@@ -113,17 +113,17 @@
 ;;
 
 
-(define firefox-108
+(define firefox
   (let* ((channels
           (list (channel
                  (inherit %channel-guix)
-                 (commit "e55bc944a94134f7ff2a4ab4a0e8b9a5ac9d46d1"))
+                 (commit "1f684d00d25f0f205c4cc4b762d8f56911062581"))
                 (channel
                  (inherit %channel-nonguix)
-                 (commit "f5fa2efb0c5b0efdf0d1e446ee97a30a32f3f4bd"))))
+                 (commit "29d63cbac7b1e652932595adb583fcffe59bfaee"))))
          (inferior
           (inferior-for-channels channels)))
-    (first (lookup-inferior-packages inferior "firefox" "108.0.2"))))
+    (first (lookup-inferior-packages inferior "firefox" "109.0"))))
 
 
 ;;
@@ -174,7 +174,7 @@
   (append (list emacs-next-pgtk
                 buku
                 exa
-                firefox-108
+                firefox
                 fish
                 git
                 git-crypt
