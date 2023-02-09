@@ -356,7 +356,11 @@
         'wl-user-agent-compose
         'wl-draft-send
         'wl-draft-kill
-        'mail-send-hook)))
+        'mail-send-hook))
+  :config
+  (use-package message
+    :bind (:map wl-draft-mode-map
+                ("C-c M-m" . message-mark-inserted-region))))
 
 (use-package yasnippet
   :hook (after-init . yas-global-mode))
