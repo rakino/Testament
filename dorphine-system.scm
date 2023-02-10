@@ -88,7 +88,6 @@
   (firmware (list amdgpu-firmware iwlwifi-firmware))
 
   (host-name "dorphine")
-  (hosts-file %dorphine-hosts)
 
   (file-systems
    (let ((rootfs (file-system
@@ -207,6 +206,9 @@
 
           (udev-rules-service 'backlight light)
           (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
+
+          (simple-service 'add-extra-hosts hosts-service-type
+                          %dorphine-hosts)
 
           (simple-service 'guix-extra-configuration guix-service-type
                           (guix-extension
