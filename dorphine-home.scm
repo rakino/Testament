@@ -185,6 +185,7 @@
                 isync
                 libfido2
                 mosh
+                netcat-openbsd          ;for `-X` option
                 openssh-sans-x
                 pass-otp
                 password-store
