@@ -87,7 +87,11 @@
                     (token %kroan-cloudflared-token)
                     (http2-origin? #t)))
 
+          (service dbus-root-service-type)
+
           (service docker-service-type)
+
+          (service elogind-service-type)
 
           (service (fail2ban-jail-service
                     openssh-service-type
@@ -101,9 +105,6 @@
 
           (service static-networking-service-type
                    %kroan-static-networking-configuration)
-
-          (dbus-service)
-          (elogind-service)
 
           (simple-service 'guix-extra-configuration guix-service-type
                           (guix-extension
