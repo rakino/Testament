@@ -226,6 +226,9 @@
                            (substitute-urls
                             (list "https://mirror.sjtu.edu.cn/guix"))))
 
+          (simple-service 'setup-etc-dir etc-service-type
+                          `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
+
           (modify-services %rosenthal-base-services
             (delete login-service-type)
             (delete mingetty-service-type)
