@@ -128,10 +128,21 @@
 
              ;; Devices
              (list (file-system
+                     (device (uuid "28cd5d6b-439f-4e65-be35-8dda84297999"))
+                     (mount-point "/mnt/Myosotis")
+                     (type "btrfs")
+                     (options "compress=zstd:5,subvolid=5")
+                     (mount? #f))
+                   (file-system
                      (inherit rootfs)
                      (mount-point "/mnt/Phinix")
                      (check? #f)
                      (options "compress=zstd,discard=async,subvolid=5")
+                     (mount? #f))
+                   (file-system
+                     (device (uuid "4E21-0000" 'fat))
+                     (mount-point "/mnt/Symphytum")
+                     (type "exfat")
                      (mount? #f)))
 
              %rosenthal-base-file-systems)))
