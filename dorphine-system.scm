@@ -143,7 +143,7 @@
            (supplementary-groups
             '("plugdev" "seat" "audio" "video" "wheel"))
            (home-directory "/home/hako")
-           (shell "/var/guix/profiles/per-user/hako/guix-home/profile/bin/xonsh"))
+           (shell (file-append xonsh "/bin/xonsh")))
           %base-user-accounts))
 
   (packages (map normalize-package %rosenthal-base-packages))
