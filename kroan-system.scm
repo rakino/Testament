@@ -9,6 +9,7 @@
   #:use-module (gnu services dbus)
   #:use-module (gnu services desktop)
   #:use-module (gnu services docker)
+  #:use-module (gnu services linux)
   #:use-module (gnu services security)
   #:use-module (gnu services ssh)
   #:use-module (gnu services sysctl)
@@ -106,6 +107,8 @@
           (service static-networking-service-type
                    %kroan-static-networking-configuration)
 
+          (service zram-device-service-type)
+
           (simple-service 'guix-extra-configuration guix-service-type
                           (guix-extension
                            (authorized-keys
@@ -116,4 +119,6 @@
           (simple-service 'sysctl-extra-settings sysctl-service-type
                           '(("vm.overcommit_memory" . "1")))
 
-          %rosenthal-base-services)))
+          %rosenthal-base-services))
+
+  (sudoers-file %kroan-sudoers-file))
