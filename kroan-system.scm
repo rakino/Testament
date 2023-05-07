@@ -4,6 +4,7 @@
 
 (define-module (kroan-system)
   #:use-module (common)
+  #:use-module (counter-stop)
   #:use-module (gnu)
   #:use-module (gnu packages linux)
   #:use-module (gnu services dbus)
@@ -16,8 +17,7 @@
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
   #:use-module (rosenthal packages linux)
-  #:use-module (rosenthal services child-error)
-  #:use-module (rosenthal utils counter-stop))
+  #:use-module (rosenthal services child-error))
 
 (load (summon "blob-kroan-system.scm"))
 

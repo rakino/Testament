@@ -4,6 +4,7 @@
 
 (define-module (dorphine-home)
   #:use-module (common)
+  #:use-module (counter-stop)
   #:use-module (srfi srfi-1)
   #:use-module (guix channels)
   #:use-module (guix download)
@@ -40,8 +41,7 @@
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages web)
   #:use-module (rosenthal packages wm)
-  #:use-module (rosenthal services child-error)
-  #:use-module (rosenthal utils counter-stop))
+  #:use-module (rosenthal services child-error))
 
 (load (summon "blob-dorphine-home.scm"))
 

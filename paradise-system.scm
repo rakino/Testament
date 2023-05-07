@@ -4,6 +4,7 @@
 
 (define-module (paradise-system)
   #:use-module (common)
+  #:use-module (counter-stop)
   #:use-module (gnu)
   #:use-module (gnu packages linux)
   #:use-module (gnu services dbus)
@@ -13,8 +14,7 @@
   #:use-module (gnu services security)
   #:use-module (gnu services ssh)
   #:use-module (rosenthal packages linux)
-  #:use-module (rosenthal services child-error)
-  #:use-module (rosenthal utils counter-stop))
+  #:use-module (rosenthal services child-error))
 
 (load (summon "blob-paradise-system.scm"))
 

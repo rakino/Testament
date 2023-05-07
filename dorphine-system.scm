@@ -4,6 +4,7 @@
 
 (define-module (dorphine-system)
   #:use-module (common)
+  #:use-module (counter-stop)
   #:use-module (ice-9 match)
   #:use-module (gnu)
   #:use-module (gnu packages disk)
@@ -24,8 +25,7 @@
   #:use-module (rosenthal services child-error)
   #:use-module ((rosenthal services desktop) #:prefix rosenthal:)
   #:use-module (rosenthal services dns)
-  #:use-module (rosenthal services networking)
-  #:use-module (rosenthal utils counter-stop))
+  #:use-module (rosenthal services networking))
 
 (load (summon "blob-dorphine-system.scm"))
 
