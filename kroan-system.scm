@@ -14,8 +14,6 @@
   #:use-module (gnu services security)
   #:use-module (gnu services ssh)
   #:use-module (gnu services sysctl)
-  #:use-module (nongnu packages linux)
-  #:use-module (nongnu system linux-initrd)
   #:use-module (rosenthal packages linux)
   #:use-module (rosenthal services child-error))
 
@@ -33,8 +31,6 @@
           %base-initrd-modules))
 
 (operating-system
-  (kernel linux-hardened)
-
   (kernel-arguments %rosenthal-default-kernel-arguments)
 
   (bootloader (bootloader-configuration
@@ -42,12 +38,9 @@
                (targets '("/dev/sda"))))
 
   (initrd (lambda (file-systems . rest)
-            (microcode-initrd file-systems
-                              #:initrd raw-initrd
-                              #:microcode-packages (list intel-microcode)
-                              #:linux kernel
-                              #:linux-modules %kroan-initrd-modules
-                              #:helper-packages (list btrfs-progs/static))))
+            (raw-initrd file-systems
+                        #:linux-modules %kroan-initrd-modules
+                        #:helper-packages (list btrfs-progs/static))))
 
   (initrd-modules %kroan-initrd-modules)
 
