@@ -177,6 +177,7 @@
                 firefox
                 fish
                 git
+                `(,git "send-email")
                 git-crypt
                 gnupg
                 grimblast
