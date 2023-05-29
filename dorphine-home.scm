@@ -94,7 +94,7 @@
 
      ;; Binds
      "bind = $mainMod, E, exec, emacsclient --create-frame --no-wait --alternate-editor=''" "\n"
-     "bind = $mainMod, Q, exec, " (file-append foot "/bin/foot") "\n"
+     "bind = $mainMod, Q, exec, " (file-append alacritty "/bin/alacritty") "\n"
      "bind = $mainMod, B, exec, " (file-append buku-run-dev "/bin/buku_run") "\n"
      "bind = $mainMod, D, exec, " (file-append tessen "/bin/tessen") "\n"
      "bind = $mainMod, R, exec, " (file-append rofi-wayland "/bin/rofi") " -show combi" "\n\n"
@@ -237,9 +237,9 @@
 
         (simple-service 'setup-xdg-config-home
                         home-xdg-configuration-files-service-type
-                        `(("emacs/early-init.el" ,(nohitaga "emacs-early-init.el"))
+                        `(("alacritty/alacritty.yml" ,(nohitaga "alacritty.yml"))
+                          ("emacs/early-init.el" ,(nohitaga "emacs-early-init.el"))
                           ("emacs/init.el" ,(nohitaga "emacs-init.el"))
-                          ("foot/foot.ini" ,(nohitaga "foot.ini"))
                           ("git/config" ,(nohitaga "git.conf"))
                           ("hypr/hyprland.conf" ,%config-hyprland)
                           ("isync/mbsyncrc" ,(nohitaga "mbsync.conf"))
