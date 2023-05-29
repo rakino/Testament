@@ -67,6 +67,14 @@
        (base32
         "0j5f6nifa3ibhgcvfn59pq7xsnbcwgj6vkcz8vm4wway2nl5b9i6"))))))
 
+(define emacs-doom-modeline/dolly
+  (let ((base emacs-doom-modeline))
+    (package
+      (inherit base)
+      (propagated-inputs
+       (modify-inputs (package-propagated-inputs base)
+         (delete "emacs-all-the-icons" "emacs-dash"))))))
+
 (define pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
 
@@ -142,10 +150,10 @@
               emacs-ace-link
               emacs-apheleia
               emacs-browse-kill-ring
-              emacs-company-dev
+              emacs-company
               emacs-ctrlf
               emacs-daemons
-              emacs-doom-modeline-dev
+              emacs-doom-modeline/dolly
               emacs-flycheck
               emacs-gcmh
               emacs-geiser-guile
@@ -156,19 +164,21 @@
               emacs-no-littering
               emacs-orderless
               emacs-org-modern
-              emacs-org-rainbow-tags-dev
+              emacs-org-rainbow-tags
               emacs-ox-hugo
               emacs-pass
               emacs-password-store-otp
               emacs-puni
-              emacs-rime-dev
+              emacs-rime
               emacs-straight-el
               emacs-vertico
               emacs-visual-fill-column
-              emacs-volatile-highlights-dev
+              emacs-volatile-highlights
               emacs-vundo
               emacs-wakatime-mode
-              emacs-which-key))))
+              emacs-which-key
+              emacs-xonsh-mode
+              emacs-yaml-mode))))
 
 (define %home-packages
   (append (list emacs-next-pgtk
