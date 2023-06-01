@@ -103,7 +103,7 @@
      ;; Binds
      "bind = $mainMod, E, exec, emacsclient --create-frame --no-wait --alternate-editor=''" "\n"
      "bind = $mainMod, Q, exec, " (file-append alacritty "/bin/alacritty") "\n"
-     "bind = $mainMod, B, exec, " (file-append buku-run-dev "/bin/buku_run") "\n"
+     "bind = $mainMod, B, exec, " (file-append buku-run-dev/dolly "/bin/buku_run") "\n"
      "bind = $mainMod, D, exec, " (file-append tessen "/bin/tessen") "\n"
      "bind = $mainMod, R, exec, " (file-append rofi-wayland "/bin/rofi") " -show combi" "\n\n"
 
