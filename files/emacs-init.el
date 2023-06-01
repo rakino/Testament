@@ -143,7 +143,11 @@
 
 (use-package geiser
   :init
-  (setq geiser-repl-use-other-window nil
+  (setq geiser-guile-load-path '("~/Repository/guix"
+                                 "~/Repository/nonguix"
+                                 "~/Workspace/Rosenthal"
+                                 "~/Workspace/Testament")
+        geiser-repl-use-other-window nil
         geiser-repl-query-on-kill-p nil
         geiser-mode-start-repl-p t))
 
@@ -164,6 +168,9 @@
   :init (god-mode-all)
   :config (setq god-exempt-major-modes
                 (cons 'pass-mode god-exempt-major-modes)))
+
+(use-package guix-devel
+  :hook (scheme-mode . guix-devel-mode))
 
 (use-package helpful
   :straight t
