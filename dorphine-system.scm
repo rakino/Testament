@@ -58,7 +58,8 @@
 (operating-system
   (kernel linux-xanmod)
   (kernel-arguments `(,@%rosenthal-default-kernel-arguments
-                      "ideapad_laptop.allow_v4_dytc=1"))
+                      "ideapad_laptop.allow_v4_dytc=1"
+                      "modprobe.blacklist=nouveau"))
 
   (bootloader (bootloader-configuration
                (bootloader grub-efi-bootloader)
