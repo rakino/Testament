@@ -225,7 +225,8 @@
           (simple-service 'guix-extra-configuration guix-service-type
                           (guix-extension
                            (substitute-urls
-                            (list "https://mirror.sjtu.edu.cn/guix"))))
+                            (list "https://mirror.sjtu.edu.cn/guix"
+                                  "https://bordeaux-singapore-mirror.cbaines.net"))))
 
           (simple-service 'setup-etc-dir etc-service-type
                           `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
