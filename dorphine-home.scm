@@ -39,6 +39,7 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (rosenthal packages emacs-xyz)
+  #:use-module (rosenthal packages gnome-xyz)
   #:use-module (rosenthal packages web)
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
@@ -113,7 +114,7 @@
      ;; Dispatchers
      "exec-once = " (file-append swaybg "/bin/swaybg") " --image " (nohitaga "94280741_p0.jpg") " --mode fill --output '*'" "\n"
      "exec-once = " (file-append wlsunset "/bin/wlsunset") " " %dorphine-wlsunset-args "\n"
-     "exec = " (file-append hyprland "/bin/hyprctl") " setcursor Adwaita 24" "\n")))
+     "exec = " (file-append hyprland "/bin/hyprctl") " setcursor Qogir 24" "\n")))
 
 
 ;;
@@ -211,7 +212,8 @@
                 zathura-pdf-poppler
                 zoxide)
           (list adwaita-icon-theme
-                hicolor-icon-theme)
+                hicolor-icon-theme
+                qogir-icon-theme)
           (list font-adobe-source-serif-pro
                 font-chiron-hei-hk
                 font-chiron-sung-hk
@@ -246,12 +248,17 @@
                  (home-wakapi-configuration
                   (config %dorphine-wakapi-config)))
 
+        (simple-service 'setup-non-xdg-home
+                        home-files-service-type
+                        `((".icons/default/index.theme" ,(nohitaga "icons.theme"))))
+
         (simple-service 'setup-xdg-config-home
                         home-xdg-configuration-files-service-type
                         `(("alacritty/alacritty.yml" ,(nohitaga "alacritty.yml"))
                           ("emacs/early-init.el" ,(nohitaga "emacs-early-init.el"))
                           ("emacs/init.el" ,(nohitaga "emacs-init.el"))
                           ("git/config" ,(nohitaga "git.conf"))
+                          ("gtk-3.0/settings.ini" ,(nohitaga "gtk-3.0.ini"))
                           ("hypr/hyprland.conf" ,%config-hyprland)
                           ("isync/mbsyncrc" ,(nohitaga "mbsync.conf"))
                           ("mpv/mpv.conf" ,(nohitaga "mpv.conf"))
