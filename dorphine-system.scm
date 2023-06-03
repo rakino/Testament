@@ -222,12 +222,6 @@
           (simple-service 'add-extra-hosts hosts-service-type
                           %dorphine-hosts)
 
-          (simple-service 'guix-extra-configuration guix-service-type
-                          (guix-extension
-                           (substitute-urls
-                            (list "https://mirror.sjtu.edu.cn/guix"
-                                  "https://bordeaux-singapore-mirror.cbaines.net"))))
-
           (simple-service 'setup-etc-dir etc-service-type
                           `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
 
@@ -242,4 +236,16 @@
                                      (vtnr (number->string vtnr))
                                      (tty (string-append "tty" vtnr)))
                                 `(,tty . ,font)))
-                            (iota 6 1)))))))
+                            (iota 6 1)))
+
+            (guix-service-type
+             config => (guix-configuration
+                        (inherit config)
+                        (substitute-urls
+                         (append '("https://mirror.sjtu.edu.cn/guix"
+                                   "https://bordeaux-singapore-mirror.cbaines.net")
+                                 (guix-configuration-substitute-urls config)
+                                 '("https://substitutes.nonguix.org")))
+                        (authorized-keys
+                         (cons* %guix-authorized-key-nonguix
+                                (guix-configuration-authorized-keys config)))))))))

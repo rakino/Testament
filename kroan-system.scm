@@ -102,16 +102,18 @@
 
           (service zram-device-service-type)
 
-          (simple-service 'guix-extra-configuration guix-service-type
-                          (guix-extension
-                           (authorized-keys
-                            (list %guix-authorized-key-dorphine))
-                           (substitute-urls
-                            (list "https://substitute.boiledscript.com"))))
-
           (simple-service 'sysctl-extra-settings sysctl-service-type
                           '(("vm.overcommit_memory" . "1")))
 
-          %rosenthal-base-services))
+          (modify-services %rosenthal-base-services
+            (guix-service-type
+             config => (guix-configuration
+                        (inherit config)
+                        (substitute-urls
+                         (append (guix-configuration-substitute-urls config)
+                                 '("https://substitute.boiledscript.com")))
+                        (authorized-keys
+                         (cons* %guix-authorized-key-dorphine
+                                (guix-configuration-authorized-keys config))))))))
 
   (sudoers-file %kroan-sudoers-file))

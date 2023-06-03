@@ -185,13 +185,4 @@
                        (settings `(,@%kicksecure-sysctl-rules
                                    ("net.core.rmem_max" . "2500000")
                                    ("vm.page-cluster" . "0")
-                                   ("vm.swappiness" . "90")))))
-           (guix-service-type
-            config => (guix-configuration
-                       (inherit config)
-                       (substitute-urls
-                        (append %default-substitute-urls
-                                '("https://substitutes.nonguix.org")))
-                       (authorized-keys
-                        (cons* %guix-authorized-key-nonguix
-                               %default-authorized-guix-keys)))))))
+                                   ("vm.swappiness" . "90"))))))))
