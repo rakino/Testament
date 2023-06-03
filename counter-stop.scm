@@ -165,17 +165,8 @@
                  %base-file-systems)))
 
 (define %rosenthal-base-packages
-  (let ((to-add (list nss-certs))
-        (to-remove (list bash-completion
-                         info-reader
-                         mg
-                         nano
-                         nvi
-                         inetutils
-                         isc-dhcp
-                         iw
-                         wireless-tools)))
-    (append to-add (lset-difference eqv? %base-packages to-remove))))
+  (cons* nss-certs
+         %base-packages))
 
 (define %rosenthal-base-services
   (cons* (modify-services %base-services
