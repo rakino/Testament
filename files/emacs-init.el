@@ -178,16 +178,12 @@
          ([remap describe-variable] . #'helpful-variable)
          ([remap describe-symbol]   . #'helpful-symbol)
          ([remap describe-key]      . #'helpful-key)
+         ([remap describe-command]  . #'helpful-command)
          :map help-map
          ("F" . #'helpful-function)
          ("M-f" . #'helpful-macro)
-         ("C" . #'helpful-command)
          :map global-map
-         ("C-c C-d" . #'helpful-at-point))
-  :config
-  (if (version<= "29" emacs-version)
-      ;; REVIEW See Wilfred/elisp-refs#35. Remove once fixed upstream.
-      (defvar read-symbol-positions-list nil)))
+         ("C-c C-d" . #'helpful-at-point)))
 
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode)
