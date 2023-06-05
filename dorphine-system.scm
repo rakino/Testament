@@ -13,9 +13,11 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages shells)
+  #:use-module (gnu packages wm)
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services security-token)
+  #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
   #:use-module (rosenthal packages dns)
@@ -211,6 +213,14 @@
                     (webui-port 35951)))
 
           (service rosenthal:seatd-service-type)
+
+          (service screen-locker-service-type
+                   (screen-locker-configuration
+                    (name "swaylock")
+                    (program (file-append swaylock-effects "/bin/swaylock"))
+                    (allow-empty-password? #f)
+                    (using-pam? #t)
+                    (using-setuid? #f)))
 
           (service smartdns-service-type
                    (smartdns-configuration

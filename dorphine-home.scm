@@ -94,6 +94,7 @@
 (define %config-hyprland
   (let ((filename   "hyprland.conf")
         (wallpaper (nohitaga "94280741_p0.jpg"))
+        (lockpaper (nohitaga "102982564_p0.jpg"))
         (alacritty (file-append alacritty "/bin/alacritty"))
         (buku_run  (file-append buku-run-dev/dolly "/bin/buku_run"))
         (hyprctl   (file-append hyprland "/bin/hyprctl"))
@@ -101,6 +102,7 @@
         (rofi      (file-append rofi-wayland "/bin/rofi"))
         (swaybg    (file-append swaybg "/bin/swaybg"))
         (swayidle  (file-append swayidle "/bin/swayidle"))
+        (swaylock  (file-append swaylock-effects "/bin/swaylock"))
         (tessen    (file-append tessen "/bin/tessen"))
         (wlsunset  (file-append wlsunset "/bin/wlsunset")))
     (mixed-text-file
@@ -119,12 +121,16 @@
      "bind = $mainMod, Q, exec, " alacritty "\n"
      "bind = $mainMod, B, exec, " buku_run "\n"
      "bind = $mainMod, D, exec, " tessen "\n"
-     "bind = $mainMod, R, exec, " rofi " -show combi\n\n"
+     "bind = $mainMod, R, exec, " rofi " -show combi\n"
+     "bind = $mainMod, L, exec, " swaylock " --clock -fei " lockpaper "\n\n"
 
      "bindle = , XF86MonBrightnessUp, exec, " light " -A 5\n"
      "bindle = , XF86MonBrightnessDown, exec, " light " -U 5\n\n"
 
      ;; Dispatchers
+     "exec-once = " swayidle " -w"
+                   " timeout 300 '" swaylock " --clock -fei " lockpaper "'"
+                   " timeout 600 '" hyprctl " dispatch dpms off'\n"
      "exec-once = " swaybg " --image " wallpaper " --mode fill --output '*'\n"
      "exec-once = " wlsunset " " %dorphine-wlsunset-args "\n"
      "exec = " hyprctl " setcursor Qogir 24\n")))
