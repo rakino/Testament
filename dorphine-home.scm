@@ -86,35 +86,48 @@
 
 
 (define %config-gpg-agent
-  (mixed-text-file
-   "gpg-agent.conf"
-   "pinentry-program " (file-append pinentry-rofi/dolly "/bin/pinentry-rofi") "\n"))
+  (let ((pinentry-rofi (file-append pinentry-rofi/dolly "/bin/pinentry-rofi")))
+    (mixed-text-file
+     "gpg-agent.conf"
+     "pinentry-program " pinentry-rofi "\n")))
 
 (define %config-hyprland
-  (let ((filename "hyprland.conf"))
+  (let ((filename   "hyprland.conf")
+        (wallpaper (nohitaga "94280741_p0.jpg"))
+        (alacritty (file-append alacritty "/bin/alacritty"))
+        (buku_run  (file-append buku-run-dev/dolly "/bin/buku_run"))
+        (hyprctl   (file-append hyprland "/bin/hyprctl"))
+        (light     (file-append light "/bin/light"))
+        (rofi      (file-append rofi-wayland "/bin/rofi"))
+        (swaybg    (file-append swaybg "/bin/swaybg"))
+        (swayidle  (file-append swayidle "/bin/swayidle"))
+        (tessen    (file-append tessen "/bin/tessen"))
+        (wlsunset  (file-append wlsunset "/bin/wlsunset")))
     (mixed-text-file
      filename
      (agathion filename) "\n"
 
      ;; Monitors
-     "monitor = , preferred, auto, 1" "\n"
-     "monitor = HDMI-A-1, 1920x1080@60, 0x0, 1" "\n"
-     "monitor = eDP-1, 2560x1600@120, 1920x0, 1.5, bitdepth,10" "\n\n"
+     "monitor = , preferred, auto, 1\n"
+     "monitor = HDMI-A-1, 1920x1080@60, 0x0, 1\n"
+     "monitor = eDP-1, 2560x1600@120, 1920x0, 1.5\n\n"
 
      ;; Binds
-     "bind = $mainMod, E, exec, emacsclient --create-frame --no-wait --alternate-editor=''" "\n"
-     "bind = $mainMod, Q, exec, " (file-append alacritty "/bin/alacritty") "\n"
-     "bind = $mainMod, B, exec, " (file-append buku-run-dev/dolly "/bin/buku_run") "\n"
-     "bind = $mainMod, D, exec, " (file-append tessen "/bin/tessen") "\n"
-     "bind = $mainMod, R, exec, " (file-append rofi-wayland "/bin/rofi") " -show combi" "\n\n"
+     "bind = $mainMod, E, exec, emacsclient --create-frame"
+                                          " --no-wait"
+                                          " --alternate-editor=''\n"
+     "bind = $mainMod, Q, exec, " alacritty "\n"
+     "bind = $mainMod, B, exec, " buku_run "\n"
+     "bind = $mainMod, D, exec, " tessen "\n"
+     "bind = $mainMod, R, exec, " rofi " -show combi\n\n"
 
-     "bindle = , XF86MonBrightnessUp, exec, " (file-append light "/bin/light")" -A 5" "\n"
-     "bindle = , XF86MonBrightnessDown, exec, " (file-append light "/bin/light") " -U 5" "\n\n"
+     "bindle = , XF86MonBrightnessUp, exec, " light " -A 5\n"
+     "bindle = , XF86MonBrightnessDown, exec, " light " -U 5\n\n"
 
      ;; Dispatchers
-     "exec-once = " (file-append swaybg "/bin/swaybg") " --image " (nohitaga "94280741_p0.jpg") " --mode fill --output '*'" "\n"
-     "exec-once = " (file-append wlsunset "/bin/wlsunset") " " %dorphine-wlsunset-args "\n"
-     "exec = " (file-append hyprland "/bin/hyprctl") " setcursor Qogir 24" "\n")))
+     "exec-once = " swaybg " --image " wallpaper " --mode fill --output '*'\n"
+     "exec-once = " wlsunset " " %dorphine-wlsunset-args "\n"
+     "exec = " hyprctl " setcursor Qogir 24\n")))
 
 
 ;;
