@@ -237,6 +237,12 @@
 
           (modify-services %rosenthal-base-services
             (delete login-service-type)
+
+            (delete mingetty-service-type)
+            (delete mingetty-service-type)
+            (delete mingetty-service-type)
+            (delete mingetty-service-type)
+            (delete mingetty-service-type)
             (delete mingetty-service-type)
 
             (console-font-service-type
