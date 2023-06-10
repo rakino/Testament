@@ -52,10 +52,6 @@
 ;;
 
 
-(define rofi-dolly
-  (package-input-rewriting/spec
-   `(("rofi" . ,(const rofi-wayland)))))
-
 (define buku-run-dev/dolly
   (package-with-patches
    buku-run-dev
@@ -76,9 +72,6 @@
        (modify-inputs (package-propagated-inputs base)
          (delete "emacs-all-the-icons" "emacs-dash"))))))
 
-(define pinentry-rofi/dolly
-  (rofi-dolly pinentry-rofi))
-
 
 ;;
 ;; File-like
@@ -86,7 +79,7 @@
 
 
 (define %config-gpg-agent
-  (let ((pinentry-rofi (file-append pinentry-rofi/dolly "/bin/pinentry-rofi")))
+  (let ((pinentry-rofi (file-append pinentry-rofi "/bin/pinentry-rofi")))
     (mixed-text-file
      "gpg-agent.conf"
      "pinentry-program " pinentry-rofi "\n")))
