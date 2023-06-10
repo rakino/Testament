@@ -280,7 +280,8 @@
                           ("isync/mbsyncrc" ,(nohitaga "mbsync.conf"))
                           ("mpv/mpv.conf" ,(nohitaga "mpv.conf"))
                           ("wanderlust/folders" ,(nohitaga "wanderlust-folders.conf"))
-                          ("wanderlust/init.el" ,(nohitaga "wanderlust-init.el"))))
+                          ("wanderlust/init.el" ,(nohitaga "wanderlust-init.el"))
+                          ("xonsh/rc.xsh" ,(nohitaga "rc.xsh"))))
 
         (simple-service 'setup-xdg-data-home
                         home-xdg-data-files-service-type
