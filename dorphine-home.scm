@@ -111,8 +111,8 @@
 
      ;; Monitors
      "monitor = , preferred, auto, 1\n"
-     "monitor = HDMI-A-1, 1920x1080@60, 0x0, 1\n"
-     "monitor = eDP-1, 2560x1600@120, 1920x0, 1.5\n\n"
+     "monitor = HDMI-A-1, preferred, auto, 1\n"
+     "monitor = eDP-1, preferred, auto, 1.5\n\n"
 
      ;; Binds
      "bind = $mainMod, E, exec, emacsclient --create-frame"
@@ -128,11 +128,13 @@
      "bindle = , XF86MonBrightnessDown, exec, " light " -U 5\n\n"
 
      ;; Dispatchers
-     "exec-once = " swayidle " -w"
-                   " timeout 300 '" swaylock " --clock -fei " lockpaper "'"
-                   " timeout 600 '" hyprctl " dispatch dpms off'\n"
      "exec-once = " swaybg " --image " wallpaper " --mode fill --output '*'\n"
-     "exec-once = " wlsunset " " %dorphine-wlsunset-args "\n"
+     "exec-once = " swayidle " -w"
+                  " timeout 300 '" swaylock " --clock -fei " lockpaper "'"
+                  " timeout 600 '" hyprctl " dispatch dpms off'"
+                  " resume '" hyprctl " dispatch dpms on'\n"
+     "exec-once = " wlsunset " " %dorphine-wlsunset-args "\n\n"
+
      "exec = " hyprctl " setcursor Qogir 24\n")))
 
 
