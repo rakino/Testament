@@ -124,6 +124,9 @@
      "bind = $mainMod, R, exec, " rofi " -show combi\n"
      "bind = $mainMod, L, exec, " swaylock " --clock -fei " lockpaper "\n\n"
 
+     "bindl = , switch:on:Lid Switch, exec, " hyprctl " dispatch dpms off eDP-1\n"
+     "bindl = , switch:off:Lid Switch, exec, " hyprctl " dispatch dpms on eDP-1\n\n"
+
      "bindle = , XF86MonBrightnessUp, exec, " light " -A 5\n"
      "bindle = , XF86MonBrightnessDown, exec, " light " -U 5\n\n"
 
