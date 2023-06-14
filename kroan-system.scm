@@ -6,7 +6,11 @@
   #:use-module (common)
   #:use-module (counter-stop)
   #:use-module (gnu)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages rsync)
+  #:use-module (gnu packages ssh)
+  #:use-module (gnu packages version-control)
   #:use-module (gnu services dbus)
   #:use-module (gnu services desktop)
   #:use-module (gnu services docker)
@@ -29,6 +33,10 @@
   (append '("virtio_scsi")
           %rosenthal-base-initrd-modules
           %base-initrd-modules))
+
+(define %kroan-packages
+  (append (list git mosh rsync zstd)
+          %rosenthal-base-packages))
 
 (operating-system
   (kernel-arguments %rosenthal-default-kernel-arguments)
@@ -71,7 +79,7 @@
            (supplementary-groups '("wheel")))
           %base-user-accounts))
 
-  (packages (map normalize-package %rosenthal-base-packages))
+  (packages (map normalize-package %kroan-packages))
 
   (timezone "Asia/Hong_Kong")
 
