@@ -3,8 +3,8 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (dorphine-system)
-  #:use-module (common)
-  #:use-module (counter-stop)
+  #:use-module (testament common)
+  #:use-module (testament counter-stop)
   #:use-module (ice-9 match)
   #:use-module (gnu)
   #:use-module (gnu packages disk)

@@ -2,8 +2,8 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(define-module (counter-stop)
-  #:use-module (kicksecure)
+(define-module (testament counter-stop)
+  #:use-module (testament kicksecure)
   #:use-module (srfi srfi-1)
   #:use-module (guix channels)
   #:use-module (guix gexp)

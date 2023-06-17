@@ -1,6 +1,6 @@
 ;; Contents extracted from Kicksecure's resources.
 
-(define-module (kicksecure)
+(define-module (testament kicksecure)
   #:export (%kicksecure-kernel-arguments
             %kicksecure-sysctl-rules))
 

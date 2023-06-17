@@ -2,7 +2,7 @@
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(define-module (common)
+(define-module (testament common)
   #:use-module ((ice-9 rdelim) #:select (read-delimited))
   #:use-module ((guix gexp) #:select (local-file))
   #:export (agathion
@@ -12,9 +12,11 @@
 (define (testament-path)
   "Get the path to Testament repository, fallback to \"~/Workspace/Testament\"
 in REPL."
-  (dirname (or (current-filename)
-               (string-append (getenv "HOME")
-                              "/Workspace/Testament/common.scm"))))
+  (dirname
+   (dirname
+    (or (current-filename)
+        (string-append (getenv "HOME")
+                       "/Workspace/Testament/testament/common.scm")))))
 
 (define (summon name)
   "Find a file in the \"files\" directory (fallback to \"blobs\") of Testament
