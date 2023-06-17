@@ -70,7 +70,7 @@
 (define %channel-rosenthal
   (channel
    (name 'rosenthal)
-   (url "https://github.com/rakino/rosenthal")
+   (url "https://codeberg.org/hako/rosenthal.git")
    (branch "trunk")
    (introduction
     (make-channel-introduction
