@@ -35,6 +35,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages terminals)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu packages virtualization)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
@@ -222,6 +223,7 @@
                 python-prompt-toolkit
                 rofi-wayland
                 rsync
+                virt-manager
                 wl-clipboard
                 xdg-utils
                 xonsh

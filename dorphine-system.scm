@@ -17,6 +17,7 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services security-token)
+  #:use-module (gnu services virtualization)
   #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
@@ -47,6 +48,11 @@
      "conf-file " (file-append conf-dir "apple.china.smartdns.conf") "\n"
      "conf-file " (file-append conf-dir "bogus-nxdomain.china.smartdns.conf") "\n")))
 
+(define %config-modprobe-vfio
+  (plain-file "vfio.conf"
+              "options vfio-pci ids=10de:1f9d"))
+
+
 
 ;;
 ;; Operating system definition for Dorphine.
@@ -54,7 +60,8 @@
 
 
 (define %dorphine-initrd-modules
-  (append %rosenthal-base-initrd-modules
+  (append '("vfio_pci")
+          %rosenthal-base-initrd-modules
           %base-initrd-modules))
 
 (operating-system
@@ -155,7 +162,7 @@
            (name "hako")
            (group "users")
            (supplementary-groups
-            '("plugdev" "seat" "audio" "video" "wheel"))
+            '("libvirt" "plugdev" "seat" "audio" "video" "wheel"))
            (home-directory "/home/hako")
            (shell (file-append xonsh "/bin/xonsh")))
           %base-user-accounts))
@@ -197,6 +204,10 @@
                                         (EnableNetworkConfiguration . #t)))
                               (Network ((EnableIPv6 . #t)))))))
 
+          (service libvirt-service-type
+                   (libvirt-configuration
+                    (auth-unix-rw "none"))) ;TODO: Setup Polkit on Wayland.
+
           (service mcron-service-type
                    (mcron-configuration
                     (jobs (list #~(job next-day-from
@@ -226,6 +237,8 @@
                    (smartdns-configuration
                     (config %config-smartdns)))
 
+          (service virtlog-service-type)
+
           (udev-rules-service 'backlight light)
           (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
 
@@ -233,7 +246,8 @@
                           %dorphine-hosts)
 
           (simple-service 'setup-etc-dir etc-service-type
-                          `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
+                          `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))
+                            ("modprobe.d/vfio.conf" ,%config-modprobe-vfio)))
 
           (modify-services %rosenthal-base-services
             (delete login-service-type)
