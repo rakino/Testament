@@ -197,7 +197,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
            (name "hako")
            (group "users")
            (supplementary-groups
-            '("audio" "plugdev" "seat" "video" "wheel"))
+            '("audio" "libvirt" "plugdev" "seat" "video" "wheel"))
            (home-directory "/home/hako")
            (shell (file-append bash "/bin/bash")))
           %base-user-accounts))
@@ -257,6 +257,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                     (enable-network-configuration? #t)
                     (address-randomization 'once)))
 
+          (service libvirt-service-type)
+
           (service mcron-service-type
                    (mcron-configuration
                     (jobs (list %mcron-job-defrag-guix-db))))
@@ -308,6 +310,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
           (service tor-service-type
                    (tor-configuration
                     (config-file (testament-file-object "tor.conf"))))
+
+          (service virtlog-service-type)
 
           (service zram-device-service-type
                    (zram-device-configuration

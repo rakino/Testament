@@ -48,6 +48,7 @@
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
+  #:use-module (gnu packages virtualization)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
@@ -191,6 +192,7 @@ fi"))
                 sway
                 tessen
                 unzip
+                virt-manager
                 wl-clipboard
                 xdg-desktop-portal
                 xdg-desktop-portal-wlr
