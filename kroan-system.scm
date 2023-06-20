@@ -111,8 +111,13 @@
 
           (service zram-device-service-type)
 
+          (simple-service 'add-extra-modules kernel-module-loader-service-type
+                          '("tcp_bbr"))
+
           (simple-service 'sysctl-extra-settings sysctl-service-type
-                          '(("vm.overcommit_memory" . "1")))
+                          '(("net.core.default_qdisc" . "fq_codel")
+                            ("net.ipv4.tcp_congestion_control" . "bbr")
+                            ("vm.overcommit_memory" . "1")))
 
           (modify-services %rosenthal-base-services
             (guix-service-type
