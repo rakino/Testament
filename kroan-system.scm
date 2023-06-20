@@ -101,6 +101,7 @@
                      (name "sshd")
                      (enabled? #t)))
                    (openssh-configuration
+                    (openssh openssh-sans-x)
                     (port-number 51048)
                     (password-authentication? #f)
                     (authorized-keys %kroan-ssh-authorized-keys)))
