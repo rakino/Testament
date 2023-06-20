@@ -17,11 +17,8 @@
         no-littering-var-directory (or (getenv "XDG_DATA_HOME")
                                        "~/.local/share"))
   :config
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
-  (setq custom-file
-        (no-littering-expand-var-file-name "custom.el"))
-
+  (no-littering-theme-backups)
+  (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
   (unless (file-exists-p custom-file)
     (write-region "" nil custom-file))
   (load-file custom-file))
