@@ -164,15 +164,10 @@
          emacs-yasnippet)
    (map (package-input-rewriting/spec
          `(("emacs-minimal" . ,(const emacs-next-pgtk))))
-        (list emacs-ace-jump-mode
-              emacs-ace-link
-              emacs-apheleia
-              emacs-browse-kill-ring
+        (list emacs-apheleia
               emacs-company
               emacs-ctrlf
-              emacs-daemons
               emacs-doom-modeline/dolly
-              emacs-flycheck
               emacs-gcmh
               emacs-geiser-guile
               emacs-god-mode
@@ -193,11 +188,9 @@
               emacs-vertico
               emacs-visual-fill-column
               emacs-volatile-highlights
-              emacs-vundo
               emacs-wakatime-mode
               emacs-which-key
-              emacs-xonsh-mode
-              emacs-yaml-mode))))
+              emacs-xonsh-mode))))
 
 (define %home-packages
   (append (list emacs-next-pgtk
@@ -215,7 +208,6 @@
                 isync
                 libfido2
                 mosh
-                netcat-openbsd          ;for `-X` option
                 openssh-sans-x
                 pass-otp
                 password-store

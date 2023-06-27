@@ -97,21 +97,8 @@
 
 
 
-(use-package ace-link
-  :init (ace-link-setup-default)
-  :bind ("C-c M-o" . ace-link-org))
-
-(use-package ace-jump-mode
-  :init (eval-after-load "ace-jump-mode"
-          '(ace-jump-mode-enable-mark-sync))
-  :bind (("C-c SPC" . ace-jump-mode)
-         ("C-x SPC" . ace-jump-mode-pop-mark)))
-
 (use-package apheleia
   :init (apheleia-global-mode +1))
-
-(use-package browse-kill-ring
-  :bind ("C-c y" . browse-kill-ring))
 
 (use-package company
   :hook (after-init . global-company-mode)
@@ -133,10 +120,6 @@
   (setq doom-modeline-icon nil
         doom-modeline-height 18))
 
-(use-package flycheck
-  :init
-  (setq flycheck-emacs-lisp-load-path 'inherit)
-  (global-flycheck-mode +1))
 
 (use-package geiser
   :init
@@ -322,11 +305,6 @@
 (use-package volatile-highlights
   :init (volatile-highlights-mode +1))
 
-(use-package vundo
-  :bind (("C-x u" . #'vundo)
-         :map god-local-mode-map
-         ("C-x C-u" . #'vundo)))
-
 (use-package wakatime-mode
   :init
   (setq wakatime-cli-path "/bin/wakatime-cli")
@@ -336,12 +314,6 @@
   :init
   (which-key-mode +1)
   (which-key-setup-side-window-right-bottom))
-
-(use-package windmove
-  :bind (("s-<left>" . windmove-left)
-         ("s-<right>" . windmove-right)
-         ("s-<up>" . windmove-up)
-         ("s-<down>" . windmove-down)))
 
 (use-package wl
   :commands (wl)
