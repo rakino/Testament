@@ -23,36 +23,6 @@
 
 
 
-(use-package straight
-  :demand t
-  :init
-  (setq straight-base-dir no-littering-var-directory
-        straight-repository-branch "develop")
-  :config
-  (straight-use-package-mode +1)
-  (mapc 'straight-use-recipes
-        '((org-elpa :local-repo nil)
-          (melpa
-           :type git :host github :build nil
-           :repo "melpa/melpa")
-          (gnu-elpa-mirror
-           :type git :host github :build nil
-           :repo "emacs-straight/gnu-elpa-mirror")
-          (nongnu-elpa
-           :type git :build nil :local-repo "nongnu-elpa"
-           :repo "https://git.savannah.gnu.org/git/emacs/nongnu.git")
-          (el-get
-           :type git :host github :build nil
-           :repo "dimitri/el-get")
-          (emacsmirror-mirror
-           :type git :host github :build nil
-           :repo "emacs-straight/emacsmirror-mirror"))))
-
-(use-package straight-x
-  :commands (straight-x-fetch-all))
-
-
-
 (use-package emacs
   :bind ("C-x C-b" . switch-to-buffer)
   :init

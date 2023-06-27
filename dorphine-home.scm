@@ -183,6 +183,7 @@
               emacs-guix
               emacs-hl-todo
               emacs-macrostep-geiser
+              emacs-magit
               emacs-mwim
               emacs-no-littering
               emacs-orderless
@@ -193,7 +194,6 @@
               emacs-password-store-otp
               emacs-puni
               emacs-rime
-              emacs-straight-el
               emacs-vertico
               emacs-visual-fill-column
               emacs-volatile-highlights
