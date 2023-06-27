@@ -72,6 +72,13 @@
        (modify-inputs (package-propagated-inputs base)
          (delete "emacs-all-the-icons" "emacs-dash"))))))
 
+(define emacs-helpful/dolly
+  (let ((base emacs-helpful))
+    (package
+      (inherit base)
+      (propagated-inputs '())
+      (inputs (package-propagated-inputs base)))))
+
 
 ;;
 ;; File-like
@@ -159,7 +166,8 @@
 
 (define %home-packages-emacs
   (append
-   (list emacs-rainbow-delimiters
+   (list emacs-helpful/dolly
+         emacs-rainbow-delimiters
          emacs-wanderlust
          emacs-yasnippet)
    (map (package-input-rewriting/spec
@@ -168,6 +176,7 @@
               emacs-company
               emacs-ctrlf
               emacs-doom-modeline/dolly
+              emacs-elisp-refs
               emacs-gcmh
               emacs-geiser-guile
               emacs-god-mode

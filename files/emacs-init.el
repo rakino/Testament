@@ -151,7 +151,6 @@
   :hook (scheme-mode . guix-devel-mode))
 
 (use-package helpful
-  :straight t
   :bind (([remap describe-function] . helpful-callable)
          ([remap describe-variable] . helpful-variable)
          ([remap describe-symbol]   . helpful-symbol)
