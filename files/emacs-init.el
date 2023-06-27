@@ -12,10 +12,8 @@
   (before-save . delete-trailing-whitespace)
   (minibuffer-setup . cursor-intangible-mode)
   :init
-  (setq no-littering-etc-directory (or (getenv "XDG_CONFIG_HOME")
-                                       "~/.config")
-        no-littering-var-directory (or (getenv "XDG_DATA_HOME")
-                                       "~/.local/share"))
+  (setq no-littering-etc-directory (getenv "XDG_CONFIG_HOME")
+        no-littering-var-directory (getenv "XDG_DATA_HOME"))
   :config
   (no-littering-theme-backups)
   (setq custom-file (no-littering-expand-etc-file-name "custom.el"))
@@ -55,45 +53,45 @@
 
 
 
-(setq create-lockfiles nil
-      enable-recursive-minibuffers t
-      inhibit-startup-screen t
-      org-startup-truncated nil
-      require-final-newline nil
-      show-paren-style 'parenthesis
-      show-paren-context-when-offscreen 'overlay
-      truncate-partial-width-windows nil
-      warning-minimum-level :emergency)
+(use-package emacs
+  :bind ("C-x C-b" . switch-to-buffer)
+  :init
+  (setq create-lockfiles nil
+        enable-recursive-minibuffers t
+        inhibit-startup-screen t
+        org-startup-truncated nil
+        require-final-newline nil
+        show-paren-style 'parenthesis
+        show-paren-context-when-offscreen 'overlay
+        truncate-partial-width-windows nil
+        warning-minimum-level :emergency)
 
-(setq minibuffer-prompt-properties
-      '(read-only t cursor-intangible t face minibuffer-prompt))
+  (setq minibuffer-prompt-properties
+        '(read-only t cursor-intangible t face minibuffer-prompt))
 
-(setq read-extended-command-predicate
-      #'command-completion-default-include-p)
+  (setq read-extended-command-predicate
+        #'command-completion-default-include-p)
 
-;; buffer-local variables
-(setq-default fill-column 100
-              indent-tabs-mode nil
-              truncate-lines nil)
+  ;; buffer-local variables
+  (setq-default indent-tabs-mode nil
+                truncate-lines nil)
 
-(blink-cursor-mode -1)
-(electric-pair-mode +1)
-(ido-mode 'both)
-(menu-bar-mode +1)
-(scroll-bar-mode -1)
-(show-paren-mode +1)
-(tool-bar-mode -1)
-(tooltip-mode -1)
-(global-display-fill-column-indicator-mode +1)
+  (blink-cursor-mode -1)
+  (electric-pair-mode +1)
+  (ido-mode 'both)
+  (menu-bar-mode +1)
+  (scroll-bar-mode -1)
+  (show-paren-mode +1)
+  (tool-bar-mode -1)
+  (tooltip-mode -1)
+  (global-display-fill-column-indicator-mode +1)
 
-(set-fringe-mode 1)
+  (set-fringe-mode 1)
 
-(bind-key "C-x C-b" #'switch-to-buffer)
-
-(defun god-mode-update-cursor-type ()
-  (setq cursor-type (if (or god-local-mode buffer-read-only)
-                        'box
-                      'bar)))
+  (defun god-mode-update-cursor-type ()
+    (setq cursor-type (if (or god-local-mode buffer-read-only)
+                          'box
+                        'bar))))
 
 
 
@@ -154,16 +152,16 @@
 
 (use-package helpful
   :straight t
-  :bind (([remap describe-function] . #'helpful-callable)
-         ([remap describe-variable] . #'helpful-variable)
-         ([remap describe-symbol]   . #'helpful-symbol)
-         ([remap describe-key]      . #'helpful-key)
-         ([remap describe-command]  . #'helpful-command)
+  :bind (([remap describe-function] . helpful-callable)
+         ([remap describe-variable] . helpful-variable)
+         ([remap describe-symbol]   . helpful-symbol)
+         ([remap describe-key]      . helpful-key)
+         ([remap describe-command]  . helpful-command)
          :map help-map
-         ("F" . #'helpful-function)
-         ("M-f" . #'helpful-macro)
+         ("F" . helpful-function)
+         ("M-f" . helpful-macro)
          :map global-map
-         ("C-c C-d" . #'helpful-at-point)))
+         ("C-c C-d" . helpful-at-point)))
 
 (use-package hl-todo
   :hook (prog-mode . hl-todo-mode)
@@ -192,8 +190,8 @@
   (load-theme 'modus-operandi t))
 
 (use-package mwim
-  :bind (([remap move-beginning-of-line] . #'mwim-beginning)
-         ([remap move-end-of-line] . #'mwim-end)))
+  :bind (([remap move-beginning-of-line] . mwim-beginning)
+         ([remap move-end-of-line] . mwim-end)))
 
 (use-package orderless
   :init
@@ -203,8 +201,8 @@
         '((file (styles partial-completion)))))
 
 (use-package org
-  :bind (("C-c a" . #'org-agenda)
-         ("C-c c" . #'org-capture))
+  :bind (("C-c a" . org-agenda)
+         ("C-c c" . org-capture))
   :hook (auto-save . org-save-all-org-buffers)
   :config
   (setq org-insert-heading-respect-content t
