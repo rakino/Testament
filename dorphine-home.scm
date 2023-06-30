@@ -34,6 +34,7 @@
   #:use-module (gnu packages shells)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages terminals)
+  #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
@@ -246,6 +247,19 @@
                 font-lxgw-wenkai-tc
                 font-sarasa-gothic
                 font-victor-mono)
+          (list tree-sitter-bash
+                tree-sitter-c
+                tree-sitter-cpp
+                tree-sitter-c-sharp
+                tree-sitter-css
+                tree-sitter-go
+                tree-sitter-java
+                tree-sitter-javascript
+                tree-sitter-json
+                tree-sitter-python
+                tree-sitter-ruby
+                tree-sitter-rust
+                tree-sitter-typescript)
           %home-packages-emacs))
 
 

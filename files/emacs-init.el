@@ -263,6 +263,44 @@
 (use-package savehist
   :init (savehist-mode +1))
 
+(use-package treesit
+  :init
+  (setq treesit-extra-load-path
+        (list (getenv "TREE_SITTER_GRAMMAR_PATH")))
+
+  (setq treesit-load-name-override-list
+        '((c-sharp "libtree-sitter-c_sharp" "tree_sitter_c_sharp")))
+
+  (setq major-mode-remap-alist
+        '((sh-mode . bash-ts-mode)
+          (c-mode . c-ts-mode)
+          (c++-mode . c++-ts-mode)
+          (c-or-c++-mode . c-or-c++-ts-mode)
+          (csharp-mode . csharp-ts-mode)
+          (css-mode . css-ts-mode)
+          (java-mode . java-ts-mode)
+          (js-mode . js-ts-mode)
+          (js-json-mode . json-ts-mode)
+          (python-mode . python-ts-mode)
+          (ruby-mode . ruby-ts-mode)
+          ;; (conf-toml-mode . toml-ts-mode) ;TODO: package grammar
+          ))
+
+  ;; Copied from source file of each mode.
+  (let ((auto-modes
+         '(("\\(?:CMakeLists\\.txt\\|\\.cmake\\)\\'" . cmake-ts-mode)
+           ("\\(?:Dockerfile\\(?:\\..*\\)?\\|\\.[Dd]ockerfile\\)\\'"
+            . dockerfile-ts-mode)
+           ("/go\\.mod\\'" . go-mod-ts-mode)
+           ("\\.go\\'" . go-ts-mode)
+           ("\\.rs\\'" . rust-ts-mode)
+           ("\\.tsx\\'" . tsx-ts-mode)
+           ("\\.ts\\'" . typescript-ts-mode)
+           ("\\.ya?ml\\'" . yaml-ts-mode)
+           )))
+    (dolist (mode auto-modes)
+      (push mode auto-mode-alist))))
+
 (use-package vertico
   :init (vertico-mode +1))
 
