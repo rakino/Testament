@@ -20,6 +20,7 @@
   #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
+  #:use-module (rosenthal packages bittorrent)
   #:use-module (rosenthal packages dns)
   #:use-module (rosenthal packages linux)
   #:use-module (rosenthal packages wm)
@@ -210,6 +211,7 @@
 
           (service qbittorrent-service-type
                    (qbittorrent-configuration
+                    (qbittorrent qbittorrent-enhanced-nox)
                     (webui-port 35951)))
 
           (service rosenthal:seatd-service-type)
