@@ -131,6 +131,7 @@
 (define %rosenthal-default-kernel-arguments
   `(,@(delete "nosmt=force"
               %kicksecure-kernel-arguments)
+    "iommu=force"
     "net.ifnames=0"))
 
 (define %rosenthal-default-keyboard-layout

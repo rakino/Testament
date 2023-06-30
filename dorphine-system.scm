@@ -53,13 +53,20 @@
 ;; Operating system definition for Dorphine.
 ;;
 
+(define linux-dorphine
+  (customize-linux
+   #:name "linux-dorphine"
+   #:linux linux-xanmod
+   #:source linux-xanmod-source
+   #:defconfig (nohitaga "defconfig-zen3-dorphine")
+   #:extra-version "dorphine"))
 
 (define %dorphine-initrd-modules
   (append %rosenthal-base-initrd-modules
           %base-initrd-modules))
 
 (operating-system
-  (kernel linux-xanmod)
+  (kernel linux-dorphine)
   (kernel-arguments `(,@%rosenthal-default-kernel-arguments
                       "ideapad_laptop.allow_v4_dytc=1"
                       "modprobe.blacklist=nouveau"))
