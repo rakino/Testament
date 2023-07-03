@@ -7,6 +7,7 @@
   #:use-module (testament counter-stop)
   #:use-module (ice-9 match)
   #:use-module (gnu)
+  #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages disk)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages glib)
@@ -20,9 +21,7 @@
   #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
-  #:use-module (rosenthal packages bittorrent)
   #:use-module (rosenthal packages dns)
-  #:use-module (rosenthal packages linux)
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services bittorrent)
   #:use-module (rosenthal services child-error)
@@ -233,7 +232,7 @@
 
           (service smartdns-service-type
                    (smartdns-configuration
-                    (config %config-smartdns)))
+                    (config-file %config-smartdns)))
 
           (udev-rules-service 'backlight light)
           (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))

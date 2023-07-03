@@ -1,5 +1,8 @@
 ;; -*- lexical-binding: t -*-
 
+(setq %repo-dir "~/Repository"
+      %work-dir "~/Workspace")
+
 (setq use-package-always-defer t)
 (require 'use-package)
 
@@ -8,9 +11,6 @@
 
 (use-package no-littering
   :demand t
-  :hook
-  (before-save . delete-trailing-whitespace)
-  (minibuffer-setup . cursor-intangible-mode)
   :init
   (setq no-littering-etc-directory (getenv "XDG_CONFIG_HOME")
         no-littering-var-directory (getenv "XDG_DATA_HOME"))
@@ -25,6 +25,9 @@
 
 (use-package emacs
   :bind ("C-x C-b" . switch-to-buffer)
+  :hook
+  (before-save . delete-trailing-whitespace)
+  (minibuffer-setup . cursor-intangible-mode)
   :init
   (setq create-lockfiles nil
         enable-recursive-minibuffers t
@@ -91,10 +94,11 @@
 
 (use-package geiser
   :init
-  (setq geiser-guile-load-path '("~/Repository/guix"
-                                 "~/Repository/nonguix"
-                                 "~/Workspace/Rosenthal"
-                                 "~/Workspace/Testament")
+  (setq geiser-guile-load-path
+        (list (expand-file-name "guix" %repo-dir)
+              (expand-file-name "nonguix" %repo-dir)
+              (expand-file-name "Rosenthal" %work-dir)
+              (expand-file-name "Testament" %work-dir))
         geiser-repl-use-other-window nil
         geiser-repl-query-on-kill-p nil
         geiser-mode-start-repl-p t))

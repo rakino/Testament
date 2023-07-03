@@ -314,4 +314,5 @@
                         `(,@%xdg-base-directory-environment-variables
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
+                          ("GUILE_AUTO_COMPILE" . "0")
                           ("VISUAL" . "$EDITOR"))))))
