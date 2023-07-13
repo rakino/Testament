@@ -123,8 +123,7 @@
                    (file-system
                      (inherit rootfs)
                      (mount-point "/boot")
-                     (options "compress=zstd,discard=async,subvol=Boot")
-                     (mount? #f)))
+                     (options "compress=zstd,discard=async,subvol=Boot")))
 
              (map (match-lambda
                     ((mount-point subvolume)
