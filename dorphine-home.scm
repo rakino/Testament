@@ -41,6 +41,7 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages gnome-xyz)
+  #:use-module (rosenthal packages tree-sitter)
   #:use-module (rosenthal packages web)
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
@@ -86,6 +87,23 @@
 
 (define pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
+
+(define tree-sitter-cmake/dolly
+  ((@@ (gnu packages tree-sitter) tree-sitter-grammar)
+   "cmake" "CMake"
+   "071q1ds7whish8mz11ba47gngv6yfhhf27vdkp31rs8kxnbxqzmd"
+   "0.3.0"                              ;FIXME: 0.4.0 won't work on Emacs.
+   #:repository-url "https://github.com/uyha/tree-sitter-cmake"))
+
+;; <https://issues.guix.gnu.org/64330>
+(define tree-sitter-json/dolly
+  ;; Not tagged
+  (let ((commit "5d992d9dd42d533aa25618b3a0588f4375adf9f3"))
+    ((@@ (gnu packages tree-sitter) tree-sitter-grammar)
+     "json" "JSON"
+     "08kxzqyyl900al8mc0bwigxlkzsh2f14qzjyb5ki7506myxlmnql"
+     "0.20.0"
+     #:commit commit)))
 
 
 ;;
@@ -250,17 +268,21 @@
                 font-victor-mono)
           (list tree-sitter-bash
                 tree-sitter-c
+                tree-sitter-cmake/dolly
                 tree-sitter-cpp
                 tree-sitter-c-sharp
                 tree-sitter-css
+                tree-sitter-dockerfile
                 tree-sitter-go
+                tree-sitter-gomod
                 tree-sitter-java
                 tree-sitter-javascript
-                tree-sitter-json
+                tree-sitter-json/dolly
                 tree-sitter-python
                 tree-sitter-ruby
                 tree-sitter-rust
-                tree-sitter-typescript)
+                tree-sitter-typescript
+                tree-sitter-yaml)
           %home-packages-emacs))
 
 
