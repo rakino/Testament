@@ -203,6 +203,7 @@
               emacs-password-store-otp
               emacs-puni
               emacs-rime
+              emacs-spamfilter-el
               emacs-vertico
               emacs-visual-fill-column
               emacs-volatile-highlights
@@ -223,7 +224,6 @@
                 grimblast
                 hyfetch
                 hyprland
-                isync
                 libfido2
                 mosh
                 openssh-sans-x
@@ -300,7 +300,6 @@
                           ("git/config" ,(nohitaga "git.conf"))
                           ("gtk-3.0/settings.ini" ,(nohitaga "gtk-3.0.ini"))
                           ("hypr/hyprland.conf" ,%config-hyprland)
-                          ("isync/mbsyncrc" ,(nohitaga "mbsync.conf"))
                           ("mpv/mpv.conf" ,(nohitaga "mpv.conf"))
                           ("wanderlust/folders" ,(nohitaga "wanderlust-folders.conf"))
                           ("wanderlust/init.el" ,(nohitaga "wanderlust-init.el"))
