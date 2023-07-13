@@ -183,6 +183,7 @@
         (list emacs-apheleia
               emacs-company
               emacs-ctrlf
+              emacs-denote
               emacs-doom-modeline/dolly
               emacs-elisp-refs
               emacs-gcmh

@@ -85,6 +85,13 @@
 (use-package ctrlf
   :init (ctrlf-mode +1))
 
+(use-package denote
+  :hook (dired-mode . denote-dired-mode-in-directories)
+  :init
+  (setq denote-directory (expand-file-name "Notes" %work-dir)
+        denote-dired-directories (list denote-directory)
+        denote-known-keywords '()))
+
 (use-package doom-modeline
   :hook (after-init . doom-modeline-mode)
   :init
