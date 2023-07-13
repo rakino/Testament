@@ -315,9 +315,7 @@
   :init (volatile-highlights-mode +1))
 
 (use-package wakatime-mode
-  :init
-  (setq wakatime-cli-path "/bin/wakatime-cli")
-  (global-wakatime-mode +1))
+  :init (global-wakatime-mode +1))
 
 (use-package which-key
   :init
