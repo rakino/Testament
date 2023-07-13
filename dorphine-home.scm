@@ -17,12 +17,16 @@
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services ssh)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages commencement)
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnupg)
+  #:use-module (gnu packages golang)
+  #:use-module (gnu packages haskell-apps)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mail)
   #:use-module (gnu packages password-utils)
@@ -80,6 +84,13 @@
 
 (define emacs-helpful/dolly
   (let ((base emacs-helpful))
+    (package
+      (inherit base)
+      (propagated-inputs '())
+      (inputs (package-propagated-inputs base)))))
+
+(define gopls/dolly
+  (let ((base gopls))
     (package
       (inherit base)
       (propagated-inputs '())
@@ -203,6 +214,7 @@
               emacs-ctrlf
               emacs-denote
               emacs-doom-modeline/dolly
+              emacs-eldoc-box
               emacs-elisp-refs
               emacs-gcmh
               emacs-geiser-guile
@@ -211,6 +223,7 @@
               emacs-hl-todo
               emacs-macrostep-geiser
               emacs-magit
+              emacs-markdown-mode
               emacs-mwim
               emacs-no-littering
               emacs-orderless
@@ -283,6 +296,11 @@
                 tree-sitter-rust
                 tree-sitter-typescript
                 tree-sitter-yaml)
+          (list ccls
+                gcc-toolchain-12
+                go-1.20
+                gopls/dolly
+                shellcheck)
           %home-packages-emacs))
 
 

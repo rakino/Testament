@@ -98,6 +98,26 @@
   (setq doom-modeline-icon nil
         doom-modeline-height 18))
 
+(use-package eglot
+  :hook
+  ((bash-ts-mode sh-mode                ;TODO bash-language-server
+    c-mode c-ts-mode c++-mode c++-ts-mode
+    cmake-ts-mode                       ;TODO cmake-language-server
+    css-mode css-ts-mode                ;TODO vscode-css-language-server
+    go-ts-mode go-mod-ts-mode
+    html-mode                           ;TODO vscode-html-language-server
+    js-mode js-ts-mode                  ;TODO typescript-language-server
+    js-json-mode json-ts-mode           ;TODO vscode-json-language-server
+    markdown-mode                       ;TODO vscode-markdown-language-server
+    python-mode python-ts-mode          ;TODO jedi-language-server
+    rust-ts-mode                        ;TODO rust-analyzer
+    typescript-ts-mode                  ;TODO typescript-language-server
+    yaml-ts-mode                        ;TODO yaml-language-server
+    ) . eglot-ensure))
+
+(use-package eldoc-box
+  :init (setq eldoc-box-only-multi-line t)
+  :hook (eldoc-mode . eldoc-box-hover-mode))
 
 (use-package geiser
   :init
