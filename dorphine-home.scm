@@ -43,6 +43,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages gnome-xyz)
   #:use-module (rosenthal packages tree-sitter)
@@ -263,6 +264,7 @@
                 python-prompt-toolkit
                 rofi-wayland
                 rsync
+                wakatime-cli-bin
                 wl-clipboard
                 xdg-utils
                 xonsh
