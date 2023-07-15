@@ -266,6 +266,8 @@
                 rsync
                 wakatime-cli-bin
                 wl-clipboard
+                xdg-desktop-portal
+                xdg-desktop-portal-wlr
                 xdg-utils
                 xonsh
                 zathura
