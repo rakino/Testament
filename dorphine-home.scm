@@ -171,6 +171,12 @@
 
      "exec = " hyprctl " setcursor Qogir 24\n")))
 
+(define %config-wget
+  (plain-file
+   "wgetrc"
+   (format #f "hsts-file = ~a/wget-hsts~%"
+           (getenv "XDG_CACHE_HOME"))))
+
 
 ;;
 ;; Inferior
@@ -346,8 +352,11 @@
                           ("gtk-3.0/settings.ini" ,(nohitaga "gtk-3.0.ini"))
                           ("hypr/hyprland.conf" ,%config-hyprland)
                           ("mpv/mpv.conf" ,(nohitaga "mpv.conf"))
+                          ("npm/npmrc" ,(nohitaga "npm.conf"))
+                          ("pythonstartup.py" ,(nohitaga "pythonstartup.py"))
                           ("wanderlust/folders" ,(nohitaga "wanderlust-folders.conf"))
                           ("wanderlust/init.el" ,(nohitaga "wanderlust-init.el"))
+                          ("wgetrc" ,%config-wget)
                           ("xonsh/rc.xsh" ,(nohitaga "rc.xsh"))))
 
         (simple-service 'setup-xdg-data-home

@@ -110,14 +110,12 @@
 ;; Source: <https://wiki.archlinux.org/title/XDG_Base_Directory>
 (define %xdg-base-directory-environment-variables
   '(;; XDG Cache Home
-    ("LESSHISTFILE" . "$XDG_CACHE_HOME/.lesshst")
+    ("GOMODCACHE" . "$XDG_CACHE_HOME/go/mod")
+    ("PYTHONPYCACHEPREFIX" . "$XDG_CACHE_HOME/python")
 
     ;; XDG Config Home
-    ("AWS_CONFIG_FILE" . "$XDG_CONFIG_HOME/aws/config")
-    ("AWS_SHARED_CREDENTIALS_FILE" . "$XDG_CONFIG_HOME/aws/credentials")
-    ("INPUTRC" . "$XDG_CONFIG_HOME/readline/inputrc")
-    ("MBSYNCRC" . "$XDG_CONFIG_HOME/isync/mbsyncrc")
     ("NPM_CONFIG_USERCONFIG" . "$XDG_CONFIG_HOME/npm/npmrc")
+    ("PYTHONSTARTUP" . "$XDG_CONFIG_HOME/pythonstartup.py")
     ("WAKATIME_HOME" . "$XDG_CONFIG_HOME/wakatime")
     ("WGETRC" . "$XDG_CONFIG_HOME/wgetrc")
 
@@ -126,7 +124,9 @@
     ("GDBHISTFILE" . "$XDG_DATA_HOME/gdb/history")
     ("GNUPGHOME" . "$XDG_DATA_HOME/gnupg")
     ("GOPATH" . "$XDG_DATA_HOME/go")
-    ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")))
+    ("GUILE_HISTORY" . "$XDG_DATA_HOME/guile/history")
+    ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")
+    ("PYTHONUSERBASE" . "$XDG_DATA_HOME/python")))
 
 (define %rosenthal-default-kernel-arguments
   `(,@%kicksecure-kernel-arguments
