@@ -1,6 +1,5 @@
-xontrib load coreutils fish_completer whole_word_jumping
-
-aliases["guix"] = "~/.config/guix/current/bin/guix"
+# FIXME: Xonsh bug?
+aliases["guix"] = $(which guix)
 
 # https://github.com/TwoPizza9621536/zsh-exa
 aliases["ls"] = "exa -Fgh --color-scale --git --group-directories-first --icons"

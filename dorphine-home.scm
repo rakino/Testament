@@ -247,7 +247,6 @@
                 buku
                 exa
                 firefox
-                fish
                 git
                 `(,git "send-email")
                 git-crypt
@@ -357,7 +356,7 @@
                           ("wanderlust/folders" ,(nohitaga "wanderlust-folders.conf"))
                           ("wanderlust/init.el" ,(nohitaga "wanderlust-init.el"))
                           ("wgetrc" ,%config-wget)
-                          ("xonsh/rc.xsh" ,(nohitaga "rc.xsh"))))
+                          ("xonsh/rc.xsh" ,(nohitaga "xonsh.xsh"))))
 
         (simple-service 'setup-xdg-data-home
                         home-xdg-data-files-service-type
