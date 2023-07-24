@@ -32,7 +32,7 @@
   #:use-module (rosenthal services dns)
   #:use-module (rosenthal services networking))
 
-(load (testament-find-file "blob-dorphine-system.scm"))
+(load (testament-find-file "blob-dorphine"))
 
 
 ;;

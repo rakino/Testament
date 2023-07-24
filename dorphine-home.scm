@@ -54,7 +54,7 @@
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
 
-(load (testament-find-file "blob-dorphine-home.scm"))
+(load (testament-find-file "blob-dorphine"))
 
 
 ;;
