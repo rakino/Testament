@@ -5,9 +5,9 @@
 (define-module (testament common)
   #:use-module ((ice-9 rdelim) #:select (read-delimited))
   #:use-module ((guix gexp) #:select (local-file))
-  #:export (agathion
-            nohitaga
-            summon))
+  #:export (testament-find-file
+            testament-file-content
+            testament-file-object))
 
 (define (testament-path)
   "Get the path to Testament repository, fallback to \"~/Workspace/Testament\"
@@ -18,7 +18,7 @@ in REPL."
         (string-append (getenv "HOME")
                        "/Workspace/Testament/testament/common.scm")))))
 
-(define (summon name)
+(define (testament-find-file name)
   "Find a file in the \"files\" directory (fallback to \"blobs\") of Testament
 repository.  Return a string of path to the file, or #f if file not found."
   (let ((file-name (string-append (testament-path) "/files/" name))
@@ -30,13 +30,13 @@ repository.  Return a string of path to the file, or #f if file not found."
                              name)
                      #f)))))
 
-(define (agathion name)
+(define (testament-file-content name)
   "Return a string, the content of file NAME located in the \"files\" or
 \"blobs\" directory of Testament repository."
-  (call-with-input-file (summon name)
+  (call-with-input-file (testament-find-file name)
     (lambda (port)
       (read-delimited "" port))))
 
-(define (nohitaga name)
-  "Similar to 'agathion' but return a file-like object."
-  (local-file (summon name)))
+(define (testament-file-object name)
+  "Similar to 'testament-file-content' but return a file-like object."
+  (local-file (testament-find-file name)))

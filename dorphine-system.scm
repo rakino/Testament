@@ -3,7 +3,10 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (dorphine-system)
-  #:use-module (testament common)
+  #:use-module ((testament common)
+                #:select (testament-find-file
+                          (testament-file-content . agathion)
+                          (testament-file-object . nohitaga)))
   #:use-module (testament counter-stop)
   #:use-module (ice-9 match)
   #:use-module (gnu)
@@ -29,7 +32,7 @@
   #:use-module (rosenthal services dns)
   #:use-module (rosenthal services networking))
 
-(load (summon "blob-dorphine-system.scm"))
+(load (testament-find-file "blob-dorphine-system.scm"))
 
 
 ;;

@@ -3,7 +3,10 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (dorphine-home)
-  #:use-module (testament common)
+  #:use-module ((testament common)
+                #:select (testament-find-file
+                          (testament-file-content . agathion)
+                          (testament-file-object . nohitaga)))
   #:use-module (testament counter-stop)
   #:use-module (srfi srfi-1)
   #:use-module (guix channels)
@@ -51,7 +54,7 @@
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
 
-(load (summon "blob-dorphine-home.scm"))
+(load (testament-find-file "blob-dorphine-home.scm"))
 
 
 ;;

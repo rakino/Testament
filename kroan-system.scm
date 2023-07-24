@@ -21,7 +21,7 @@
   #:use-module (rosenthal packages linux)
   #:use-module (rosenthal services child-error))
 
-(load (summon "blob-kroan-system.scm"))
+(load (testament-find-file "blob-kroan-system.scm"))
 
 
 ;;
