@@ -129,8 +129,7 @@
     ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")))
 
 (define %rosenthal-default-kernel-arguments
-  `(,@(delete "nosmt=force"
-              %kicksecure-kernel-arguments)
+  `(,@%kicksecure-kernel-arguments
     "iommu=force"
     "net.ifnames=0"))
 
