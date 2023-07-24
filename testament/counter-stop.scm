@@ -174,7 +174,4 @@
            (sysctl-service-type
             config => (sysctl-configuration
                        (inherit config)
-                       (settings `(,@%kicksecure-sysctl-rules
-                                   ("net.core.rmem_max" . "2500000")
-                                   ("vm.page-cluster" . "0")
-                                   ("vm.swappiness" . "90"))))))))
+                       (settings %kicksecure-sysctl-rules))))))
