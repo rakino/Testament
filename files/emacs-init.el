@@ -296,9 +296,6 @@
 
 (use-package treesit
   :init
-  (setq treesit-extra-load-path
-        (list (getenv "TREE_SITTER_GRAMMAR_PATH")))
-
   (setq treesit-load-name-override-list
         '((c-sharp "libtree-sitter-c_sharp" "tree_sitter_c_sharp")))
 
