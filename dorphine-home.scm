@@ -325,6 +325,14 @@
                  (home-wakapi-configuration
                   (config %dorphine-wakapi-config)))
 
+        (simple-service 'setup-env-vars
+                        home-environment-variables-service-type
+                        `(,@%xdg-base-directory-environment-variables
+                          ("BROWSER" . "firefox")
+                          ("EDITOR" . "emacsclient")
+                          ("GUILE_AUTO_COMPILE" . "0")
+                          ("VISUAL" . "$EDITOR")))
+
         (simple-service 'setup-non-xdg-home
                         home-files-service-type
                         `((".icons/default/index.theme" ,(nohitaga "icons.theme"))))
@@ -344,12 +352,4 @@
 
         (simple-service 'setup-xdg-data-home
                         home-xdg-data-files-service-type
-                        `(("gnupg/gpg-agent.conf" ,%config-gpg-agent)))
-
-        (simple-service 'setup-env-vars
-                        home-environment-variables-service-type
-                        `(,@%xdg-base-directory-environment-variables
-                          ("BROWSER" . "firefox")
-                          ("EDITOR" . "emacsclient")
-                          ("GUILE_AUTO_COMPILE" . "0")
-                          ("VISUAL" . "$EDITOR"))))))
+                        `(("gnupg/gpg-agent.conf" ,%config-gpg-agent))))))
