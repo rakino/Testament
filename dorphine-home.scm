@@ -110,16 +110,6 @@
    "0.3.0"                              ;FIXME: 0.4.0 won't work on Emacs.
    #:repository-url "https://github.com/uyha/tree-sitter-cmake"))
 
-;; <https://issues.guix.gnu.org/64330>
-(define tree-sitter-json/dolly
-  ;; Not tagged
-  (let ((commit "5d992d9dd42d533aa25618b3a0588f4375adf9f3"))
-    ((@@ (gnu packages tree-sitter) tree-sitter-grammar)
-     "json" "JSON"
-     "08kxzqyyl900al8mc0bwigxlkzsh2f14qzjyb5ki7506myxlmnql"
-     "0.20.0"
-     #:commit commit)))
-
 
 ;;
 ;; File-like
@@ -297,7 +287,7 @@
                 tree-sitter-gomod
                 tree-sitter-java
                 tree-sitter-javascript
-                tree-sitter-json/dolly
+                tree-sitter-json
                 tree-sitter-python
                 tree-sitter-ruby
                 tree-sitter-rust
