@@ -315,7 +315,7 @@
  (packages (map normalize-package %home-packages))
  (services
   (list (service home-channels-service-type
-                 %rosenthal-default-channels)
+                 %testament-default-channels)
 
         (service home-mcron-service-type
                  (home-mcron-configuration

@@ -42,13 +42,13 @@
 
             %xdg-base-directory-environment-variables
 
-            %rosenthal-default-channels
-            %rosenthal-default-kernel-arguments
-            %rosenthal-default-keyboard-layout
-            %rosenthal-base-initrd-modules
-            %rosenthal-base-file-systems
-            %rosenthal-base-packages
-            %rosenthal-base-services))
+            %testament-default-channels
+            %testament-default-kernel-arguments
+            %testament-default-keyboard-layout
+            %testament-base-initrd-modules
+            %testament-base-file-systems
+            %testament-base-packages
+            %testament-base-services))
 
 ;; Common procedures and variables shared across my home environment and
 ;; operating system definitions.
@@ -78,7 +78,7 @@
      (openpgp-fingerprint
       "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7")))))
 
-(define %rosenthal-default-channels
+(define %testament-default-channels
   (list %channel-guix
         %channel-nonguix
         %channel-rosenthal))
@@ -128,19 +128,19 @@
     ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")
     ("PYTHONUSERBASE" . "$XDG_DATA_HOME/python")))
 
-(define %rosenthal-default-kernel-arguments
+(define %testament-default-kernel-arguments
   `(,@%kicksecure-kernel-arguments
     "iommu=force"
     "net.ifnames=0"))
 
-(define %rosenthal-default-keyboard-layout
+(define %testament-default-keyboard-layout
   (keyboard-layout "us" "dvorak"
                    #:options '("ctrl:nocaps")))
 
-(define %rosenthal-base-initrd-modules
+(define %testament-base-initrd-modules
   '("btrfs" "xxhash_generic"))
 
-(define %rosenthal-base-file-systems
+(define %testament-base-file-systems
   (cons* (file-system
            (device "none")
            (mount-point "/tmp")
@@ -164,11 +164,11 @@
          (delete %debug-file-system
                  %base-file-systems)))
 
-(define %rosenthal-base-packages
+(define %testament-base-packages
   (cons* nss-certs
          %base-packages))
 
-(define %rosenthal-base-services
+(define %testament-base-services
   (cons* (modify-services %base-services
            (sysctl-service-type
             config => (sysctl-configuration

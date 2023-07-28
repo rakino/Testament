@@ -64,12 +64,12 @@
    #:extra-version "dorphine"))
 
 (define %dorphine-initrd-modules
-  (append %rosenthal-base-initrd-modules
+  (append %testament-base-initrd-modules
           %base-initrd-modules))
 
 (operating-system
   (kernel linux-dorphine)
-  (kernel-arguments `(,@%rosenthal-default-kernel-arguments
+  (kernel-arguments `(,@%testament-default-kernel-arguments
                       "ideapad_laptop.allow_v4_dytc=1"
                       "modprobe.blacklist=nouveau"))
 
@@ -82,7 +82,7 @@
                        (device "/dev/nvme0n1p1")
                        (chain-loader "/EFI/Microsoft/Boot/bootmgfw.efi"))))))
 
-  (keyboard-layout %rosenthal-default-keyboard-layout)
+  (keyboard-layout %testament-default-keyboard-layout)
 
   (initrd (lambda (file-systems . rest)
             (microcode-initrd file-systems
@@ -157,7 +157,7 @@
                      (type "exfat")
                      (mount? #f)))
 
-             %rosenthal-base-file-systems)))
+             %testament-base-file-systems)))
 
   (users
    (cons* (user-account
@@ -169,7 +169,7 @@
            (shell (file-append xonsh "/bin/xonsh")))
           %base-user-accounts))
 
-  (packages (map normalize-package %rosenthal-base-packages))
+  (packages (map normalize-package %testament-base-packages))
 
   (timezone "Asia/Hong_Kong")
 
@@ -245,7 +245,7 @@
           (simple-service 'setup-etc-dir etc-service-type
                           `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
 
-          (modify-services %rosenthal-base-services
+          (modify-services %testament-base-services
             (delete login-service-type)
 
             (delete mingetty-service-type)

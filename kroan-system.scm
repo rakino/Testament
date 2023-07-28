@@ -31,15 +31,15 @@
 
 (define %kroan-initrd-modules
   (append '("virtio_scsi")
-          %rosenthal-base-initrd-modules
+          %testament-base-initrd-modules
           %base-initrd-modules))
 
 (define %kroan-packages
   (append (list git mosh rsync zstd)
-          %rosenthal-base-packages))
+          %testament-base-packages))
 
 (operating-system
-  (kernel-arguments %rosenthal-default-kernel-arguments)
+  (kernel-arguments %testament-default-kernel-arguments)
 
   (bootloader (bootloader-configuration
                (bootloader grub-bootloader)
@@ -70,7 +70,7 @@
                      (check? #f)
                      (options (string-append "compress=zstd,discard=async,subvol=Data"))))
 
-             %rosenthal-base-file-systems)))
+             %testament-base-file-systems)))
 
   (users
    (cons* (user-account
@@ -119,7 +119,7 @@
                             ("net.ipv4.tcp_congestion_control" . "bbr")
                             ("vm.overcommit_memory" . "1")))
 
-          (modify-services %rosenthal-base-services
+          (modify-services %testament-base-services
             (guix-service-type
              config => (guix-configuration
                         (inherit config)
