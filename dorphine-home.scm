@@ -13,6 +13,7 @@
   #:use-module (guix download)
   #:use-module (guix inferior)
   #:use-module (guix packages)
+  #:use-module (guix utils)
   #:use-module (gnu)
   #:use-module (gnu home)
   #:use-module (gnu home services)
@@ -103,6 +104,15 @@
       (propagated-inputs '())
       (inputs (package-propagated-inputs base)))))
 
+(define hyprland/dolly
+  (let ((base hyprland))
+    (package
+      (inherit base)
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:configure-flags flags #~'())
+          #~(append #$flags '("-Dxwayland=disabled"))))))))
+
 (define pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
 
@@ -132,7 +142,7 @@
         (alacritty (file-append alacritty "/bin/alacritty"))
         (amixer    (file-append alsa-utils "/bin/amixer"))
         (buku_run  (file-append buku-run-dev/dolly "/bin/buku_run"))
-        (hyprctl   (file-append hyprland "/bin/hyprctl"))
+        (hyprctl   (file-append hyprland/dolly "/bin/hyprctl"))
         (light     (file-append light "/bin/light"))
         (rofi      (file-append rofi-wayland "/bin/rofi"))
         (swaybg    (file-append swaybg "/bin/swaybg"))
@@ -266,7 +276,7 @@ fi")))
                 git-crypt
                 gnupg
                 grimblast
-                hyprland
+                hyprland/dolly
                 mosh
                 openssh-sans-x
                 pass-otp
