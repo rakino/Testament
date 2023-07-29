@@ -129,6 +129,7 @@
         (wallpaper (nohitaga "94280741_p0.jpg"))
         (lockpaper (nohitaga "102982564_p0.jpg"))
         (alacritty (file-append alacritty "/bin/alacritty"))
+        (amixer    (file-append alsa-utils "/bin/amixer"))
         (buku_run  (file-append buku-run-dev/dolly "/bin/buku_run"))
         (hyprctl   (file-append hyprland "/bin/hyprctl"))
         (light     (file-append light "/bin/light"))
@@ -160,6 +161,9 @@
      "bindl = , switch:on:Lid Switch, exec, " hyprctl " dispatch dpms off eDP-1\n"
      "bindl = , switch:off:Lid Switch, exec, " hyprctl " dispatch dpms on eDP-1\n\n"
 
+     "bindle = , XF86AudioRaiseVolume, exec, " amixer " -q --card 1 set Master 5%+\n"
+     "bindle = , XF86AudioLowerVolume, exec, " amixer " -q --card 1 set Master 5%-\n"
+     "bindle = , XF86AudioMute, exec, " amixer " -q --card 1 set Master toggle\n"
      "bindle = , XF86MonBrightnessUp, exec, " light " -A 5\n"
      "bindle = , XF86MonBrightnessDown, exec, " light " -U 5\n\n"
 
