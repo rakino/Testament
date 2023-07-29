@@ -261,9 +261,7 @@ fi")))
                 git-crypt
                 gnupg
                 grimblast
-                hyfetch
                 hyprland
-                libfido2
                 mosh
                 openssh-sans-x
                 pass-otp
@@ -277,8 +275,6 @@ fi")))
                 xdg-desktop-portal-wlr
                 xdg-utils
                 xonsh
-                zathura
-                zathura-pdf-poppler
                 zoxide)
           (list adwaita-icon-theme
                 hicolor-icon-theme
