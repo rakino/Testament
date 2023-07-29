@@ -180,6 +180,9 @@
   :bind (("C-c e" . macrostep-expand))
   :init (use-package macrostep-geiser))
 
+(use-package message
+  :bind (("C-c M-m" . message-mark-inserted-region)))
+
 (use-package modus-themes
   :no-require t
   :functions (true-color-p)
@@ -359,11 +362,7 @@
         'wl-user-agent-compose
         'wl-draft-send
         'wl-draft-kill
-        'mail-send-hook))
-  :config
-  (use-package message
-    :bind (:map wl-draft-mode-map
-                ("C-c M-m" . message-mark-inserted-region))))
+        'mail-send-hook)))
 
 (use-package yasnippet
   :hook (after-init . yas-global-mode))
