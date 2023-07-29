@@ -69,16 +69,17 @@
    `(("rofi" . ,(const rofi-wayland)))))
 
 (define buku-run-dev/dolly
-  (package-with-patches
-   buku-run-dev
-   (list
-    ;; (fix #27) Show Bookmark tag correctly
-    (origin
-      (method url-fetch)
-      (uri "https://github.com/carnager/buku_run/pull/29.patch")
-      (sha256
-       (base32
-        "0j5f6nifa3ibhgcvfn59pq7xsnbcwgj6vkcz8vm4wway2nl5b9i6"))))))
+  (rofi-dolly
+   (package-with-patches
+    buku-run-dev
+    (list
+     ;; (fix #27) Show Bookmark tag correctly
+     (origin
+       (method url-fetch)
+       (uri "https://github.com/carnager/buku_run/pull/29.patch")
+       (sha256
+        (base32
+         "0j5f6nifa3ibhgcvfn59pq7xsnbcwgj6vkcz8vm4wway2nl5b9i6")))))))
 
 (define emacs-doom-modeline/dolly
   (let ((base emacs-doom-modeline))
