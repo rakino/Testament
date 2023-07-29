@@ -13,7 +13,6 @@
   #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages disk)
   #:use-module (gnu packages fonts)
-  #:use-module (gnu packages glib)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages shells)
@@ -25,7 +24,6 @@
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
   #:use-module (rosenthal packages dns)
-  #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services bittorrent)
   #:use-module (rosenthal services child-error)
   #:use-module ((rosenthal services desktop) #:prefix rosenthal:)
@@ -184,21 +182,14 @@
                     (greeter-supplementary-groups
                      '("input" "video" "seat"))
                     (terminals
-                     (append
-                      (list (greetd-terminal-configuration
-                             (terminal-vt "1")
-                             (terminal-switch #t)
+                     (map (lambda (vtnr)
+                            (greetd-terminal-configuration
+                             (terminal-vt (number->string vtnr))
+                             (terminal-switch (eq? 1 vtnr))
                              (default-session-command
                                (greetd-agreety-session
-                                (command (file-append dbus "/bin/dbus-run-session"))
-                                (command-args (list (file-append hyprland "/bin/Hyprland")))))))
-                      (map (lambda (vtnr)
-                             (greetd-terminal-configuration
-                              (terminal-vt (number->string vtnr))
-                              (default-session-command
-                                (greetd-agreety-session
-                                 (command (file-append xonsh "/bin/xonsh"))))))
-                           (iota 5 2))))))
+                                (command (file-append xonsh "/bin/xonsh"))))))
+                          (iota 6 1)))))
 
           (service iwd-service-type
                    (iwd-configuration

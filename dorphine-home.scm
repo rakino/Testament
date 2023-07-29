@@ -16,8 +16,10 @@
   #:use-module (gnu)
   #:use-module (gnu home)
   #:use-module (gnu home services)
+  #:use-module (gnu home services desktop)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services mcron)
+  #:use-module (gnu home services shells)
   #:use-module (gnu home services ssh)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages commencement)
@@ -177,6 +179,13 @@
    (format #f "hsts-file = ~a/wget-hsts~%"
            (getenv "XDG_CACHE_HOME"))))
 
+(define %shell-profile-wm
+  (plain-file "shell-profile-wm"
+              (format #f "~
+if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
+    exec Hyprland
+fi")))
+
 
 ;;
 ;; Inferior
@@ -317,6 +326,8 @@
   (list (service home-channels-service-type
                  %testament-default-channels)
 
+        (service home-dbus-service-type)
+
         (service home-mcron-service-type
                  (home-mcron-configuration
                   (jobs (list #~(job next-hour-from
@@ -360,4 +371,8 @@
 
         (simple-service 'setup-xdg-data-home
                         home-xdg-data-files-service-type
-                        `(("gnupg/gpg-agent.conf" ,%config-gpg-agent))))))
+                        `(("gnupg/gpg-agent.conf" ,%config-gpg-agent)))
+
+        (simple-service 'setup-shell-profile
+                        home-shell-profile-service-type
+                        (list %shell-profile-wm)))))
