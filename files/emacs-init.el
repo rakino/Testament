@@ -177,8 +177,10 @@
           ("DEBUG"      error bold))))
 
 (use-package macrostep
-  :bind (("C-c e" . macrostep-expand))
-  :init (use-package macrostep-geiser))
+  :bind (("C-c e" . macrostep-expand)))
+
+(use-package macrostep-geiser
+  :hook (geiser-mode . macrostep-geiser-setup))
 
 (use-package message
   :bind (("C-c M-m" . message-mark-inserted-region)))
