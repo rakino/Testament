@@ -21,6 +21,7 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services security-token)
+  #:use-module (gnu services virtualization)
   #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
@@ -205,6 +206,10 @@
                    (qbittorrent-configuration
                     (qbittorrent qbittorrent-enhanced-nox)
                     (webui-port 35951)))
+
+          (service qemu-binfmt-service-type
+                   (qemu-binfmt-configuration
+                    (platforms (lookup-qemu-platforms "aarch64"))))
 
           (service seatd-service-type)
 
