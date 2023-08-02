@@ -17,6 +17,7 @@
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages shells)
   #:use-module (gnu packages wm)
+  #:use-module (gnu services desktop)
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services security-token)
@@ -26,7 +27,6 @@
   #:use-module (rosenthal packages dns)
   #:use-module (rosenthal services bittorrent)
   #:use-module (rosenthal services child-error)
-  #:use-module ((rosenthal services desktop) #:prefix rosenthal:)
   #:use-module (rosenthal services dns)
   #:use-module (rosenthal services networking))
 
@@ -107,13 +107,6 @@
                    (type "btrfs")
                    (options "compress=zstd,discard=async,subvol=Skeleton/Guix"))))
      (append (list rootfs)
-
-             ;; Control Group
-             (list (file-system
-                     (device "none")
-                     (mount-point "/sys/fs/cgroup")
-                     (type "cgroup2")
-                     (check? #f)))
 
              ;; Bootloader
              (list (file-system
@@ -213,7 +206,7 @@
                     (qbittorrent qbittorrent-enhanced-nox)
                     (webui-port 35951)))
 
-          (service rosenthal:seatd-service-type)
+          (service seatd-service-type)
 
           (service screen-locker-service-type
                    (screen-locker-configuration
