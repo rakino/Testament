@@ -1,5 +1,5 @@
 # FIXME: Xonsh bug?
-aliases["guix"] = $(which guix)
+aliases["guix"] = $(which --skip-alias guix)
 
 # https://github.com/TwoPizza9621536/zsh-exa
 aliases["ls"] = "exa -Fgh --color-scale --git --group-directories-first --icons"
