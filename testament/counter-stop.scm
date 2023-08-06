@@ -122,7 +122,6 @@
     ;; XDG Data Home
     ("CARGO_HOME" . "$XDG_DATA_HOME/cargo")
     ("GDBHISTFILE" . "$XDG_DATA_HOME/gdb/history")
-    ("GNUPGHOME" . "$XDG_DATA_HOME/gnupg")
     ("GOPATH" . "$XDG_DATA_HOME/go")
     ("GUILE_HISTORY" . "$XDG_DATA_HOME/guile/history")
     ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")

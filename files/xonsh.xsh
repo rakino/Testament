@@ -20,10 +20,6 @@ aliases["lxa"] = "lx -@"
 aliases["lt"] = "ls -T"
 aliases["tree"] = "lt"
 
-# GnuPG
-$GPG_TTY = $(tty).strip()
-gpg-connect-agent updatestartuptty /bye > /dev/null
-
 # Zoxide
 execx($(zoxide init xonsh --cmd cd), 'exec', __xonsh__.ctx, filename='zoxide')
 

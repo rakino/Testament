@@ -18,6 +18,7 @@
   #:use-module (gnu home)
   #:use-module (gnu home services)
   #:use-module (gnu home services desktop)
+  #:use-module (gnu home services gnupg)
   #:use-module (gnu home services guix)
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services shells)
@@ -128,12 +129,6 @@
 ;; File-like
 ;;
 
-
-(define %config-gpg-agent
-  (let ((pinentry-rofi (file-append pinentry-rofi/dolly "/bin/pinentry-rofi")))
-    (mixed-text-file
-     "gpg-agent.conf"
-     "pinentry-program " pinentry-rofi "\n")))
 
 (define %config-hyprland
   (let ((filename   "hyprland.conf")
@@ -339,6 +334,11 @@ fi")))
 
         (service home-dbus-service-type)
 
+        (service home-gpg-agent-service-type
+                 (home-gpg-agent-configuration
+                  (pinentry-program
+                   (file-append pinentry-rofi/dolly "/bin/pinentry-rofi"))))
+
         (service home-mcron-service-type
                  (home-mcron-configuration
                   (jobs (list #~(job next-hour-from
@@ -379,10 +379,6 @@ fi")))
                           ("wanderlust/init.el" ,(nohitaga "wanderlust-init.el"))
                           ("wgetrc" ,%config-wget)
                           ("xonsh/rc.xsh" ,(nohitaga "xonsh.xsh"))))
-
-        (simple-service 'setup-xdg-data-home
-                        home-xdg-data-files-service-type
-                        `(("gnupg/gpg-agent.conf" ,%config-gpg-agent)))
 
         (simple-service 'setup-shell-profile
                         home-shell-profile-service-type
