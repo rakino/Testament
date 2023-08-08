@@ -90,7 +90,7 @@
 (public-key
  (ecc
   (curve Ed25519)
-  (q #BBE816F9D051E8B715F17DA26B674462DF1967AC77A4130CA3306878314B84AC#)))"))
+  (q #7B44CACBD0FD38E2A083E0694441C230680BC6E78A407C74ACD23AF693A48BF5#)))"))
 
 ;; https://substitutes.nonguix.org/signing-key.pub
 (define %guix-authorized-key-nonguix
