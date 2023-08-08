@@ -141,24 +141,38 @@
 
 (define %testament-base-file-systems
   (cons* (file-system
-           (device "none")
+           (device "tmpfs")
            (mount-point "/tmp")
            (type "tmpfs")
-           (check? #f))
+           (check? #f)
+           (flags '(no-suid no-dev strict-atime))
+           (options "nr_inodes=1m,size=50%"))
 
          (file-system
-           (device "none")
+           (device "tmpfs")
            (mount-point "/run")
            (type "tmpfs")
            (needed-for-boot? #t)
-           (check? #f))
+           (check? #f)
+           (flags '(no-dev strict-atime))
+           (options "mode=0755,nr_inodes=800k,size=20%"))
 
          (file-system
-           (device "none")
+           (device "tmpfs")
            (mount-point "/var/run")
            (type "tmpfs")
            (needed-for-boot? #t)
-           (check? #f))
+           (check? #f)
+           (flags '(no-suid no-dev strict-atime))
+           (options "mode=0755,nr_inodes=800k,size=20%"))
+
+         (file-system
+           (device "tmpfs")
+           (mount-point "/var/lock")
+           (type "tmpfs")
+           (check? #f)
+           (flags '(no-suid no-dev strict-atime))
+           (options "nr_inodes=800k,size=20%"))
 
          (delete %debug-file-system
                  %base-file-systems)))
