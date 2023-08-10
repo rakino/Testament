@@ -109,7 +109,9 @@
           (service static-networking-service-type
                    %kroan-static-networking-configuration)
 
-          (service zram-device-service-type)
+          (service zram-device-service-type
+                   (zram-device-configuration
+                    (size "6G")))
 
           (simple-service 'add-extra-modules kernel-module-loader-service-type
                           '("tcp_bbr"))
@@ -117,7 +119,12 @@
           (simple-service 'sysctl-extra-settings sysctl-service-type
                           '(("net.core.default_qdisc" . "fq_codel")
                             ("net.ipv4.tcp_congestion_control" . "bbr")
-                            ("vm.overcommit_memory" . "1")))
+                            ("vm.overcommit_memory" . "1")
+                            ;; Pop!_OS settings for zram
+                            ("vm.page-cluster" . "0")
+                            ("vm.swappiness" . "180")
+                            ("vm.watermark_boost_factor" . "0")
+                            ("vm.watermark_scale_factor" . "125")))
 
           (modify-services %testament-base-services
             (guix-service-type
