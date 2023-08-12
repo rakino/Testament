@@ -68,7 +68,7 @@
                      (inherit rootfs)
                      (mount-point "/var/lib")
                      (check? #f)
-                     (options (string-append "compress=zstd,discard=async,subvol=Data"))))
+                     (options "compress=zstd,discard=async,subvol=Data")))
 
              %testament-base-file-systems)))
 
