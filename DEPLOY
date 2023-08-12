@@ -6,11 +6,16 @@
 
 (use-modules (gnu machine)
              (gnu machine ssh)
-             (kroan-system))
+             (kroan-system)
+             (paradise-system))
 
 (list
  (machine
   (operating-system (load (canonicalize-path "kroan-system.scm")))
   (environment managed-host-environment-type)
   (configuration %kroan-deploy-configuration))
+ (machine
+  (operating-system (load (canonicalize-path "paradise-system.scm")))
+  (environment managed-host-environment-type)
+  (configuration %paradise-deploy-configuration))
  )
