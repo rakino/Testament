@@ -18,9 +18,11 @@
   #:use-module (gnu packages shells)
   #:use-module (gnu packages wm)
   #:use-module (gnu services desktop)
+  #:use-module (gnu services linux)
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services security-token)
+  #:use-module (gnu services sysctl)
   #:use-module (gnu services virtualization)
   #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
@@ -229,6 +231,10 @@
                    (smartdns-configuration
                     (config-file %config-smartdns)))
 
+          (service zram-device-service-type
+                   (zram-device-configuration
+                    (size "6G")))
+
           (udev-rules-service 'backlight light)
           (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
 
@@ -237,6 +243,13 @@
 
           (simple-service 'setup-etc-dir etc-service-type
                           `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
+
+          (simple-service 'sysctl-extra-settings sysctl-service-type
+                          '(;; Pop!_OS settings for zram
+                            ("vm.page-cluster" . "0")
+                            ("vm.swappiness" . "180")
+                            ("vm.watermark_boost_factor" . "0")
+                            ("vm.watermark_scale_factor" . "125")))
 
           (modify-services %testament-base-services
             (delete login-service-type)
