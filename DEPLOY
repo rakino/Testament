@@ -1,0 +1,16 @@
+;; -*- mode: scheme -*-
+;; On target machine:
+;;   printf "\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILA5V+IboMRfLK7qa4OLfq569gGY2iygZHj0fEK7kJIj" | sudo tee -a /etc/ssh/authorized_keys.d/hako
+;; Then:
+;;   guix deploy DEPLOY -L.
+
+(use-modules (gnu machine)
+             (gnu machine ssh)
+             (kroan-system))
+
+(list
+ (machine
+  (operating-system (load (canonicalize-path "kroan-system.scm")))
+  (environment managed-host-environment-type)
+  (configuration %kroan-deploy-configuration))
+ )
