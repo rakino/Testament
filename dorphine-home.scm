@@ -36,6 +36,7 @@
   #:use-module (gnu packages haskell-apps)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mail)
+  #:use-module (gnu packages man)
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages pdf)
   #:use-module (gnu packages python-xyz)
@@ -272,6 +273,7 @@ fi")))
                 gnupg
                 grimblast
                 hyprland/dolly
+                man-pages
                 mosh
                 openssh-sans-x
                 pass-otp
