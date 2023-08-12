@@ -185,6 +185,10 @@
                                 (command (file-append xonsh "/bin/xonsh"))))))
                           (iota 6 1)))))
 
+          (service guix-publish-service-type
+                   (guix-publish-configuration
+                    (port 27254)))
+
           (service iwd-service-type
                    (iwd-configuration
                     (config '((General ((AddressRandomization . once)
