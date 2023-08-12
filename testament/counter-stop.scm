@@ -146,7 +146,7 @@
            (type "tmpfs")
            (check? #f)
            (flags '(no-suid no-dev strict-atime))
-           (options "nr_inodes=1m,size=50%"))
+           (options "nr_inodes=1m,size=60%"))
 
          (file-system
            (device "tmpfs")
