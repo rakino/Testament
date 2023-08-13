@@ -238,7 +238,6 @@ fi")))
               emacs-elisp-refs
               emacs-gcmh
               emacs-geiser-guile
-              emacs-god-mode
               emacs-guix
               emacs-hl-todo
               emacs-macrostep-geiser

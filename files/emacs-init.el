@@ -59,12 +59,7 @@
   (tooltip-mode -1)
   (global-display-fill-column-indicator-mode +1)
 
-  (set-fringe-mode 1)
-
-  (defun god-mode-update-cursor-type ()
-    (setq cursor-type (if (or god-local-mode buffer-read-only)
-                          'box
-                        'bar))))
+  (set-fringe-mode 1))
 
 
 
@@ -129,24 +124,6 @@
         geiser-repl-use-other-window nil
         geiser-repl-query-on-kill-p nil
         geiser-mode-start-repl-p t))
-
-(use-package god-mode
-  :hook (post-command . god-mode-update-cursor-type)
-  :bind (("<escape>" . god-mode-all)
-         ("C-x C-1" . delete-other-windows)
-         ("C-x C-2" . split-window-below)
-         ("C-x C-3" . split-window-right)
-         ("C-x C-0" . delete-window)
-         :map god-local-mode-map
-         ("." . repeat)
-         ("i" . god-local-mode)
-         ("[" . backward-paragraph)
-         ("]" . forward-paragraph)
-         ("C-x C-o" . other-window)
-         ("C-x C-k" . kill-buffer))
-  :init (god-mode-all)
-  :config (setq god-exempt-major-modes
-                (cons 'pass-mode god-exempt-major-modes)))
 
 (use-package guix-devel
   :hook (scheme-mode . guix-devel-mode))
