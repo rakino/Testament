@@ -150,6 +150,20 @@
      filename
      (agathion filename) "\n"
 
+     (apply
+      string-append
+      (append-map
+       (lambda (fmt)
+         (map (lambda (n)
+                (format #f fmt n (if (zero? n)
+                                     10
+                                     n)))
+              (iota 10)))
+       '(;; Switch workspaces with mainMod + [0-9]
+         "bind = $mainMod, ~a, workspace, ~a~%"
+         ;; Move active window to a workspace with mainMod + SHIFT + [0-9]
+         "bind = $mainMod SHIFT, ~a, movetoworkspace, ~a~%")))
+
      ;; Monitors
      "monitor = , preferred, auto, 1\n"
      "monitor = HDMI-A-1, preferred, auto, 1\n"
