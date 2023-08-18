@@ -40,6 +40,7 @@
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages pdf)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages qt)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages security-token)
@@ -292,6 +293,7 @@ fi")))
                 pass-otp
                 password-store
                 python-prompt-toolkit
+                qtwayland-5
                 rofi-wayland
                 rsync
                 wakatime-cli-bin
