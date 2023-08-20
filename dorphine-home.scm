@@ -354,7 +354,8 @@ fi")))
         (service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
                   (pinentry-program
-                   (file-append pinentry-rofi/dolly "/bin/pinentry-rofi"))))
+                   (file-append pinentry-rofi/dolly "/bin/pinentry-rofi"))
+                  (ssh-support? #t)))
 
         (service home-mcron-service-type
                  (home-mcron-configuration
