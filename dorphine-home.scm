@@ -214,6 +214,16 @@ fi")))
 
 
 ;;
+;; Mcron jobs
+;;
+
+
+(define %mcron-job-modprobed-db
+  #~(job next-hour-from
+         #$(file-append modprobed-db "/bin/modprobed-db storesilent")))
+
+
+;;
 ;; Inferior
 ;;
 
@@ -359,8 +369,7 @@ fi")))
 
         (service home-mcron-service-type
                  (home-mcron-configuration
-                  (jobs (list #~(job next-hour-from
-                                     #$(file-append modprobed-db "/bin/modprobed-db storesilent"))))))
+                  (jobs (list %mcron-job-modprobed-db))))
 
         (service home-openssh-service-type
                  (home-openssh-configuration
