@@ -52,6 +52,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu services mcron)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages gnome-xyz)
@@ -368,8 +369,9 @@ fi")))
                   (ssh-support? #t)))
 
         (service home-mcron-service-type
-                 (home-mcron-configuration
-                  (jobs (list %mcron-job-modprobed-db))))
+                 (for-home
+                  (mcron-configuration
+                   (jobs (list %mcron-job-modprobed-db)))))
 
         (service home-openssh-service-type
                  (home-openssh-configuration
