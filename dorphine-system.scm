@@ -241,11 +241,16 @@
           (simple-service 'add-extra-hosts hosts-service-type
                           %dorphine-hosts)
 
+          (simple-service 'add-extra-modules kernel-module-loader-service-type
+                          '("tcp_bbr"))
+
           (simple-service 'setup-etc-dir etc-service-type
                           `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
 
           (simple-service 'sysctl-extra-settings sysctl-service-type
-                          '(;; Pop!_OS settings for zram
+                          '(("net.core.default_qdisc" . "fq_codel")
+                            ("net.ipv4.tcp_congestion_control" . "bbr")
+                            ;; Pop!_OS settings for zram
                             ("vm.page-cluster" . "0")
                             ("vm.swappiness" . "180")
                             ("vm.watermark_boost_factor" . "0")
