@@ -32,6 +32,7 @@
   #:use-module (gnu system keyboard)
   #:use-module (gnu system shadow)
   #:export (%channel-guix
+            %channel-guixcn
             %channel-nonguix
             %channel-rosenthal
 
@@ -57,6 +58,16 @@
 (define %channel-guix
   (first %default-channels))
 
+(define %channel-guixcn
+  (channel
+   (name 'guixcn)
+   (url "https://github.com/guixcn/guix-channel.git")
+   (introduction
+    (make-channel-introduction
+     "993d200265630e9c408028a022f32f34acacdf29"
+     (openpgp-fingerprint
+      "7EBE A494 60CE 5E2C 0875  7FDB 3B5A A993 E1A2 DFF0")))))
+
 (define %channel-nonguix
   (channel
    (name 'nonguix)
@@ -80,6 +91,7 @@
 
 (define %testament-default-channels
   (list %channel-guix
+        %channel-guixcn
         %channel-nonguix
         %channel-rosenthal))
 
