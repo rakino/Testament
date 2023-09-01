@@ -258,12 +258,6 @@
 
           (modify-services %testament-base-services
             (delete login-service-type)
-
-            (delete mingetty-service-type)
-            (delete mingetty-service-type)
-            (delete mingetty-service-type)
-            (delete mingetty-service-type)
-            (delete mingetty-service-type)
             (delete mingetty-service-type)
 
             (console-font-service-type
