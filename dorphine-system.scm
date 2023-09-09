@@ -248,7 +248,7 @@
                           `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
 
           (simple-service 'sysctl-extra-settings sysctl-service-type
-                          '(("net.core.default_qdisc" . "fq_codel")
+                          '(("net.core.default_qdisc" . "fq_pie")
                             ("net.ipv4.tcp_congestion_control" . "bbr")
                             ;; Pop!_OS settings for zram
                             ("vm.page-cluster" . "0")
