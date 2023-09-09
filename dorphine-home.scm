@@ -374,7 +374,7 @@ fi")))
                 rsync
                 wl-clipboard
                 xdg-desktop-portal
-                xdg-desktop-portal-wlr
+                xdg-desktop-portal-hyprland
                 xdg-utils
                 xonsh
                 zoxide)
