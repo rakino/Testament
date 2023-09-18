@@ -19,7 +19,6 @@
   #:use-module (gnu services security)
   #:use-module (gnu services ssh)
   #:use-module (gnu services sysctl)
-  #:use-module (rosenthal packages linux)
   #:use-module (rosenthal services child-error))
 
 (load (testament-find-file "blob-paradise"))
