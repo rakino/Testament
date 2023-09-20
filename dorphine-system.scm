@@ -193,9 +193,8 @@
 
           (service iwd-service-type
                    (iwd-configuration
-                    (config '((General ((AddressRandomization . once)
-                                        (EnableNetworkConfiguration . #t)))
-                              (Network ((EnableIPv6 . #t)))))))
+                    (enable-network-configuration? #t)
+                    (address-randomization 'once)))
 
           (service mcron-service-type
                    (mcron-configuration
