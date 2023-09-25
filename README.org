@@ -1,6 +1,6 @@
 #+TITLE: Testament - Personal dot(?)files
 
 Dependencies:
-+ Guix (master + changes from emacs-team branch + [[https://issues.guix.gnu.org/64620][home-emacs patch]])
++ Guix (master + [[https://issues.guix.gnu.org/64620][home-emacs patch]])
 + [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/320][xanmod update]])
 + [[https://codeberg.org/hako/Rosenthal][Rosenthal]]
