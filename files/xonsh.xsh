@@ -1,5 +1,9 @@
+import os.path
+
 # FIXME: Xonsh bug?
-aliases["guix"] = $(which --skip-alias guix)
+guix_path = os.path.expanduser("~/.config/guix/current/bin/guix")
+if os.path.isfile(guix_path):
+    aliases["guix"] = guix_path
 
 # https://github.com/TwoPizza9621536/zsh-exa
 aliases["ls"] = "exa -Fgh --color-scale --git --group-directories-first --icons"
