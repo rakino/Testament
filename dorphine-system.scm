@@ -9,6 +9,8 @@
                           (testament-file-object . nohitaga)))
   #:use-module (testament counter-stop)
   #:use-module (ice-9 match)
+  #:use-module (guix packages)
+  #:use-module (guix download)
   #:use-module (gnu)
   #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages disk)
@@ -66,11 +68,33 @@
 ;; Operating system definition for Dorphine.
 ;;
 
-(define linux-dorphine
+
+(define %linux-bcachefs-patch
+  (let ((commit "ab4abf79c90e562dd4d8f33190b0067a71082747")
+        (kernel-version "6.5")
+        (patch-revision "16"))
+    (origin
+      (method url-fetch)
+      (uri (string-append
+            "https://github.com/sirlucjan/kernel-patches/raw/" commit "/"
+            kernel-version "/bcachefs-patches-v"
+            patch-revision "/0001-bcachefs-"
+            kernel-version "-introduce-bcachefs-patchset.patch"))
+      (sha256
+       (base32
+        "1186srgdanxf1n3b65qrahi45bamfpn3y17w81qp8g3cy5zrnsq0")))))
+
+(define linux-dorphine-source
+  (origin
+    (inherit linux-xanmod-source)
+    (patches
+     (list %linux-bcachefs-patch))))
+
+(define-public linux-dorphine
   (customize-linux
    #:name "linux-dorphine"
    #:linux linux-xanmod
-   #:source linux-xanmod-source
+   #:source linux-dorphine-source
    #:defconfig (nohitaga "defconfig-zen3-dorphine")
    #:extra-version "dorphine"))
 
