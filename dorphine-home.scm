@@ -801,6 +801,7 @@ fi")))
                         (wl-auto-refile-guess-functions
                          . (wl-refile-guess-by-rule
                             wl-refile-guess-by-spam))
+                        (wl-default-spec . ".")
                         (wl-fcc-force-as-read . #t)
                         (wl-plugged . #f)
                         (wl-summary-auto-refile-skip-marks . #f)
