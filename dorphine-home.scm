@@ -310,13 +310,13 @@ fi")))
   (let* ((channels
           (list (channel
                  (inherit %channel-guix)
-                 (commit "273709932fa47f6ae56c96564a9415fdbff4a169"))
+                 (commit "b9fae146d6cc4a6968a8eb18beef29aa1414a31e"))
                 (channel
                  (inherit %channel-nonguix)
-                 (commit "bb184bd0a8f91beec3a00718759e96c7828853de"))))
+                 (commit "61279f68f2b617ab868a094db856188602fc880b"))))
          (inferior
           (inferior-for-channels channels)))
-    (first (lookup-inferior-packages inferior "firefox" "117.0.1"))))
+    (first (lookup-inferior-packages inferior "firefox" "118.0.1"))))
 
 
 ;;
