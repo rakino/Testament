@@ -426,6 +426,8 @@ fi")))
                         (show-paren-style . parenthesis)
                         (truncate-lines . #f)
                         (truncate-partial-width-windows . #f)
+                        (user-full-name . "Hilton Chain")
+                        (user-mail-address . "hako@ultrarare.space")
                         (warning-minimum-level . :emergency)))
                      (modes
                       '((blink-cursor-mode . #f)
@@ -531,8 +533,13 @@ fi")))
 
                     (emacs-package
                      (name 'emacs)
+                     (options
+                      `((copyright-names-regexp
+                         . ,#%(format "%s <%s>"
+                                      user-full-name user-mail-address))))
                      (hooks
-                      '((before-save . delete-trailing-whitespace)
+                      '((after-save . copyright-update)
+                        (before-save . delete-trailing-whitespace)
                         (minibuffer-setup . cursor-intangible-mode))))
 
                     (emacs-package
