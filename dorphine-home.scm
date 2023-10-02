@@ -24,6 +24,7 @@
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services shells)
   #:use-module (gnu home services ssh)
+  #:use-module (gnu home services syncthing)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
@@ -840,6 +841,11 @@ fi")))
         (service home-openssh-service-type
                  (home-openssh-configuration
                   (hosts %dorphine-ssh-hosts)))
+
+        (service home-syncthing-service-type
+                 (for-home
+                  (syncthing-configuration
+                   (user "hako"))))
 
         (service home-wakapi-service-type
                  (home-wakapi-configuration
