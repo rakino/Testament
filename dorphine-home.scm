@@ -482,6 +482,10 @@ fi")))
                      (hooks '((after-init . ctrlf-mode))))
 
                     (emacs-package
+                     (name 'debbugs)
+                     (package emacs-debbugs))
+
+                    (emacs-package
                      (name 'doom-modeline)
                      (package emacs-doom-modeline)
                      (options
