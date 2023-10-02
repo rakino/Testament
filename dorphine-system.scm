@@ -53,6 +53,16 @@
 
 
 ;;
+;; Mcron jobs
+;;
+
+
+(define %mcron-job-defrag-guix-db
+  #~(job next-day-from
+         #$(file-append btrfs-progs "/bin/btrfs fi defrag -r /var/guix/db/")))
+
+
+;;
 ;; Operating system definition for Dorphine.
 ;;
 
@@ -198,8 +208,7 @@
 
           (service mcron-service-type
                    (mcron-configuration
-                    (jobs (list #~(job next-day-from
-                                       #$(file-append btrfs-progs "/bin/btrfs fi defrag -r /var/guix/db/"))))))
+                    (jobs (list %mcron-job-defrag-guix-db))))
 
           (service nftables-service-type
                    (nftables-configuration
