@@ -91,6 +91,17 @@
       (propagated-inputs '())
       (inputs (package-propagated-inputs base)))))
 
+(define grimblast/dolly
+  (let ((base grimblast))
+    (package
+      (inherit base)
+      (source
+       (origin
+         (inherit (package-source base))
+         (modules '((guix build utils)))
+         (snippet '(substitute* "grimblast/grimblast"
+                     (("-Ins") "+%4Y%m%d-%H%M%S"))))))))
+
 (define hyprland/dolly
   (let ((base hyprland))
     (package
@@ -358,7 +369,7 @@ fi")))
                 `(,git "send-email")
                 git-crypt
                 gnupg
-                grimblast
+                grimblast/dolly
                 hyprland/dolly
                 man-pages
                 mosh
