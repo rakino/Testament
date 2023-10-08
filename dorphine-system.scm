@@ -133,7 +133,10 @@
 
   (initrd-modules %dorphine-initrd-modules)
 
-  (firmware (list amdgpu-firmware iwlwifi-firmware))
+  (firmware
+   (list amdgpu-firmware
+         ibt-hw-firmware
+         iwlwifi-firmware))
 
   (host-name "dorphine")
 
@@ -196,7 +199,9 @@
   (timezone "Asia/Hong_Kong")
 
   (services
-   (cons* (service cloudflare-tunnel-service-type
+   (cons* (service bluetooth-service-type)
+
+          (service cloudflare-tunnel-service-type
                    (cloudflare-tunnel-configuration
                     (token %dorphine-cloudflared-token)
                     (http2-origin? #t)))
