@@ -535,17 +535,12 @@ fi")))
                     (emacs-package
                      (name 'erc)
                      (load-force? #t)
-                     (options
-                      `((erc-autojoin-channels-alist . ,%erc-channels)
-                        (erc-sasl-user . "hako")
-                        (erc-sasl-password . ,%erc-pass)))
                      (extra-after-load
-                      (list #%(setq erc-modules (cons 'sasl erc-modules))
-                            #%(defun erc-up ()
+                      (list #%(defun erc-up ()
                                 (interactive)
-                                (erc-tls :server erc-default-server
-                                         :port erc-default-port-tls
-                                         :nick "hako")))))
+                                (erc-tls :server "chat.sr.ht"
+                                         :user "hako/irc.libera.chat"
+                                         :password #$%erc-pass)))))
 
                     (emacs-package
                      (name 'emacs)
