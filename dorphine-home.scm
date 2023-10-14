@@ -122,7 +122,7 @@
 
 (define %config-hyprland
   (let ((filename   "hyprland.conf")
-        (wallpaper (nohitaga "94280741_p0.jpg"))
+        (wallpaper (nohitaga "112358159_p0.png"))
         (lockpaper (nohitaga "102982564_p0.jpg"))
         (alacritty (file-append alacritty "/bin/alacritty"))
         (amixer    (file-append alsa-utils "/bin/amixer"))
