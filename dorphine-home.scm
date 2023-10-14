@@ -52,6 +52,7 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu services mcron)
+  #:use-module (nongnu packages fonts)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages tree-sitter)
@@ -389,10 +390,17 @@ fi")))
           (list adwaita-icon-theme
                 hicolor-icon-theme
                 qogir-icon-theme)
-          (list font-adobe-source-serif-pro
+          (list font-adobe-source-sans-pro
+                font-adobe-source-serif-pro
+                font-apple-new-york
+                font-apple-sf-arabic
+                font-apple-sf-compact
+                font-apple-sf-mono
+                font-apple-sf-pro
                 font-chiron-hei-hk
                 font-chiron-sung-hk
                 font-google-noto
+                font-lxgw-wenkai
                 font-lxgw-wenkai-tc
                 font-sarasa-gothic
                 font-victor-mono)))
