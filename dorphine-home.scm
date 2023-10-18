@@ -122,7 +122,8 @@
 
 
 (define %config-hyprland
-  (let ((filename   "hyprland.conf")
+  (let ((filename  "hyprland.conf")
+        (main-mod  "SUPER")
         (wallpaper (nohitaga "112358159_p0.png"))
         (lockpaper (nohitaga "102982564_p0.jpg"))
         (alacritty (file-append alacritty "/bin/alacritty"))
@@ -140,6 +141,27 @@
      filename
      (agathion filename) "\n"
 
+     "bind = " main-mod " SHIFT, C, killactive," "\n"
+     "bind = " main-mod " SHIFT, M, exit," "\n"
+     "bind = " main-mod ", V, togglefloating," "\n"
+     ;; dwindle
+     "bind = " main-mod ", P, pseudo," "\n"
+     "bind = " main-mod ", J, togglesplit," "\n"
+
+     ;; Move focus with mainMod + jkl; (htns in Dvorak)
+     "bind = " main-mod ", H, movefocus, l" "\n"
+     "bind = " main-mod ", T, movefocus, d" "\n"
+     "bind = " main-mod ", N, movefocus, u" "\n"
+     "bind = " main-mod ", S, movefocus, r" "\n"
+
+     ;; Scroll through existing workspaces with mainMod + scroll
+     "bind = " main-mod ", mouse_down, workspace, e-1" "\n"
+     "bind = " main-mod ", mouse_up, workspace, e+1" "\n"
+
+     ;; Move/resize windows with mainMod + LMB/RMB and dragging
+     "bindm = " main-mod ", mouse:272, movewindow" "\n"
+     "bindm = " main-mod ", mouse:273, resizewindow" "\n"
+
      (apply
       string-append
       (append-map
@@ -149,25 +171,25 @@
                                      10
                                      n)))
               (iota 10)))
-       '(;; Switch workspaces with mainMod + [0-9]
-         "bind = $mainMod, ~a, workspace, ~a~%"
-         ;; Move active window to a workspace with mainMod + SHIFT + [0-9]
-         "bind = $mainMod SHIFT, ~a, movetoworkspace, ~a~%")))
+       (list ;; Switch workspaces with mainMod + [0-9]
+        (string-append "bind = " main-mod ", ~a, workspace, ~a~%")
+        ;; Move active window to a workspace with mainMod + SHIFT + [0-9]
+        (string-append "bind = " main-mod " SHIFT, ~a, movetoworkspace, ~a~%"))))
 
      ;; Monitors
-     "monitor = , preferred, auto, 1\n"
+     "monitor = eDP-1, preferred, auto, 1.5\n"
      "monitor = HDMI-A-1, preferred, auto, 1\n"
-     "monitor = eDP-1, preferred, auto, 1.5\n\n"
+     "monitor = , preferred, auto, 1\n\n"
 
      ;; Binds
-     "bind = $mainMod, E, exec, emacsclient --create-frame"
+     "bind = " main-mod ", E, exec, emacsclient --create-frame"
                                           " --no-wait"
                                           " --alternate-editor=''\n"
-     "bind = $mainMod, Q, exec, " alacritty "\n"
-     "bind = $mainMod, B, exec, " buku_run "\n"
-     "bind = $mainMod, D, exec, " tessen "\n"
-     "bind = $mainMod, R, exec, " rofi " -show combi\n"
-     "bind = $mainMod, L, exec, " swaylock " --clock -fei " lockpaper "\n\n"
+     "bind = " main-mod ", Q, exec, " alacritty "\n"
+     "bind = " main-mod ", B, exec, " buku_run "\n"
+     "bind = " main-mod ", D, exec, " tessen "\n"
+     "bind = " main-mod ", R, exec, " rofi " -show combi\n"
+     "bind = " main-mod ", L, exec, " swaylock " --clock -fei " lockpaper "\n\n"
 
      "bindl = , switch:on:Lid Switch, exec, " hyprctl " dispatch dpms off eDP-1\n"
      "bindl = , switch:off:Lid Switch, exec, " hyprctl " dispatch dpms on eDP-1\n\n"
