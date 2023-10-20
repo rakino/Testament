@@ -1,11 +1,7 @@
 ;; -*- mode: scheme -*-
-;; On target machine:
-;;   printf "\nssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAILA5V+IboMRfLK7qa4OLfq569gGY2iygZHj0fEK7kJIj" | sudo tee -a /etc/ssh/authorized_keys.d/hako
-;; Then:
-;;   guix deploy DEPLOY -L.
-
 (use-modules (gnu machine)
              (gnu machine ssh)
+             (blobs paradise)
              (paradise-system))
 
 (list

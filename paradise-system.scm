@@ -3,7 +3,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (paradise-system)
-  #:use-module (testament common)
+  #:use-module (blobs paradise)
   #:use-module (testament counter-stop)
   #:use-module (gnu)
   #:use-module (gnu packages compression)
@@ -20,8 +20,6 @@
   #:use-module (gnu services ssh)
   #:use-module (gnu services sysctl)
   #:use-module (rosenthal services child-error))
-
-(load (testament-find-file "blob-paradise"))
 
 
 ;;

@@ -3,6 +3,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (dorphine-home)
+  #:use-module (blobs dorphine)
   #:use-module ((testament common)
                 #:select (testament-find-file
                           (testament-file-content . agathion)
@@ -59,8 +60,6 @@
   #:use-module (rosenthal packages web)
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
-
-(load (testament-find-file "blob-dorphine"))
 
 
 ;;
