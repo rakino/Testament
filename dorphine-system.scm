@@ -69,9 +69,9 @@
 
 
 (define %linux-bcachefs-patch
-  (let ((commit "ab4abf79c90e562dd4d8f33190b0067a71082747")
+  (let ((commit "415565c7651f76471fe8a2d17dca64620c35bf7a")
         (kernel-version "6.5")
-        (patch-revision "16"))
+        (patch-revision "24"))
     (origin
       (method url-fetch)
       (uri (string-append
@@ -81,7 +81,7 @@
             kernel-version "-introduce-bcachefs-patchset.patch"))
       (sha256
        (base32
-        "1186srgdanxf1n3b65qrahi45bamfpn3y17w81qp8g3cy5zrnsq0")))))
+        "10zb34fmldb0ljhxsp2miik0sk659465fanhkxn6hcxdr624dj36")))))
 
 (define linux-dorphine-source
   (origin
