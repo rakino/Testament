@@ -44,7 +44,6 @@
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages shells)
   #:use-module (gnu packages ssh)
-  #:use-module (gnu packages terminals)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages web)
@@ -124,7 +123,6 @@
         (main-mod  "SUPER")
         (wallpaper (nohitaga "112358159_p0.png"))
         (lockpaper (nohitaga "102982564_p0.jpg"))
-        (alacritty (file-append alacritty "/bin/alacritty"))
         (amixer    (file-append alsa-utils "/bin/amixer"))
         (buku_run  (file-append buku-run-dev/dolly "/bin/buku_run"))
         (hyprctl   (file-append hyprland/dolly "/bin/hyprctl"))
@@ -183,7 +181,6 @@
      "bind = " main-mod ", E, exec, emacsclient --create-frame"
                                           " --no-wait"
                                           " --alternate-editor=''\n"
-     "bind = " main-mod ", Q, exec, " alacritty "\n"
      "bind = " main-mod ", B, exec, " buku_run "\n"
      "bind = " main-mod ", D, exec, " tessen "\n"
      "bind = " main-mod ", R, exec, " rofi " -show combi\n"
@@ -425,7 +422,8 @@ fi")))
                  (home-emacs-configuration
                   (emacs emacs-pgtk)
                   (extra-packages
-                   (list emacs-magit
+                   (list emacs-eat
+                         emacs-magit
                          emacs-xonsh-mode))
                   (package-serializer %emacs-use-package-serializer)
                   (default-init
@@ -891,8 +889,7 @@ fi")))
 
         (simple-service 'setup-xdg-config-home
                         home-xdg-configuration-files-service-type
-                        `(("alacritty/alacritty.yml" ,(nohitaga "alacritty.yml"))
-                          ("git/config" ,(nohitaga "git.conf"))
+                        `(("git/config" ,(nohitaga "git.conf"))
                           ("gtk-3.0/settings.ini" ,(nohitaga "gtk-3.0.ini"))
                           ("hypr/hyprland.conf" ,%config-hyprland)
                           ("mpv/mpv.conf" ,(nohitaga "mpv.conf"))
