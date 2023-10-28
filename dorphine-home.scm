@@ -692,6 +692,12 @@ fi")))
                      (hooks '((org-mode . org-rainbow-tags-mode))))
 
                     (emacs-package
+                     (name 'org-re-reveal)
+                     (package emacs-org-re-reveal)
+                     (load-force? #t)
+                     (load-after-packages '(ox)))
+
+                    (emacs-package
                      (name 'ox-hugo)
                      (package emacs-ox-hugo)
                      (load-force? #t)
