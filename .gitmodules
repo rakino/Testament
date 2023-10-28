@@ -1,0 +1,3 @@
+[submodule "blobs"]
+	path = blobs
+	url = git@github.com:rakino/testament-blobs.git
