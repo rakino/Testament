@@ -82,6 +82,18 @@
         (base32
          "0j5f6nifa3ibhgcvfn59pq7xsnbcwgj6vkcz8vm4wway2nl5b9i6")))))))
 
+(define emacs-wakatime-mode/dolly
+  (let ((base emacs-wakatime-mode))
+    (package
+      (inherit base)
+      (source
+       (origin
+         (inherit (package-source base))
+         (modules '((guix build utils)))
+         (snippet '(substitute* "wakatime-mode.el"
+                     (("%s--entity.*%s" cmd)
+                      (format #f "/bin/sh -c '~a'" cmd)))))))))
+
 (define gopls/dolly
   (let ((base gopls))
     (package
@@ -799,7 +811,7 @@ fi")))
 
                     (emacs-package
                      (name 'wakatime-mode)
-                     (package emacs-wakatime-mode)
+                     (package emacs-wakatime-mode/dolly)
                      (options
                       `((wakatime-cli-path
                          . ,(file-append wakatime-cli-bin "/bin/wakatime-cli"))))
