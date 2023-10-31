@@ -69,19 +69,17 @@
 
 
 (define %linux-bcachefs-patch
-  (let ((commit "415565c7651f76471fe8a2d17dca64620c35bf7a")
-        (kernel-version "6.5")
-        (patch-revision "24"))
+  (let ((commit "69163682bbc6c94d1656cb640d8f2aca3641b807")
+        (kernel-version "6.6"))
     (origin
       (method url-fetch)
       (uri (string-append
             "https://github.com/sirlucjan/kernel-patches/raw/" commit "/"
-            kernel-version "/bcachefs-patches-v"
-            patch-revision "/0001-bcachefs-"
+            kernel-version "/bcachefs-upstream-patches/0001-bcachefs-"
             kernel-version "-introduce-bcachefs-patchset.patch"))
       (sha256
        (base32
-        "10zb34fmldb0ljhxsp2miik0sk659465fanhkxn6hcxdr624dj36")))))
+        "190sn9my09i3dvym27m53j7m6r9z5ddl5m0k4p08gnhqflsf2cxv")))))
 
 (define linux-dorphine-source
   (origin
