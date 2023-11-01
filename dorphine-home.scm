@@ -217,7 +217,10 @@
                   " resume '" hyprctl " dispatch dpms on'\n"
      "exec-once = " wlsunset " " %dorphine-wlsunset-args "\n\n"
 
-     "exec = " hyprctl " setcursor Qogir 24\n")))
+     "exec = " hyprctl " setcursor Qogir 24\n\n"
+
+     ;; Window rules
+     "windowrulev2 = float, class:^(firefox-default)$")))
 
 (define %config-wget
   (plain-file
