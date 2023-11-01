@@ -38,6 +38,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages man)
   #:use-module (gnu packages password-utils)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages qt)
   #:use-module (gnu packages rsync)
@@ -49,6 +50,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages zig)
   #:use-module (gnu services mcron)
   #:use-module (nongnu packages fonts)
   #:use-module (nongnu packages mozilla)
@@ -349,10 +351,14 @@ fi")))
 
 (define %language-packages-for-emacs
   (list ccls
-        gcc-toolchain-12
+        gcc-toolchain-13
         go-1.20
         gopls/dolly
-        shellcheck))
+        python
+        python-black
+        rust-analyzer
+        shellcheck
+        zig))
 
 (define %tree-sitter-packages-for-emacs
   (list tree-sitter-bash
@@ -436,7 +442,8 @@ fi")))
                   (extra-packages
                    (list emacs-eat
                          emacs-magit
-                         emacs-xonsh-mode))
+                         emacs-xonsh-mode
+                         emacs-zig-mode))
                   (package-serializer %emacs-use-package-serializer)
                   (default-init
                     (emacs-configuration
