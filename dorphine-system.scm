@@ -29,6 +29,7 @@
   #:use-module (gnu services virtualization)
   #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
+  #:use-module (nongnu services nvidia)
   #:use-module (nongnu system linux-initrd)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages dns)
@@ -104,7 +105,8 @@
   (kernel linux-dorphine)
   (kernel-arguments `(,@%testament-default-kernel-arguments
                       "ideapad_laptop.allow_v4_dytc=1"
-                      "modprobe.blacklist=nouveau"))
+                      "modprobe.blacklist=nouveau"
+                      "nvidia_drm.modeset=1"))
 
   (bootloader (bootloader-configuration
                (bootloader grub-efi-bootloader)
@@ -250,6 +252,8 @@
                      (cons (ntp-server
                             (address "ntp.tuna.tsinghua.edu.cn"))
                            %ntp-servers))))
+
+          (service nvidia-service-type)
 
           (service pcscd-service-type)
 
