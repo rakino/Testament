@@ -30,6 +30,7 @@
   #:use-module (gnu services xorg)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu system linux-initrd)
+  #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages dns)
   #:use-module (rosenthal services bittorrent)
   #:use-module (rosenthal services child-error)
@@ -201,6 +202,11 @@
 
   (services
    (cons* (service bluetooth-service-type)
+
+          (service clash-service-type
+                   (clash-configuration
+                    (clash clash-meta-bin)
+                    (config (nohitaga "clash.yaml"))))
 
           (service cloudflare-tunnel-service-type
                    (cloudflare-tunnel-configuration
