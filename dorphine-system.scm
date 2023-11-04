@@ -112,7 +112,11 @@
                 (list (menu-entry
                        (label "Microsoft Windows 11")
                        (device "/dev/nvme0n1p1")
-                       (chain-loader "/EFI/Microsoft/Boot/bootmgfw.efi"))))))
+                       (chain-loader "/EFI/Microsoft/Boot/bootmgfw.efi"))))
+               (theme
+                (grub-theme
+                 (image (nohitaga "grub.png"))
+                 (resolution '(2560 . 1600))))))
 
   (keyboard-layout %testament-default-keyboard-layout)
 
