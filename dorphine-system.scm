@@ -238,6 +238,13 @@
                    (nftables-configuration
                     (ruleset (nohitaga "nftables-dorphine.conf"))))
 
+          (service ntp-service-type
+                   (ntp-configuration
+                    (servers
+                     (cons (ntp-server
+                            (address "ntp.tuna.tsinghua.edu.cn"))
+                           %ntp-servers))))
+
           (service pcscd-service-type)
 
           (service qbittorrent-service-type
