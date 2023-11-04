@@ -305,10 +305,9 @@
              config => (guix-configuration
                         (inherit config)
                         (substitute-urls
-                         (append '("https://mirror.sjtu.edu.cn/guix"
-                                   "https://bordeaux-singapore-mirror.cbaines.net")
-                                 (guix-configuration-substitute-urls config)
-                                 '("https://substitutes.nonguix.org")))
+                         `("https://mirror.sjtu.edu.cn/guix"
+                           ,@(guix-configuration-substitute-urls config)
+                           "https://substitutes.nonguix.org"))
                         (authorized-keys
                          (cons* %guix-authorized-key-nonguix
                                 (guix-configuration-authorized-keys config)))))))))
