@@ -889,7 +889,12 @@ fi")))
 
         (service home-openssh-service-type
                  (home-openssh-configuration
-                  (hosts %dorphine-ssh-hosts)))
+                  (hosts
+                   (cons
+                    (openssh-host
+                     (match-criteria
+                      "host * exec \"gpg-connect-agent UPDATESTARTUPTTY /bye\""))
+                    %dorphine-ssh-hosts))))
 
         (service home-syncthing-service-type
                  (for-home
