@@ -815,7 +815,8 @@ fi")))
                     (emacs-package
                      (name 'visual-fill-column)
                      (package emacs-visual-fill-column)
-                     (hooks '((text-mode . visual-fill-column-mode))))
+                     (options '((visual-fill-column-center-text . #t)))
+                     (hooks '((org-mode . visual-fill-column-mode))))
 
                     (emacs-package
                      (name 'volatile-highlights)
