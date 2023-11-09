@@ -280,6 +280,8 @@
                    (smartdns-configuration
                     (config-file %config-smartdns)))
 
+          (service tailscale-service-type)
+
           (service zram-device-service-type
                    (zram-device-configuration
                     (size "6G")))
