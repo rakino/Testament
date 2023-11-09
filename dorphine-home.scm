@@ -474,6 +474,7 @@ fi")))
                             cursor-intangible-mode t
                             face minibuffer-prompt))
                         (org-startup-truncated . #f)
+                        (pixel-scroll-precision-mode . #t)
                         (read-extended-command-predicate
                          . command-completion-default-include-p)
                         (require-final-newline . #f)
