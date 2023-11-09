@@ -22,6 +22,7 @@
   #:use-module (gnu home services guix)
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services shells)
+  #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
   #:use-module (gnu packages commencement)
@@ -127,6 +128,15 @@
 (define pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
 
+(define wireplumber/dolly
+  (let ((base wireplumber))
+    (package
+      (inherit base)
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:configure-flags flags ''())
+          #~(cons "-Delogind=disabled" #$flags)))))))
+
 
 ;;
 ;; File-like
@@ -204,9 +214,9 @@
      "bindl = , switch:on:Lid Switch, exec, " hyprctl " dispatch dpms off eDP-1\n"
      "bindl = , switch:off:Lid Switch, exec, " hyprctl " dispatch dpms on eDP-1\n\n"
 
-     "bindle = , XF86AudioRaiseVolume, exec, " amixer " -q --card 1 set Master 5%+\n"
-     "bindle = , XF86AudioLowerVolume, exec, " amixer " -q --card 1 set Master 5%-\n"
-     "bindle = , XF86AudioMute, exec, " amixer " -q --card 1 set Master toggle\n"
+     "bindle = , XF86AudioRaiseVolume, exec, " amixer " -q set Master 5%+\n"
+     "bindle = , XF86AudioLowerVolume, exec, " amixer " -q set Master 5%-\n"
+     "bindle = , XF86AudioMute, exec, " amixer " -q set Master toggle\n"
      "bindle = , XF86MonBrightnessUp, exec, " light " -A 5\n"
      "bindle = , XF86MonBrightnessDown, exec, " light " -U 5\n\n"
 
@@ -896,6 +906,10 @@ fi")))
                      (match-criteria
                       "host * exec \"gpg-connect-agent UPDATESTARTUPTTY /bye\""))
                     %dorphine-ssh-hosts))))
+
+        (service home-pipewire-service-type
+                 (home-pipewire-configuration
+                  (wireplumber wireplumber/dolly)))
 
         (service home-syncthing-service-type
                  (for-home
