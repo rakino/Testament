@@ -282,6 +282,10 @@
 
           (service tailscale-service-type)
 
+          (service tor-service-type
+                   (tor-configuration
+                    (config-file (nohitaga "tor.conf"))))
+
           (service zram-device-service-type
                    (zram-device-configuration
                     (size "6G")))
