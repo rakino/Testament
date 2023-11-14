@@ -13,12 +13,12 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (gnu)
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages disk)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages security-token)
-  #:use-module (gnu packages shells)
   #:use-module (gnu packages wm)
   #:use-module (gnu services desktop)
   #:use-module (gnu services linux)
@@ -195,7 +195,7 @@
            (supplementary-groups
             '("plugdev" "seat" "audio" "video" "wheel"))
            (home-directory "/home/hako")
-           (shell (file-append xonsh "/bin/xonsh")))
+           (shell (file-append bash "/bin/bash")))
           %base-user-accounts))
 
   (packages (map normalize-package %testament-base-packages))
@@ -226,7 +226,7 @@
                              (terminal-switch (eq? 1 vtnr))
                              (default-session-command
                                (greetd-agreety-session
-                                (command (file-append xonsh "/bin/xonsh"))))))
+                                (command (file-append bash "/bin/bash"))))))
                           (iota 6 1)))))
 
           (service guix-publish-service-type

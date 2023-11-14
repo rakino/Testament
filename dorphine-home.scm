@@ -47,7 +47,6 @@
   #:use-module (gnu packages qt)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust-apps)
-  #:use-module (gnu packages shells)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
@@ -86,18 +85,6 @@
        (sha256
         (base32
          "0j5f6nifa3ibhgcvfn59pq7xsnbcwgj6vkcz8vm4wway2nl5b9i6")))))))
-
-(define emacs-wakatime-mode/dolly
-  (let ((base emacs-wakatime-mode))
-    (package
-      (inherit base)
-      (source
-       (origin
-         (inherit (package-source base))
-         (modules '((guix build utils)))
-         (snippet '(substitute* "wakatime-mode.el"
-                     (("%s--entity.*%s" cmd)
-                      (format #f "/bin/sh -c '~a'" cmd)))))))))
 
 (define gopls/dolly
   (let ((base gopls))
@@ -427,7 +414,6 @@ fi")))
                 openssh-sans-x
                 pass-otp
                 password-store
-                python-prompt-toolkit
                 qtwayland-5
                 rofi-wayland
                 rsync
@@ -435,7 +421,6 @@ fi")))
                 xdg-desktop-portal
                 xdg-desktop-portal-hyprland
                 xdg-utils
-                xonsh
                 zathura
                 zathura-pdf-mupdf
                 zoxide)
@@ -466,7 +451,21 @@ fi")))
 (home-environment
  (packages (map normalize-package %home-packages))
  (services
-  (list (service home-channels-service-type
+  (list (service home-bash-service-type
+                 (home-bash-configuration
+                  (aliases
+                   `(("ls" . ,(string-join
+                               '("exa"
+                                 "--classify"
+                                 "--color-scale"
+                                 "--git"
+                                 "--group"
+                                 "--group-directories-first"
+                                 "--icons")))
+                     ("la" . "ls -a")
+                     ("ll" . "ls -l")))))
+
+        (service home-channels-service-type
                  %testament-default-channels)
 
         (service home-dbus-service-type)
@@ -477,7 +476,6 @@ fi")))
                   (extra-packages
                    (list emacs-eat
                          emacs-magit
-                         emacs-xonsh-mode
                          emacs-zig-mode))
                   (package-serializer %emacs-use-package-serializer)
                   (default-init
@@ -855,7 +853,7 @@ fi")))
 
                     (emacs-package
                      (name 'wakatime-mode)
-                     (package emacs-wakatime-mode/dolly)
+                     (package emacs-wakatime-mode)
                      (options
                       `((wakatime-cli-path
                          . ,(file-append wakatime-cli-bin "/bin/wakatime-cli"))))
@@ -966,8 +964,7 @@ fi")))
                           ("rclone/rclone.conf" ,(nohitaga "rclone.conf"))
                           ("wakatime/.wakatime.cfg" ,(nohitaga "wakatime.conf"))
                           ("wanderlust/folders" ,(nohitaga "wanderlust-folders.conf"))
-                          ("wgetrc" ,%config-wget)
-                          ("xonsh/rc.xsh" ,(nohitaga "xonsh.xsh"))))
+                          ("wgetrc" ,%config-wget)))
 
         (simple-service 'setup-shell-profile
                         home-shell-profile-service-type
