@@ -10,7 +10,9 @@
                           (testament-file-object . nohitaga)))
   #:use-module (testament counter-stop)
   #:use-module (srfi srfi-1)
+  #:use-module (guix channels)
   #:use-module (guix download)
+  #:use-module (guix inferior)
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (gnu)
@@ -55,7 +57,6 @@
   #:use-module (gnu packages zig)
   #:use-module (gnu services mcron)
   #:use-module (nongnu packages fonts)
-  #:use-module (nongnu packages mozilla)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages tree-sitter)
@@ -356,6 +357,24 @@ fi")))
 (define %mcron-job-modprobed-db
   #~(job next-hour-from
          #$(file-append modprobed-db "/bin/modprobed-db storesilent")))
+
+
+;;
+;; Inferior
+;;
+
+
+(define firefox
+  (let* ((channels
+          (list (channel
+                 (inherit %channel-guix)
+                 (commit "b437896e87a51cc610388d4c462893652dd773e6"))
+                (channel
+                 (inherit %channel-nonguix)
+                 (commit "14656d642dc113c73f9b144ccba366376a274a2b"))))
+         (inferior
+          (inferior-for-channels channels)))
+    (first (lookup-inferior-packages inferior "firefox" "118.0.2"))))
 
 
 ;;
