@@ -41,7 +41,6 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages man)
   #:use-module (gnu packages password-utils)
-  #:use-module (gnu packages pdf)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages qt)
@@ -421,8 +420,6 @@ fi")))
                 xdg-desktop-portal
                 xdg-desktop-portal-hyprland
                 xdg-utils
-                zathura
-                zathura-pdf-mupdf
                 zoxide)
           (list adwaita-icon-theme
                 hicolor-icon-theme
