@@ -208,6 +208,14 @@
           (service clash-service-type
                    (clash-configuration
                     (clash clash-meta-bin)
+                    (log-file "/var/log/clash-tor.log")
+                    (data-directory "/var/lib/clash-tor")
+                    (config (nohitaga "clash-tor.yaml"))
+                    (shepherd-provision '(clash-tor))))
+
+          (service clash-service-type
+                   (clash-configuration
+                    (clash clash-meta-bin)
                     (config (nohitaga "clash.yaml"))))
 
           (service cloudflare-tunnel-service-type
