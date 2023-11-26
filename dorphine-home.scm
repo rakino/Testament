@@ -9,6 +9,8 @@
                           (testament-file-content . agathion)
                           (testament-file-object . nohitaga)))
   #:use-module (testament counter-stop)
+  #:use-module (ice-9 format)
+  #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (guix channels)
   #:use-module (guix download)
@@ -59,7 +61,6 @@
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages tree-sitter)
   #:use-module (rosenthal packages web)
-  #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
 
 
@@ -92,28 +93,20 @@
       (propagated-inputs '())
       (inputs (package-propagated-inputs base)))))
 
-(define grimblast/dolly
-  (let ((base grimblast))
-    (package
-      (inherit base)
-      (source
-       (origin
-         (inherit (package-source base))
-         (modules '((guix build utils)))
-         (snippet '(substitute* "grimblast/grimblast"
-                     (("-Ins") "+%4Y%m%d-%H%M%S"))))))))
+(define pinentry-rofi/dolly
+  (rofi-dolly pinentry-rofi))
 
-(define hyprland/dolly
-  (let ((base hyprland))
+(define swayidle/dolly
+  (let ((base swayidle))
     (package
       (inherit base)
       (arguments
-       (substitute-keyword-arguments (package-arguments base)
-         ((#:configure-flags flags #~'())
-          #~(append #$flags '("-Dxwayland=disabled"))))))))
-
-(define pinentry-rofi/dolly
-  (rofi-dolly pinentry-rofi))
+       (strip-keyword-arguments
+        '(#:configure-flags)
+        (package-arguments base)))
+      (inputs
+       (modify-inputs (package-inputs base)
+         (delete "elogind"))))))
 
 (define wireplumber/dolly
   (let ((base wireplumber))
@@ -122,7 +115,10 @@
       (arguments
        (substitute-keyword-arguments (package-arguments base)
          ((#:configure-flags flags ''())
-          #~(cons "-Delogind=disabled" #$flags)))))))
+          #~(cons "-Delogind=disabled" #$flags))))
+      (inputs
+       (modify-inputs (package-inputs base)
+         (delete "elogind"))))))
 
 
 ;;
@@ -130,95 +126,84 @@
 ;;
 
 
-(define %config-hyprland
-  (let ((filename  "hyprland.conf")
-        (main-mod  "SUPER")
-        (wallpaper (nohitaga "112358159_p0.png"))
-        (lockpaper (nohitaga "102982564_p0.jpg"))
-        (amixer    (file-append alsa-utils "/bin/amixer"))
-        (buku_run  (file-append buku-run-dev/dolly "/bin/buku_run"))
-        (hyprctl   (file-append hyprland/dolly "/bin/hyprctl"))
-        (light     (file-append light "/bin/light"))
-        (rofi      (file-append rofi-wayland "/bin/rofi"))
-        (swaybg    (file-append swaybg "/bin/swaybg"))
-        (swayidle  (file-append swayidle "/bin/swayidle"))
-        (swaylock  (file-append swaylock-effects "/bin/swaylock"))
-        (tessen    (file-append tessen "/bin/tessen"))
-        (wlsunset  (file-append wlsunset "/bin/wlsunset")))
+(define %config-sway
+  (let ((filename  "sway.conf")
+        (screenshot "~/Library/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png")
+        (wallpaper  (nohitaga "112358159_p0.png"))
+        (lock-args  #~(string-join
+                       (list "--clock"
+                             "--daemonize"
+                             "--ignore-empty-password"
+                             "--image"
+                             #$(nohitaga "102982564_p0.jpg"))))
+        (autotiling (file-append i3-autotiling "/bin/autotiling"))
+        (buku_run   (file-append buku-run-dev/dolly "/bin/buku_run"))
+        (grimshot   (file-append grimshot "/bin/grimshot"))
+        (light      (file-append light "/bin/light"))
+        (rofi       (file-append rofi-wayland "/bin/rofi"))
+        (swayidle   (file-append swayidle/dolly "/bin/swayidle"))
+        (swaylock   (file-append swaylock-effects "/bin/swaylock"))
+        (tessen     (file-append tessen "/bin/tessen"))
+        (wl-copy    (file-append wl-clipboard "/bin/wl-copy"))
+        (wlsunset   (file-append wlsunset "/bin/wlsunset"))
+        (wpctl      (file-append wireplumber/dolly "/bin/wpctl")))
     (mixed-text-file
      filename
      (agathion filename) "\n"
 
-     "bind = " main-mod " SHIFT, C, killactive," "\n"
-     "bind = " main-mod " SHIFT, M, exit," "\n"
-     "bind = " main-mod ", V, togglefloating," "\n"
-     ;; dwindle
-     "bind = " main-mod ", P, pseudo," "\n"
-     "bind = " main-mod ", J, togglesplit," "\n"
+     (apply string-append
+            (append-map
+             (match-lambda
+               ((position keys)
+                (map (lambda (key)
+                       (format #f "~
+bindsym $mod+~a focus ~a
+bindsym $mod+Shift+~@*~a move ~a~%"
+                               key position))
+                     keys)))
+             '(("left"  ("h" "Left"))
+               ("down"  ("t" "Down"))
+               ("up"    ("n" "Up"))
+               ("right" ("s" "Right")))))
 
-     ;; Move focus with mainMod + jkl; (htns in Dvorak)
-     "bind = " main-mod ", H, movefocus, l" "\n"
-     "bind = " main-mod ", T, movefocus, d" "\n"
-     "bind = " main-mod ", N, movefocus, u" "\n"
-     "bind = " main-mod ", S, movefocus, r" "\n"
+     (apply string-append
+            (map (lambda (workspace-number)
+                   (format #f "~
+bindsym $mod+~a workspace number ~a
+bindsym $mod+Shift+~@*~a move container to workspace number ~a~%"
+                           workspace-number
+                           (if (zero? workspace-number)
+                               10
+                               workspace-number)))
+                 (iota 10)))
 
-     ;; Scroll through existing workspaces with mainMod + scroll
-     "bind = " main-mod ", mouse_down, workspace, e-1" "\n"
-     "bind = " main-mod ", mouse_up, workspace, e+1" "\n"
+     "output eDP-1 scale 1.5\n"
+     "output * bg " wallpaper " fill\n"
 
-     ;; Move/resize windows with mainMod + LMB/RMB and dragging
-     "bindm = " main-mod ", mouse:272, movewindow" "\n"
-     "bindm = " main-mod ", mouse:273, resizewindow" "\n"
+     "bindswitch --reload --locked lid:on output eDP-1 disable\n"
+     "bindswitch --reload --locked lid:off output eDP-1 enable\n"
 
-     (apply
-      string-append
-      (append-map
-       (lambda (fmt)
-         (map (lambda (n)
-                (format #f fmt n (if (zero? n)
-                                     10
-                                     n)))
-              (iota 10)))
-       (list ;; Switch workspaces with mainMod + [0-9]
-        (string-append "bind = " main-mod ", ~a, workspace, ~a~%")
-        ;; Move active window to a workspace with mainMod + SHIFT + [0-9]
-        (string-append "bind = " main-mod " SHIFT, ~a, movetoworkspace, ~a~%"))))
+     "bindsym $mod+e exec emacsclient --create-frame --no-wait --alternate-editor=''\n"
+     "bindsym $mod+b exec " buku_run "\n"
+     "bindsym $mod+d exec " tessen "\n"
+     "bindsym $mod+r exec " rofi " -show combi\n"
+     "bindsym $mod+l exec " swaylock " " lock-args "\n"
 
-     ;; Monitors
-     "monitor = eDP-1, preferred, auto, 1.5\n"
-     "monitor = HDMI-A-1, preferred, auto, 1\n"
-     "monitor = , preferred, auto, 1\n\n"
+     "bindsym Print exec " wl-copy " --type image/png < $(" grimshot " save area " screenshot ")\n"
+     "bindsym XF86AudioRaiseVolume  exec " wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%+ --limit 1.0\n"
+     "bindsym XF86AudioLowerVolume  exec " wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%-\n"
+     "bindsym XF86AudioMute         exec " wpctl " set-mute   @DEFAULT_AUDIO_SINK@   toggle\n"
+     "bindsym XF86AudioMicMute      exec " wpctl " set-mute   @DEFAULT_AUDIO_SOURCE@ toggle\n"
+     "bindsym XF86MonBrightnessUp   exec " light " -A 5\n"
+     "bindsym XF86MonBrightnessDown exec " light " -U 5\n"
 
-     ;; Binds
-     "bind = " main-mod ", E, exec, emacsclient --create-frame"
-                                          " --no-wait"
-                                          " --alternate-editor=''\n"
-     "bind = " main-mod ", B, exec, " buku_run "\n"
-     "bind = " main-mod ", D, exec, " tessen "\n"
-     "bind = " main-mod ", R, exec, " rofi " -show combi\n"
-     "bind = " main-mod ", L, exec, " swaylock " --clock -fei " lockpaper "\n\n"
+     "exec " autotiling "\n"
+     "exec " wlsunset " " %dorphine-wlsunset-args "\n"
 
-     "bindl = , switch:on:Lid Switch, exec, " hyprctl " dispatch dpms off eDP-1\n"
-     "bindl = , switch:off:Lid Switch, exec, " hyprctl " dispatch dpms on eDP-1\n\n"
-
-     "bindle = , XF86AudioRaiseVolume, exec, " amixer " -q set Master 5%+\n"
-     "bindle = , XF86AudioLowerVolume, exec, " amixer " -q set Master 5%-\n"
-     "bindle = , XF86AudioMute, exec, " amixer " -q set Master toggle\n"
-     "bindle = , XF86MonBrightnessUp, exec, " light " -A 5\n"
-     "bindle = , XF86MonBrightnessDown, exec, " light " -U 5\n\n"
-
-     ;; Dispatchers
-     "exec-once = " swaybg " --image " wallpaper " --mode fill --output '*'\n"
-     "exec-once = " swayidle " -w"
-                  " timeout 300 '" swaylock " --clock -fei " lockpaper "'"
-                  " timeout 600 '" hyprctl " dispatch dpms off'"
-                  " resume '" hyprctl " dispatch dpms on'\n"
-     "exec-once = " wlsunset " " %dorphine-wlsunset-args "\n\n"
-
-     "exec = " hyprctl " setcursor Qogir 24\n\n"
-
-     ;; Window rules
-     "windowrulev2 = float, class:^(firefox-default)$")))
+     "exec " swayidle " -w \
+timeout 300 '" swaylock " " lock-args "' \
+timeout 600 'swaymsg \"output * dpms off\"' \
+resume 'swaymsg \"output * dpms on\"'\n")))
 
 (define %config-wget
   (plain-file
@@ -227,10 +212,11 @@
            (getenv "XDG_CACHE_HOME"))))
 
 (define %shell-profile-wm
-  (plain-file "shell-profile-wm"
-              (format #f "~
+  (plain-file
+   "shell-profile-wm"
+   (format #f "~
 if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
-    exec Hyprland
+    exec sway --unsupported-gpu
 fi")))
 
 
@@ -406,8 +392,6 @@ fi")))
                 `(,git "send-email")
                 git-crypt
                 gnupg
-                grimblast/dolly
-                hyprland/dolly
                 man-pages
                 mosh
                 openssh-sans-x
@@ -416,9 +400,10 @@ fi")))
                 qtwayland-5
                 rofi-wayland
                 rsync
+                sway
                 wl-clipboard
                 xdg-desktop-portal
-                xdg-desktop-portal-hyprland
+                xdg-desktop-portal-wlr
                 xdg-utils
                 zoxide)
           (list adwaita-icon-theme
@@ -941,6 +926,7 @@ fi")))
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
                           ("GUILE_AUTO_COMPILE" . "0")
+                          ("MOZ_ENABLE_WAYLAND" . "1")
                           ("VISUAL" . "$EDITOR")))
 
         (simple-service 'setup-non-xdg-home
@@ -952,13 +938,13 @@ fi")))
                         `(("git/config" ,(nohitaga "git.conf"))
                           ("gtk-3.0/settings.ini" ,(nohitaga "gtk-3.0.ini"))
                           ("hyfetch.json" ,(nohitaga "hyfetch.json"))
-                          ("hypr/hyprland.conf" ,%config-hyprland)
                           ("modprobed-db.conf" ,(nohitaga "modprobed-db.conf"))
                           ("mpv/mpv.conf" ,(nohitaga "mpv.conf"))
                           ("neofetch/config.conf" ,(nohitaga "neofetch.conf"))
                           ("npm/npmrc" ,(nohitaga "npm.conf"))
                           ("pythonstartup.py" ,(nohitaga "pythonstartup.py"))
                           ("rclone/rclone.conf" ,(nohitaga "rclone.conf"))
+                          ("sway/config" ,%config-sway)
                           ("wakatime/.wakatime.cfg" ,(nohitaga "wakatime.conf"))
                           ("wanderlust/folders" ,(nohitaga "wanderlust-folders.conf"))
                           ("wgetrc" ,%config-wget)))
