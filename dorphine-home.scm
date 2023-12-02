@@ -386,7 +386,6 @@ fi")))
 
 (define %home-packages
   (append (list buku
-                exa
                 firefox
                 git
                 `(,git "send-email")
@@ -435,17 +434,6 @@ fi")))
  (services
   (list (service home-bash-service-type
                  (home-bash-configuration
-                  (aliases
-                   `(("ls" . ,(string-join
-                               '("exa"
-                                 "--classify"
-                                 "--color-scale"
-                                 "--git"
-                                 "--group"
-                                 "--group-directories-first"
-                                 "--icons")))
-                     ("la" . "ls -a")
-                     ("ll" . "ls -l")))
                   (bashrc
                    (list (plain-file
                           "bashrc-eat"
