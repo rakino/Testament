@@ -104,9 +104,7 @@
 (operating-system
   (kernel linux-dorphine)
   (kernel-arguments `(,@%testament-default-kernel-arguments
-                      "ideapad_laptop.allow_v4_dytc=1"
-                      "modprobe.blacklist=nouveau"
-                      "nvidia_drm.modeset=1"))
+                      "modprobe.blacklist=hid_nintendo,nouveau,pcspkr,snd_pcsp"))
 
   (bootloader (bootloader-configuration
                (bootloader grub-efi-bootloader)
