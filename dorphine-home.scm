@@ -746,9 +746,7 @@ fi")))
                                      ("C-M-," . puni-slurp-backward)
                                      ("s-." . puni-barf-forward)
                                      ("s-," . puni-barf-backward))))))
-                     (hooks
-                      '((after-init . puni-global-mode)
-                        (minibuffer-mode . puni-disable-puni-mode))))
+                     (hooks '((after-init . puni-global-mode))))
 
                     (emacs-package
                      (name 'rainbow-delimiters)
