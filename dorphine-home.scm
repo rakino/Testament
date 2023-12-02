@@ -445,7 +445,13 @@ fi")))
                                  "--group-directories-first"
                                  "--icons")))
                      ("la" . "ls -a")
-                     ("ll" . "ls -l")))))
+                     ("ll" . "ls -l")))
+                  (bashrc
+                   (list (plain-file
+                          "bashrc-eat"
+                          (format #f "
+[ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && \\
+  source \"$EAT_SHELL_INTEGRATION_DIR/bash\"~%"))))))
 
         (service home-channels-service-type
                  %testament-default-channels)
@@ -456,8 +462,7 @@ fi")))
                  (home-emacs-configuration
                   (emacs emacs-pgtk)
                   (extra-packages
-                   (list emacs-eat
-                         emacs-magit
+                   (list emacs-magit
                          emacs-zig-mode))
                   (package-serializer %emacs-use-package-serializer)
                   (default-init
@@ -546,6 +551,11 @@ fi")))
                       '((doom-modeline-icon . #f)
                         (doom-modeline-height . 18)))
                      (hooks '((after-init . doom-modeline-mode))))
+
+                    (emacs-package
+                     (name 'eat)
+                     (package emacs-eat)
+                     (options '((eat-enable-auto-line-mode . #t))))
 
                     (emacs-package
                      (name 'eglot)
