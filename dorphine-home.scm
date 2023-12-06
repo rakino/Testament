@@ -12,6 +12,7 @@
   #:use-module (ice-9 format)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-26)
   #:use-module (guix channels)
   #:use-module (guix download)
   #:use-module (guix inferior)
@@ -549,22 +550,20 @@ fi")))
                      (name 'eglot)
                      (extra-packages %language-packages-for-emacs)
                      (hooks
-                      (append-map
-                       (lambda (mode)
-                         `((,mode . eglot-ensure)))
-                       '(bash-ts-mode sh-mode
-                         c-mode c-ts-mode c++-mode c++-ts-mode
-                         cmake-ts-mode
-                         css-mode css-ts-mode
-                         go-ts-mode go-mod-ts-mode
-                         html-mode
-                         js-mode js-ts-mode
-                         js-json-mode json-ts-mode
-                         markdown-mode
-                         python-mode python-ts-mode
-                         rust-ts-mode
-                         typescript-ts-mode
-                         yaml-ts-mode))))
+                      (map (cut cons <> 'eglot-ensure)
+                           '(cmake-ts-mode
+                             bash-ts-mode sh-mode
+                             c-mode c-ts-mode c++-mode c++-ts-mode
+                             css-mode css-ts-mode
+                             go-ts-mode go-mod-ts-mode
+                             html-mode
+                             js-mode js-ts-mode
+                             js-json-mode json-ts-mode
+                             markdown-mode
+                             python-mode python-ts-mode
+                             rust-ts-mode
+                             typescript-ts-mode
+                             yaml-ts-mode))))
 
                     (emacs-package
                      (name 'eldoc-box)
