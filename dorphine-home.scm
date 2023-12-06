@@ -61,7 +61,6 @@
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages tree-sitter)
-  #:use-module (rosenthal packages web)
   #:use-module (rosenthal services child-error))
 
 
@@ -73,19 +72,6 @@
 (define rofi-dolly
   (package-input-rewriting/spec
    `(("rofi" . ,(const rofi-wayland)))))
-
-(define buku-run-dev/dolly
-  (rofi-dolly
-   (package-with-patches
-    buku-run-dev
-    (list
-     ;; (fix #27) Show Bookmark tag correctly
-     (origin
-       (method url-fetch)
-       (uri "https://github.com/carnager/buku_run/pull/29.patch")
-       (sha256
-        (base32
-         "0j5f6nifa3ibhgcvfn59pq7xsnbcwgj6vkcz8vm4wway2nl5b9i6")))))))
 
 (define gopls/dolly
   (let ((base gopls))
@@ -138,7 +124,6 @@
                              "--image"
                              #$(nohitaga "102982564_p0.jpg"))))
         (autotiling (file-append i3-autotiling "/bin/autotiling"))
-        (buku_run   (file-append buku-run-dev/dolly "/bin/buku_run"))
         (grimshot   (file-append grimshot "/bin/grimshot"))
         (light      (file-append light "/bin/light"))
         (rofi       (file-append rofi-wayland "/bin/rofi"))
@@ -185,7 +170,6 @@ bindsym $mod+Shift+~@*~a move container to workspace number ~a~%"
      "bindswitch --reload --locked lid:off output eDP-1 enable\n"
 
      "bindsym $mod+e exec emacsclient --create-frame --no-wait --alternate-editor=''\n"
-     "bindsym $mod+b exec " buku_run "\n"
      "bindsym $mod+d exec " tessen "\n"
      "bindsym $mod+r exec " rofi " -show combi\n"
      "bindsym $mod+l exec " swaylock " " lock-args "\n"
