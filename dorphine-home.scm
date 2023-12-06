@@ -474,6 +474,8 @@ fi")))
                         (show-paren-style . parenthesis)
                         (truncate-lines . #f)
                         (truncate-partial-width-windows . #f)
+                        (user-full-name . "Hilton Chain")
+                        (user-mail-address . "hako@ultrarare.space")
                         (warning-minimum-level . :emergency)))
                      (modes
                       '((blink-cursor-mode . #f)
