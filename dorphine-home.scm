@@ -874,12 +874,7 @@ fi")))
 
         (service home-openssh-service-type
                  (home-openssh-configuration
-                  (hosts
-                   (cons
-                    (openssh-host
-                     (match-criteria
-                      "host * exec \"gpg-connect-agent UPDATESTARTUPTTY /bye\""))
-                    %dorphine-ssh-hosts))))
+                  (hosts %dorphine-ssh-hosts)))
 
         (service home-pipewire-service-type
                  (home-pipewire-configuration
