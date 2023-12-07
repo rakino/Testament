@@ -42,6 +42,7 @@
   #:use-module (gnu packages golang)
   #:use-module (gnu packages haskell-apps)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages python)
@@ -629,6 +630,13 @@ fi")))
                      (hooks '((geiser-mode . macrostep-geiser-setup))))
 
                     (emacs-package
+                     (name 'mbsync)
+                     (package emacs-mbsync)
+                     (options
+                      `((mbsync-executable . ,(file-append isync "/bin/mbsync"))
+                        (mbsync-args . ("-a" "--config" ,(nohitaga "mbsync.conf"))))))
+
+                    (emacs-package
                      (name 'message)
                      (keys-global
                       '(("C-c M-m" . message-mark-inserted-region))))
@@ -828,17 +836,34 @@ fi")))
                      (extra-packages (list emacs-spamfilter-el))
                      (autoloads-interactive '(wl))
                      (options
-                      `(,@%wanderlust-init-options
-                        ;; https://github.com/wanderlust/wanderlust/issues/148
-                        (elmo-network-session-idle-timeout . 110)
+                      '((elmo-localdir-folder-path . "~/.local/share/mail")
+                        (elmo-maildir-folder-path . "~/.local/share/mail")
+                        (elmo-msgdb-extra-fields . ("list-id"))
                         (elmo-spam-scheme . spamfilter)
+                        (mime-edit-pgp-signers
+                         . ("F4C2D1DF3FDEEA63D1D30776ACC66D09CA528292"))
                         (mime-header-accept-quoted-encoded-words . #t)
                         (wl-auto-refile-guess-functions
                          . (wl-refile-guess-by-rule
                             wl-refile-guess-by-spam))
+                        (wl-default-folder . ".inbox")
                         (wl-default-spec . ".")
+                        (wl-draft-always-delete-myself . #t)
+                        (wl-fcc . ".inbox")
                         (wl-fcc-force-as-read . #t)
-                        (wl-plugged . #f)
+                        (wl-local-domain . "ultrarare.space")
+                        (wl-refile-rule-alist
+                         . (("List-Id"
+                             ("bug-guix"     . ".hako@ultrarare.space/Zbug-guix")
+                             ("guix-devel"   . ".hako@ultrarare.space/Zguix-devel")
+                             ("guix-patches" . ".hako@ultrarare.space/Zguix-patches")
+                             ("help-guix"    . ".hako@ultrarare.space/Zhelp-guix")
+                             ("info-guix"    . ".hako@ultrarare.space/Zinfo-guix"))))
+                        (wl-smtp-authenticate-type . "plain")
+                        (wl-smtp-connection-type . ssl)
+                        (wl-smtp-posting-port . 465)
+                        (wl-smtp-posting-server . "mail.boiledscript.com")
+                        (wl-smtp-posting-user . "hako@ultrarare.space")
                         (wl-summary-auto-refile-skip-marks . #f)
                         (wl-summary-width . 185)))
                      (extra-after-load
