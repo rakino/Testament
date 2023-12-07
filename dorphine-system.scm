@@ -10,8 +10,6 @@
                           (testament-file-object . nohitaga)))
   #:use-module (testament counter-stop)
   #:use-module (ice-9 match)
-  #:use-module (guix packages)
-  #:use-module (guix download)
   #:use-module (gnu)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bittorrent)
@@ -70,30 +68,11 @@
 ;;
 
 
-(define %linux-bcachefs-patch
-  (let ((commit "69163682bbc6c94d1656cb640d8f2aca3641b807")
-        (kernel-version "6.6"))
-    (origin
-      (method url-fetch)
-      (uri (string-append
-            "https://github.com/sirlucjan/kernel-patches/raw/" commit "/"
-            kernel-version "/bcachefs-upstream-patches/0001-bcachefs-"
-            kernel-version "-introduce-bcachefs-patchset.patch"))
-      (sha256
-       (base32
-        "190sn9my09i3dvym27m53j7m6r9z5ddl5m0k4p08gnhqflsf2cxv")))))
-
-(define linux-dorphine-source
-  (origin
-    (inherit linux-xanmod-source)
-    (patches
-     (list %linux-bcachefs-patch))))
-
 (define-public linux-dorphine
   (customize-linux
    #:name "linux-dorphine"
    #:linux linux-xanmod
-   #:source linux-dorphine-source
+   #:source linux-xanmod-source
    #:defconfig (nohitaga "defconfig-zen3-dorphine")
    #:extra-version "dorphine"))
 
