@@ -4,10 +4,7 @@
 
 (define-module (dorphine-home)
   #:use-module (blobs dorphine)
-  #:use-module ((testament common)
-                #:select (testament-find-file
-                          (testament-file-content . agathion)
-                          (testament-file-object . nohitaga)))
+  #:use-module (testament common)
   #:use-module (testament counter-stop)
   #:use-module (ice-9 format)
   #:use-module (ice-9 match)
@@ -117,13 +114,13 @@
 (define %config-sway
   (let ((filename  "sway.conf")
         (screenshot "~/Library/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png")
-        (wallpaper  (nohitaga "112358159_p0.png"))
+        (wallpaper  (testament-file-object "112358159_p0.png"))
         (lock-args  #~(string-join
                        (list "--clock"
                              "--daemonize"
                              "--ignore-empty-password"
                              "--image"
-                             #$(nohitaga "102982564_p0.jpg"))))
+                             #$(testament-file-object "102982564_p0.jpg"))))
         (autotiling (file-append i3-autotiling "/bin/autotiling"))
         (grimshot   (file-append grimshot "/bin/grimshot"))
         (light      (file-append light "/bin/light"))
@@ -136,7 +133,7 @@
         (wpctl      (file-append wireplumber/dolly "/bin/wpctl")))
     (mixed-text-file
      filename
-     (agathion filename) "\n"
+     (testament-file-content filename) "\n"
 
      (apply string-append
             (append-map
@@ -634,7 +631,9 @@ fi")))
                      (package emacs-mbsync)
                      (options
                       `((mbsync-executable . ,(file-append isync "/bin/mbsync"))
-                        (mbsync-args . ("-a" "--config" ,(nohitaga "mbsync.conf"))))))
+                        (mbsync-args
+                         . ("--config" ,(testament-file-object "mbsync.conf")
+                            "-a")))))
 
                     (emacs-package
                      (name 'message)
@@ -925,22 +924,22 @@ fi")))
 
         (simple-service 'setup-non-xdg-home
                         home-files-service-type
-                        `((".icons/default/index.theme" ,(nohitaga "icons.theme"))))
+                        `((".icons/default/index.theme" ,(testament-file-object "icons.theme"))))
 
         (simple-service 'setup-xdg-config-home
                         home-xdg-configuration-files-service-type
-                        `(("git/config" ,(nohitaga "git.conf"))
-                          ("gtk-3.0/settings.ini" ,(nohitaga "gtk-3.0.ini"))
-                          ("hyfetch.json" ,(nohitaga "hyfetch.json"))
-                          ("modprobed-db.conf" ,(nohitaga "modprobed-db.conf"))
-                          ("mpv/mpv.conf" ,(nohitaga "mpv.conf"))
-                          ("neofetch/config.conf" ,(nohitaga "neofetch.conf"))
-                          ("npm/npmrc" ,(nohitaga "npm.conf"))
-                          ("pythonstartup.py" ,(nohitaga "pythonstartup.py"))
-                          ("rclone/rclone.conf" ,(nohitaga "rclone.conf"))
+                        `(("git/config" ,(testament-file-object "git.conf"))
+                          ("gtk-3.0/settings.ini" ,(testament-file-object "gtk-3.0.ini"))
+                          ("hyfetch.json" ,(testament-file-object "hyfetch.json"))
+                          ("modprobed-db.conf" ,(testament-file-object "modprobed-db.conf"))
+                          ("mpv/mpv.conf" ,(testament-file-object "mpv.conf"))
+                          ("neofetch/config.conf" ,(testament-file-object "neofetch.conf"))
+                          ("npm/npmrc" ,(testament-file-object "npm.conf"))
+                          ("pythonstartup.py" ,(testament-file-object "pythonstartup.py"))
+                          ("rclone/rclone.conf" ,(testament-file-object "rclone.conf"))
                           ("sway/config" ,%config-sway)
-                          ("wakatime/.wakatime.cfg" ,(nohitaga "wakatime.conf"))
-                          ("wanderlust/folders" ,(nohitaga "wanderlust-folders.conf"))
+                          ("wakatime/.wakatime.cfg" ,(testament-file-object "wakatime.conf"))
+                          ("wanderlust/folders" ,(testament-file-object "wanderlust-folders.conf"))
                           ("wgetrc" ,%config-wget)))
 
         (simple-service 'setup-shell-profile

@@ -4,10 +4,7 @@
 
 (define-module (dorphine-system)
   #:use-module (blobs dorphine)
-  #:use-module ((testament common)
-                #:select (testament-find-file
-                          (testament-file-content . agathion)
-                          (testament-file-object . nohitaga)))
+  #:use-module (testament common)
   #:use-module (testament counter-stop)
   #:use-module (ice-9 match)
   #:use-module (gnu)
@@ -47,7 +44,7 @@
          (conf-dir (file-append dnsmasq-china-list "/share/dnsmasq-china-list/")))
     (mixed-text-file
      filename
-     (agathion filename) "\n"
+     (testament-file-content filename) "\n"
      "conf-file " (file-append conf-dir "accelerated-domains.china.smartdns.conf") "\n"
      "conf-file " (file-append conf-dir "apple.china.smartdns.conf") "\n"
      "conf-file " (file-append conf-dir "bogus-nxdomain.china.smartdns.conf") "\n")))
@@ -73,7 +70,7 @@
    #:name "linux-dorphine"
    #:linux linux-xanmod
    #:source linux-xanmod-source
-   #:defconfig (nohitaga "defconfig-zen3-dorphine")
+   #:defconfig (testament-file-object "defconfig-zen3-dorphine")
    #:extra-version "dorphine"))
 
 (define %dorphine-initrd-modules
@@ -95,7 +92,7 @@
                        (chain-loader "/EFI/Microsoft/Boot/bootmgfw.efi"))))
                (theme
                 (grub-theme
-                 (image (nohitaga "grub.png"))
+                 (image (testament-file-object "grub.png"))
                  (resolution '(2560 . 1600))))))
 
   (keyboard-layout %testament-default-keyboard-layout)
@@ -187,13 +184,13 @@
                     (clash clash-meta-bin)
                     (log-file "/var/log/clash-tor.log")
                     (data-directory "/var/lib/clash-tor")
-                    (config (nohitaga "clash-tor.yaml"))
+                    (config (testament-file-object "clash-tor.yaml"))
                     (shepherd-provision '(clash-tor))))
 
           (service clash-service-type
                    (clash-configuration
                     (clash clash-meta-bin)
-                    (config (nohitaga "clash.yaml"))))
+                    (config (testament-file-object "clash.yaml"))))
 
           (service cloudflare-tunnel-service-type
                    (cloudflare-tunnel-configuration
@@ -229,7 +226,7 @@
 
           (service nftables-service-type
                    (nftables-configuration
-                    (ruleset (nohitaga "nftables-dorphine.conf"))))
+                    (ruleset (testament-file-object "nftables-dorphine.conf"))))
 
           (service ntp-service-type
                    (ntp-configuration
@@ -269,7 +266,7 @@
 
           (service tor-service-type
                    (tor-configuration
-                    (config-file (nohitaga "tor.conf"))))
+                    (config-file (testament-file-object "tor.conf"))))
 
           (service zram-device-service-type
                    (zram-device-configuration
@@ -285,7 +282,8 @@
                           '("tcp_bbr"))
 
           (simple-service 'setup-etc-dir etc-service-type
-                          `(("btrbk/btrbk.conf" ,(nohitaga "btrbk-dorphine.conf"))))
+                          `(("btrbk/btrbk.conf"
+                             ,(testament-file-object "btrbk-dorphine.conf"))))
 
           (simple-service 'sysctl-extra-settings sysctl-service-type
                           '(("net.core.default_qdisc" . "fq_pie")
