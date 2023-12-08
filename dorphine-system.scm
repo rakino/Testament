@@ -16,6 +16,7 @@
   #:use-module (gnu packages certs)
   #:use-module (gnu packages disk)
   #:use-module (gnu packages fonts)
+  #:use-module (gnu packages games)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages wm)
@@ -297,6 +298,7 @@
                     (size "6G")))
 
           (udev-rules-service 'backlight light)
+          (udev-rules-service 'steam-devices steam-devices-udev-rules)
           (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
 
           (simple-service 'add-extra-hosts hosts-service-type
