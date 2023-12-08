@@ -5,12 +5,15 @@
 (define-module (paradise-system)
   #:use-module (blobs paradise)
   #:use-module (testament counter-stop)
-  #:use-module (gnu)
+  #:use-module (gnu bootloader)
+  #:use-module (gnu bootloader grub)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu services)
+  #:use-module (gnu services base)
   #:use-module (gnu services dbus)
   #:use-module (gnu services desktop)
   #:use-module (gnu services docker)
@@ -19,6 +22,10 @@
   #:use-module (gnu services security)
   #:use-module (gnu services ssh)
   #:use-module (gnu services sysctl)
+  #:use-module (gnu system)
+  #:use-module (gnu system file-systems)
+  #:use-module (gnu system linux-initrd)
+  #:use-module (gnu system shadow)
   #:use-module (rosenthal services child-error))
 
 
