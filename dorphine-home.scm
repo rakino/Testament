@@ -413,7 +413,7 @@ fi")))
 
 
 (home-environment
- (packages (map normalize-package %home-packages))
+ (packages %home-packages)
  (services
   (list (service home-bash-service-type
                  (home-bash-configuration
@@ -425,7 +425,9 @@ fi")))
   source \"$EAT_SHELL_INTEGRATION_DIR/bash\"~%"))))))
 
         (service home-channels-service-type
-                 %testament-default-channels)
+                 (list %channel-guix
+                       %channel-nonguix
+                       %channel-rosenthal))
 
         (service home-dbus-service-type)
 
@@ -915,7 +917,7 @@ fi")))
 
         (simple-service 'setup-env-vars
                         home-environment-variables-service-type
-                        `(,@%xdg-base-directory-environment-variables
+                        `(,@%testament-xdg-base-directory-env-vars
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
                           ("GUILE_AUTO_COMPILE" . "0")

@@ -5,13 +5,14 @@
 (define-module (paradise-system)
   #:use-module (blobs paradise)
   #:use-module (testament counter-stop)
+  #:use-module (testament kicksecure)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
+  #:use-module (gnu packages certs)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages ssh)
-  #:use-module (gnu packages version-control)
   #:use-module (gnu services)
   #:use-module (gnu services base)
   #:use-module (gnu services dbus)
@@ -35,16 +36,13 @@
 
 
 (define %paradise-initrd-modules
-  (append '("virtio_scsi")
-          %testament-base-initrd-modules
-          %base-initrd-modules))
-
-(define %paradise-packages
-  (append (list git mosh rsync zstd)
-          %testament-base-packages))
+  (cons* "btrfs"
+         "virtio_scsi"
+         "xxhash_generic"
+         %base-initrd-modules))
 
 (operating-system
-  (kernel-arguments %testament-default-kernel-arguments)
+  (kernel-arguments %kicksecure-kernel-arguments)
 
   (bootloader (bootloader-configuration
                (bootloader grub-bootloader)
@@ -84,7 +82,12 @@
            (supplementary-groups '("wheel")))
           %base-user-accounts))
 
-  (packages (map normalize-package %paradise-packages))
+  (packages
+   (cons* mosh
+          nss-certs
+          rsync
+          zstd
+          %base-packages))
 
   (timezone "Asia/Hong_Kong")
 
@@ -130,7 +133,7 @@
                             ("vm.watermark_boost_factor" . "0")
                             ("vm.watermark_scale_factor" . "125")))
 
-          (modify-services %testament-base-services
+          (modify-services %base-services
             (guix-service-type
              config => (guix-configuration
                         (inherit config)
@@ -139,6 +142,11 @@
                                  '("https://substitute.boiledscript.com")))
                         (authorized-keys
                          (cons* %guix-authorized-key-dorphine
-                                (guix-configuration-authorized-keys config))))))))
+                                (guix-configuration-authorized-keys config)))))
+
+            (sysctl-service-type
+             config => (sysctl-configuration
+                        (inherit config)
+                        (settings %kicksecure-sysctl-rules))))))
 
   (sudoers-file %paradise-sudoers-file))

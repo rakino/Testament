@@ -3,18 +3,10 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (testament counter-stop)
-  #:use-module (testament kicksecure)
   #:use-module (srfi srfi-1)
   #:use-module (guix channels)
   #:use-module (guix gexp)
-  #:use-module (guix packages)
-  #:use-module (gnu packages certs)
-  #:use-module (gnu services)
-  #:use-module (gnu services base)
-  #:use-module (gnu services sysctl)
-  #:use-module (gnu system)
   #:use-module (gnu system file-systems)
-  #:use-module (gnu system keyboard)
   #:export (%channel-guix
             %channel-guixcn
             %channel-nonguix
@@ -23,22 +15,15 @@
             %guix-authorized-key-dorphine
             %guix-authorized-key-nonguix
 
-            normalize-package
+            %testament-xdg-base-directory-env-vars
+            %testament-base-file-systems))
 
-            %xdg-base-directory-environment-variables
-
-            %testament-default-channels
-            %testament-default-kernel-arguments
-            %testament-default-keyboard-layout
-            %testament-base-initrd-modules
-            %testament-base-file-systems
-            %testament-base-packages
-            %testament-base-services))
-
-;; Common procedures and variables shared across my home environment and
-;; operating system definitions.
-
+
+;;
 ;; Channels
+;;
+
+
 (define %channel-guix
   (first %default-channels))
 
@@ -73,14 +58,12 @@
      (openpgp-fingerprint
       "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7")))))
 
-(define %testament-default-channels
-  (list %channel-guix
-        %channel-guixcn
-        %channel-nonguix
-        %channel-rosenthal))
-
+
+;;
 ;; Keys
-;; local
+;;
+
+
 (define %guix-authorized-key-dorphine
   (plain-file "dorphine.pub" "
 (public-key
@@ -96,15 +79,14 @@
   (curve Ed25519)
   (q #C1FD53E5D4CE971933EC50C9F307AE2171A2D3B52C804642A7A35F84F3A4EA98#)))"))
 
-;; Procedures
-(define (normalize-package pkg)
-  (if (package? pkg)
-      `(,pkg "out")
-      pkg))
-
+
+;;
 ;; Variables
+;;
+
+
 ;; Source: <https://wiki.archlinux.org/title/XDG_Base_Directory>
-(define %xdg-base-directory-environment-variables
+(define %testament-xdg-base-directory-env-vars
   '(;; XDG Cache Home
     ("GOMODCACHE" . "$XDG_CACHE_HOME/go/mod")
     ("PYTHONPYCACHEPREFIX" . "$XDG_CACHE_HOME/python")
@@ -122,18 +104,6 @@
     ("GUILE_HISTORY" . "$XDG_DATA_HOME/guile/history")
     ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")
     ("PYTHONUSERBASE" . "$XDG_DATA_HOME/python")))
-
-(define %testament-default-kernel-arguments
-  `(,@%kicksecure-kernel-arguments
-    "iommu=force"
-    "net.ifnames=0"))
-
-(define %testament-default-keyboard-layout
-  (keyboard-layout "us" "dvorak"
-                   #:options '("ctrl:nocaps")))
-
-(define %testament-base-initrd-modules
-  '("btrfs" "xxhash_generic"))
 
 (define %testament-base-file-systems
   (cons* (file-system
@@ -172,14 +142,3 @@
 
          (delete %debug-file-system
                  %base-file-systems)))
-
-(define %testament-base-packages
-  (cons* nss-certs
-         %base-packages))
-
-(define %testament-base-services
-  (cons* (modify-services %base-services
-           (sysctl-service-type
-            config => (sysctl-configuration
-                       (inherit config)
-                       (settings %kicksecure-sysctl-rules))))))

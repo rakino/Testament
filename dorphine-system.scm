@@ -6,12 +6,14 @@
   #:use-module (blobs dorphine)
   #:use-module (testament common)
   #:use-module (testament counter-stop)
+  #:use-module (testament kicksecure)
   #:use-module (ice-9 match)
   #:use-module (guix gexp)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bittorrent)
+  #:use-module (gnu packages certs)
   #:use-module (gnu packages disk)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages linux)
@@ -83,13 +85,22 @@
    #:extra-version "dorphine"))
 
 (define %dorphine-initrd-modules
-  (append %testament-base-initrd-modules
-          %base-initrd-modules))
+  (cons* "btrfs"
+         "xxhash_generic"
+         %base-initrd-modules))
 
 (operating-system
   (kernel linux-dorphine)
-  (kernel-arguments `(,@%testament-default-kernel-arguments
-                      "modprobe.blacklist=hid_nintendo,nouveau,pcspkr,snd_pcsp"))
+  (kernel-arguments
+   (cons* (string-append "modprobe.blacklist="
+                         (string-join
+                          (cons* "hid_nintendo"
+                                 "nouveau"
+                                 "pcspkr"
+                                 "snd_pcsp"
+                                 (@@ (gnu system) %default-modprobe-blacklist))
+                          ","))
+          %kicksecure-kernel-arguments))
 
   (bootloader (bootloader-configuration
                (bootloader grub-efi-bootloader)
@@ -104,7 +115,9 @@
                  (image (testament-file-object "grub.png"))
                  (resolution '(2560 . 1600))))))
 
-  (keyboard-layout %testament-default-keyboard-layout)
+  (keyboard-layout
+   (keyboard-layout "us" "dvorak"
+                    #:options '("ctrl:nocaps")))
 
   (initrd (lambda (file-systems . rest)
             (microcode-initrd file-systems
@@ -181,7 +194,9 @@
            (shell (file-append bash "/bin/bash")))
           %base-user-accounts))
 
-  (packages (map normalize-package %testament-base-packages))
+  (packages
+   (cons nss-certs
+         %base-packages))
 
   (timezone "Asia/Hong_Kong")
 
@@ -303,18 +318,18 @@
                             ("vm.watermark_boost_factor" . "0")
                             ("vm.watermark_scale_factor" . "125")))
 
-          (modify-services %testament-base-services
+          (modify-services %base-services
             (delete login-service-type)
             (delete mingetty-service-type)
 
             (console-font-service-type
-             config => (map (lambda (vtnr)
-                              (let* ((path "/share/consolefonts/ter-132n")
-                                     (font (file-append font-terminus path))
-                                     (vtnr (number->string vtnr))
-                                     (tty (string-append "tty" vtnr)))
-                                `(,tty . ,font)))
-                            (iota 6 1)))
+             _ => (map (lambda (vtnr)
+                         (let* ((path "/share/consolefonts/ter-132n")
+                                (font (file-append font-terminus path))
+                                (vtnr (number->string vtnr))
+                                (tty (string-append "tty" vtnr)))
+                           (cons tty font)))
+                       (iota 6 1)))
 
             (guix-service-type
              config => (guix-configuration
@@ -325,4 +340,9 @@
                            "https://substitutes.nonguix.org"))
                         (authorized-keys
                          (cons* %guix-authorized-key-nonguix
-                                (guix-configuration-authorized-keys config)))))))))
+                                (guix-configuration-authorized-keys config)))))
+
+            (sysctl-service-type
+             config => (sysctl-configuration
+                        (inherit config)
+                        (settings %kicksecure-sysctl-rules)))))))
