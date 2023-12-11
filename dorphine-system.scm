@@ -154,11 +154,7 @@
                      (device (uuid "6985-D4C6" 'fat))
                      (mount-point "/efi")
                      (type "vfat")
-                     (mount? #f))
-                   (file-system
-                     (inherit rootfs)
-                     (mount-point "/boot")
-                     (options "compress=zstd,discard=async,subvol=Boot")))
+                     (mount? #f)))
 
              (map (match-lambda
                     ((mount-point subvolume)
@@ -166,8 +162,11 @@
                        (inherit rootfs)
                        (mount-point mount-point)
                        (check? #f)
-                       (options (string-append "compress=zstd,discard=async,subvol=" subvolume)))))
-                  '(("/home"    "Home")
+                       (options
+                        (string-append
+                         "compress=zstd,discard=async,subvol=" subvolume)))))
+                  '(("/boot"    "Boot")
+                    ("/home"    "Home")
                     ("/var/lib" "Data")))
 
              ;; Devices
