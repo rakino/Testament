@@ -45,7 +45,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages qt)
   #:use-module (gnu packages rsync)
-  #:use-module (gnu packages rust-apps)
+  #:use-module (gnu packages rust)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
@@ -386,8 +386,7 @@ fi")))
                 wl-clipboard
                 xdg-desktop-portal
                 xdg-desktop-portal-wlr
-                xdg-utils
-                zoxide)
+                xdg-utils)
           (list adwaita-icon-theme
                 hicolor-icon-theme
                 qogir-icon-theme)
