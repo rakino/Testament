@@ -12,6 +12,7 @@
   #:use-module (srfi srfi-26)
   #:use-module (guix channels)
   #:use-module (guix gexp)
+  #:use-module (guix git-download)
   #:use-module (guix inferior)
   #:use-module (guix packages)
   #:use-module (guix utils)
@@ -23,15 +24,19 @@
   #:use-module (gnu home services guix)
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services shells)
+  #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages freedesktop)
+  #:use-module (gnu packages gettext)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnome-xyz)
   #:use-module (gnu packages gnupg)
@@ -47,6 +52,7 @@
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust)
   #:use-module (gnu packages ssh)
+  #:use-module (gnu packages texinfo)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages web)
@@ -80,6 +86,27 @@
 
 (define pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
+
+(define shepherd/dolly
+  (let ((base shepherd-0.10)
+        (commit "5dbde1c0fbe3b19cc8e11d9733837b8ab7040e59")
+        (revision "21"))
+    (package
+      (inherit base)
+      (name "shepherd")
+      (version (git-version "0.10.2" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://git.savannah.gnu.org/git/shepherd.git")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0yv655d2nczfrib2p9fww3y0afcigs1ghs7pqhd3bl69i4kz11l0"))))
+      (native-inputs
+       (modify-inputs (package-native-inputs base)
+         (prepend autoconf automake gettext-minimal texinfo help2man))))))
 
 (define swayidle/dolly
   (let ((base swayidle))
@@ -904,6 +931,10 @@ fi")))
         (service home-pipewire-service-type
                  (home-pipewire-configuration
                   (wireplumber wireplumber/dolly)))
+
+        (service home-shepherd-service-type
+                 (home-shepherd-configuration
+                  (shepherd shepherd/dolly)))
 
         (service home-syncthing-service-type
                  (for-home

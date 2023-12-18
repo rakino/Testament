@@ -9,16 +9,23 @@
   #:use-module (testament kicksecure)
   #:use-module (ice-9 match)
   #:use-module (guix gexp)
+  #:use-module (guix git-download)
+  #:use-module (guix packages)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages certs)
   #:use-module (gnu packages disk)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages games)
+  #:use-module (gnu packages gettext)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages man)
   #:use-module (gnu packages security-token)
+  #:use-module (gnu packages texinfo)
   #:use-module (gnu packages wm)
   #:use-module (gnu services)
   #:use-module (gnu services base)
@@ -27,6 +34,7 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services security-token)
+  #:use-module (gnu services shepherd)
   #:use-module (gnu services sysctl)
   #:use-module (gnu services virtualization)
   #:use-module (gnu services xorg)
@@ -44,6 +52,33 @@
   #:use-module (rosenthal services child-error)
   #:use-module (rosenthal services dns)
   #:use-module (rosenthal services networking))
+
+
+;;
+;; Dolly
+;;
+
+
+(define shepherd/dolly
+  (let ((base shepherd-0.10)
+        (commit "5dbde1c0fbe3b19cc8e11d9733837b8ab7040e59")
+        (revision "21"))
+    (package
+      (inherit base)
+      (name "shepherd")
+      (version (git-version "0.10.2" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://git.savannah.gnu.org/git/shepherd.git")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0yv655d2nczfrib2p9fww3y0afcigs1ghs7pqhd3bl69i4kz11l0"))))
+      (native-inputs
+       (modify-inputs (package-native-inputs base)
+         (prepend autoconf automake gettext-minimal texinfo help2man))))))
 
 
 ;;
@@ -199,6 +234,14 @@
          %base-packages))
 
   (timezone "Asia/Hong_Kong")
+
+  (essential-services
+   (modify-services (operating-system-default-essential-services
+                     this-operating-system)
+     (shepherd-root-service-type
+      config => (shepherd-configuration
+                 (inherit config)
+                 (shepherd shepherd/dolly)))))
 
   (services
    (cons* (service bluetooth-service-type)
