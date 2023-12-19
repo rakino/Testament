@@ -6,16 +6,13 @@
   #:use-module (blobs dorphine)
   #:use-module (testament common)
   #:use-module (testament counter-stop)
+  #:use-module (testament packages)
   #:use-module (ice-9 format)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
-  #:use-module (guix channels)
   #:use-module (guix gexp)
-  #:use-module (guix git-download)
-  #:use-module (guix inferior)
   #:use-module (guix packages)
-  #:use-module (guix utils)
   #:use-module (gnu home)
   #:use-module (gnu home services)
   #:use-module (gnu home services desktop)
@@ -28,15 +25,12 @@
   #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
-  #:use-module (gnu packages admin)
-  #:use-module (gnu packages autotools)
   #:use-module (gnu packages commencement)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages freedesktop)
-  #:use-module (gnu packages gettext)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnome-xyz)
   #:use-module (gnu packages gnupg)
@@ -52,7 +46,6 @@
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust)
   #:use-module (gnu packages ssh)
-  #:use-module (gnu packages texinfo)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages web)
@@ -66,71 +59,6 @@
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages tree-sitter)
   #:use-module (rosenthal services child-error))
-
-
-;;
-;; Dolly
-;;
-
-
-(define rofi-dolly
-  (package-input-rewriting/spec
-   `(("rofi" . ,(const rofi-wayland)))))
-
-(define gopls/dolly
-  (let ((base gopls))
-    (package
-      (inherit base)
-      (propagated-inputs '())
-      (inputs (package-propagated-inputs base)))))
-
-(define pinentry-rofi/dolly
-  (rofi-dolly pinentry-rofi))
-
-(define shepherd/dolly
-  (let ((base shepherd-0.10)
-        (commit "5dbde1c0fbe3b19cc8e11d9733837b8ab7040e59")
-        (revision "21"))
-    (package
-      (inherit base)
-      (name "shepherd")
-      (version (git-version "0.10.2" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://git.savannah.gnu.org/git/shepherd.git")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "0yv655d2nczfrib2p9fww3y0afcigs1ghs7pqhd3bl69i4kz11l0"))))
-      (native-inputs
-       (modify-inputs (package-native-inputs base)
-         (prepend autoconf automake gettext-minimal texinfo help2man))))))
-
-(define swayidle/dolly
-  (let ((base swayidle))
-    (package
-      (inherit base)
-      (arguments
-       (strip-keyword-arguments
-        '(#:configure-flags)
-        (package-arguments base)))
-      (inputs
-       (modify-inputs (package-inputs base)
-         (delete "elogind"))))))
-
-(define wireplumber/dolly
-  (let ((base wireplumber))
-    (package
-      (inherit base)
-      (arguments
-       (substitute-keyword-arguments (package-arguments base)
-         ((#:configure-flags flags ''())
-          #~(cons "-Delogind=disabled" #$flags))))
-      (inputs
-       (modify-inputs (package-inputs base)
-         (delete "elogind"))))))
 
 
 ;;
@@ -342,24 +270,6 @@ fi")))
 
 
 ;;
-;; Inferior
-;;
-
-
-(define firefox
-  (let* ((channels
-          (list (channel
-                 (inherit %channel-guix)
-                 (commit "aeb494322ca9dec4a4d66a7d063239c8536bd538"))
-                (channel
-                 (inherit %channel-nonguix)
-                 (commit "b5b890f30a0566599a6933f3b65f56848650ec4f"))))
-         (inferior
-          (inferior-for-channels channels)))
-    (first (lookup-inferior-packages inferior "firefox" "120.0.1"))))
-
-
-;;
 ;; Package bundles
 ;;
 
@@ -396,7 +306,7 @@ fi")))
 
 (define %home-packages
   (append (list buku
-                firefox
+                firefox/dolly
                 git
                 `(,git "send-email")
                 git-crypt
