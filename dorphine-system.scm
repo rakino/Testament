@@ -296,7 +296,9 @@
                    (smartdns-configuration
                     (config-file %config-smartdns)))
 
-          (service tailscale-service-type)
+          (service tailscale-service-type
+                   (tailscale-configuration
+                    (iptables iptables-nft)))
 
           (service tor-service-type
                    (tor-configuration
