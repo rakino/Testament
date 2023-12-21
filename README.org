@@ -2,5 +2,5 @@
 
 Dependencies:
 + Guix (master + [[https://issues.guix.gnu.org/64620][home-emacs patch]] + [[https://issues.guix.gnu.org/63863][home-pipewire patch]])
-+ [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/320][xanmod update]])
++ [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/375][xanmod update]])
 + [[https://codeberg.org/hako/Rosenthal][Rosenthal]]
