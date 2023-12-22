@@ -302,6 +302,7 @@ fi")))
 
         (service home-channels-service-type
                  (list %channel-guix
+                       %channel-guixcn
                        %channel-nonguix
                        %channel-rosenthal))
 
