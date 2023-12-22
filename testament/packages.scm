@@ -62,8 +62,8 @@
 
 (define-public shepherd/dolly
   (let ((base shepherd-0.10)
-        (commit "5dbde1c0fbe3b19cc8e11d9733837b8ab7040e59")
-        (revision "21"))
+        (commit "9dfeb4ecd6429135f5fb8ceb6d43ae7054fbc193")
+        (revision "23"))
     (package
       (inherit base)
       (name "shepherd")
@@ -76,7 +76,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0yv655d2nczfrib2p9fww3y0afcigs1ghs7pqhd3bl69i4kz11l0"))))
+                  "0v8ybj6dv625nphq05d0s3bfnm3lyypi9myvcih6caywzqy838b3"))))
       (native-inputs
        (modify-inputs (package-native-inputs base)
          (prepend autoconf automake gettext-minimal texinfo help2man))))))
