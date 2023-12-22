@@ -85,7 +85,7 @@
         (tessen     (file-append tessen "/bin/tessen"))
         (wl-copy    (file-append wl-clipboard "/bin/wl-copy"))
         (wlsunset   (file-append wlsunset "/bin/wlsunset"))
-        (wpctl      (file-append wireplumber/dolly "/bin/wpctl")))
+        (wpctl      (file-append wireplumber-minimal "/bin/wpctl")))
     (mixed-text-file
      filename
      (testament-file-content filename) "\n"
@@ -783,7 +783,7 @@ fi")))
 
         (service home-pipewire-service-type
                  (home-pipewire-configuration
-                  (wireplumber wireplumber/dolly)))
+                  (wireplumber wireplumber-minimal)))
 
         (service home-shepherd-service-type
                  (home-shepherd-configuration

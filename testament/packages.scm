@@ -2,7 +2,6 @@
   #:use-module (testament counter-stop)
   #:use-module (srfi srfi-1)
   #:use-module (guix channels)
-  #:use-module (guix gexp)
   #:use-module (guix inferior)
   #:use-module (guix packages)
   #:use-module (guix utils)
@@ -12,7 +11,6 @@
   #:use-module (gnu packages gettext)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages golang)
-  #:use-module (gnu packages linux)
   #:use-module (gnu packages man)
   #:use-module (gnu packages texinfo)
   #:use-module (gnu packages wm)
@@ -91,18 +89,6 @@
        (strip-keyword-arguments
         '(#:configure-flags)
         (package-arguments base)))
-      (inputs
-       (modify-inputs (package-inputs base)
-         (delete "elogind"))))))
-
-(define-public wireplumber/dolly
-  (let ((base wireplumber))
-    (package
-      (inherit base)
-      (arguments
-       (substitute-keyword-arguments (package-arguments base)
-         ((#:configure-flags flags ''())
-          #~(cons "-Delogind=disabled" #$flags))))
       (inputs
        (modify-inputs (package-inputs base)
          (delete "elogind"))))))
