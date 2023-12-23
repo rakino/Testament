@@ -1,8 +1,34 @@
 ;; Contents extracted from Kicksecure's resources.
 
 (define-module (testament kicksecure)
-  #:export (%kicksecure-kernel-arguments
+  #:export (kicksecure-delete
+            %kicksecure-kernel-arguments
             %kicksecure-sysctl-rules))
+
+(define (kicksecure-delete item lst)
+  "Return a newly-created copy of LST with elements or pairs whose
+keys `string-prefix?' with ITEM removed.
+
+For example:
+  (kicksecure-delete \"loglevel\"
+                     '(\"quiet\" \"loglevel=0\" \"loglevel=1\"))
+
+  => (\"quiet\")
+
+  (kicksecure-delete \"net.ipv6.conf\"
+                     '((\"net.ipv6.conf.all.accept_ra\" . \"0\")
+                       (\"net.ipv6.conf.default.accept_ra\" . \"0\")))
+
+  => ()"
+  (cond
+   ((null? lst) '())
+   ((string-prefix?
+     item
+     (if (pair? (car lst)) (caar lst) (car lst)))
+    (kicksecure-delete item (cdr lst)))
+   (else
+    (cons (car lst)
+          (kicksecure-delete item (cdr lst))))))
 
 ;; Source: <https://github.com/Kicksecure/security-misc>
 ;; Extracted with the following command:
