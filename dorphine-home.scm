@@ -494,16 +494,7 @@ fi")))
                     (emacs-package
                      (name 'hl-todo)
                      (package emacs-hl-todo)
-                     (options
-                      '((hl-todo-highlight-punctuation . ":")
-                        (hl-todo-keyword-faces
-                         . (("TODO"       warning bold)
-                            ("FIXME"      error bold)
-                            ("HACK"       font-lock-constant-face bold)
-                            ("REVIEW"     font-lock-keyword-face bold)
-                            ("NOTE"       success bold)
-                            ("DEPRECATED" font-lock-doc-face bold)
-                            ("DEBUG"      error bold)))))
+                     (options '((hl-todo-highlight-punctuation . ":")))
                      (hooks '((prog-mode . hl-todo-mode))))
 
                     (emacs-package
