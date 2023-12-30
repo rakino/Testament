@@ -127,7 +127,7 @@ bindsym $mod+Shift+~@*~a move container to workspace number ~a~%"
      "bindsym $mod+r exec " rofi " -show combi\n"
      "bindsym $mod+l exec " swaylock " " lock-args "\n"
 
-     "bindsym Print exec " wl-copy " --type image/png < $(" grimshot " save area " screenshot ")\n"
+     "bindsym Print exec " wl-copy " --type image/png < $(" grimshot " save window " screenshot ")\n"
      "bindsym XF86AudioRaiseVolume  exec " wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%+ --limit 1.0\n"
      "bindsym XF86AudioLowerVolume  exec " wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%-\n"
      "bindsym XF86AudioMute         exec " wpctl " set-mute   @DEFAULT_AUDIO_SINK@   toggle\n"
