@@ -307,8 +307,7 @@ fi"))
                  (home-emacs-configuration
                   (emacs emacs-pgtk)
                   (extra-packages
-                   (list emacs-magit
-                         emacs-zig-mode))
+                   (list emacs-zig-mode))
                   (package-serializer %emacs-use-package-serializer)
                   (default-init
                     (emacs-configuration
@@ -491,6 +490,18 @@ fi"))
                      (name 'macrostep-geiser)
                      (package emacs-macrostep-geiser)
                      (hooks '((geiser-mode . macrostep-geiser-setup))))
+
+                    (emacs-package
+                     (name 'magit)
+                     (package emacs-magit)
+                     (options
+                      '((magit-define-global-key-bindings . recommended))))
+
+                    (emacs-package
+                     (name 'magit-extras)
+                     (package emacs-magit)
+                     (load-force? #t)
+                     (load-after-packages '(project)))
 
                     (emacs-package
                      (name 'mbsync)
