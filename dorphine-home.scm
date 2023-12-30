@@ -407,7 +407,8 @@ fi")))
                     (emacs-package
                      (name 'eat)
                      (package emacs-eat)
-                     (options '((eat-enable-auto-line-mode . #t))))
+                     (options '((eat-enable-auto-line-mode . #t)))
+                     (hooks '((eshell-mode . eat-eshell-mode))))
 
                     (emacs-package
                      (name 'eglot)
@@ -444,6 +445,10 @@ fi")))
                                 (erc-tls :server "chat.sr.ht"
                                          :user "hako/irc.libera.chat"
                                          :password #$%erc-pass)))))
+
+                    (emacs-package
+                     (name 'eshell)
+                     (options '((eshell-visual-commands . #f))))
 
                     (emacs-package
                      (name 'emacs)
