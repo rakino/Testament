@@ -795,7 +795,6 @@ fi"))
                         `(,@%testament-xdg-base-directory-env-vars
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
-                          ("GUILE_AUTO_COMPILE" . "0")
                           ("MOZ_ENABLE_WAYLAND" . "1")
                           ("VISUAL" . "$EDITOR")))
 
