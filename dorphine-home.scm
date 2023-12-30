@@ -764,7 +764,7 @@ fi")))
                     (emacs-package
                      (name 'yasnippet)
                      (package emacs-yasnippet)
-                     (hooks '((after-init . yas-global-mode))))))))
+                     (hooks '((prog-mode . yas-minor-mode))))))))
 
         (service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
