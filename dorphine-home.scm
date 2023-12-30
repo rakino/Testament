@@ -448,7 +448,11 @@ fi")))
 
                     (emacs-package
                      (name 'eshell)
-                     (options '((eshell-visual-commands . #f))))
+                     (options '((eshell-visual-commands . #f)))
+                     (extra-after-load
+                      (list #%(dolist
+                               (module '(eshell-elecslash eshell-xtra))
+                               (add-to-list 'eshell-modules-list module t)))))
 
                     (emacs-package
                      (name 'emacs)
