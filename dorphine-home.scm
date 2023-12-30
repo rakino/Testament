@@ -352,13 +352,6 @@ fi"))
                   (configured-packages
                    (list
                     (emacs-package
-                     (name 'gcmh)
-                     (package emacs-gcmh)
-                     (load-force? #t)
-                     (extra-after-load
-                      (list #%(gcmh-mode +1))))
-
-                    (emacs-package
                      (name 'no-littering)
                      (package emacs-no-littering)
                      (load-force? #t)
