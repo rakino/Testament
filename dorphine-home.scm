@@ -146,16 +146,15 @@ resume 'swaymsg \"output * dpms on\"'\n")))
 (define %config-wget
   (plain-file
    "wgetrc"
-   (format #f "hsts-file = ~a/wget-hsts~%"
-           (getenv "XDG_CACHE_HOME"))))
+   "hsts-file = ~/.cache/wget-hsts\n"))
 
 (define %shell-profile-wm
   (plain-file
    "shell-profile-wm"
-   (format #f "~
+   "
 if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
     exec sway --unsupported-gpu
-fi")))
+fi"))
 
 
 ;;
@@ -167,11 +166,7 @@ fi")))
   (list #%(setq package-enable-at-startup nil)
 
         #%(when (fboundp 'startup-redirect-eln-cache)
-            (startup-redirect-eln-cache
-             (convert-standard-filename
-              (expand-file-name "eln-cache/"
-                                (or (getenv "XDG_DATA_HOME")
-                                    "~/.local/share")))))))
+            (startup-redirect-eln-cache "~/.local/share/eln-cache"))))
 
 (define %emacs-set-org-capture-template
   (list #%(defun org-hugo-new-subtree-post-capture-template ()
@@ -296,9 +291,9 @@ fi")))
                   (bashrc
                    (list (plain-file
                           "bashrc-eat"
-                          (format #f "
+                          "
 [ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && \\
-  source \"$EAT_SHELL_INTEGRATION_DIR/bash\"~%"))))))
+  source \"$EAT_SHELL_INTEGRATION_DIR/bash\"")))))
 
         (service home-channels-service-type
                  (list %channel-guix
@@ -370,12 +365,9 @@ fi")))
                      (extra-after-load
                       (list #%(no-littering-theme-backups)))
                      (extra-init
-                      (list #%(setq no-littering-etc-directory
-                                    (or (getenv "XDG_CONFIG_HOME")
-                                        "~/.config"))
-                            #%(setq no-littering-var-directory
-                                    (or (getenv "XDG_DATA_HOME")
-                                        "~/.local/share")))))
+                      (list
+                       #%(setq no-littering-etc-directory "~/.config"
+                               no-littering-var-directory "~/.local/share"))))
 
                     (emacs-package
                      (name 'apheleia)
