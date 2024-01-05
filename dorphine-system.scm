@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022, 2023, 2024 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,6 +9,7 @@
   #:use-module (testament kicksecure)
   #:use-module (testament packages)
   #:use-module (ice-9 match)
+  #:use-module (srfi srfi-1)
   #:use-module (guix gexp)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
@@ -198,7 +199,12 @@
 
   (packages
    (cons nss-certs
-         %base-packages))
+         (fold delete-package-from-list
+               %base-packages
+               '(;; From %base-packages-interactive
+                 "mg" "nano" "nvi"
+                 ;; From %base-packages-networking
+                 "isc-dhcp" "iw" "wireless-tools"))))
 
   (timezone "Asia/Hong_Kong")
 
