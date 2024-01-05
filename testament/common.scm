@@ -1,13 +1,16 @@
-;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2023, 2024 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (testament common)
   #:use-module ((ice-9 rdelim) #:select (read-delimited))
   #:use-module ((guix gexp) #:select (local-file))
+  #:use-module ((guix packages) #:select (package-name))
   #:export (testament-find-file
             testament-file-content
-            testament-file-object))
+            testament-file-object
+
+            delete-package-from-list))
 
 (define (testament-path)
   "Get the path to Testament repository, fallback to \"~/Workspace/Testament\"
@@ -40,3 +43,9 @@ repository.  Return a string of path to the file, or #f if file not found."
 (define (testament-file-object name)
   "Similar to 'testament-file-content' but return a file-like object."
   (local-file (testament-find-file name)))
+
+(define (delete-package-from-list name lst)
+  "Return a copy of package list LST, removing packages named NAME."
+  (filter (lambda (pkg)
+            (not (string=? name (package-name pkg))))
+          lst))
