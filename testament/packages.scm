@@ -1,3 +1,7 @@
+;; SPDX-FileCopyrightText: 2023, 2024 Hilton Chain <hako@ultrarare.space>
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
+
 (define-module (testament packages)
   #:use-module (testament counter-stop)
   #:use-module (srfi srfi-1)
@@ -62,12 +66,12 @@
 
 (define-public shepherd/dolly
   (let ((base shepherd-0.10)
-        (commit "9dfeb4ecd6429135f5fb8ceb6d43ae7054fbc193")
-        (revision "23"))
+        (commit "79b8bd8af4d94d3451aa50688d5e1b6a29ea0d9b")
+        (revision "3"))
     (package
       (inherit base)
       (name "shepherd")
-      (version (git-version "0.10.2" revision commit))
+      (version (git-version "0.10.3rc1" revision commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -76,7 +80,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0v8ybj6dv625nphq05d0s3bfnm3lyypi9myvcih6caywzqy838b3"))))
+                  "0wwbxm8dvxy17ammssbsrja7sxz9z69w8rly5j7wsnr37j9wbr91"))))
       (native-inputs
        (modify-inputs (package-native-inputs base)
          (prepend autoconf automake gettext-minimal texinfo help2man))))))
