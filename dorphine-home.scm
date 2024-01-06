@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022, 2023, 2024 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -54,7 +54,6 @@
   #:use-module (gnu packages zig)
   #:use-module (gnu services)
   #:use-module (gnu services mcron)
-  #:use-module (nongnu packages fonts)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages tree-sitter)
@@ -264,11 +263,6 @@ fi"))
                 qogir-icon-theme)
           (list font-adobe-source-sans-pro
                 font-adobe-source-serif-pro
-                font-apple-new-york
-                font-apple-sf-arabic
-                font-apple-sf-compact
-                font-apple-sf-mono
-                font-apple-sf-pro
                 font-chiron-hei-hk
                 font-chiron-sung-hk
                 font-google-noto
