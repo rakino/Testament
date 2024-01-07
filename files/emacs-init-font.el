@@ -5,7 +5,7 @@
                      (unicode . "LXGW WenKai TC")
                      (modeline . "Source Serif Pro")
                      (fixed . "Sarasa Mono TC")
-                     (variable . "Bembo Std"))
+                     (variable . "Cardo"))
   "Fonts to use.")
 
 (defun nema//get-font-family (key)

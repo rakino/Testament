@@ -263,6 +263,7 @@ fi"))
                 qogir-icon-theme)
           (list font-adobe-source-sans-pro
                 font-adobe-source-serif-pro
+                font-cardo
                 font-chiron-hei-hk
                 font-chiron-sung-hk
                 font-google-noto
