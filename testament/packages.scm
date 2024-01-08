@@ -9,14 +9,8 @@
   #:use-module (guix inferior)
   #:use-module (guix packages)
   #:use-module (guix utils)
-  #:use-module (guix git-download)
-  #:use-module (gnu packages admin)
-  #:use-module (gnu packages autotools)
-  #:use-module (gnu packages gettext)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages golang)
-  #:use-module (gnu packages man)
-  #:use-module (gnu packages texinfo)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg))
 
@@ -63,27 +57,6 @@
 
 (define-public pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
-
-(define-public shepherd/dolly
-  (let ((base shepherd-0.10)
-        (commit "79b8bd8af4d94d3451aa50688d5e1b6a29ea0d9b")
-        (revision "3"))
-    (package
-      (inherit base)
-      (name "shepherd")
-      (version (git-version "0.10.3rc1" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://git.savannah.gnu.org/git/shepherd.git")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "0wwbxm8dvxy17ammssbsrja7sxz9z69w8rly5j7wsnr37j9wbr91"))))
-      (native-inputs
-       (modify-inputs (package-native-inputs base)
-         (prepend autoconf automake gettext-minimal texinfo help2man))))))
 
 (define-public swayidle/dolly
   (let ((base swayidle))

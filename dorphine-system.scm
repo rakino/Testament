@@ -7,7 +7,6 @@
   #:use-module (testament common)
   #:use-module (testament counter-stop)
   #:use-module (testament kicksecure)
-  #:use-module (testament packages)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (guix gexp)
@@ -29,7 +28,6 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services security-token)
-  #:use-module (gnu services shepherd)
   #:use-module (gnu services sysctl)
   #:use-module (gnu services virtualization)
   #:use-module (gnu services xorg)
@@ -207,14 +205,6 @@
                  "isc-dhcp" "iw" "wireless-tools"))))
 
   (timezone "Asia/Hong_Kong")
-
-  (essential-services
-   (modify-services (operating-system-default-essential-services
-                     this-operating-system)
-     (shepherd-root-service-type
-      config => (shepherd-configuration
-                 (inherit config)
-                 (shepherd shepherd/dolly)))))
 
   (services
    (cons* (service bluetooth-service-type)

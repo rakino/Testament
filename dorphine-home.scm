@@ -21,7 +21,6 @@
   #:use-module (gnu home services guix)
   #:use-module (gnu home services mcron)
   #:use-module (gnu home services shells)
-  #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
@@ -775,10 +774,6 @@ fi"))
         (service home-pipewire-service-type
                  (home-pipewire-configuration
                   (wireplumber wireplumber-minimal)))
-
-        (service home-shepherd-service-type
-                 (home-shepherd-configuration
-                  (shepherd shepherd/dolly)))
 
         (service home-syncthing-service-type
                  (for-home

@@ -6,7 +6,6 @@
   #:use-module (blobs paradise)
   #:use-module (testament counter-stop)
   #:use-module (testament kicksecure)
-  #:use-module (testament packages)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
   #:use-module (gnu packages certs)
@@ -22,7 +21,6 @@
   #:use-module (gnu services linux)
   #:use-module (gnu services networking)
   #:use-module (gnu services security)
-  #:use-module (gnu services shepherd)
   #:use-module (gnu services ssh)
   #:use-module (gnu services sysctl)
   #:use-module (gnu system)
@@ -92,14 +90,6 @@
           %base-packages))
 
   (timezone "Asia/Hong_Kong")
-
-  (essential-services
-   (modify-services (operating-system-default-essential-services
-                     this-operating-system)
-     (shepherd-root-service-type
-      config => (shepherd-configuration
-                 (inherit config)
-                 (shepherd shepherd/dolly)))))
 
   (services
    (cons* (service cloudflare-tunnel-service-type
