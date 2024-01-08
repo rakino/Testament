@@ -207,17 +207,6 @@ fi"))
 ;;
 
 
-(define %language-packages-for-emacs
-  (list ccls
-        gcc-toolchain-13
-        go-1.20
-        gopls/dolly
-        python
-        python-black
-        rust-analyzer
-        shellcheck
-        zig))
-
 (define %tree-sitter-packages-for-emacs
   (list tree-sitter-bash
         tree-sitter-c
@@ -257,6 +246,15 @@ fi"))
                 xdg-desktop-portal
                 xdg-desktop-portal-wlr
                 xdg-utils)
+          (list ccls
+                gcc-toolchain-13
+                go-1.21
+                gopls/dolly
+                python
+                python-black
+                `(,rust "tools")
+                shellcheck
+                zig)
           (list adwaita-icon-theme
                 hicolor-icon-theme
                 qogir-icon-theme)
@@ -390,7 +388,6 @@ fi"))
 
                     (emacs-package
                      (name 'eglot)
-                     (extra-packages %language-packages-for-emacs)
                      (hooks
                       (map (cut cons <> 'eglot-ensure)
                            '(cmake-ts-mode
