@@ -471,6 +471,20 @@ fi"))
                      (package emacs-guix)
                      (hooks '((scheme-mode . guix-devel-mode))))
 
+                    ;; https://gitlab.com/emacs-guix/emacs-guix/-/issues/19
+                    ;; See also: `guix-repl-guile-args'
+                    (emacs-package
+                     (name 'guix-repl)
+                     (package emacs-guix)
+                     (options
+                      '((guix-guile-program . ("guix" "repl"))
+                        (guix-repl-use-latest . #f)
+                        (guix-repl-use-server . #f)))
+                     (extra-after-load
+                      (list #%(setq guix-config-scheme-compiled-directory nil
+                                    guix-config-guix-scheme-directory nil
+                                    guix-load-path nil))))
+
                     (emacs-package
                      (name 'helpful)
                      (package emacs-helpful)
