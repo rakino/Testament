@@ -436,6 +436,12 @@ fi"))
                                (add-to-list 'eshell-modules-list module t)))))
 
                     (emacs-package
+                     (name 'eshell-syntax-highlighting)
+                     (package emacs-eshell-syntax-highlighting)
+                     (hooks
+                      '((after-init . eshell-syntax-highlighting-global-mode))))
+
+                    (emacs-package
                      (name 'emacs)
                      (hooks
                       '((before-save . delete-trailing-whitespace)
