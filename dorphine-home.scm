@@ -423,6 +423,11 @@ fi"))
                                          :password #$%erc-pass)))))
 
                     (emacs-package
+                     (name 'esh-autosuggest)
+                     (package emacs-esh-autosuggest)
+                     (hooks '((eshell-mode . esh-autosuggest-mode))))
+
+                    (emacs-package
                      (name 'eshell)
                      (options '((eshell-visual-commands . #f)))
                      (extra-after-load
