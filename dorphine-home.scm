@@ -44,6 +44,7 @@
   #:use-module (gnu packages qt)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust)
+  #:use-module (gnu packages shells)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
@@ -434,6 +435,16 @@ fi"))
                      (hooks
                       '((before-save . delete-trailing-whitespace)
                         (minibuffer-setup . cursor-intangible-mode))))
+
+                    (emacs-package
+                     (name 'fish-completion)
+                     (package emacs-fish-completion)
+                     (extra-packages (list emacs-bash-completion))
+                     (options
+                      `((fish-completion-command
+                         . ,(file-append fish "/bin/fish"))
+                        (fish-completion-fallback-on-bash-p . #t)))
+                     (hooks '((after-init . global-fish-completion-mode))))
 
                     (emacs-package
                      (name 'geiser)
