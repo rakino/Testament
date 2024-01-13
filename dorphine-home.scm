@@ -768,7 +768,7 @@ fi"))
                         (wl-smtp-posting-server . "mail.boiledscript.com")
                         (wl-smtp-posting-user . "hako@ultrarare.space")
                         (wl-summary-auto-refile-skip-marks . #f)
-                        (wl-summary-width . 185)))
+                        (wl-summary-width . 150)))
                      (extra-after-load
                       (list #%(require 'wl-spam)))
                      (extra-init
