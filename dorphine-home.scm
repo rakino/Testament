@@ -755,6 +755,7 @@ fi"))
                         (wl-fcc . ".inbox")
                         (wl-fcc-force-as-read . #t)
                         (wl-local-domain . "ultrarare.space")
+                        (wl-quicksearch-folder . "[]~/.local/share/mail!rgrep")
                         (wl-refile-rule-alist
                          . (("List-Id"
                              ("bug-guix"     . ".hako@ultrarare.space/Zbug-guix")
