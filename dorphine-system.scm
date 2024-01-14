@@ -27,6 +27,7 @@
   #:use-module (gnu services linux)
   #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
+  #:use-module (gnu services pm)
   #:use-module (gnu services security-token)
   #:use-module (gnu services sysctl)
   #:use-module (gnu services virtualization)
@@ -295,6 +296,8 @@
           (service tailscale-service-type
                    (tailscale-configuration
                     (iptables iptables-nft)))
+
+          (service tlp-service-type)
 
           (service tor-service-type
                    (tor-configuration
