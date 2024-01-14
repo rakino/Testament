@@ -191,7 +191,7 @@
            (name "hako")
            (group "users")
            (supplementary-groups
-            '("plugdev" "seat" "audio" "video" "wheel"))
+            '("audio" "plugdev" "seat" "video" "wheel"))
            (home-directory "/home/hako")
            (shell (file-append bash "/bin/bash")))
           %base-user-accounts))
@@ -231,7 +231,7 @@
           (service greetd-service-type
                    (greetd-configuration
                     (greeter-supplementary-groups
-                     '("input" "video" "seat"))
+                     '("input" "seat" "video"))
                     (terminals
                      (map (lambda (vtnr)
                             (greetd-terminal-configuration
