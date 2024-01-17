@@ -84,7 +84,6 @@
         (rofi       (file-append rofi-wayland "/bin/rofi"))
         (swayidle   (file-append swayidle/dolly "/bin/swayidle"))
         (swaylock   (file-append swaylock-effects "/bin/swaylock"))
-        (tessen     (file-append tessen "/bin/tessen"))
         (wl-copy    (file-append wl-clipboard "/bin/wl-copy"))
         (wlsunset   (file-append wlsunset "/bin/wlsunset"))
         (wpctl      (file-append wireplumber-minimal "/bin/wpctl")))
@@ -125,7 +124,6 @@ bindsym $mod+Shift+~@*~a move container to workspace number ~a~%"
      "bindswitch --reload --locked lid:off output eDP-1 enable\n"
 
      "bindsym $mod+e exec emacsclient --create-frame --no-wait --alternate-editor=''\n"
-     "bindsym $mod+d exec " tessen "\n"
      "bindsym $mod+r exec " rofi " -show combi\n"
      "bindsym $mod+l exec " swaylock " " lock-args "\n"
 
@@ -248,6 +246,7 @@ fi"))
                 rofi-wayland
                 rsync
                 sway
+                tessen
                 unzip
                 wl-clipboard
                 xdg-desktop-portal
