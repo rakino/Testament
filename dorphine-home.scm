@@ -25,6 +25,7 @@
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
   #:use-module (gnu packages commencement)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
@@ -243,10 +244,12 @@ fi"))
                 rofi-wayland
                 rsync
                 sway
+                unzip
                 wl-clipboard
                 xdg-desktop-portal
                 xdg-desktop-portal-wlr
-                xdg-utils)
+                xdg-utils
+                zstd)
           (list ccls
                 gcc-toolchain-13
                 go-1.21
