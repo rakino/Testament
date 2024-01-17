@@ -1,8 +1,7 @@
 ;; -*- mode: scheme -*-
 (use-modules (gnu machine)
              (gnu machine ssh)
-             (blobs paradise)
-             (paradise-system))
+             (blobs paradise))
 
 (list
  (machine
