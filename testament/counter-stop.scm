@@ -16,6 +16,7 @@
             %guix-authorized-key-nonguix
 
             %testament-xdg-base-directory-env-vars
+            %testament-xdg-base-directory-activation
             %testament-base-file-systems))
 
 
@@ -113,6 +114,24 @@
     ("WAKATIME_HOME" . "$XDG_CONFIG_HOME/wakatime/")
     ;; wget
     ("WGETRC" . "$XDG_CONFIG_HOME/wgetrc")))
+
+(define %testament-xdg-base-directory-activation
+  #~(begin
+      (use-modules (guix build utils))
+      (for-each
+       mkdir-p
+       (map (lambda (pair)
+              (let* ((val (cdr pair))
+                     (index-l (string-index val #\$))
+                     (index-r (string-index val #\/))
+                     ;; $XDG_STATE_HOME/gdb/history
+                     ;; ^- index-l     ^- index-r
+                     (env (getenv (substring val (+ 1 index-l) index-r)))
+                     (path (string-replace val env index-l index-r)))
+                (if (string-suffix? "/" path)
+                    path
+                    (dirname path))))
+            '#$%testament-xdg-base-directory-env-vars))))
 
 (define %testament-base-file-systems
   (cons* (file-system
