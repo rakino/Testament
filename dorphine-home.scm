@@ -818,6 +818,10 @@ fi"))
                  (home-wakapi-configuration
                   (config %dorphine-wakapi-config)))
 
+        (simple-service 'activate-directories
+                        home-activation-service-type
+                        %testament-xdg-base-directory-activation)
+
         (simple-service 'setup-env-vars
                         home-environment-variables-service-type
                         `(,@%testament-xdg-base-directory-env-vars
