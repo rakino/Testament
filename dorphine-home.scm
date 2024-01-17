@@ -827,6 +827,7 @@ fi"))
                         `(,@%testament-xdg-base-directory-env-vars
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
+                          ("HISTSIZE" . "10000")
                           ("MOZ_ENABLE_WAYLAND" . "1")
                           ("VISUAL" . "$EDITOR")))
 
