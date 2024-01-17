@@ -155,7 +155,7 @@ resume 'swaymsg \"output * dpms on\"'\n")))
    "shell-profile-wm"
    "
 if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
-    exec sway --unsupported-gpu
+    exec env XDG_CURRENT_DESKTOP=sway sway --unsupported-gpu
 fi"))
 
 
