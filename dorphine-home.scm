@@ -36,6 +36,7 @@
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages haskell-apps)
+  #:use-module (gnu packages image-viewers)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mail)
   #:use-module (gnu packages man)
@@ -49,6 +50,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu packages video)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
@@ -235,8 +237,10 @@ fi"))
                 `(,git "send-email")
                 git-crypt
                 gnupg
+                imv
                 man-pages
                 mosh
+                mpv
                 openssh-sans-x
                 pass-otp
                 password-store
