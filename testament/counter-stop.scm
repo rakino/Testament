@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2023, 2024 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -88,23 +88,31 @@
 
 ;; Source: <https://wiki.archlinux.org/title/XDG_Base_Directory>
 (define %testament-xdg-base-directory-env-vars
-  '(;; XDG Cache Home
-    ("GOMODCACHE" . "$XDG_CACHE_HOME/go/mod")
-    ("PYTHONPYCACHEPREFIX" . "$XDG_CACHE_HOME/python")
-
-    ;; XDG Config Home
+  '(;; bash
+    ("HISTFILE" . "$XDG_STATE_HOME/bash/history")
+    ;; gdb
+    ("GDBHISTFILE" . "$XDG_STATE_HOME/gdb/history")
+    ;; go
+    ("GOMODCACHE" . "$XDG_CACHE_HOME/go/mod/")
+    ("GOPATH" . "$XDG_DATA_HOME/go/")
+    ;; guile
+    ("GUILE_HISTORY" . "$XDG_STATE_HOME/guile/history")
+    ;; node
     ("NPM_CONFIG_USERCONFIG" . "$XDG_CONFIG_HOME/npm/npmrc")
+    ;; password-store
+    ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass/")
+    ;; python
+    ;; TODO: When using Python 3.13, remove PYTHONSTARTUP and set PYTHON_HISTORY
+    ("PYTHONPYCACHEPREFIX" . "$XDG_CACHE_HOME/python/")
     ("PYTHONSTARTUP" . "$XDG_CONFIG_HOME/pythonstartup.py")
-    ("WAKATIME_HOME" . "$XDG_CONFIG_HOME/wakatime")
-    ("WGETRC" . "$XDG_CONFIG_HOME/wgetrc")
-
-    ;; XDG Data Home
-    ("CARGO_HOME" . "$XDG_DATA_HOME/cargo")
-    ("GDBHISTFILE" . "$XDG_DATA_HOME/gdb/history")
-    ("GOPATH" . "$XDG_DATA_HOME/go")
-    ("GUILE_HISTORY" . "$XDG_DATA_HOME/guile/history")
-    ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")
-    ("PYTHONUSERBASE" . "$XDG_DATA_HOME/python")))
+    ("PYTHONUSERBASE" . "$XDG_DATA_HOME/python/")
+    ;; ("PYTHON_HISTORY" . "$XDG_STATE_HOME/python/history")
+    ;; rust
+    ("CARGO_HOME" . "$XDG_DATA_HOME/cargo/")
+    ;; wakatime-cli-bin
+    ("WAKATIME_HOME" . "$XDG_CONFIG_HOME/wakatime/")
+    ;; wget
+    ("WGETRC" . "$XDG_CONFIG_HOME/wgetrc")))
 
 (define %testament-base-file-systems
   (cons* (file-system
