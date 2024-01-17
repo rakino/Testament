@@ -101,10 +101,10 @@ bindsym $mod+~a focus ~a
 bindsym $mod+Shift+~@*~a move ~a~%"
                                key position))
                      keys)))
-             '(("left"  ("h" "Left"))
-               ("down"  ("t" "Down"))
-               ("up"    ("n" "Up"))
-               ("right" ("s" "Right")))))
+             '(("left"  ("d" "Left"))
+               ("down"  ("h" "Down"))
+               ("up"    ("t" "Up"))
+               ("right" ("n" "Right")))))
 
      (apply string-append
             (map (lambda (workspace-number)
@@ -123,7 +123,7 @@ bindsym $mod+Shift+~@*~a move container to workspace number ~a~%"
      "bindswitch --reload --locked lid:on output eDP-1 disable\n"
      "bindswitch --reload --locked lid:off output eDP-1 enable\n"
 
-     "bindsym $mod+e exec emacsclient --create-frame --no-wait --alternate-editor=''\n"
+     "bindsym $mod+Return exec emacsclient --create-frame --no-wait --alternate-editor=''\n"
      "bindsym $mod+r exec " rofi " -show combi\n"
      "bindsym $mod+l exec " swaylock " " lock-args "\n"
 
