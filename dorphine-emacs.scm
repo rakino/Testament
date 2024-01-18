@@ -531,10 +531,4 @@
      (emacs-package
       (name 'yasnippet)
       (package emacs-yasnippet)
-      (hooks '((prog-mode . yas-minor-mode))))))
-   (servers
-    (list (emacs-server
-           (name "dorphine")
-           (default-init
-             (emacs-configuration
-              (early-init %emacs-early-init))))))))
+      (hooks '((prog-mode . yas-minor-mode))))))))
