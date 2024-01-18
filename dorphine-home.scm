@@ -123,7 +123,7 @@ bindsym $mod+Shift+~@*~a move container to workspace number ~a~%"
      "bindswitch --reload --locked lid:on output eDP-1 disable\n"
      "bindswitch --reload --locked lid:off output eDP-1 enable\n"
 
-     "bindsym $mod+Return exec emacsclient --create-frame --no-wait --alternate-editor=''\n"
+     "bindsym $mod+Return exec emacsclient --create-frame --socket-name=dorphine\n"
      "bindsym $mod+r exec " rofi " -show combi\n"
      "bindsym $mod+l exec " swaylock " " lock-args "\n"
 
@@ -795,7 +795,10 @@ fi"))
                     (emacs-package
                      (name 'yasnippet)
                      (package emacs-yasnippet)
-                     (hooks '((prog-mode . yas-minor-mode))))))))
+                     (hooks '((prog-mode . yas-minor-mode))))))
+                  (servers
+                   (list (emacs-server
+                          (name "dorphine"))))))
 
         (service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
