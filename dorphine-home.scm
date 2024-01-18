@@ -800,6 +800,9 @@ fi"))
                    (list (emacs-server
                           (name "dorphine"))))))
 
+        (service home-files-service-type
+                   (".icons/default/index.theme" ,(testament-file-object "icons.theme"))))
+
         (service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
                   (pinentry-program
@@ -828,6 +831,21 @@ fi"))
                  (home-wakapi-configuration
                   (config %dorphine-wakapi-config)))
 
+        (service home-xdg-configuration-files-service-type
+                 `(("git/config" ,(testament-file-object "git.conf"))
+                   ("gtk-3.0/settings.ini" ,(testament-file-object "gtk-3.0.ini"))
+                   ("hyfetch.json" ,(testament-file-object "hyfetch.json"))
+                   ("modprobed-db.conf" ,(testament-file-object "modprobed-db.conf"))
+                   ("mpv/mpv.conf" ,(testament-file-object "mpv.conf"))
+                   ("neofetch/config.conf" ,(testament-file-object "neofetch.conf"))
+                   ("npm/npmrc" ,(testament-file-object "npm.conf"))
+                   ("pythonstartup.py" ,(testament-file-object "pythonstartup.py"))
+                   ("rclone/rclone.conf" ,(testament-file-object "rclone.conf"))
+                   ("sway/config" ,%config-sway)
+                   ("wakatime/.wakatime.cfg" ,(testament-file-object "wakatime.conf"))
+                   ("wanderlust/folders" ,(testament-file-object "wanderlust-folders.conf"))
+                   ("wgetrc" ,%config-wget)))
+
         (simple-service 'activate-directories
                         home-activation-service-type
                         %testament-xdg-base-directory-activation)
@@ -840,26 +858,6 @@ fi"))
                           ("HISTSIZE" . "10000")
                           ("MOZ_ENABLE_WAYLAND" . "1")
                           ("VISUAL" . "$EDITOR")))
-
-        (simple-service 'setup-non-xdg-home
-                        home-files-service-type
-                        `((".icons/default/index.theme" ,(testament-file-object "icons.theme"))))
-
-        (simple-service 'setup-xdg-config-home
-                        home-xdg-configuration-files-service-type
-                        `(("git/config" ,(testament-file-object "git.conf"))
-                          ("gtk-3.0/settings.ini" ,(testament-file-object "gtk-3.0.ini"))
-                          ("hyfetch.json" ,(testament-file-object "hyfetch.json"))
-                          ("modprobed-db.conf" ,(testament-file-object "modprobed-db.conf"))
-                          ("mpv/mpv.conf" ,(testament-file-object "mpv.conf"))
-                          ("neofetch/config.conf" ,(testament-file-object "neofetch.conf"))
-                          ("npm/npmrc" ,(testament-file-object "npm.conf"))
-                          ("pythonstartup.py" ,(testament-file-object "pythonstartup.py"))
-                          ("rclone/rclone.conf" ,(testament-file-object "rclone.conf"))
-                          ("sway/config" ,%config-sway)
-                          ("wakatime/.wakatime.cfg" ,(testament-file-object "wakatime.conf"))
-                          ("wanderlust/folders" ,(testament-file-object "wanderlust-folders.conf"))
-                          ("wgetrc" ,%config-wget)))
 
         (simple-service 'setup-shell-profile
                         home-shell-profile-service-type
