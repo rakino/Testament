@@ -437,7 +437,9 @@ fi"))
 
                     (emacs-package
                      (name 'eshell)
-                     (options '((eshell-visual-commands . #f)))
+                     (options
+                      '((eshell-history-size . #f)
+                        (eshell-visual-commands . #f)))
                      (extra-after-load
                       (list #%(dolist
                                (module '(eshell-elecslash eshell-xtra))
