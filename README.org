@@ -1,6 +1,25 @@
 #+TITLE: Testament - Personal dot(?)files
 
-Dependencies:
+** Structure
++ [[file:testament/common.scm][testament/common.scm]]: Common Scheme procedures.
++ [[file:testament/counter-stop.scm][testament/counter-stop.scm]]: Common variables.
++ [[file:testament/packages.scm][testament/packages.scm]]: Package variants.
+
+*** Desktop configuration
+**** Dorphine (Laptop)
+Guix Home:
++ [[file:dorphine-emacs.scm][dorphine-emacs.scm]]: Emacs configuration, splitted from dorphine-home.scm for its large size.
++ [[file:dorphine-home.scm][dorphine-home.scm]]
+
+Guix System:
++ [[file:dorphine-system.scm][dorphine-system.scm]]
+
+*** Server configuration
+**** Paradise (VPS)
+Guix System:
++ [[file:paradise-system.scm][paradise-system.scm]]
+
+** Dependencies:
 + Guix (master + [[https://issues.guix.gnu.org/64620][home-emacs patch]])
 + [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/375][xanmod update]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/328][nvidia update]])
 + [[https://codeberg.org/hako/Rosenthal][Rosenthal]]
