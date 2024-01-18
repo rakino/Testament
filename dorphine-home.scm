@@ -57,6 +57,7 @@
   #:use-module (gnu packages zig)
   #:use-module (gnu services)
   #:use-module (gnu services mcron)
+  #:use-module (gnu system shadow)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages emacs-xyz)
   #:use-module (rosenthal packages tree-sitter)
@@ -801,6 +802,7 @@ fi"))
                           (name "dorphine"))))))
 
         (service home-files-service-type
+                 `((".guile" ,%default-dotguile)
                    (".icons/default/index.theme" ,(testament-file-object "icons.theme"))))
 
         (service home-gpg-agent-service-type
@@ -832,11 +834,13 @@ fi"))
                   (config %dorphine-wakapi-config)))
 
         (service home-xdg-configuration-files-service-type
-                 `(("git/config" ,(testament-file-object "git.conf"))
+                 `(("gdb/gdbinit" ,%default-gdbinit)
+                   ("git/config" ,(testament-file-object "git.conf"))
                    ("gtk-3.0/settings.ini" ,(testament-file-object "gtk-3.0.ini"))
                    ("hyfetch.json" ,(testament-file-object "hyfetch.json"))
                    ("modprobed-db.conf" ,(testament-file-object "modprobed-db.conf"))
                    ("mpv/mpv.conf" ,(testament-file-object "mpv.conf"))
+                   ("nano/nanorc" ,%default-nanorc)
                    ("neofetch/config.conf" ,(testament-file-object "neofetch.conf"))
                    ("npm/npmrc" ,(testament-file-object "npm.conf"))
                    ("pythonstartup.py" ,(testament-file-object "pythonstartup.py"))
