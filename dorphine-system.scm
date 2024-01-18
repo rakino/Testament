@@ -63,6 +63,12 @@
      "conf-file " (file-append conf-dir "apple.china.smartdns.conf") "\n"
      "conf-file " (file-append conf-dir "bogus-nxdomain.china.smartdns.conf") "\n")))
 
+;; See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
+(define %controller-permission-udev-rule
+  (udev-rule "60-controller-permission.rules" "\
+KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
+MODE=\"0660\", TAG+=\"uaccess\""))
+
 
 ;;
 ;; Mcron jobs
@@ -308,6 +314,7 @@
                     (size "6G")))
 
           (udev-rules-service 'backlight light)
+          (udev-rules-service 'controller %controller-permission-udev-rule)
           (udev-rules-service 'steam-devices steam-devices-udev-rules)
           (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
 
