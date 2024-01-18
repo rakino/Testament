@@ -211,25 +211,6 @@ fi"))
 ;;
 
 
-(define %tree-sitter-packages-for-emacs
-  (list tree-sitter-bash
-        tree-sitter-c
-        tree-sitter-cmake
-        tree-sitter-cpp
-        tree-sitter-c-sharp
-        tree-sitter-css
-        tree-sitter-dockerfile
-        tree-sitter-go
-        tree-sitter-gomod
-        tree-sitter-java
-        tree-sitter-javascript
-        tree-sitter-json
-        tree-sitter-python
-        tree-sitter-ruby
-        tree-sitter-rust
-        tree-sitter-typescript
-        tree-sitter-yaml))
-
 (define %home-packages
   (append (list buku
                 firefox/dolly
@@ -264,6 +245,23 @@ fi"))
                 `(,rust "tools")
                 shellcheck
                 zig)
+          (list tree-sitter-bash
+                tree-sitter-c
+                tree-sitter-cmake
+                tree-sitter-cpp
+                tree-sitter-c-sharp
+                tree-sitter-css
+                tree-sitter-dockerfile
+                tree-sitter-go
+                tree-sitter-gomod
+                tree-sitter-java
+                tree-sitter-javascript
+                tree-sitter-json
+                tree-sitter-python
+                tree-sitter-ruby
+                tree-sitter-rust
+                tree-sitter-typescript
+                tree-sitter-yaml)
           (list adwaita-icon-theme
                 hicolor-icon-theme
                 qogir-icon-theme)
@@ -679,7 +677,6 @@ fi"))
 
                     (emacs-package
                      (name 'treesit)
-                     (extra-packages %tree-sitter-packages-for-emacs)
                      (options
                       '((major-mode-remap-alist
                          . ((sh-mode . bash-ts-mode)
