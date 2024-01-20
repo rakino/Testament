@@ -167,6 +167,11 @@
       (hooks '((eldoc-mode . eldoc-box-hover-mode))))
 
      (emacs-package
+      (name 'envrc)
+      (package emacs-envrc)
+      (hooks '((after-init . envrc-global-mode))))
+
+     (emacs-package
       (name 'erc)
       (load-force? #t)
       (extra-after-load

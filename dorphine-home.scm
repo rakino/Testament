@@ -43,6 +43,7 @@
   #:use-module (gnu packages qt)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust)
+  #:use-module (gnu packages shellutils)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
@@ -171,6 +172,7 @@ fi"))
 
 (define %home-packages
   (append (list buku
+                direnv
                 firefox/dolly
                 git
                 `(,git "send-email")
@@ -247,6 +249,10 @@ fi"))
                  (home-bash-configuration
                   (bashrc
                    (list (plain-file
+                          "bashrc-direnv"
+                          "
+eval \"$(direnv hook bash)\"")
+                         (plain-file
                           "bashrc-eat"
                           "
 [ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && \\
