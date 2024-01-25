@@ -36,10 +36,12 @@
   #:use-module (gnu system file-systems)
   #:use-module (gnu system keyboard)
   #:use-module (gnu system linux-initrd)
+  #:use-module (gnu system pam)
   #:use-module (gnu system shadow)
   #:use-module (nongnu packages linux)
   #:use-module (nongnu services nvidia)
   #:use-module (nongnu system linux-initrd)
+  #:use-module (rosenthal packages admin)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages dns)
   #:use-module (rosenthal services bittorrent)
@@ -340,6 +342,26 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                             ("vm.swappiness" . "180")
                             ("vm.watermark_boost_factor" . "0")
                             ("vm.watermark_scale_factor" . "125")))
+
+          (simple-service 'uaccess-pam-service pam-root-service-type
+                          (let ((uaccess-pam-entry
+                                 (pam-entry
+                                  (control "optional")
+                                  (module (file-append
+                                           pam-uaccess
+                                           "/lib/security/pam_uaccess.so"))
+                                  (arguments '("skip_ungrant")))))
+                            (list (pam-extension
+                                   (transformer
+                                    (lambda (pam)
+                                      (if (string=? (pam-service-name pam)
+                                                    "greetd")
+                                          (pam-service
+                                           (inherit pam)
+                                           (session
+                                            (append (pam-service-session pam)
+                                                    (list uaccess-pam-entry))))
+                                          pam)))))))
 
           (modify-services %base-services
             (delete login-service-type)
