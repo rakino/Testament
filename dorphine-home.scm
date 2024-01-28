@@ -57,6 +57,7 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu system shadow)
   #:use-module (rosenthal packages tree-sitter)
+  #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
 
 
@@ -65,8 +66,8 @@
 ;;
 
 
-(define %config-sway
-  (let ((filename  "sway.conf")
+(define %config-hyprland
+  (let ((filename  "hyprland.conf")
         (screenshot "~/Library/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png")
         (wallpaper  (testament-file-object "112358159_p0.png"))
         (lock-args  #~(string-join
@@ -75,71 +76,97 @@
                              "--ignore-empty-password"
                              "--image"
                              #$(testament-file-object "102982564_p0.jpg"))))
-        (autotiling (file-append i3-autotiling "/bin/autotiling"))
         (grimshot   (file-append grimshot "/bin/grimshot"))
+        (hyprctl    (file-append hyprland "/bin/hyprctl"))
         (light      (file-append light "/bin/light"))
         (rofi       (file-append rofi-wayland "/bin/rofi"))
+        (swaybg     (file-append swaybg "/bin/swaybg"))
         (swayidle   (file-append swayidle/dolly "/bin/swayidle"))
         (swaylock   (file-append swaylock-effects "/bin/swaylock"))
         (wl-copy    (file-append wl-clipboard "/bin/wl-copy"))
         (wlsunset   (file-append wlsunset "/bin/wlsunset"))
-        (wpctl      (file-append wireplumber-minimal "/bin/wpctl")))
+        (wpctl      (file-append wireplumber-minimal "/bin/wpctl"))
+        (xdp        (file-append xdg-desktop-portal "/libexec/xdg-desktop-portal"))
+        (xdp-gtk    (file-append xdg-desktop-portal-gtk "/libexec/xdg-desktop-portal-gtk"))
+        (xdp-hypr   (file-append xdg-desktop-portal-hyprland "/libexec/xdg-desktop-portal-hyprland")))
     (mixed-text-file
      filename
      (testament-file-content filename) "\n"
 
+     ;; https://github.com/hyprwm/Hyprland/issues/2661
+     "windowrulev2=stayfocused,title:^()$,class:^(steam)$\n"
+     "windowrulev2=minsize 1 1,title:^()$,class:^(steam)$\n"
+
      (apply string-append
             (append-map
              (match-lambda
-               ((position keys)
+               ((direction keys)
                 (map (lambda (key)
                        (format #f "~
-bindsym $mod+~a focus ~a
-bindsym $mod+Shift+~@*~a move ~a~%"
-                               key position))
+bind=SUPER,~a,movefocus,~a~%"
+                               key direction))
                      keys)))
-             '(("left"  ("d" "Left"))
-               ("down"  ("h" "Down"))
-               ("up"    ("t" "Up"))
-               ("right" ("n" "Right")))))
+             '(("l" ("D" "left"))
+               ("d" ("H" "down"))
+               ("u" ("T" "up"))
+               ("r" ("N" "right")))))
 
      (apply string-append
             (map (lambda (workspace-number)
                    (format #f "~
-bindsym $mod+~a workspace number ~a
-bindsym $mod+Shift+~@*~a move container to workspace number ~a~%"
+bind=SUPER,~a,workspace,~a
+bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
                            workspace-number
                            (if (zero? workspace-number)
                                10
                                workspace-number)))
                  (iota 10)))
 
-     "output eDP-1 scale 1.5\n"
-     "output * bg " wallpaper " fill\n"
+     "bind=ALT,Tab,bringactivetotop\n"
+     "bind=ALT,Tab,cyclenext\n"
+     "bind=SUPER,F,fullscreen\n"
+     "bind=SUPER,P,pseudo\n"
+     "bind=SUPER,V,togglefloating\n"
+     "bind=SUPER,J,togglesplit\n"
+     "bind=SUPER SHIFT,M,exit\n"
+     "bind=SUPER SHIFT,Q,killactive\n"
 
-     "bindswitch --reload --locked lid:on output eDP-1 disable\n"
-     "bindswitch --reload --locked lid:off output eDP-1 enable\n"
+     ;; Scroll through existing workspaces with SUPER + scroll.
+     "bind=SUPER,mouse_down,workspace,e-1\n"
+     "bind=SUPER,mouse_up,workspace,e+1\n"
 
-     "bindsym $mod+Return exec emacsclient --create-frame --no-wait --alternate-editor=''\n"
-     "bindsym $mod+r exec " rofi " -show combi\n"
-     "bindsym $mod+l exec " swaylock " " lock-args "\n"
+     ;; Move/resize windows with SUPER + LMB/RMB and dragging.
+     "bindm=SUPER,mouse:272,movewindow\n"
+     "bindm=SUPER,mouse:273,resizewindow\n"
 
-     "bindsym Print exec " wl-copy " --type image/png < $(" grimshot " save output " screenshot ")\n"
-     "bindsym $mod+Print exec " wl-copy " --type image/png < $(" grimshot " save window " screenshot ")\n"
-     "bindsym XF86AudioRaiseVolume  exec " wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%+ --limit 1.0\n"
-     "bindsym XF86AudioLowerVolume  exec " wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%-\n"
-     "bindsym XF86AudioMute         exec " wpctl " set-mute   @DEFAULT_AUDIO_SINK@   toggle\n"
-     "bindsym XF86AudioMicMute      exec " wpctl " set-mute   @DEFAULT_AUDIO_SOURCE@ toggle\n"
-     "bindsym XF86MonBrightnessUp   exec " light " -A 5\n"
-     "bindsym XF86MonBrightnessDown exec " light " -U 5\n"
+     "monitor=,preferred,auto,auto\n"
 
-     "exec " autotiling "\n"
-     "exec " wlsunset " " %dorphine-wlsunset-args "\n"
+     "bindl=,switch:on:Lid Switch,exec," hyprctl " dispatch dpms off eDP-1\n"
+     "bindl=,switch:off:Lid Switch,exec," hyprctl " dispatch dpms on eDP-1\n"
 
-     "exec " swayidle " -w \
+     "bind=SUPER,Return,exec,emacsclient --create-frame --no-wait --alternate-editor=''\n"
+     "bind=SUPER,R,exec," rofi " -show combi\n"
+     "bind=SUPER,L,exec," swaylock " " lock-args "\n"
+
+     "bind=,Print,exec," wl-copy " --type image/png < $(" grimshot " save output " screenshot ")\n"
+     "bind=SUPER,Print,exec," wl-copy " --type image/png < $(" grimshot " save window " screenshot ")\n"
+
+     "bindl =,XF86AudioMicMute,     exec," wpctl " set-mute   @DEFAULT_AUDIO_SOURCE@ toggle\n"
+     "bindl =,XF86AudioMute,        exec," wpctl " set-mute   @DEFAULT_AUDIO_SINK@   toggle\n"
+     "bindle=,XF86AudioLowerVolume, exec," wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%-\n"
+     "bindle=,XF86AudioRaiseVolume, exec," wpctl " set-volume @DEFAULT_AUDIO_SINK@   5%+ --limit 1.0\n"
+     "bindle=,XF86MonBrightnessDown,exec," light " -U 5\n"
+     "bindle=,XF86MonBrightnessUp,  exec," light " -A 5\n"
+
+     "exec-once=" xdp-gtk " -r\n"
+     "exec-once=" xdp-hypr "\n"
+     "exec-once=sleep 5; exec " xdp " -r\n"
+     "exec-once=" wlsunset " " %dorphine-wlsunset-args "\n"
+     "exec-once=" swaybg " --image " wallpaper " --mode fill --output '*'\n"
+     "exec-once=" swayidle " -w \
 timeout 300 '" swaylock " " lock-args "' \
-timeout 600 'swaymsg \"output * dpms off\"' \
-resume 'swaymsg \"output * dpms on\"'\n")))
+timeout 600 '" hyprctl " dispatch dpms off' \
+resume '" hyprctl " dispatch dpms on'\n")))
 
 (define %config-wget
   (plain-file
@@ -151,7 +178,7 @@ resume 'swaymsg \"output * dpms on\"'\n")))
    "shell-profile-wm"
    "
 if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
-    exec env XDG_CURRENT_DESKTOP=sway sway --unsupported-gpu
+    exec env XDG_CURRENT_DESKTOP=Hyprland Hyprland
 fi"))
 
 
@@ -179,6 +206,7 @@ fi"))
                 `(,git "send-email")
                 git-crypt
                 gnupg
+                hyprland
                 imv
                 man-pages
                 mosh
@@ -189,13 +217,13 @@ fi"))
                 qtwayland-5
                 rofi-wayland
                 rsync
-                sway
                 tessen
                 unzip
                 virt-manager
                 wl-clipboard
                 xdg-desktop-portal
-                xdg-desktop-portal-wlr
+                xdg-desktop-portal-gtk
+                xdg-desktop-portal-hyprland
                 xdg-utils
                 zstd)
           (list ccls
@@ -308,6 +336,7 @@ eval \"$(direnv hook bash)\"")
                    ("git/config" ,(testament-file-object "git.conf"))
                    ("gtk-3.0/settings.ini" ,(testament-file-object "gtk-3.0.ini"))
                    ("hyfetch.json" ,(testament-file-object "hyfetch.json"))
+                   ("hypr/hyprland.conf" ,%config-hyprland)
                    ("modprobed-db.conf" ,(testament-file-object "modprobed-db.conf"))
                    ("mpv/mpv.conf" ,(testament-file-object "mpv.conf"))
                    ("nano/nanorc" ,%default-nanorc)
@@ -315,7 +344,6 @@ eval \"$(direnv hook bash)\"")
                    ("npm/npmrc" ,(testament-file-object "npm.conf"))
                    ("pythonstartup.py" ,(testament-file-object "pythonstartup.py"))
                    ("rclone/rclone.conf" ,(testament-file-object "rclone.conf"))
-                   ("sway/config" ,%config-sway)
                    ("wakatime/.wakatime.cfg" ,(testament-file-object "wakatime.conf"))
                    ("wanderlust/folders" ,(testament-file-object "wanderlust-folders.conf"))
                    ("wgetrc" ,%config-wget)))
