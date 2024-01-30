@@ -103,7 +103,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 (operating-system
   (kernel linux-dorphine)
   (kernel-arguments
-   (cons* (string-append "modprobe.blacklist="
+   (cons* "nvidia_drm.modeset=1"
+          (string-append "modprobe.blacklist="
                          (string-join
                           (cons* "hid_nintendo"
                                  "nouveau"
