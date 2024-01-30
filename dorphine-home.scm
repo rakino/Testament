@@ -348,10 +348,6 @@ eval \"$(direnv hook bash)\"")
                    ("wanderlust/folders" ,(testament-file-object "wanderlust-folders.conf"))
                    ("wgetrc" ,%config-wget)))
 
-        (simple-service 'activate-directories
-                        home-activation-service-type
-                        %testament-xdg-base-directory-activation)
-
         (simple-service 'setup-env-vars
                         home-environment-variables-service-type
                         `(,@%testament-xdg-base-directory-env-vars
