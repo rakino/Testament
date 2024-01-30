@@ -354,8 +354,12 @@ eval \"$(direnv hook bash)\"")
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
                           ("HISTSIZE" . "10000")
+                          ("HTTPS_PROXY" . "http://127.0.0.1:7890")
+                          ("HTTP_PROXY" . "$HTTPS_PROXY")
                           ("MOZ_ENABLE_WAYLAND" . "1")
-                          ("VISUAL" . "$EDITOR")))
+                          ("VISUAL" . "$EDITOR")
+                          ("https_proxy" . "$HTTPS_PROXY")
+                          ("http_proxy" . "$HTTPS_PROXY")))
 
         (simple-service 'setup-shell-profile
                         home-shell-profile-service-type

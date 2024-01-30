@@ -385,7 +385,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                            "https://substitutes.nonguix.org"))
                         (authorized-keys
                          (cons* %guix-authorized-key-nonguix
-                                (guix-configuration-authorized-keys config)))))
+                                (guix-configuration-authorized-keys config)))
+                        (http-proxy "http://127.0.0.1:7890")))
 
             (sysctl-service-type
              config => (sysctl-configuration
