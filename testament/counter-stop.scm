@@ -100,6 +100,8 @@
     ("GUILE_HISTORY" . "$XDG_STATE_HOME/guile/history")
     ;; node
     ("NPM_CONFIG_USERCONFIG" . "$XDG_CONFIG_HOME/npm/npmrc")
+    ;; nvidia-driver
+    ("CUDA_CACHE_PATH" . "$XDG_CACHE_HOME/nv")
     ;; password-store
     ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass/")
     ;; python
