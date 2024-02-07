@@ -531,9 +531,4 @@
                      'wl-user-agent-compose
                      'wl-draft-send
                      'wl-draft-kill
-                     'mail-send-hook)))))
-
-     (emacs-package
-      (name 'yasnippet)
-      (package emacs-yasnippet)
-      (hooks '((prog-mode . yas-minor-mode))))))))
+                     'mail-send-hook)))))))))
