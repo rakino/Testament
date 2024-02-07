@@ -21,5 +21,5 @@ Guix System:
 
 ** Dependencies:
 + Guix (+ [[https://issues.guix.gnu.org/64620][home-emacs patch]])
-+ [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/328][nvidia update]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/403][multiarch container change]])
++ [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/328][nvidia update]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/403][multiarch container change]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/417][xanmod update]])
 + [[https://codeberg.org/hako/Rosenthal][Rosenthal]]
