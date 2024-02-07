@@ -48,6 +48,7 @@
   #:use-module (gnu services)
   #:use-module (gnu services mcron)
   #:use-module (gnu system shadow)
+  #:use-module (nongnu packages game-client)
   #:use-module (rosenthal packages tree-sitter)
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal services child-error))
@@ -218,6 +219,7 @@ fi"))
                 qtwayland-5
                 rofi-wayland
                 rsync
+                steam-nvidia
                 tessen
                 unzip
                 virt-manager
@@ -345,10 +347,12 @@ eval \"$(direnv hook bash)\"")
                         `(,@%testament-xdg-base-directory-env-vars
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
+                          ("GDK_SCALE" . "1.5")
                           ("HISTSIZE" . "10000")
                           ("HTTPS_PROXY" . "http://127.0.0.1:7890")
                           ("HTTP_PROXY" . "$HTTPS_PROXY")
                           ("MOZ_ENABLE_WAYLAND" . "1")
+                          ("TZ" . "Asia/Hong_Kong")
                           ("VISUAL" . "$EDITOR")
                           ("https_proxy" . "$HTTPS_PROXY")
                           ("http_proxy" . "$HTTPS_PROXY")))
