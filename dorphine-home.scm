@@ -165,6 +165,15 @@ resume '" hyprctl " dispatch dpms on'\n")))
    "wgetrc"
    "hsts-file = ~/.cache/wget-hsts\n"))
 
+(define %shell-profile-nvidia
+  (plain-file
+   "shell-profile-nvidia"
+   "
+if [ -d /proc/driver/nvidia ]; then
+    export __GLX_VENDOR_LIBRARY_NAME=nvidia
+    export __NV_PRIME_RENDER_OFFLOAD=1
+fi"))
+
 (define %shell-profile-wm
   (plain-file
    "shell-profile-wm"
@@ -346,4 +355,5 @@ eval \"$(direnv hook bash)\"")
 
         (simple-service 'setup-shell-profile
                         home-shell-profile-service-type
-                        (list %shell-profile-wm)))))
+                        (list %shell-profile-nvidia
+                              %shell-profile-wm)))))
