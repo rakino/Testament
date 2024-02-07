@@ -24,25 +24,18 @@
   #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
-  #:use-module (gnu packages commencement)
   #:use-module (gnu packages compression)
-  #:use-module (gnu packages cpp)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnome-xyz)
   #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages golang)
-  #:use-module (gnu packages haskell-apps)
   #:use-module (gnu packages image-viewers)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages man)
   #:use-module (gnu packages password-utils)
-  #:use-module (gnu packages python)
-  #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages qt)
   #:use-module (gnu packages rsync)
-  #:use-module (gnu packages rust)
   #:use-module (gnu packages shellutils)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tree-sitter)
@@ -52,7 +45,6 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
-  #:use-module (gnu packages zig)
   #:use-module (gnu services)
   #:use-module (gnu services mcron)
   #:use-module (gnu system shadow)
@@ -226,15 +218,6 @@ fi"))
                 xdg-desktop-portal-hyprland
                 xdg-utils
                 zstd)
-          (list ccls
-                gcc-toolchain-13
-                go-1.21
-                gopls/dolly
-                python
-                python-black
-                `(,rust "tools")
-                shellcheck
-                zig)
           (list tree-sitter-bash
                 tree-sitter-c
                 tree-sitter-cmake

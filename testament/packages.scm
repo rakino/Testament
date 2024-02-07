@@ -10,7 +10,6 @@
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (gnu packages gnupg)
-  #:use-module (gnu packages golang)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg))
 
@@ -48,12 +47,6 @@
 ;;
 
 
-(define-public gopls/dolly
-  (let ((base gopls))
-    (package
-      (inherit base)
-      (propagated-inputs '())
-      (inputs (package-propagated-inputs base)))))
 
 (define-public pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
