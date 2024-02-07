@@ -112,7 +112,9 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                                  "snd_pcsp"
                                  (@@ (gnu system) %default-modprobe-blacklist))
                           ","))
-          %kicksecure-kernel-arguments))
+          (fold kicksecure-delete
+                %kicksecure-kernel-arguments
+                '("nosmt"))))
 
   (bootloader (bootloader-configuration
                (bootloader grub-efi-bootloader)
