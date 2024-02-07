@@ -3,15 +3,13 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (testament packages)
-  #:use-module (testament counter-stop)
-  #:use-module (srfi srfi-1)
-  #:use-module (guix channels)
-  #:use-module (guix inferior)
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages wm)
-  #:use-module (gnu packages xdisorg))
+  #:use-module (gnu packages xdisorg)
+  #:use-module (nongnu packages mozilla)
+  #:use-module (nongnu packages nvidia))
 
 
 ;;
@@ -25,28 +23,12 @@
 
 
 ;;
-;; Inferior
-;;
-
-
-(define-public firefox/dolly
-  (let* ((channels
-          (list (channel
-                 (inherit %channel-guix)
-                 (commit "ab1ff7ca40b0a2d935f715dcf64f0f3128632d3d"))
-                (channel
-                 (inherit %channel-nonguix)
-                 (commit "71a53faf2e1925a309b480f17e5b836740ce54bc"))))
-         (inferior
-          (inferior-for-channels channels)))
-    (first (lookup-inferior-packages inferior "firefox" "121.0"))))
-
-
-;;
 ;; Packages
 ;;
 
 
+(define-public firefox/dolly
+  (replace-mesa firefox))
 
 (define-public pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
