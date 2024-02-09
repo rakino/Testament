@@ -40,9 +40,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
-  #:use-module (gnu packages video)
   #:use-module (gnu packages virtualization)
-  #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu services)
@@ -212,7 +210,7 @@ fi"))
                 imv
                 man-pages
                 mosh
-                mpv
+                mpv/dolly
                 nvidia-system-monitor
                 openssh-sans-x
                 pass-otp

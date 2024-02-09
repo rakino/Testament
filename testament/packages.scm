@@ -6,6 +6,7 @@
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (gnu packages gnupg)
+  #:use-module (gnu packages video)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (nongnu packages mozilla)
@@ -29,6 +30,9 @@
 
 (define-public firefox/dolly
   (replace-mesa firefox))
+
+(define-public mpv/dolly
+  (replace-mesa mpv))
 
 (define-public pinentry-rofi/dolly
   (rofi-dolly pinentry-rofi))
