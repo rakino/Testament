@@ -21,7 +21,6 @@
   #:use-module (gnu packages games)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages security-token)
-  #:use-module (gnu packages wm)
   #:use-module (gnu services)
   #:use-module (gnu services base)
   #:use-module (gnu services desktop)
@@ -294,9 +293,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
           (service screen-locker-service-type
                    (screen-locker-configuration
                     (name "swaylock")
-                    (program (file-append swaylock-effects "/bin/swaylock"))
-                    (allow-empty-password? #f)
-                    (using-pam? #t)
+                    (program (plain-file "empty" ""))
                     (using-setuid? #f)))
 
           (service smartdns-service-type
