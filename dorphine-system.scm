@@ -315,6 +315,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 
           (service virtlog-service-type)
 
+          (service x11-socket-directory-service-type)
+
           (service zram-device-service-type
                    (zram-device-configuration
                     (size "6G")))
