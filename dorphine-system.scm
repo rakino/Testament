@@ -214,7 +214,9 @@ MODE=\"0660\", TAG+=\"uaccess\""))
   (timezone "Asia/Hong_Kong")
 
   (services
-   (cons* (service bluetooth-service-type)
+   (cons* (service bluetooth-service-type
+                   (bluetooth-configuration
+                    (auto-enable? #t)))
 
           (service clash-service-type
                    (clash-configuration
