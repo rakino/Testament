@@ -35,12 +35,6 @@
 ;;
 
 
-(define %paradise-initrd-modules
-  (cons* "btrfs"
-         "virtio_scsi"
-         "xxhash_generic"
-         %base-initrd-modules))
-
 (operating-system
   (kernel-arguments %kicksecure-kernel-arguments)
 
@@ -48,12 +42,18 @@
                (bootloader grub-bootloader)
                (targets '("/dev/sda"))))
 
-  (initrd (lambda (file-systems . rest)
-            (raw-initrd file-systems
-                        #:linux-modules %paradise-initrd-modules
-                        #:helper-packages (list btrfs-progs/static))))
+  (initrd
+   (lambda (file-systems . rest)
+     (apply raw-initrd
+            file-systems
+            #:helper-packages (list btrfs-progs/static)
+            rest)))
 
-  (initrd-modules %paradise-initrd-modules)
+  (initrd-modules
+   (cons* "btrfs"
+          "virtio_scsi"
+          "xxhash_generic"
+          %base-initrd-modules))
 
   (firmware '())
 

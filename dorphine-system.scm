@@ -94,11 +94,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
    #:defconfig (testament-file-object "defconfig-zen3-dorphine")
    #:extra-version "dorphine"))
 
-(define %dorphine-initrd-modules
-  (cons* "btrfs"
-         "xxhash_generic"
-         %base-initrd-modules))
-
 (operating-system
   (kernel linux-dorphine)
   (kernel-arguments
@@ -132,19 +127,22 @@ MODE=\"0660\", TAG+=\"uaccess\""))
    (keyboard-layout "us" "dvorak"
                     #:options '("ctrl:nocaps")))
 
-  (initrd (lambda (file-systems . rest)
-            (microcode-initrd file-systems
-                              #:initrd raw-initrd
-                              #:microcode-packages (list amd-microcode)
-                              #:keyboard-layout keyboard-layout
-                              #:linux kernel
-                              #:linux-modules %dorphine-initrd-modules
-                              #:helper-packages
-                              (list btrfs-progs/static
-                                    fatfsck/static
-                                    loadkeys-static))))
+  (initrd
+   (lambda (file-systems . rest)
+     (apply microcode-initrd
+            file-systems
+            #:initrd raw-initrd
+            #:microcode-packages (list amd-microcode)
+            #:helper-packages
+            (list btrfs-progs/static
+                  fatfsck/static
+                  loadkeys-static)
+            rest)))
 
-  (initrd-modules %dorphine-initrd-modules)
+  (initrd-modules
+   (cons* "btrfs"
+          "xxhash_generic"
+          %base-initrd-modules))
 
   (firmware
    (list amdgpu-firmware
