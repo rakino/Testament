@@ -246,7 +246,6 @@ fi"))
                 tree-sitter-typescript
                 tree-sitter-yaml)
           (list adwaita-icon-theme
-                hicolor-icon-theme
                 qogir-icon-theme)
           (list font-adobe-source-sans-pro
                 font-adobe-source-serif-pro
