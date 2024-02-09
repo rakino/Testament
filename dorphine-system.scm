@@ -188,11 +188,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                      (mount-point "/mnt/Phinix")
                      (check? #f)
                      (options "compress=zstd,discard=async,subvolid=5")
-                     (mount? #f))
-                   (file-system
-                     (device (uuid "4E21-0000" 'fat))
-                     (mount-point "/mnt/Symphytum")
-                     (type "exfat")
                      (mount? #f)))
 
              %testament-base-file-systems)))
@@ -316,11 +311,15 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                    (tor-configuration
                     (config-file (testament-file-object "tor.conf"))))
 
+          (service udisks-service-type)
+
           (service virtlog-service-type)
 
           (service zram-device-service-type
                    (zram-device-configuration
                     (size "6G")))
+
+          polkit-wheel-service
 
           (udev-rules-service 'backlight light)
           (udev-rules-service 'controller %controller-permission-udev-rule)
