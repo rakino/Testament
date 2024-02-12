@@ -3,7 +3,9 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (testament common)
+  #:use-module ((guix diagnostics) #:select (leave))
   #:use-module ((guix gexp) #:select (local-file))
+  #:use-module ((guix i18n) #:select (G_))
   #:use-module ((guix packages) #:select (package-name))
   #:use-module ((rnrs io ports) #:select (get-string-all))
   #:export (testament-find-file
@@ -28,10 +30,7 @@ repository.  Return a string of path to the file, or #f if file not found."
         (blob-name (string-append (testament-path) "/blobs/" name)))
     (cond ((file-exists? file-name) file-name)
           ((file-exists? blob-name) blob-name)
-          (else (and (format (current-error-port)
-                             "File `~a' not found.~%"
-                             name)
-                     #f)))))
+          (else (leave (G_ "file '~a' not found.~%") name)))))
 
 (define (testament-file-content name)
   "Return a string, the content of file NAME located in the \"files\" or
