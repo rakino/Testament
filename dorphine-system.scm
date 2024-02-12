@@ -11,7 +11,7 @@
   #:use-module (srfi srfi-1)
   #:use-module (guix gexp)
   #:use-module (gnu bootloader)
-  #:use-module (gnu bootloader grub)
+  #:use-module (gnu bootloader uki)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bittorrent)
@@ -111,17 +111,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                 '("nosmt"))))
 
   (bootloader (bootloader-configuration
-               (bootloader grub-efi-bootloader)
-               (targets '("/efi"))
-               (menu-entries
-                (list (menu-entry
-                       (label "Microsoft Windows 11")
-                       (device "/dev/nvme0n1p1")
-                       (chain-loader "/EFI/Microsoft/Boot/bootmgfw.efi"))))
-               (theme
-                (grub-theme
-                 (image (testament-file-object "grub.png"))
-                 (resolution '(2560 . 1600))))))
+               (bootloader uefi-uki-bootloader)
+               (targets '("/efi"))))
 
   (keyboard-layout
    (keyboard-layout "us" "dvorak"
