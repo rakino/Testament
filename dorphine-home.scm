@@ -153,7 +153,7 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "exec-once=" xdp-gtk " -r\n"
      "exec-once=" xdp-hypr "\n"
      "exec-once=sleep 5; exec " xdp " -r\n"
-     "exec-once=" wlsunset " " %dorphine-wlsunset-args "\n"
+     "exec-once=" wlsunset " -o eDP-1 " %dorphine-wlsunset-args "\n"
      "exec-once=" swaybg " --image " wallpaper " --mode fill --output '*'\n"
      "exec-once=" swayidle " -w \
 timeout 300 '" swaylock " " lock-args "' \
