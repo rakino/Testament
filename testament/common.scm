@@ -3,9 +3,9 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (testament common)
-  #:use-module ((ice-9 rdelim) #:select (read-delimited))
   #:use-module ((guix gexp) #:select (local-file))
   #:use-module ((guix packages) #:select (package-name))
+  #:use-module ((rnrs io ports) #:select (get-string-all))
   #:export (testament-find-file
             testament-file-content
             testament-file-object
@@ -38,7 +38,7 @@ repository.  Return a string of path to the file, or #f if file not found."
 \"blobs\" directory of Testament repository."
   (call-with-input-file (testament-find-file name)
     (lambda (port)
-      (read-delimited "" port))))
+      (get-string-all port))))
 
 (define (testament-file-object name)
   "Similar to 'testament-file-content' but return a file-like object."
