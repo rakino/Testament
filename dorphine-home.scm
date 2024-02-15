@@ -253,6 +253,7 @@ fi"))
                 font-chiron-hei-hk
                 font-chiron-sung-hk
                 font-google-noto
+                font-google-noto-emoji
                 font-lxgw-wenkai
                 font-lxgw-wenkai-tc
                 font-sarasa-gothic
