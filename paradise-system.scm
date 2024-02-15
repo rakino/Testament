@@ -70,8 +70,8 @@
              (list (file-system
                      (inherit rootfs)
                      (mount-point "/var/lib")
-                     (check? #f)
-                     (options "compress=zstd,subvol=Data")))
+                     (options "compress=zstd,subvol=Data")
+                     (check? #f)))
 
              %testament-base-file-systems)))
 

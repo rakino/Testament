@@ -140,35 +140,35 @@
            (device "tmpfs")
            (mount-point "/tmp")
            (type "tmpfs")
-           (check? #f)
            (flags '(no-suid no-dev strict-atime))
-           (options "nr_inodes=1m,size=60%"))
+           (options "nr_inodes=1m,size=60%")
+           (check? #f))
 
          (file-system
            (device "tmpfs")
            (mount-point "/run")
            (type "tmpfs")
-           (needed-for-boot? #t)
-           (check? #f)
            (flags '(no-dev strict-atime))
-           (options "mode=0755,nr_inodes=800k,size=20%"))
+           (options "mode=0755,nr_inodes=800k,size=20%")
+           (needed-for-boot? #t)
+           (check? #f))
 
          (file-system
            (device "tmpfs")
            (mount-point "/var/run")
            (type "tmpfs")
-           (needed-for-boot? #t)
-           (check? #f)
            (flags '(no-suid no-dev strict-atime))
-           (options "mode=0755,nr_inodes=800k,size=20%"))
+           (options "mode=0755,nr_inodes=800k,size=20%")
+           (needed-for-boot? #t)
+           (check? #f))
 
          (file-system
            (device "tmpfs")
            (mount-point "/var/lock")
            (type "tmpfs")
-           (check? #f)
            (flags '(no-suid no-dev strict-atime))
-           (options "nr_inodes=800k,size=20%"))
+           (options "nr_inodes=800k,size=20%")
+           (check? #f))
 
          (delete %debug-file-system
                  %base-file-systems)))

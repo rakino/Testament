@@ -162,10 +162,10 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                      (file-system
                        (inherit rootfs)
                        (mount-point mount-point)
-                       (check? #f)
                        (options
                         (string-append
-                         "compress=zstd,discard=async,subvol=" subvolume)))))
+                         "compress=zstd,discard=async,subvol=" subvolume))
+                       (check? #f))))
                   '(("/boot"    "Boot")
                     ("/home"    "Home")
                     ("/var/lib" "Data")))
@@ -181,9 +181,9 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                    (file-system
                      (inherit rootfs)
                      (mount-point "/mnt/Phinix")
-                     (check? #f)
                      (options "compress=zstd,discard=async,subvolid=5")
                      (mount? #f)
+                     (check? #f)
                      (create-mount-point? #t)))
 
              %testament-base-file-systems)))
