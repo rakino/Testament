@@ -172,6 +172,13 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 
              ;; Devices
              (list (file-system
+                     (device (uuid "537de57b-30b7-4273-868f-83771074b6af"))
+                     (mount-point "/mnt/Myosotis")
+                     (type "btrfs")
+                     (options "compress=zstd,subvolid=5")
+                     (mount? #f)
+                     (create-mount-point? #t))
+                   (file-system
                      (inherit rootfs)
                      (mount-point "/mnt/Phinix")
                      (check? #f)
