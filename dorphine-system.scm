@@ -183,7 +183,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                      (mount-point "/mnt/Phinix")
                      (check? #f)
                      (options "compress=zstd,discard=async,subvolid=5")
-                     (mount? #f)))
+                     (mount? #f)
+                     (create-mount-point? #t)))
 
              %testament-base-file-systems)))
 
