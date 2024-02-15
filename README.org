@@ -1,12 +1,16 @@
 #+TITLE: Testament - Personal dot(?)files
 
 ** Structure
-+ [[file:testament/common.scm][testament/common.scm]]: Common Scheme procedures.
-+ [[file:testament/counter-stop.scm][testament/counter-stop.scm]]: Common variables.
++ [[file:blobs][blobs/]]: Files encrypted with [[https://www.agwa.name/projects/git-crypt/][git-crypt]].
++ [[file:files][files/]]: Plain files.
++ [[file:testament/common.scm][testament/common.scm]]: Scheme procedures.
++ [[file:testament/counter-stop.scm][testament/counter-stop.scm]]: Variables.
 + [[file:testament/packages.scm][testament/packages.scm]]: Package variants.
 
-*** Desktop configuration
+*** Desktop
 **** Dorphine (Laptop)
+[[file:files/screenshot.png]]
+
 Guix Home:
 + [[file:dorphine-emacs.scm][dorphine-emacs.scm]]: Emacs configuration, splitted from dorphine-home.scm for its large size.
 + [[file:dorphine-home.scm][dorphine-home.scm]]
@@ -14,12 +18,12 @@ Guix Home:
 Guix System:
 + [[file:dorphine-system.scm][dorphine-system.scm]]
 
-*** Server configuration
+*** Server
 **** Paradise (VPS)
 Guix System:
 + [[file:paradise-system.scm][paradise-system.scm]]
 
-** Dependencies
+** Dependency
 + Guix (+ [[https://bugs.gnu.org/64620][home-emacs patch]] + [[https://bugs.gnu.org/68524][uefi-uki-bootloader patch]])
-+ [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/328][nvidia update]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/403][multiarch container change]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/417][xanmod update]])
++ [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/403][multiarch container patch]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/328][nvidia update]])
 + [[https://codeberg.org/hako/Rosenthal][Rosenthal]]
