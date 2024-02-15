@@ -253,7 +253,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
           (service iwd-service-type
                    (iwd-configuration
                     (enable-network-configuration? #t)
-                    (address-randomization 'once)))
+                    (address-randomization 'network)))
 
           (service libvirt-service-type)
 
