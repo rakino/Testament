@@ -78,7 +78,8 @@
          (truncate-partial-width-windows . #f)
          (user-full-name . "Hilton Chain")
          (user-mail-address . "hako@ultrarare.space")
-         (warning-minimum-level . :emergency)))
+         (warning-minimum-level . :emergency)
+         (word-wrap-by-category . #t)))
       (modes
        '((blink-cursor-mode . #f)
          (electric-pair-mode . #t)
@@ -107,6 +108,7 @@
       (hooks
        '((before-save . delete-trailing-whitespace)
          (minibuffer-setup . cursor-intangible-mode)
+         (org-mode . visual-line-mode)
          (prog-mode . display-fill-column-indicator-mode))))
 
      (emacs-package
@@ -461,7 +463,7 @@
       (name 'visual-fill-column)
       (package emacs-visual-fill-column)
       (options '((visual-fill-column-center-text . #t)))
-      (hooks '((org-mode . visual-fill-column-mode))))
+      (hooks '((visual-line-mode . visual-fill-column-mode))))
 
      (emacs-package
       (name 'volatile-highlights)
