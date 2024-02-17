@@ -74,8 +74,6 @@
          (require-final-newline . #f)
          (show-paren-context-when-offscreen . overlay)
          (show-paren-style . parenthesis)
-         (truncate-lines . #f)
-         (truncate-partial-width-windows . #f)
          (user-full-name . "Hilton Chain")
          (user-mail-address . "hako@ultrarare.space")
          (warning-minimum-level . :emergency)
