@@ -82,7 +82,6 @@
       (modes
        '((blink-cursor-mode . #f)
          (electric-pair-mode . #t)
-         (global-display-fill-column-indicator-mode . #t)
          (ido-mode . both)
          (menu-bar-mode . #t)
          (scroll-bar-mode . #f)
@@ -107,7 +106,8 @@
       (name 'emacs)
       (hooks
        '((before-save . delete-trailing-whitespace)
-         (minibuffer-setup . cursor-intangible-mode))))
+         (minibuffer-setup . cursor-intangible-mode)
+         (prog-mode . display-fill-column-indicator-mode))))
 
      (emacs-package
       (name 'apheleia)
