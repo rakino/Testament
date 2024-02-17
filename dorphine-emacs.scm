@@ -112,6 +112,11 @@
          (prog-mode . display-fill-column-indicator-mode))))
 
      (emacs-package
+      (name 'adaptive-wrap)
+      (package emacs-adaptive-wrap)
+      (hooks '((visual-line-mode . adaptive-wrap-prefix-mode))))
+
+     (emacs-package
       (name 'apheleia)
       (package emacs-apheleia)
       (hooks '((after-init . apheleia-global-mode))))
