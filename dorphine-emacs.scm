@@ -62,6 +62,7 @@
       (variables
        '((create-lockfiles . #f)
          (enable-recursive-minibuffers . #t)
+         (fill-column . 80)
          (indent-tabs-mode . #f)
          (inhibit-startup-screen . #t)
          (minibuffer-prompt-properties
