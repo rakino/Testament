@@ -68,14 +68,13 @@
                              "--ignore-empty-password"
                              "--image"
                              #$(testament-file-object "102982564_p0.jpg"))))
-        (grimshot   (file-append grimshot "/bin/grimshot"))
+        (grimblast  (file-append grimblast "/bin/grimblast"))
         (hyprctl    (file-append hyprland "/bin/hyprctl"))
         (light      (file-append light "/bin/light"))
         (rofi       (file-append rofi-wayland "/bin/rofi"))
         (swaybg     (file-append swaybg "/bin/swaybg"))
         (swayidle   (file-append swayidle/dolly "/bin/swayidle"))
         (swaylock   (file-append swaylock-effects "/bin/swaylock"))
-        (wl-copy    (file-append wl-clipboard "/bin/wl-copy"))
         (wlsunset   (file-append wlsunset "/bin/wlsunset"))
         (wpctl      (file-append wireplumber-minimal "/bin/wpctl"))
         (xdp        (file-append xdg-desktop-portal "/libexec/xdg-desktop-portal"))
@@ -140,8 +139,8 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "bind=SUPER,R,exec," rofi " -show run -matching fuzzy \n"
      "bind=SUPER,L,exec," swaylock " " lock-args "\n"
 
-     "bind=,Print,exec," wl-copy " --type image/png < $(" grimshot " save output " screenshot ")\n"
-     "bind=SUPER,Print,exec," wl-copy " --type image/png < $(" grimshot " save window " screenshot ")\n"
+     "bind=,Print,exec," grimblast " copysave output " screenshot "\n"
+     "bind=SUPER,Print,exec," grimblast " copysave area " screenshot "\n"
 
      "bindl =,XF86AudioMicMute,     exec," wpctl " set-mute   @DEFAULT_AUDIO_SOURCE@ toggle\n"
      "bindl =,XF86AudioMute,        exec," wpctl " set-mute   @DEFAULT_AUDIO_SINK@   toggle\n"
