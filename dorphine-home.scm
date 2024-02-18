@@ -49,8 +49,7 @@
   #:use-module (nongnu packages game-client)
   #:use-module (nongnu packages nvidia)
   #:use-module (rosenthal packages tree-sitter)
-  #:use-module (rosenthal packages wm)
-  #:use-module (rosenthal services child-error))
+  #:use-module (rosenthal packages wm))
 
 
 ;;
@@ -319,10 +318,6 @@ eval \"$(direnv hook bash)\"")
                   (syncthing-configuration
                    (user "hako"))))
 
-        (service home-wakapi-service-type
-                 (home-wakapi-configuration
-                  (config %dorphine-wakapi-config)))
-
         (service home-xdg-configuration-files-service-type
                  `(("gdb/gdbinit" ,%default-gdbinit)
                    ("git/config" ,(testament-file-object "git.conf"))
@@ -336,7 +331,6 @@ eval \"$(direnv hook bash)\"")
                    ("npm/npmrc" ,(testament-file-object "npm.conf"))
                    ("pythonstartup.py" ,(testament-file-object "pythonstartup.py"))
                    ("rclone/rclone.conf" ,(testament-file-object "rclone.conf"))
-                   ("wakatime/.wakatime.cfg" ,(testament-file-object "wakatime.conf"))
                    ("wanderlust/folders" ,(testament-file-object "wanderlust-folders.conf"))
                    ("wgetrc" ,%config-wget)))
 

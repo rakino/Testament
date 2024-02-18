@@ -112,8 +112,6 @@
     ;; ("PYTHON_HISTORY" . "$XDG_STATE_HOME/python/history")
     ;; rust
     ("CARGO_HOME" . "$XDG_DATA_HOME/cargo/")
-    ;; wakatime-cli-bin
-    ("WAKATIME_HOME" . "$XDG_CONFIG_HOME/wakatime/")
     ;; wget
     ("WGETRC" . "$XDG_CONFIG_HOME/wgetrc")))
 

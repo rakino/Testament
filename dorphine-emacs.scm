@@ -12,8 +12,6 @@
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages mail)
   #:use-module (gnu packages shells)
-  #:use-module (rosenthal packages binaries)
-  #:use-module (rosenthal packages emacs-xyz)
   #:export (%dorphine-home-emacs-configuration))
 
 (define %emacs-early-init
@@ -473,14 +471,6 @@
       (name 'volatile-highlights)
       (package emacs-volatile-highlights)
       (hooks '((after-init . volatile-highlights-mode))))
-
-     (emacs-package
-      (name 'wakatime-mode)
-      (package emacs-wakatime-mode)
-      (options
-       `((wakatime-cli-path
-          . ,(file-append wakatime-cli-bin "/bin/wakatime-cli"))))
-      (hooks '((after-init . global-wakatime-mode))))
 
      (emacs-package
       (name 'which-key)
