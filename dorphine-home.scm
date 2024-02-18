@@ -47,7 +47,6 @@
   #:use-module (gnu services mcron)
   #:use-module (gnu system shadow)
   #:use-module (nongnu packages game-client)
-  #:use-module (nongnu packages nvidia)
   #:use-module (rosenthal packages tree-sitter)
   #:use-module (rosenthal packages wm))
 
@@ -209,7 +208,6 @@ fi"))
                 man-pages
                 mosh
                 mpv/dolly
-                nvidia-system-monitor
                 openssh-sans-x
                 pass-otp
                 password-store
