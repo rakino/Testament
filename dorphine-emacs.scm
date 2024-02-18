@@ -63,6 +63,7 @@
        '((create-lockfiles . #f)
          (enable-recursive-minibuffers . #t)
          (fill-column . 80)
+         (find-function-C-source-directory . "~/Repository/emacs/src")
          (indent-tabs-mode . #f)
          (inhibit-startup-screen . #t)
          (minibuffer-prompt-properties
