@@ -295,10 +295,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 
           (service tlp-service-type)
 
-          (service tor-service-type
-                   (tor-configuration
-                    (config-file (testament-file-object "tor.conf"))))
-
           (service udisks-service-type)
 
           (service virtlog-service-type)
