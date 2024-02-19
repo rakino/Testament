@@ -217,14 +217,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
           (service clash-service-type
                    (clash-configuration
                     (clash clash-meta-bin)
-                    (log-file "/var/log/clash-tor.log")
-                    (data-directory "/var/lib/clash-tor")
-                    (config (testament-file-object "clash-tor.yaml"))
-                    (shepherd-provision '(clash-tor))))
-
-          (service clash-service-type
-                   (clash-configuration
-                    (clash clash-meta-bin)
                     (config (testament-file-object "clash.yaml"))))
 
           (service cloudflare-tunnel-service-type
