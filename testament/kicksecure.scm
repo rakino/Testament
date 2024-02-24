@@ -44,7 +44,11 @@ For example:
     ;; Enables all known mitigations for CPU vulnerabilities.
     ;;
     ;; https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/index.html
+    ;; https://www.kernel.org/doc/html/latest/admin-guide/kernel-parameters.html
     ;; https://forums.whonix.org/t/should-all-kernel-patches-for-cpu-bugs-be-unconditionally-enabled-vs-performance-vs-applicability/7647
+
+    ;; Enable known mitigations for CPU vulnerabilities and disable SMT.
+    "mitigations=auto,nosmt"
 
     ;; Enable mitigations for Spectre variant 2 (indirect branch speculation).
     ;;
@@ -99,6 +103,18 @@ For example:
     ;;
     ;; https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/processor_mmio_stale_data.html
     "mmio_stale_data=full,nosmt"
+
+    ;; Enable mitigations for RETBleed (Arbitrary Speculative Code Execution with
+    ;; Return Instructions) vulnerability and disable SMT.
+    ;;
+    "retbleed=auto,nosmt"
+
+    ;; Control RAS overflow mitigation on AMD Zen CPUs.
+    ;; The current default kernel parameter is 'spec_rstack_overflow=safe-ret'
+    ;; This default will used until provided sufficient evidence to modify.
+    ;;
+    ;; https://www.kernel.org/doc/html/latest/admin-guide/hw-vuln/srso.html
+
     ;; Copyright (C) 2019 - 2023 ENCRYPTED SUPPORT LP <adrelanos@whonix.org>
     ;; See the file COPYING for copying conditions.
 
@@ -361,6 +377,12 @@ For example:
     ;; Hardens the BPF JIT compiler and restricts it to root.
     ("kernel.unprivileged_bpf_disabled" . "1")
     ("net.core.bpf_jit_harden" . "2")
+
+    ;; Disable asynchronous I/O for all processes.
+    ;; Valid only for linux kernel version >= 6.6.
+    ;; Command is retained here for future-proofing and completeness.
+    ;; https://forums.whonix.org/t/io-uring-security-vulnerabilties/16890/6
+    ("kernel.io_uring_disabled" . "2")
 
     ;; meta start
     ;; project Kicksecure
