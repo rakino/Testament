@@ -24,6 +24,7 @@
   #:use-module (gnu home services sound)
   #:use-module (gnu home services ssh)
   #:use-module (gnu home services syncthing)
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages freedesktop)
@@ -208,6 +209,7 @@ fi"))
                 man-pages
                 mosh
                 mpv/dolly
+                netcat-openbsd
                 openssh-sans-x
                 pass-otp
                 password-store
