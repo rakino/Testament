@@ -36,6 +36,7 @@
   #:use-module (gnu system file-systems)
   #:use-module (gnu system keyboard)
   #:use-module (gnu system linux-initrd)
+  #:use-module (gnu system mapped-devices)
   #:use-module (gnu system pam)
   #:use-module (gnu system shadow)
   #:use-module (nongnu packages linux)
@@ -142,17 +143,24 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 
   (host-name "dorphine")
 
+  (mapped-devices
+   (list (mapped-device
+	  (source (uuid "9d66aba7-854d-4322-b0ed-e0ab6ad85f00"))
+	  (target "Windose")
+	  (type luks-device-mapping))))
+
   (file-systems
    (let ((rootfs (file-system
-                   (device (uuid "d6a4de85-7276-4573-aa94-e8d3927585ae"))
+                   (device (uuid "86085728-1a31-4c4b-bfd5-ca3bef030136"))
                    (mount-point "/")
                    (type "btrfs")
-                   (options "compress=zstd,discard=async,subvol=Skeleton/Guix"))))
+                   (options "compress=zstd,discard=async,subvol=@System/@Guix")
+                   (dependencies mapped-devices))))
      (append (list rootfs)
 
              ;; Bootloader
              (list (file-system
-                     (device (uuid "6985-D4C6" 'fat))
+                     (device (uuid "F5BB-DCAF" 'fat))
                      (mount-point "/efi")
                      (type "vfat")
                      (mount? #f)))
@@ -166,9 +174,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                         (string-append
                          "compress=zstd,discard=async,subvol=" subvolume))
                        (check? #f))))
-                  '(("/boot"    "Boot")
-                    ("/home"    "Home")
-                    ("/var/lib" "Data")))
+                  '(("/home"    "@Home")
+                    ("/var/lib" "@Data")))
 
              ;; Devices
              (list (file-system
