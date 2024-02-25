@@ -99,6 +99,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
   (kernel linux-dorphine)
   (kernel-arguments
    (cons* "nvidia_drm.modeset=1"
+          "zswap.enabled=1"
           (string-append "modprobe.blacklist="
                          (string-join
                           (cons* "hid_nintendo"
@@ -175,6 +176,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                          "compress=zstd,discard=async,subvol=" subvolume))
                        (check? #f))))
                   '(("/home"    "@Home")
+                    ("/swap"    "@Swap")
                     ("/var/lib" "@Data")))
 
              ;; Devices
@@ -194,6 +196,14 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                      (create-mount-point? #t)))
 
              %testament-base-file-systems)))
+
+  (swap-devices
+   (list (swap-space
+          (target "/swap/swapfile")
+          (dependencies
+           (filter (file-system-mount-point-predicate "/swap")
+                   file-systems))
+          (discard? #t))))
 
   (users
    (cons* (user-account
