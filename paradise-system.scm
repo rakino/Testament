@@ -6,6 +6,8 @@
   #:use-module (blobs paradise)
   #:use-module (testament counter-stop)
   #:use-module (testament kicksecure)
+  #:use-module (ice-9 match)
+  #:use-module (srfi srfi-26)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
   #:use-module (gnu packages certs)
@@ -60,20 +62,26 @@
   (host-name "paradise")
 
   (file-systems
-   (let ((rootfs (file-system
-                   (device (uuid "480ebd1b-e5b6-4ff0-a54e-864b15ff9e7d"))
-                   (mount-point "/")
-                   (type "btrfs")
-                   (options "compress=zstd,subvol=System"))))
-     (append (list rootfs)
+   (let ((file-system-base
+          (file-system
+            (type "btrfs")
+            (mount-point "/")
+            (device (uuid "480ebd1b-e5b6-4ff0-a54e-864b15ff9e7d"))
+            (create-mount-point? #t)))
+         (options-for-subvolume
+          (cut string-append "compress=zstd,subvol=" <>)))
+     (append
+      (map (match-lambda
+             ((subvolume . mount-point)
+              (file-system
+                (inherit file-system-base)
+                (mount-point mount-point)
+                (options (options-for-subvolume subvolume))
+                (check? (string=? "/" mount-point)))))
+           '(("System" . "/")
+             ("Data"   . "/var/lib")))
 
-             (list (file-system
-                     (inherit rootfs)
-                     (mount-point "/var/lib")
-                     (options "compress=zstd,subvol=Data")
-                     (check? #f)))
-
-             %testament-base-file-systems)))
+      %testament-base-file-systems)))
 
   (users
    (cons* (user-account

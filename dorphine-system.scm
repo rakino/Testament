@@ -9,6 +9,7 @@
   #:use-module (testament kicksecure)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-26)
   #:use-module (guix gexp)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader uki)
@@ -151,51 +152,53 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 	  (type luks-device-mapping))))
 
   (file-systems
-   (let ((rootfs (file-system
-                   (device (uuid "86085728-1a31-4c4b-bfd5-ca3bef030136"))
-                   (mount-point "/")
-                   (type "btrfs")
-                   (options "compress=zstd,discard=async,subvol=@System/@Guix")
-                   (dependencies mapped-devices))))
-     (append (list rootfs)
+   (let ((file-system-base
+          (file-system
+            (type "btrfs")
+            (mount-point "/")
+            (device (uuid "86085728-1a31-4c4b-bfd5-ca3bef030136"))
+            (create-mount-point? #t)
+            (dependencies mapped-devices)))
+         (options-for-subvolume
+          (cut string-append "compress=zstd,discard=async,subvol=" <>)))
+     (append
+      (map (match-lambda
+             ((subvolume . mount-point)
+              (file-system
+                (inherit file-system-base)
+                (mount-point mount-point)
+                (options (options-for-subvolume subvolume))
+                (check? (string=? "/" mount-point)))))
+           '(("@System/@Guix" . "/")
+             ("@Home"         . "/home")
+             ("@Swap"         . "/swap")
+             ("@Data"         . "/var/lib")))
 
-             ;; Bootloader
-             (list (file-system
-                     (device (uuid "F5BB-DCAF" 'fat))
-                     (mount-point "/efi")
-                     (type "vfat")
-                     (mount? #f)))
+      ;; Bootloader
+      (list (file-system
+              (type "vfat")
+              (mount-point "/efi")
+              (device (uuid "F5BB-DCAF" 'fat))
+              (mount? #f)
+              (create-mount-point? #t)))
 
-             (map (match-lambda
-                    ((mount-point subvolume)
-                     (file-system
-                       (inherit rootfs)
-                       (mount-point mount-point)
-                       (options
-                        (string-append
-                         "compress=zstd,discard=async,subvol=" subvolume))
-                       (check? #f))))
-                  '(("/home"    "@Home")
-                    ("/swap"    "@Swap")
-                    ("/var/lib" "@Data")))
+      ;; Devices
+      (list (file-system
+              (type "btrfs")
+              (mount-point "/mnt/Myosotis")
+              (device (uuid "537de57b-30b7-4273-868f-83771074b6af"))
+              (options "compress=zstd,subvolid=5")
+              (mount? #f)
+              (create-mount-point? #t))
+            (file-system
+              (inherit file-system-base)
+              (mount-point "/mnt/Phinix")
+              (options "compress=zstd,discard=async,subvolid=5")
+              (mount? #f)
+              (check? #f)
+              (create-mount-point? #t)))
 
-             ;; Devices
-             (list (file-system
-                     (device (uuid "537de57b-30b7-4273-868f-83771074b6af"))
-                     (mount-point "/mnt/Myosotis")
-                     (type "btrfs")
-                     (options "compress=zstd,subvolid=5")
-                     (mount? #f)
-                     (create-mount-point? #t))
-                   (file-system
-                     (inherit rootfs)
-                     (mount-point "/mnt/Phinix")
-                     (options "compress=zstd,discard=async,subvolid=5")
-                     (mount? #f)
-                     (check? #f)
-                     (create-mount-point? #t)))
-
-             %testament-base-file-systems)))
+      %testament-base-file-systems)))
 
   (swap-devices
    (list (swap-space
