@@ -101,6 +101,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
   (kernel-arguments
    (cons* "nvidia_drm.modeset=1"
           "zswap.enabled=1"
+          "zswap.max_pool_percent=90"
           (string-append "modprobe.blacklist="
                          (string-join
                           (cons* "hid_nintendo"
@@ -321,10 +322,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 
           (service x11-socket-directory-service-type)
 
-          (service zram-device-service-type
-                   (zram-device-configuration
-                    (size "6G")))
-
           polkit-wheel-service
 
           (udev-rules-service 'backlight light)
@@ -344,12 +341,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 
           (simple-service 'sysctl-extra-settings sysctl-service-type
                           '(("net.core.default_qdisc" . "fq_pie")
-                            ("net.ipv4.tcp_congestion_control" . "bbr")
-                            ;; Pop!_OS settings for zram
-                            ("vm.page-cluster" . "0")
-                            ("vm.swappiness" . "180")
-                            ("vm.watermark_boost_factor" . "0")
-                            ("vm.watermark_scale_factor" . "125")))
+                            ("net.ipv4.tcp_congestion_control" . "bbr")))
 
           (simple-service 'uaccess-pam-service pam-root-service-type
                           (let ((uaccess-pam-entry
@@ -399,4 +391,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
             (sysctl-service-type
              config => (sysctl-configuration
                         (inherit config)
-                        (settings %kicksecure-sysctl-rules)))))))
+                        (settings
+                         (fold kicksecure-delete
+                               %kicksecure-sysctl-rules
+                               '("vm.swappiness")))))))))
