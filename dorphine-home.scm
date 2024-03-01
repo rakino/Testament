@@ -198,7 +198,8 @@ fi"))
 
 
 (define %home-packages
-  (append (list direnv
+  (append (list b4
+                direnv
                 firefox/dolly
                 git
                 `(,git "send-email")
