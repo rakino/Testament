@@ -72,12 +72,8 @@
   (let ((filename "alacritty.toml"))
     (mixed-text-file
      filename
-     (testament-file-content filename) "\n"
-     #~(begin
-         (use-modules (rnrs io ports))
-         (call-with-input-file #$%alacritty-theme-catppuccin-latte
-           (lambda (port)
-             (get-string-all port)))))))
+     "import = [ \"" %alacritty-theme-catppuccin-latte "\" ]\n"
+     (testament-file-content filename) "\n")))
 
 (define %config-hyprland
   (let ((filename  "hyprland.conf")
