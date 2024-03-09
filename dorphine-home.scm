@@ -135,7 +135,7 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "bindl=,switch:off:Lid Switch,exec," hyprctl " dispatch dpms on eDP-1\n"
 
      "bind=SUPER,Return,exec,emacsclient --create-frame --no-wait --alternate-editor=''\n"
-     "bind=SUPER,R,exec," rofi " -show run -matching fuzzy \n"
+     "bind=SUPER,R,exec," rofi " -modes combi -show combi -matching fuzzy\n"
      "bind=SUPER,L,exec," swaylock " " lock-args "\n"
 
      "bind=,Print,exec," grimblast " copysave output " screenshot "\n"
