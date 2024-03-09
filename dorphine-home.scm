@@ -11,6 +11,7 @@
   #:use-module (ice-9 format)
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
+  #:use-module (guix download)
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (gnu home)
@@ -39,6 +40,7 @@
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages shellutils)
   #:use-module (gnu packages ssh)
+  #:use-module (gnu packages terminals)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages virtualization)
@@ -57,6 +59,26 @@
 ;;
 
 
+(define %alacritty-theme-catppuccin-latte
+  (origin
+    (method url-fetch)
+    (uri (string-append "https://github.com/catppuccin/alacritty" "/raw/"
+                        "832787d6cc0796c9f0c2b03926f4a83ce4d4519b"
+                        "/catppuccin-latte.toml"))
+    (sha256
+     (base32 "09wvxg6vlfk4v47fildna1nxpjm88q6b7c6ig9xx1vyl5mpi8m51"))))
+
+(define %config-alacritty
+  (let ((filename "alacritty.toml"))
+    (mixed-text-file
+     filename
+     (testament-file-content filename) "\n"
+     #~(begin
+         (use-modules (rnrs io ports))
+         (call-with-input-file #$%alacritty-theme-catppuccin-latte
+           (lambda (port)
+             (get-string-all port)))))))
+
 (define %config-hyprland
   (let ((filename  "hyprland.conf")
         (screenshot "~/Library/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png")
@@ -67,6 +89,7 @@
                              "--ignore-empty-password"
                              "--image"
                              #$(testament-file-object "102982564_p0.jpg"))))
+        (alacritty  (file-append alacritty "/bin/alacritty"))
         (grimblast  (file-append grimblast "/bin/grimblast"))
         (hyprctl    (file-append hyprland "/bin/hyprctl"))
         (light      (file-append light "/bin/light"))
@@ -135,6 +158,7 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "bindl=,switch:off:Lid Switch,exec," hyprctl " dispatch dpms on eDP-1\n"
 
      "bind=SUPER,Return,exec,emacsclient --create-frame --no-wait --alternate-editor=''\n"
+     "bind=SUPER,T,exec," alacritty "\n"
      "bind=SUPER,R,exec," rofi " -modes combi -show combi -matching fuzzy\n"
      "bind=SUPER,L,exec," swaylock " " lock-args "\n"
 
@@ -322,7 +346,8 @@ eval \"$(direnv hook bash)\"")
                    (user "hako"))))
 
         (service home-xdg-configuration-files-service-type
-                 `(("gdb/gdbinit" ,%default-gdbinit)
+                 `(("alacritty/alacritty.toml" ,%config-alacritty)
+                   ("gdb/gdbinit" ,%default-gdbinit)
                    ("git/config" ,(testament-file-object "git.conf"))
                    ("gtk-3.0/settings.ini" ,(testament-file-object "gtk-3.0.ini"))
                    ("hyfetch.json" ,(testament-file-object "hyfetch.json"))

@@ -1,0 +1,10 @@
+[font]
+normal = { family = "Victor Mono" }
+size = 12.0
+
+[scrolling]
+history = 100000
+
+[window]
+decorations = "none"
+opacity = 0.8
