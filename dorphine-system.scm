@@ -112,7 +112,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                           ","))
           (fold kicksecure-delete
                 %kicksecure-kernel-arguments
-                '("nosmt"))))
+                '("debugfs" "nosmt"))))
 
   (bootloader (bootloader-configuration
                (bootloader uefi-uki-bootloader)
@@ -199,7 +199,8 @@ MODE=\"0660\", TAG+=\"uaccess\""))
               (check? #f)
               (create-mount-point? #t)))
 
-      %testament-base-file-systems)))
+      (cons* %debug-file-system
+             %testament-base-file-systems))))
 
   (swap-devices
    (list (swap-space
