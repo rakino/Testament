@@ -193,7 +193,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
               (create-mount-point? #t))
             (file-system
               (inherit file-system-base)
-              (mount-point "/mnt/Phinix")
+              (mount-point "/mnt/Mentha")
               (options "compress=zstd,discard=async,subvolid=5")
               (mount? #f)
               (check? #f)
