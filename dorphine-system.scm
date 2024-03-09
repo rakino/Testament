@@ -395,4 +395,4 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                         (settings
                          (fold kicksecure-delete
                                %kicksecure-sysctl-rules
-                               '("vm.swappiness")))))))))
+                               '("kernel.sysrq" "vm.swappiness"))))))))
