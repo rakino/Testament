@@ -223,6 +223,7 @@ fi"))
 
 (define %home-packages
   (append (list b4
+                dconf
                 direnv
                 firefox/dolly
                 git
