@@ -96,10 +96,10 @@
 bind=SUPER,~a,movefocus,~a~%"
                                key direction))
                      keys)))
-             '(("l" ("D" "left"))
-               ("d" ("H" "down"))
-               ("u" ("T" "up"))
-               ("r" ("N" "right")))))
+             '(("l" ("left"))
+               ("d" ("down"))
+               ("u" ("up"))
+               ("r" ("right")))))
 
      (apply string-append
             (map (lambda (workspace-number)
