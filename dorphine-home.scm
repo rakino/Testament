@@ -175,6 +175,19 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
    "wgetrc"
    "hsts-file = ~/.cache/wget-hsts\n"))
 
+(define %bashrc-direnv
+  (plain-file
+   "bashrc-direnv"
+   "
+eval \"$(direnv hook bash)\""))
+
+(define %bashrc-eat
+  (plain-file
+   "bashrc-eat"
+   "
+[ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && \\
+  source \"$EAT_SHELL_INTEGRATION_DIR/bash\""))
+
 (define %shell-profile-nvidia
   (plain-file
    "shell-profile-nvidia"
@@ -285,15 +298,8 @@ fi"))
   (list (service home-bash-service-type
                  (home-bash-configuration
                   (bashrc
-                   (list (plain-file
-                          "bashrc-direnv"
-                          "
-eval \"$(direnv hook bash)\"")
-                         (plain-file
-                          "bashrc-eat"
-                          "
-[ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && \\
-  source \"$EAT_SHELL_INTEGRATION_DIR/bash\"")))))
+                   (list %bashrc-direnv
+                         %bashrc-eat))))
 
         (service home-channels-service-type
                  (list %channel-guix
