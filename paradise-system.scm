@@ -146,6 +146,9 @@
             (sysctl-service-type
              config => (sysctl-configuration
                         (inherit config)
-                        (settings %kicksecure-sysctl-rules))))))
+                        (settings
+                         (fold kicksecure-delete
+                               %kicksecure-sysctl-rules
+                               '("net.ipv4.icmp_echo_ignore_all"))))))))
 
   (sudoers-file %paradise-sudoers-file))

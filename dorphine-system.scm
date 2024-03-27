@@ -392,4 +392,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                         (settings
                          (fold kicksecure-delete
                                %kicksecure-sysctl-rules
-                               '("kernel.sysrq" "vm.swappiness"))))))))
+                               '("kernel.sysrq"
+                                 "net.ipv4.icmp_echo_ignore_all"
+                                 "vm.swappiness")))))))))
