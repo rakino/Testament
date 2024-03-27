@@ -118,11 +118,7 @@
                     (fail2ban-jail-configuration
                      (name "sshd")
                      (enabled? #t)))
-                   (openssh-configuration
-                    (openssh openssh-sans-x)
-                    (port-number 54371)
-                    (password-authentication? #f)
-                    (authorized-keys %paradise-ssh-authorized-keys)))
+                   %paradise-ssh-configuration)
 
           (service zram-device-service-type
                    (zram-device-configuration
@@ -146,11 +142,12 @@
              config => (guix-configuration
                         (inherit config)
                         (substitute-urls
-                         (append (guix-configuration-substitute-urls config)
-                                 '("https://substitute.boiledscript.com")))
+                         `(,@%default-substitute-urls
+                           "https://substitute.boiledscript.com"))
                         (authorized-keys
                          (cons* %guix-authorized-key-dorphine
-                                (guix-configuration-authorized-keys config)))))
+                                %guix-authorized-key-gokuraku
+                                %default-authorized-guix-keys))))
 
             (sysctl-service-type
              config => (sysctl-configuration

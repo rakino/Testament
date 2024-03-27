@@ -19,6 +19,10 @@ Guix System:
 + [[file:dorphine-system.scm][dorphine-system.scm]]
 
 *** Server
+**** Gokuraku
+Guix System:
++ [[file:gokuraku-system.scm][gokuraku-system.scm]]
+
 **** Paradise (VPS)
 Guix System:
 + [[file:paradise-system.scm][paradise-system.scm]]

@@ -382,11 +382,13 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                         (inherit config)
                         (substitute-urls
                          `("https://mirror.sjtu.edu.cn/guix"
-                           ,@(guix-configuration-substitute-urls config)
-                           "https://substitutes.nonguix.org"))
+                           ,@%default-substitute-urls
+                           "https://substitutes.nonguix.org"
+                           "https://substitute.boiledscript.com"))
                         (authorized-keys
-                         (cons* %guix-authorized-key-nonguix
-                                (guix-configuration-authorized-keys config)))
+                         (cons* %guix-authorized-key-gokuraku
+                                %guix-authorized-key-nonguix
+                                %default-authorized-guix-keys))
                         (http-proxy "http://127.0.0.1:7890")))
 
             (sysctl-service-type

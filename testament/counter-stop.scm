@@ -13,6 +13,7 @@
             %channel-rosenthal
 
             %guix-authorized-key-dorphine
+            %guix-authorized-key-gokuraku
             %guix-authorized-key-nonguix
 
             %testament-xdg-base-directory-env-vars
@@ -72,6 +73,14 @@
  (ecc
   (curve Ed25519)
   (q #7B44CACBD0FD38E2A083E0694441C230680BC6E78A407C74ACD23AF693A48BF5#)))"))
+
+;; https://substitute.boiledscript.com/signing-key.pub
+(define %guix-authorized-key-gokuraku
+  (plain-file "gokuraku.pub" "
+(public-key
+ (ecc
+  (curve Ed25519)
+  (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))"))
 
 ;; https://substitutes.nonguix.org/signing-key.pub
 (define %guix-authorized-key-nonguix
