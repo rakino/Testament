@@ -11,7 +11,6 @@
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages mail)
-  #:use-module (gnu packages shells)
   #:export (%dorphine-home-emacs-configuration))
 
 (define %emacs-early-init
@@ -205,15 +204,6 @@
       (name 'eshell-syntax-highlighting)
       (package emacs-eshell-syntax-highlighting)
       (hooks '((after-init . eshell-syntax-highlighting-global-mode))))
-
-     (emacs-package
-      (name 'fish-completion)
-      (package emacs-fish-completion)
-      (extra-packages (list emacs-bash-completion))
-      (options
-       `((fish-completion-command . ,(file-append fish "/bin/fish"))
-         (fish-completion-fallback-on-bash-p . #t)))
-      (hooks '((after-init . global-fish-completion-mode))))
 
      (emacs-package
       (name 'geiser)
