@@ -33,6 +33,7 @@
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gnome-xyz)
   #:use-module (gnu packages gnupg)
+  #:use-module (gnu packages guile)
   #:use-module (gnu packages image-viewers)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages man)
@@ -76,6 +77,46 @@
      "import = [ \"" %alacritty-theme-catppuccin-latte "\" ]\n"
      (testament-file-content filename) "\n")))
 
+(define %hyprland-switch-keyboard-layout
+  (program-file
+   "switch-keyboard-layout.scm"
+   (with-extensions (list guile-json-4)
+     #~(begin
+         (use-modules (ice-9 popen)
+                      (json)
+                      (rnrs io ports))
+
+         (define (get-keyboards)
+           (let* ((port (open-input-pipe
+                         #$(file-append hyprland "/bin/hyprctl devices -j")))
+                  (str (get-string-all port)))
+             (close-pipe port)
+             (assoc-ref (json-string->scm str) "keyboards")))
+
+         (define (get-layout)
+           (assoc-ref (vector-ref (get-keyboards) 0)
+                      "active_keymap"))
+
+         (define keyboards
+           (get-keyboards))
+
+         (define layout
+           (if (string-contains (get-layout) "Dvorak")
+               0
+               1))
+
+         (for-each
+          (lambda (index)
+            (system* #$(file-append hyprland "/bin/hyprctl")
+                     "switchxkblayout"
+                     (assoc-ref (vector-ref keyboards index)
+                                "name")
+                     (number->string (- 1 layout))))
+          (iota (vector-length keyboards)))
+
+         (system* #$(file-append libnotify "/bin/notify-send")
+                  (string-append "Layout: " (get-layout)))))))
+
 (define %config-hyprland
   (let ((filename  "hyprland.conf")
         (screenshot "~/Library/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png")
@@ -90,6 +131,7 @@
         (grimblast  (file-append grimblast "/bin/grimblast"))
         (hyprctl    (file-append hyprland "/bin/hyprctl"))
         (light      (file-append light "/bin/light"))
+        (mako       (file-append mako "/bin/mako"))
         (rofi       (file-append rofi-wayland "/bin/rofi"))
         (swaybg     (file-append swaybg "/bin/swaybg"))
         (swaylock   (file-append swaylock-effects "/bin/swaylock"))
@@ -150,6 +192,7 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "bindl=,switch:off:Lid Switch,exec," hyprctl " dispatch dpms on eDP-1\n"
 
      "bind=SUPER,Return,exec,emacsclient --create-frame --no-wait --alternate-editor=''\n"
+     "bind=SUPER,space,exec," %hyprland-switch-keyboard-layout "\n"
      "bind=SUPER,T,exec," alacritty "\n"
      "bind=SUPER,R,exec," rofi " -modes combi -show combi -matching fuzzy\n"
      "bind=SUPER,L,exec," swaylock " " lock-args "\n"
@@ -164,6 +207,7 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "bindle=,XF86MonBrightnessDown,exec," light " -U 5\n"
      "bindle=,XF86MonBrightnessUp,  exec," light " -A 5\n"
 
+     "exec-once=" mako "\n"
      "exec-once=" xdp-gtk " -r\n"
      "exec-once=" xdp-hypr "\n"
      "exec-once=sleep 5; exec " xdp " -r\n"
