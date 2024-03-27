@@ -255,10 +255,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                                 (command (file-append bash "/bin/bash"))))))
                           (iota 6 1)))))
 
-          (service guix-publish-service-type
-                   (guix-publish-configuration
-                    (port 27254)))
-
           (service iwd-service-type
                    (iwd-configuration
                     (enable-network-configuration? #t)
