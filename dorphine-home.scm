@@ -102,10 +102,6 @@
      filename
      (testament-file-content filename) "\n"
 
-     ;; https://github.com/hyprwm/Hyprland/issues/2661
-     "windowrulev2=stayfocused,title:^()$,class:^(steam)$\n"
-     "windowrulev2=minsize 1 1,title:^()$,class:^(steam)$\n"
-
      (apply string-append
             (append-map
              (match-lambda
