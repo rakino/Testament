@@ -17,6 +17,7 @@
   #:use-module (gnu home)
   #:use-module (gnu home services)
   #:use-module (gnu home services desktop)
+  #:use-module (gnu home services dotfiles)
   #:use-module (gnu home services emacs)
   #:use-module (gnu home services gnupg)
   #:use-module (gnu home services guix)
@@ -311,12 +312,16 @@ eval \"$(direnv hook bash)\"")
 
         (service home-dbus-service-type)
 
+        (service home-dotfiles-service-type
+                 (home-dotfiles-configuration
+                  (layout 'stow)
+                  (directories '("./dotfiles"))))
+
         (service home-emacs-service-type
                  %dorphine-home-emacs-configuration)
 
         (service home-files-service-type
-                 `((".guile" ,%default-dotguile)
-                   (".icons/default/index.theme" ,(testament-file-object "icons.theme"))))
+                 `((".guile" ,%default-dotguile)))
 
         (service home-gpg-agent-service-type
                  (home-gpg-agent-configuration
@@ -345,18 +350,9 @@ eval \"$(direnv hook bash)\"")
         (service home-xdg-configuration-files-service-type
                  `(("alacritty/alacritty.toml" ,%config-alacritty)
                    ("gdb/gdbinit" ,%default-gdbinit)
-                   ("git/config" ,(testament-file-object "git.conf"))
-                   ("gtk-3.0/settings.ini" ,(testament-file-object "gtk-3.0.ini"))
-                   ("hyfetch.json" ,(testament-file-object "hyfetch.json"))
                    ("hypr/hyprland.conf" ,%config-hyprland)
-                   ("modprobed-db.conf" ,(testament-file-object "modprobed-db.conf"))
-                   ("mpv/mpv.conf" ,(testament-file-object "mpv.conf"))
                    ("nano/nanorc" ,%default-nanorc)
-                   ("neofetch/config.conf" ,(testament-file-object "neofetch.conf"))
-                   ("npm/npmrc" ,(testament-file-object "npm.conf"))
-                   ("pythonstartup.py" ,(testament-file-object "pythonstartup.py"))
                    ("rclone/rclone.conf" ,(testament-file-object "rclone.conf"))
-                   ("wanderlust/folders" ,(testament-file-object "wanderlust-folders.conf"))
                    ("wgetrc" ,%config-wget)))
 
         (simple-service 'setup-env-vars
