@@ -12,7 +12,6 @@
   #:use-module (srfi srfi-26)
   #:use-module (guix gexp)
   #:use-module (gnu bootloader)
-  #:use-module (gnu bootloader uki)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bittorrent)
@@ -42,6 +41,7 @@
   #:use-module (nongnu packages linux)
   #:use-module (nongnu services nvidia)
   #:use-module (nongnu system linux-initrd)
+  #:use-module (rosenthal bootloader grub)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages dns)
   #:use-module (rosenthal services bittorrent)
@@ -105,7 +105,7 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                 '("debugfs" "nosmt"))))
 
   (bootloader (bootloader-configuration
-               (bootloader uefi-uki-bootloader)
+               (bootloader grub-efi-luks2-removable-bootloader)
                (targets '("/efi"))))
 
   (keyboard-layout

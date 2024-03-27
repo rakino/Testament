@@ -3,6 +3,7 @@
 ** Structure
 + [[file:blobs][blobs/]]: Files encrypted with [[https://www.agwa.name/projects/git-crypt/][git-crypt]].
 + [[file:files][files/]]: Plain files.
++ [[file:dotfiles][dotfiles/]]: Dotfiles in [[https://www.gnu.org/software/stow/][GNU Stow]] layout.
 + [[file:testament/common.scm][testament/common.scm]]: Scheme procedures.
 + [[file:testament/counter-stop.scm][testament/counter-stop.scm]]: Variables.
 + [[file:testament/packages.scm][testament/packages.scm]]: Package variants.
@@ -28,6 +29,6 @@ Guix System:
 + [[file:paradise-system.scm][paradise-system.scm]]
 
 ** Dependency
-+ Guix (+ [[https://bugs.gnu.org/64620][home-emacs patch]] + [[https://bugs.gnu.org/68524][uefi-uki-bootloader patch]])
++ Guix (+ [[https://bugs.gnu.org/64620][home-emacs patch]])
 + [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/403][multiarch container adjustment]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/328][nvidia update]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/419][xanmod update]])
 + [[https://codeberg.org/hako/Rosenthal][Rosenthal]]
