@@ -4,11 +4,9 @@
 
 (define-module (testament packages)
   #:use-module (guix packages)
-  #:use-module (guix utils)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages video)
-  #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (nongnu packages game-client)
   #:use-module (nongnu packages mozilla)
@@ -55,15 +53,3 @@
 
 (define-public steam-nvidia/dolly
   (nonguix-container->package steam-nvidia-container/dolly))
-
-(define-public swayidle/dolly
-  (let ((base swayidle))
-    (package
-      (inherit base)
-      (arguments
-       (strip-keyword-arguments
-        '(#:configure-flags)
-        (package-arguments base)))
-      (inputs
-       (modify-inputs (package-inputs base)
-         (delete "elogind"))))))

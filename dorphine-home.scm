@@ -92,7 +92,6 @@
         (light      (file-append light "/bin/light"))
         (rofi       (file-append rofi-wayland "/bin/rofi"))
         (swaybg     (file-append swaybg "/bin/swaybg"))
-        (swayidle   (file-append swayidle/dolly "/bin/swayidle"))
         (swaylock   (file-append swaylock-effects "/bin/swaylock"))
         (wlsunset   (file-append wlsunset "/bin/wlsunset"))
         (wpctl      (file-append wireplumber-minimal "/bin/wpctl"))
@@ -173,11 +172,7 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "exec-once=" xdp-hypr "\n"
      "exec-once=sleep 5; exec " xdp " -r\n"
      "exec-once=" wlsunset " -o eDP-1 " %dorphine-wlsunset-args "\n"
-     "exec-once=" swaybg " --image " wallpaper " --mode fill --output '*'\n"
-     "exec-once=" swayidle " -w \
-timeout 300 '" swaylock " " lock-args "' \
-timeout 600 '" hyprctl " dispatch dpms off' \
-resume '" hyprctl " dispatch dpms on'\n")))
+     "exec-once=" swaybg " --image " wallpaper " --mode fill --output '*'\n")))
 
 (define %config-wget
   (plain-file
