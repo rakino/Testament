@@ -298,7 +298,7 @@ fi"))
                 qtwayland-5
                 rofi-wayland
                 rsync
-                steam-nvidia/dolly
+                steam/dolly
                 tessen
                 unzip
                 virt-manager
