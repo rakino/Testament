@@ -39,8 +39,8 @@
   #:use-module (gnu packages man)
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages qt)
-  #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages rsync)
+  #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages shellutils)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages terminals)
@@ -415,15 +415,8 @@ fi"))
                         `(,@%testament-xdg-base-directory-env-vars
                           ("BROWSER" . "firefox")
                           ("EDITOR" . "emacsclient")
-                          ("GDK_SCALE" . "1.5")
                           ("HISTSIZE" . "10000")
-                          ("HTTPS_PROXY" . "http://127.0.0.1:7890")
-                          ("HTTP_PROXY" . "$HTTPS_PROXY")
-                          ("MOZ_ENABLE_WAYLAND" . "1")
-                          ("TZ" . "Asia/Hong_Kong")
-                          ("VISUAL" . "$EDITOR")
-                          ("https_proxy" . "$HTTPS_PROXY")
-                          ("http_proxy" . "$HTTPS_PROXY")))
+                          ("VISUAL" . "$EDITOR")))
 
         (simple-service 'setup-shell-profile
                         home-shell-profile-service-type
