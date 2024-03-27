@@ -79,13 +79,13 @@
 (define %config-hyprland
   (let ((filename  "hyprland.conf")
         (screenshot "~/Library/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png")
-        (wallpaper  (testament-file-object "112358159_p0.png"))
+        (wallpaper  (testament-file-object "96496968_p0.png"))
         (lock-args  #~(string-join
                        (list "--clock"
                              "--daemonize"
                              "--ignore-empty-password"
                              "--image"
-                             #$(testament-file-object "102982564_p0.jpg"))))
+                             #$(testament-file-object "115008128_p0.jpg"))))
         (alacritty  (file-append alacritty "/bin/alacritty"))
         (grimblast  (file-append grimblast "/bin/grimblast"))
         (hyprctl    (file-append hyprland "/bin/hyprctl"))
