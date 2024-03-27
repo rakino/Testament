@@ -26,7 +26,6 @@
   #:use-module (gnu services base)
   #:use-module (gnu services desktop)
   #:use-module (gnu services linux)
-  #:use-module (gnu services mcron)
   #:use-module (gnu services networking)
   #:use-module (gnu services pm)
   #:use-module (gnu services security-token)
@@ -71,16 +70,6 @@
   (udev-rule "60-controller-permission.rules" "\
 KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
 MODE=\"0660\", TAG+=\"uaccess\""))
-
-
-;;
-;; Mcron jobs
-;;
-
-
-(define %mcron-job-defrag-guix-db
-  #~(job next-day-from
-         #$(file-append btrfs-progs "/bin/btrfs fi defrag -r /var/guix/db/")))
 
 
 ;;
@@ -261,10 +250,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                     (address-randomization 'network)))
 
           (service libvirt-service-type)
-
-          (service mcron-service-type
-                   (mcron-configuration
-                    (jobs (list %mcron-job-defrag-guix-db))))
 
           (service nftables-service-type
                    (nftables-configuration
