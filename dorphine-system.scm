@@ -47,6 +47,7 @@
   #:use-module (rosenthal services bittorrent)
   #:use-module (rosenthal services child-error)
   #:use-module (rosenthal services dns)
+  #:use-module (rosenthal services file-systems)
   #:use-module (rosenthal services networking))
 
 
@@ -184,7 +185,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
               (inherit file-system-base)
               (mount-point "/mnt/Mentha")
               (options "compress=zstd,discard=async,subvolid=5")
-              (mount? #f)
               (check? #f)
               (create-mount-point? #t)))
 
@@ -224,6 +224,11 @@ MODE=\"0660\", TAG+=\"uaccess\""))
    (cons* (service bluetooth-service-type
                    (bluetooth-configuration
                     (auto-enable? #t)))
+
+          (service btrbk-service-type
+                   (btrbk-configuration
+                    (config-file
+                     (testament-file-object "btrbk-dorphine.conf"))))
 
           (service clash-service-type
                    (clash-configuration
@@ -311,10 +316,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
 
           (simple-service 'add-extra-modules kernel-module-loader-service-type
                           '("tcp_bbr"))
-
-          (simple-service 'setup-etc-dir etc-service-type
-                          `(("btrbk/btrbk.conf"
-                             ,(testament-file-object "btrbk-dorphine.conf"))))
 
           (simple-service 'sysctl-extra-settings sysctl-service-type
                           '(("net.core.default_qdisc" . "fq_pie")
