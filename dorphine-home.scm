@@ -188,6 +188,12 @@ eval \"$(direnv hook bash)\""))
 [ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && \\
   source \"$EAT_SHELL_INTEGRATION_DIR/bash\""))
 
+(define %bashrc-liquidprompt
+  (mixed-text-file
+   "bashrc-liquidprompt"
+   "
+[[ $- = *i* ]] && source " liquidprompt "/share/liquidprompt/liquidprompt"))
+
 (define %shell-profile-nvidia
   (plain-file
    "shell-profile-nvidia"
@@ -299,7 +305,8 @@ fi"))
                  (home-bash-configuration
                   (bashrc
                    (list %bashrc-direnv
-                         %bashrc-eat))))
+                         %bashrc-eat
+                         %bashrc-liquidprompt))))
 
         (service home-channels-service-type
                  (list %channel-guix
