@@ -241,11 +241,6 @@ MODE=\"0660\", TAG+=\"uaccess\""))
                     (clash clash-meta-bin)
                     (config (testament-file-object "clash.yaml"))))
 
-          (service cloudflare-tunnel-service-type
-                   (cloudflare-tunnel-configuration
-                    (token %dorphine-cloudflared-token)
-                    (http2-origin? #t)))
-
           (service greetd-service-type
                    (greetd-configuration
                     (greeter-supplementary-groups

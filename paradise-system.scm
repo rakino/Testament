@@ -28,8 +28,7 @@
   #:use-module (gnu system)
   #:use-module (gnu system file-systems)
   #:use-module (gnu system linux-initrd)
-  #:use-module (gnu system shadow)
-  #:use-module (rosenthal services child-error))
+  #:use-module (gnu system shadow))
 
 
 ;;
@@ -100,12 +99,7 @@
   (timezone "Asia/Hong_Kong")
 
   (services
-   (cons* (service cloudflare-tunnel-service-type
-                   (cloudflare-tunnel-configuration
-                    (token %paradise-cloudflared-token)
-                    (http2-origin? #t)))
-
-          (service dbus-root-service-type)
+   (cons* (service dbus-root-service-type)
 
           (service dhcp-client-service-type)
 
