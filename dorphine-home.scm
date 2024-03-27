@@ -38,6 +38,7 @@
   #:use-module (gnu packages man)
   #:use-module (gnu packages password-utils)
   #:use-module (gnu packages qt)
+  #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages shellutils)
   #:use-module (gnu packages ssh)
@@ -50,7 +51,6 @@
   #:use-module (gnu services)
   #:use-module (gnu services mcron)
   #:use-module (gnu system shadow)
-  #:use-module (nongnu packages game-client)
   #:use-module (rosenthal packages tree-sitter)
   #:use-module (rosenthal packages wm))
 
@@ -194,6 +194,12 @@ eval \"$(direnv hook bash)\""))
    "
 [[ $- = *i* ]] && source " liquidprompt "/share/liquidprompt/liquidprompt"))
 
+(define %bashrc-zoxide
+  (plain-file
+   "bashrc-zoxide"
+   "
+eval \"$(zoxide init --cmd cd bash)\""))
+
 (define %shell-profile-nvidia
   (plain-file
    "shell-profile-nvidia"
@@ -210,7 +216,6 @@ fi"))
 if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
     exec env XDG_CURRENT_DESKTOP=Hyprland Hyprland
 fi"))
-
 
 
 ;;
@@ -258,6 +263,7 @@ fi"))
                 xdg-desktop-portal-gtk
                 xdg-desktop-portal-hyprland
                 xdg-utils
+                zoxide
                 zstd)
           (list tree-sitter-bash
                 tree-sitter-c
@@ -306,7 +312,8 @@ fi"))
                   (bashrc
                    (list %bashrc-direnv
                          %bashrc-eat
-                         %bashrc-liquidprompt))))
+                         %bashrc-liquidprompt
+                         %bashrc-zoxide))))
 
         (service home-channels-service-type
                  (list %channel-guix
