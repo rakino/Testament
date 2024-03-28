@@ -102,8 +102,8 @@
 
          (define layout
            (if (string-contains (get-layout) "Dvorak")
-               0
-               1))
+               1
+               0))
 
          (for-each
           (lambda (index)
@@ -171,12 +171,12 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
 
      "bind=ALT,Tab,bringactivetotop\n"
      "bind=ALT,Tab,cyclenext\n"
-     "bind=SUPER,F,fullscreen\n"
-     "bind=SUPER,P,pseudo\n"
-     "bind=SUPER,V,togglefloating\n"
-     "bind=SUPER,J,togglesplit\n"
+     "bind=SUPER,Y,fullscreen\n"
+     "bind=SUPER,R,pseudo\n"
+     "bind=SUPER,period,togglefloating\n"
+     "bind=SUPER,C,togglesplit\n"
      "bind=SUPER SHIFT,M,exit\n"
-     "bind=SUPER SHIFT,Q,killactive\n"
+     "bind=SUPER SHIFT,X,killactive\n"
 
      ;; Scroll through existing workspaces with SUPER + scroll.
      "bind=SUPER,mouse_down,workspace,e-1\n"
@@ -193,9 +193,9 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
 
      "bind=SUPER,Return,exec,emacsclient --create-frame --no-wait --alternate-editor=''\n"
      "bind=SUPER,space,exec," %hyprland-switch-keyboard-layout "\n"
-     "bind=SUPER,T,exec," alacritty "\n"
-     "bind=SUPER,R,exec," rofi " -modes combi -show combi -matching fuzzy\n"
-     "bind=SUPER,L,exec," swaylock " " lock-args "\n"
+     "bind=SUPER,K,exec," alacritty "\n"
+     "bind=SUPER,O,exec," rofi " -modes combi -show combi -matching fuzzy\n"
+     "bind=SUPER,P,exec," swaylock " " lock-args "\n"
 
      "bind=,Print,exec," grimblast " copysave output " screenshot "\n"
      "bind=SUPER,Print,exec," grimblast " copysave area " screenshot "\n"
@@ -207,6 +207,7 @@ bind=SUPER SHIFT,~@*~a,movetoworkspace,~a~%"
      "bindle=,XF86MonBrightnessDown,exec," light " -U 5\n"
      "bindle=,XF86MonBrightnessUp,  exec," light " -A 5\n"
 
+     "exec=" %hyprland-switch-keyboard-layout "\n"
      "exec-once=" mako "\n"
      "exec-once=" xdp-gtk " -r\n"
      "exec-once=" xdp-hypr "\n"
