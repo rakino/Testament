@@ -354,6 +354,13 @@ fi"))
  (services
   (list (service home-bash-service-type
                  (home-bash-configuration
+                  (aliases
+                   `(("ls" . ,(string-join '("ls"
+                                             "--classify"
+                                             "--color"
+                                             "--group-directories-first"
+                                             "--human-readable"
+                                             "--hyperlink")))))
                   (bashrc
                    (list %bashrc-direnv
                          %bashrc-eat
