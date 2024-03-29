@@ -121,6 +121,8 @@
     ;; ("PYTHON_HISTORY" . "$XDG_STATE_HOME/python/history")
     ;; rust
     ("CARGO_HOME" . "$XDG_DATA_HOME/cargo/")
+    ;; sqlite
+    ("SQLITE_HISTORY" . "$XDG_STATE_HOME/sqlite_history")
     ;; wget
     ("WGETRC" . "$XDG_CONFIG_HOME/wgetrc")))
 
