@@ -1,34 +1,80 @@
+# -*- org-confirm-babel-evaluate: nil; -*-
 #+TITLE: Testament - Personal dot(?)files
+#+AUTHOR: Hilton Chain
+#+EMAIL: hako@ultrarare.space
 
-** Structure
-+ [[file:blobs][blobs/]]: Files encrypted with [[https://www.agwa.name/projects/git-crypt/][git-crypt]].
-+ [[file:files][files/]]: Plain files.
-+ [[file:dotfiles][dotfiles/]]: Dotfiles in [[https://www.gnu.org/software/stow/][GNU Stow]] layout.
-+ [[file:testament/common.scm][testament/common.scm]]: Scheme procedures.
-+ [[file:testament/counter-stop.scm][testament/counter-stop.scm]]: Variables.
-+ [[file:testament/packages.scm][testament/packages.scm]]: Package variants.
+* 目錄結構
++ cfg/：按主機劃分的 Org 文件，用以生成對應 Guix 配置
++ dep/：外部依賴，以 Git submodule 形式存放
++ gen/：由本倉庫生成
+  - files/
+    + dot/：供 home-dotfiles-service-type 使用
+    + plain/：其中文件會在處理後使用
+  - modules/：供 Guix 配置使用的 Scheme 模塊
+  - scripts/：可執行腳本
++ src/：結構大致與 gen 相同，包含獨立存放效果更好的內容
++ .envrc：[[https://direnv.net/][direnv]] 配置
++ .sops.yaml：[[https://getsops.io/][SOPS]] 配置
 
-*** Desktop
-**** Dorphine (Laptop)
-[[file:files/screenshot.png]]
+* 輔助腳本
+:PROPERTIES:
+:header-args: :mkdirp yes :shebang "#!/bin/sh"
+:END:
+** build-guix
+#+begin_src shell :tangle gen/scripts/build-guix
+  sh ./bootstrap
+  ./configure --localstatedir=/var --sysconfdir=/etc
+  make -j"$(nproc)"
+#+end_src
 
-Guix Home:
-+ [[file:dorphine-emacs.scm][dorphine-emacs.scm]]: Emacs configuration, splitted from dorphine-home.scm for its large size.
-+ [[file:dorphine-home.scm][dorphine-home.scm]]
+** find-unused-module
+#+begin_src shell :tangle gen/scripts/find-unused-module
+  nonguix_path="${testament_path}/dep/nonguix"
+  rosenthal_path="${testament_path}/dep/rosenthal"
+  sops_path="${testament_path}/dep/sops-guix/modules"
+  testament_gen_path="${testament_path}/gen/modules"
+  testament_src_path="${testament_path}/src/modules"
 
-Guix System:
-+ [[file:dorphine-system.scm][dorphine-system.scm]]
+  find "${testament_path}/"{gen,src} -name '*.scm' -print0 |
+          guix shell guile-next -- \
+                  xargs -0 "${testament_path}/dep/guix/pre-inst-env" guild compile \
+                  -Wunused-module \
+                  --load-path="${nonguix_path}" \
+                  --load-path="${rosenthal_path}" \
+                  --load-path="${sops_path}" \
+                  --load-path="${testament_gen_path}" \
+                  --load-path="${testament_src_path}"
+#+end_src
 
-*** Server
-**** Gokuraku
-Guix System:
-+ [[file:gokuraku-system.scm][gokuraku-system.scm]]
+** guix
+#+begin_src shell :tangle gen/scripts/guix
+  nonguix_path="${testament_path}/dep/nonguix"
+  rosenthal_path="${testament_path}/dep/rosenthal"
+  sops_path="${testament_path}/dep/sops-guix/modules"
+  testament_modules="${testament_path}/gen/modules:${testament_path}/src/modules"
+  load_paths="${nonguix_path}:${rosenthal_path}:${sops_path}:${testament_modules}"
 
-**** Paradise (VPS)
-Guix System:
-+ [[file:paradise-system.scm][paradise-system.scm]]
+  GUILE_LOAD_PATH="${load_paths}${GUILE_LOAD_PATH:+:}${GUILE_LOAD_PATH}"
+  GUIX_PACKAGE_PATH="${load_paths}${GUIX_PACKAGE_PATH:+:}${GUIX_PACKAGE_PATH}"
+  export GUILE_LOAD_PATH GUIX_PACKAGE_PATH
 
-** Dependency
-+ Guix (+ [[https://bugs.gnu.org/64620][home-emacs patch]])
-+ [[https://gitlab.com/nonguix/nonguix][Nonguix]] (+ [[https://gitlab.com/nonguix/nonguix/-/merge_requests/403][multiarch container adjustment]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/328][nvidia update]] + [[https://gitlab.com/nonguix/nonguix/-/merge_requests/419][xanmod update]])
-+ [[https://codeberg.org/hako/Rosenthal][Rosenthal]]
+  exec "${testament_path}/dep/guix/pre-inst-env" "guix" "$@"
+#+end_src
+
+** reconfigure
+#+begin_src shell :tangle gen/scripts/reconfigure
+  mount -v /efi
+  guix shell btrbk -- btrbk run &&
+          "${testament_path}/gen/scripts/guix" system reconfigure "${testament_path}/gen/modules/dorphine.scm" "$@"
+  umount -v /efi
+
+  user=${SUDO_USER:-${USER}}
+  chown --no-dereference --recursive "${user}" "/home/${user}/.cache/guile"
+#+end_src
+
+** remove-go
+#+begin_src shell :tangle gen/scripts/remove-go
+  find . -name '*.go' -print0 |
+          xargs -0 grep -RZl "<$1>" |
+          xargs -0 rm -v
+#+end_src

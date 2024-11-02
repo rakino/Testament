@@ -1,0 +1,548 @@
+# -*- org-confirm-babel-evaluate: nil; -*-
+#+TITLE: gokuarku (Server)
+#+AUTHOR: Hilton Chain
+#+EMAIL: hako@ultrarare.space
+#+PROPERTY: header-args :mkdirp yes :noweb-prefix no
+
+* Modules
+#+name: modules
+#+begin_src scheme
+  (define-module (gokuraku)
+    #:use-module (ice-9 match)
+    #:use-module (srfi srfi-1)
+    #:use-module (srfi srfi-26)
+
+    #:use-module (guix gexp)
+    #:use-module (testament common)
+    #:use-module (testament counter-stop)
+
+    #:use-module (gnu bootloader)
+    #:use-module (gnu bootloader grub)
+
+    #:use-module (gnu system)
+    #:use-module (gnu system file-systems)
+    #:use-module (gnu system linux-initrd)
+    #:use-module (gnu system shadow)
+
+    #:use-module (gnu services)
+    #:use-module (gnu services base)
+    #:use-module (gnu services cuirass)
+    #:use-module (gnu services databases)
+    #:use-module (gnu services dbus)
+    #:use-module (gnu services desktop)
+    #:use-module (gnu services docker)
+    #:use-module (gnu services networking)
+    #:use-module (gnu services ssh)
+    #:use-module (gnu services virtualization)
+    #:use-module (rosenthal services child-error)
+    #:use-module (rosenthal services file-systems)
+    #:use-module (rosenthal services networking)
+    #:use-module (rosenthal services web)
+
+    #:use-module (gnu packages databases)
+    #:use-module (gnu packages fonts)
+    #:use-module (gnu packages ssh)
+    #:use-module (nongnu packages linux))
+#+end_src
+
+* Guix System
+#+begin_src scheme :tangle ../gen/modules/gokuraku.scm :noweb yes
+  <<modules>>
+
+  <<definition>>
+
+  (operating-system
+    (kernel linux-xanmod-lts)
+
+    (kernel-arguments
+     (cons* "zswap.enabled=1"
+            "zswap.max_pool_percent=90"
+            %default-kernel-arguments))
+
+    (bootloader (bootloader-configuration
+                 (bootloader grub-bootloader)
+                 (targets '("/dev/nvme1n1"))))
+
+    (firmware '())
+    (host-name "gokuraku")
+
+    (file-systems
+     (let ((file-system-base
+            (file-system
+              (type "btrfs")
+              (mount-point "/")
+              (device (uuid "0c7041a2-416f-419f-9b1a-cceae3330aae"))
+              (create-mount-point? #t)))
+           (options-for-subvolume
+            (cut string-append "compress=zstd,subvol=" <>)))
+       (append
+        (map (match-lambda
+               ((subvolume . mount-point)
+                (file-system
+                  (inherit file-system-base)
+                  (mount-point mount-point)
+                  (options (options-for-subvolume subvolume))
+                  (check? (string=? "/" mount-point)))))
+             '(("@System" . "/")
+               ("@Data"   . "/var/lib")))
+
+        (list (file-system
+                (inherit file-system-base)
+                (mount-point "/mnt/Lycoris")
+                (options "compress=zstd,subvolid=5")
+                (check? #f)
+                (create-mount-point? #t)))
+
+        %base-file-systems)))
+
+    (swap-devices
+     (list (swap-space
+             (target (uuid "07f2b4fb-3d4e-4a0a-9953-c4200ebdf245"))
+             (discard? #t))))
+
+    (users
+     (cons* (user-account
+             (name "hako")
+             (group "users")
+             (supplementary-groups '("wheel")))
+            (user-account
+             (name "offload")
+             (group "nogroup")
+             (home-directory "/nonexistent")
+             (create-home-directory? #f)
+             (system? #t))
+            %base-user-accounts))
+
+    (packages %testament-base-packages)
+    (timezone "Asia/Hong_Kong")
+
+    (services
+     (cons* <<service>>
+
+            (modify-services %base-services
+              (guix-service-type
+               config => (guix-configuration
+                          (inherit config)
+                          (authorized-keys
+                           (cons* %guix-authorized-key-dorphine
+                                  %guix-authorized-key-nonguix
+                                  %default-authorized-guix-keys))
+                          (substitute-urls
+                           `(,@%default-substitute-urls
+                             "https://substitutes.nonguix.org")))))))
+
+    (sudoers-file
+     (plain-file
+      "sudoers"
+      (string-append
+       (plain-file-content %sudoers-specification)
+       "hako ALL = NOPASSWD: ALL\n"))))
+#+end_src
+
+* btrbk                                                              :Backup:
+#+begin_src scheme :noweb-ref service
+  (service btrbk-service-type
+           (btrbk-configuration
+            (config-file
+             (testament-file-object "btrbk-gokuraku.conf"))))
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/plain/btrbk-gokuraku.conf
+  transaction_log            /var/log/btrbk.log
+  lockfile                   /var/lock/btrbk.lock
+
+  snapshot_dir               @Snapshot
+  snapshot_create            onchange
+
+  snapshot_preserve          30d
+  snapshot_preserve_min      3d
+
+  volume /mnt/Lycoris
+      subvolume @Data
+#+end_src
+
+* cloudflared                                                         :Proxy:
+#+begin_src scheme :noweb-ref service
+  (service cloudflare-tunnel-service-type
+           (cloudflare-tunnel-configuration
+            (log-level "error")
+            (token (sops-str '("cloudflared")))))
+#+end_src
+
+* cuirass                                                                :CI:
+#+begin_src scheme :noweb yes :noweb-ref service
+  (service cuirass-service-type
+           (cuirass-configuration
+            (port 15497)
+            (specifications
+             #~(list <<cuirass-specification>>))))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service guix-publish-service-type
+           (guix-publish-configuration
+            (port 27254)))
+#+end_src
+
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'rosenthal)
+   (build '(channels rosenthal))
+   (channels
+    (cons (channel
+           (name 'rosenthal)
+           (url "https://codeberg.org/hako/rosenthal.git")
+           (branch "trunk"))
+          %default-channels))
+   (priority 5))
+#+end_src
+
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'nonguix-nvidia)
+   (build '(packages "nvidia-driver"
+                     "nvidia-driver-beta"
+                     "nvidia-firmware"
+                     "nvidia-firmware-beta"
+                     "nvidia-module"
+                     "nvidia-module-beta"
+                     "nvidia-module-open"
+                     "nvidia-module-open-beta"
+                     "nvidia-settings"
+                     "nvidia-settings-beta"
+                     "nvda"
+                     "nvdb"))
+   (channels
+    (cons (channel
+           (name 'nonguix)
+           (url "https://gitlab.com/hakourspace/nonguix.git")
+           (branch "nvidia-beta"))
+          %default-channels))
+   (priority 7))
+#+end_src
+
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'nonguix-xanmod)
+   (build '(packages "linux-xanmod"
+                     "linux-xanmod@6.6"))
+   (channels
+    (cons (channel
+           (name 'nonguix)
+           (url "https://gitlab.com/hakourspace/nonguix.git")
+           (branch "update-xanmod"))
+          %default-channels))
+   (priority 7))
+#+end_src
+
+Latest Guix installer images (weekly)
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'guix-images)
+   (build 'images)
+   (build-outputs
+    (map (lambda (job)
+           (build-output
+            (job job)
+            (type "image")
+            (path "")))
+         '("hurd-barebones\\.qcow2"
+           "iso9660-image.*"
+           "pine64-barebones-raw-image"
+           "pinebook-pro-barebones-raw-image"
+           "visionfive2-barebones-raw-image")))
+   (period (* 60 60 24 7)))
+#+end_src
+
+Latest Guix binary tarball (weekly)
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'guix-tarball)
+   (build 'tarball)
+   (build-outputs
+    (list (build-output
+           (job "binary-tarball.*")
+           (type "archive")
+           (path ""))))
+   (period (* 60 60 24 7)))
+#+end_src
+
+Latest Guix installer image from Nonguix (weekly)
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'nonguix-images)
+   (build '(custom (nongnu ci)))
+   (channels
+    (cons (channel
+           (name 'nonguix)
+           (url "https://gitlab.com/nonguix/nonguix"))
+          %default-channels))
+   (build-outputs
+    (list (build-output
+           (job "nonfree-iso9660-image.*")
+           (type "image")
+           (path ""))))
+   (period (* 60 60 24 7)))
+#+end_src
+
+* dbus
+#+begin_src scheme :noweb-ref service
+  (service dbus-root-service-type)
+#+end_src
+
+* docker
+#+begin_src scheme :noweb-ref service
+  (service containerd-service-type)
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service docker-service-type
+           (docker-configuration
+            (enable-iptables? #f)))
+#+end_src
+
+* elogind                                                   :LoginManagement:
+#+begin_src scheme :noweb-ref service
+  (service elogind-service-type)
+#+end_src
+
+* jellyfin                                                       :WebService:
+#+begin_src scheme :noweb-ref service
+  (service jellyfin-service-type
+           (jellyfin-configuration
+            (auto-start? #f)
+            (extra-options
+             `("--device" "/dev/dri/renderD128:/dev/dri/renderD128"
+               "--device" "/dev/dri/card0:/dev/dri/card0"
+               "--volume" "/mnt/Media:/media"
+               "--volume"
+               ,(let ((path "/share/fonts/truetype/NotoSansCJK-VF.otf.ttc"))
+                  (file-append font-google-noto-sans-cjk path ":/usr" path))))))
+#+end_src
+
+* miniflux                                                       :WebService:
+#+begin_src scheme :noweb-ref service
+  (service miniflux-service-type
+           (miniflux-configuration
+            (options
+             `(("BASE_URL" . ,(sops-str '("miniflux" "url")))
+               ("CLEANUP_ARCHIVE_READ_DAYS" . -1)
+               ("CLEANUP_ARCHIVE_UNREAD_DAYS" . -1)
+               ("DATABASE_URL" . ,(sops-str '("miniflux" "database")))
+               ("LISTEN_ADDR" . "/tmp/.miniflux.sock")
+               ("RUN_MIGRATIONS" . 1)))))
+#+end_src
+
+* misskey                                                        :WebService:
+#+begin_src scheme :noweb-ref service
+  (service misskey-service-type
+           (misskey-configuration
+            (image "ghcr.io/rakino/misskey:latest")
+            (config
+             `((url . ,(sops-str '("misskey" "url")))
+               (port . 54493)
+               (db
+                . ((host . localhost)
+                   (port . 5432)
+                   (db . misskey)
+                   (user . misskey)
+                   (pass . ,(sops-str '("misskey" "password")))))
+               (dbReplications . #f)
+               (redis
+                . ((host . localhost)
+                   (port . 6379)))
+               (id . "aid")
+               (clusterLimit . 4)
+               (outgoingAddressFamily . dual)
+               (proxyBypassHosts
+                . #(api.deepl.com
+                    api-free.deepl.com
+                    www.recaptcha.net
+                    hcaptcha.com
+                    challenges.cloudflare.com))
+               (proxyRemoteFiles . #t)
+               (signToActivityPubGet . #t)))))
+#+end_src
+
+* nftables                                                         :Firewall:
+#+begin_src nftables :tangle ../gen/files/plain/nftables-gokuraku.conf
+  flush ruleset
+
+  table inet filter {
+      chain input {
+          type filter hook input priority 0; policy drop;
+
+          iifname lo accept \
+          comment "Accept any localhost traffic"
+
+          ct state { established, related } accept \
+          comment "Accept traffic originated from us"
+
+          ct state invalid drop \
+          comment "Drop invalid connections"
+
+          tcp dport 113 reject with icmpx type port-unreachable \
+          comment "Reject AUTH to make it fail fast"
+
+          # ICMPv4
+          ip protocol icmp icmp type {
+              echo-reply,              # type 0
+              destination-unreachable, # type 3
+              echo-request,            # type 8
+              time-exceeded,           # type 11
+              parameter-problem,       # type 12
+          } accept \
+          comment "Accept ICMP"
+
+          # ICMPv6
+          icmpv6 type {
+              destination-unreachable, # type 1
+              packet-too-big,          # type 2
+              time-exceeded,           # type 3
+              parameter-problem,       # type 4
+              echo-request,            # type 128
+              echo-reply,              # type 129
+          } accept \
+          comment "Accept basic IPv6 functionality"
+
+          icmpv6 type {
+              nd-router-solicit,   # type 133
+              nd-router-advert,    # type 134
+              nd-neighbor-solicit, # type 135
+              nd-neighbor-advert,  # type 136
+          } ip6 hoplimit 255 accept \
+          comment "Allow IPv6 SLAAC"
+
+          icmpv6 type {
+              mld-listener-query,     # type 130
+              mld-listener-report,    # type 131
+              mld-listener-reduction,  # type 132
+              mld2-listener-report,    # type 143
+          } ip6 saddr fe80::/10 accept \
+          comment "Allow IPv6 multicast listener discovery on link-local"
+
+          ip6 saddr fe80::/10 udp sport 547 udp dport 546 accept \
+          comment "Accept DHCPv6 replies from IPv6 link-local addresses"
+
+          tcp dport http accept
+          tcp dport https accept
+          tcp dport imap accept
+          tcp dport imaps accept
+          tcp dport pop3 accept
+          tcp dport pop3s accept
+          tcp dport smtp accept
+          tcp dport smtps accept
+          tcp dport ssh accept
+
+          udp dport 41641 accept \
+          comment "Allow Tailscale"
+
+          udp dport 60000-61000 accept \
+          comment "Allow mosh"
+      }
+
+      chain forward {
+          type filter hook forward priority 0; policy drop;
+      }
+
+      chain output {
+          type filter hook output priority 0; policy accept;
+      }
+  }
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service nftables-service-type
+           (nftables-configuration
+            (ruleset (testament-file-object "nftables-gokuraku.conf"))))
+#+end_src
+
+* ntp
+#+begin_src scheme :noweb-ref service
+  (service ntp-service-type)
+#+end_src
+
+* openssh
+#+begin_src scheme :noweb-ref service
+  (service openssh-service-type
+           (openssh-configuration
+            (openssh openssh-sans-x)
+            (password-authentication? #f)
+            (authorized-keys
+             `(("hako" ,(plain-file "hako.pub" "ssh-ed25519 \
+  AAAAC3NzaC1lZDI1NTE5AAAAIFcTj1N3cL/bh2Uvwh5/YubhZplPFnvGk/iVHQs3FWV2"))
+               ("offload" ,(plain-file "offload.pub" "ssh-ed25519 \
+  AAAAC3NzaC1lZDI1NTE5AAAAIJum7e8nRsPFgs4ZzUadT58IY6OIJsgLXDJF12NHvJaY"))))))
+#+end_src
+
+* static-networking
+#+begin_src scheme :noweb-ref service
+  (service static-networking-service-type
+           (list (static-networking
+                  (addresses
+                   (map (lambda (version)
+                          (network-address
+                           (device (sops-str (list "network" version "name")))
+                           (value (sops-str (list "network" version "address")))))
+                        '("v4" "v6")))
+                  (routes
+                   (map (lambda (version)
+                          (network-route
+                           (destination "default")
+                           (device (sops-str (list "network" version "name")))
+                           (gateway (sops-str (list "network" version "gateway")))))
+                        '("v4" "v6")))
+                  (name-servers
+                   '("1.1.1.1"
+                     "1.0.0.1"
+                     "2606:4700:4700::1111"
+                     "2606:4700:4700::1001")))))
+#+end_src
+
+* postgresql                                                       :Database:
+#+begin_src scheme :noweb-ref service
+  (service postgresql-service-type
+           (postgresql-configuration
+            (postgresql postgresql-15)))
+#+end_src
+
+* qemu-binfmt                                                :Virtualization:
+#+begin_src scheme :noweb-ref service
+  (service qemu-binfmt-service-type
+           (qemu-binfmt-configuration
+            (platforms
+             (lookup-qemu-platforms "aarch64" "riscv64"))))
+#+end_src
+
+* redis                                                            :Database:
+#+begin_src scheme :noweb-ref service
+  (service redis-service-type)
+#+end_src
+
+* sops
+#+begin_src scheme :noweb-ref definition
+  (define gokuraku.yaml
+    (testament-file-object "gokuraku.yaml"))
+
+  (define (sops-str key)
+    "The result will be publicly available in /gnu/store, YOU ARE WARNED."
+    (get-sops-secret key #:file gokuraku.yaml))
+
+  (define (sops-num key)
+    "The result will be publicly available in /gnu/store, YOU ARE WARNED."
+    (get-sops-secret key #:file gokuraku.yaml #:number? #t))
+#+end_src
+
+* tailscale                                                             :VPN:
+#+begin_src scheme :noweb-ref service
+  (service tailscale-service-type)
+#+end_src
+
+* vaultwarden                                                    :WebService:
+#+begin_src scheme :noweb-ref service
+  (service vaultwarden-service-type
+           (vaultwarden-configuration
+            (database-url (sops-str '("vaultwarden")))
+            (port 23263)
+            (extra-options '(("ROCKET_ADDRESS" . "127.0.0.1")))))
+#+end_src

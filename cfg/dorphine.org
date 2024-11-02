@@ -1,0 +1,2056 @@
+# -*- org-confirm-babel-evaluate: nil; -*-
+#+TITLE: dorphine (Laptop)
+#+AUTHOR: Hilton Chain
+#+EMAIL: hako@ultrarare.space
+#+PROPERTY: header-args :mkdirp yes :noweb-prefix no
+
+#+name: get-testament-path
+#+begin_src shell
+  echo "${testament_path}"
+#+end_src
+
+* Modules
+#+name: modules
+#+begin_src scheme :noweb yes
+  (define-module (dorphine)
+    #:use-module (ice-9 format)
+    #:use-module (ice-9 match)
+    #:use-module (srfi srfi-1)
+    #:use-module (srfi srfi-26)
+
+    #:use-module (guix download)
+    #:use-module (guix gexp)
+    #:use-module (guix packages)
+    #:use-module (sops secrets)
+    #:use-module (testament common)
+    #:use-module (testament counter-stop)
+    #:use-module (testament packages)
+
+    #:use-module (gnu bootloader)
+    #:use-module (gnu bootloader grub)
+    #:use-module (rosenthal bootloader grub)
+
+    #:use-module (gnu system)
+    #:use-module (gnu system file-systems)
+    #:use-module (gnu system keyboard)
+    #:use-module (gnu system linux-initrd)
+    #:use-module (gnu system mapped-devices)
+    #:use-module (gnu system pam)
+    #:use-module (gnu system shadow)
+
+    #:use-module (gnu services)
+    #:use-module (gnu services base)
+    #:use-module (gnu services desktop)
+    #:use-module (gnu services guix)
+    #:use-module (gnu services mcron)
+    #:use-module (gnu services networking)
+    #:use-module (gnu services pm)
+    #:use-module (gnu services security-token)
+    #:use-module (gnu services shepherd)
+    #:use-module (gnu services virtualization)
+    #:use-module (gnu services xorg)
+    #:use-module (nongnu services nvidia)
+    #:use-module (rosenthal services bittorrent)
+    #:use-module (rosenthal services child-error)
+    #:use-module (rosenthal services file-systems)
+    #:use-module (rosenthal services networking)
+
+    #:use-module (gnu home)
+    #:use-module (gnu home services)
+    #:use-module (gnu home services desktop)
+    #:use-module (gnu home services dotfiles)
+    #:use-module (gnu home services fontutils)
+    #:use-module (gnu home services gnupg)
+    #:use-module (gnu home services mcron)
+    #:use-module (gnu home services shells)
+    #:use-module (gnu home services shepherd)
+    #:use-module (gnu home services sound)
+    #:use-module (gnu home services sway)
+    #:use-module (gnu home services syncthing)
+    #:use-module (sops home services sops)
+
+    #:use-module (gnu packages admin)
+    #:use-module (gnu packages android)
+    #:use-module (gnu packages bash)
+    #:use-module (gnu packages bittorrent)
+    #:use-module (gnu packages browser-extensions)
+    #:use-module (gnu packages emacs)
+    #:use-module (gnu packages emacs-xyz)
+    #:use-module (gnu packages fonts)
+    #:use-module (gnu packages freedesktop)
+    #:use-module (gnu packages games)
+    #:use-module (gnu packages glib)
+    #:use-module (gnu packages gnome)
+    #:use-module (gnu packages gnome-xyz)
+    #:use-module (gnu packages gnupg)
+    #:use-module (gnu packages librewolf)
+    #:use-module (gnu packages linux)
+    #:use-module (gnu packages mail)
+    #:use-module (gnu packages password-utils)
+    #:use-module (gnu packages python-xyz)
+    #:use-module (gnu packages qt)
+    #:use-module (gnu packages rust-apps)
+    #:use-module (gnu packages security-token)
+    #:use-module (gnu packages shellutils)
+    #:use-module (gnu packages terminals)
+    #:use-module (gnu packages tree-sitter)
+    #:use-module (gnu packages version-control)
+    #:use-module (gnu packages web)
+    #:use-module (gnu packages wm)
+    #:use-module (gnu packages xdisorg)
+    #:use-module (nongnu packages fonts)
+    #:use-module (nongnu packages linux)
+    #:use-module (nongnu packages nvidia)
+    #:use-module (rosenthal packages binaries)
+    #:use-module (rosenthal packages tree-sitter))
+#+end_src
+
+* Guix System
+#+begin_src scheme :tangle ../gen/modules/dorphine.scm :noweb yes
+  <<modules>>
+
+  <<definition>>
+
+  (operating-system
+    (kernel linux-xanmod)
+    (kernel-arguments
+     (list <<kernel-argument>>
+           "zswap.enabled=1"
+           "zswap.max_pool_percent=90"
+           (string-append "modprobe.blacklist="
+                          (string-join
+                           (cons* <<kernel-blocklist>>
+                                  "pcspkr"
+                                  "snd_pcsp"
+                                  (@@ (gnu system) %default-modprobe-blacklist))
+                           ","))
+           "quiet"))
+
+    (bootloader
+     (bootloader-configuration
+      (bootloader grub-efi-luks2-removable-bootloader)
+      (targets '("/efi"))
+      (theme
+       (grub-theme
+        (inherit (grub-theme))
+        (image (testament-file-object "grub.png"))
+        (resolution '(2560 . 1600))))))
+
+    (keyboard-layout
+     (keyboard-layout "us" "dvorak"
+                      #:options '("ctrl:nocaps")))
+
+    (initrd-modules
+     (cons* ;; USB 3.0
+            "xhci_hcd"
+            "xhci_pci"
+            %base-initrd-modules))
+
+    (firmware (list <<firmware>>))
+    (host-name "dorphine")
+
+    (mapped-devices
+     (list (mapped-device
+            (source (uuid "1c149dec-2eb1-4866-b43b-1fc41f391f75"))
+            (target "Mentha")
+            (type luks-device-mapping))))
+
+    (file-systems
+     (let ((file-system-base
+            (file-system
+              (type "btrfs")
+              (mount-point "/")
+              (device (uuid "13fc13ea-0007-420a-b2b9-26eb2e2016fe"))
+              (create-mount-point? #t)
+              (dependencies mapped-devices)))
+           (options-for-subvolume
+            (cut string-append "compress=zstd,subvol=" <>)))
+       (append
+        (map (match-lambda
+               ((subvolume . mount-point)
+                (file-system
+                  (inherit file-system-base)
+                  (mount-point mount-point)
+                  (options (options-for-subvolume subvolume))
+                  (check? (string=? "/" mount-point)))))
+             '(("@System" . "/")
+               ("@Home"   . "/home")
+               ("@Swap"   . "/swap")
+               ("@Data"   . "/var/lib")))
+
+        ;; Bootloader
+        (list (file-system
+                (type "vfat")
+                (mount-point "/efi")
+                (device (uuid "F5BB-DCAF" 'fat))
+                (mount? #f)
+                (create-mount-point? #t)))
+
+        ;; Devices
+        (list (file-system
+                (type "btrfs")
+                (mount-point "/mnt/Myosotis")
+                (device (uuid "537de57b-30b7-4273-868f-83771074b6af"))
+                (options "compress=zstd,subvolid=5")
+                (mount? #f)
+                (create-mount-point? #t))
+              (file-system
+                (inherit file-system-base)
+                (mount-point "/mnt/Mentha")
+                (options "compress=zstd,subvolid=5")
+                (check? #f)
+                (create-mount-point? #t)))
+
+        %base-file-systems)))
+
+    (swap-devices
+     (list (swap-space
+             (target "/swap/swapfile")
+             (dependencies
+              (filter (file-system-mount-point-predicate "/swap")
+                      file-systems))
+             (discard? #t))))
+
+    (users
+     (cons* (user-account
+             (name "hako")
+             (group "users")
+             (supplementary-groups
+              '(<<hako-user-group>> "audio" "wheel"))
+             (home-directory "/home/hako"))
+            %base-user-accounts))
+
+    (packages %testament-base-packages)
+    (timezone "Asia/Hong_Kong")
+
+    (services
+     (cons* <<service>>
+
+            (modify-services %base-services
+              (delete login-service-type)
+              (delete mingetty-service-type)
+
+              (console-font-service-type
+               _ => (map (lambda (vtnr)
+                           (let* ((path "/share/consolefonts/ter-132n")
+                                  (font (file-append font-terminus path))
+                                  (vtnr (number->string vtnr))
+                                  (tty (string-append "tty" vtnr)))
+                             (cons tty font)))
+                         (iota 6 1)))
+
+              (guix-service-type
+               config => (guix-configuration
+                          (inherit config)
+                          (authorized-keys
+                           (cons* %guix-authorized-key-gokuraku
+                                  %guix-authorized-key-nonguix
+                                  %default-authorized-guix-keys))
+                          (substitute-urls
+                           '("https://bordeaux.fsf.moe"
+                             "https://mirror.sjtu.edu.cn/guix"
+                             "https://substitute.boiledscript.com"
+                             "https://substitutes.nonguix.org"))
+                          (build-machines
+                           (list
+                            #~(build-machine
+                               (name "gokuraku")
+                               (systems '("x86_64-linux"))
+                               (host-key "ssh-ed25519 \
+  AAAAC3NzaC1lZDI1NTE5AAAAIAzNGrJA8dIJzb8FGFvOzP73+KcvwV3wh+93em8/B3TT")
+                               (user "offload")
+                               (private-key "/var/lib/guix/offload-key.sec"))))
+                          (channels
+                           (cons* %channel-guixcn
+                                  %channel-nonguix
+                                  %channel-rosenthal
+                                  %channel-sops-guix
+                                  %default-channels))))))))
+#+end_src
+
+* Guix Home
+#+begin_src scheme :noweb yes :noweb-ref service
+  (service guix-home-service-type
+           `(("hako"
+              ,(home-environment
+                (packages
+                 (list <<home-package>>))
+                (services
+                 (list <<home-service>>
+
+                       (service home-dotfiles-service-type
+                                (home-dotfiles-configuration
+                                 (directories
+                                  '("<<get-testament-path()>>/gen/files/dot"
+                                    "<<get-testament-path()>>/src/files/dot"))))
+
+                       (service home-files-service-type
+                                `((".guile" ,%default-dotguile)))
+
+                       (service home-xdg-configuration-files-service-type
+                                `(("alacritty/alacritty.toml" ,<<alacritty-config>>)
+                                  ("gdb/gdbinit" ,%default-gdbinit)
+                                  ("nano/nanorc" ,%default-nanorc)
+                                  ("wgetrc" ,<<wget-config>>)))
+
+                       (simple-service 'extra-environment-variables
+                                       home-environment-variables-service-type
+                                       `(,@%testament-xdg-base-directory-env-vars
+                                         ("PATH" . "${PATH}:${HOME}/.local/bin")
+                                         <<home-environment-variable>>))))))))
+#+end_src
+
+* adb
+#+begin_src scheme :noweb-ref service
+  (udev-rules-service 'android android-udev-rules #:groups '("adbusers"))
+#+end_src
+
+#+begin_src scheme :noweb-ref hako-user-group
+  "adbusers"
+#+end_src
+
+* alacritty
+#+name: alacritty-config
+#+begin_src scheme :noweb yes
+  (let ((filename "alacritty.toml"))
+    (mixed-text-file
+     filename
+     "import = [ \"" <<alacritty-theme>> "\" ]\n"
+     (testament-file-content filename)))
+#+end_src
+
+#+name: alacritty-theme
+#+begin_src scheme
+  (origin
+    (method url-fetch)
+    (uri (string-append "https://github.com/catppuccin/alacritty" "/raw/"
+                        "f6cb5a5c2b404cdaceaff193b9c52317f62c62f7"
+                        "/catppuccin-latte.toml"))
+    (sha256
+     (base32 "061lraysrma94md83296166c6cgn29p5yxmv0am8n3ciyq505m5d")))
+#+end_src
+
+#+begin_src toml :tangle ../gen/files/plain/alacritty.toml
+  [font]
+  size = 12.0
+
+  [scrolling]
+  history = 100000
+
+  [window]
+  opacity = 0.8
+#+end_src
+
+* amdgpu                                          :Display:Firmware:Graphics:
+#+begin_src scheme :noweb-ref firmware
+  amdgpu-firmware
+#+end_src
+
+* atuin
+#+begin_src scheme :noweb-ref home-package
+  atuin-bin
+#+end_src
+
+#+begin_src scheme :noweb-ref home-bashrc
+  (plain-file
+   "bashrc-atuin"
+   "eval \"$(atuin init bash)\"")
+#+end_src
+
+* bash
+#+begin_src scheme :noweb yes :noweb-ref home-service
+  (service home-bash-service-type
+           (home-bash-configuration
+            (aliases
+             `(("ls" . ,(string-join
+                         '("ls"
+                           "--classify"
+                           "--color"
+                           "--group-directories-first")))
+               ("ll" . ,(string-join
+                         '("ls"
+                           "--all"
+                           "-l"
+                           "--human-readable")))))
+            (bashrc
+             (list <<home-bashrc>>))))
+
+  (simple-service 'extra-shell-profiles
+                  home-shell-profile-service-type
+                  (list <<home-shell-profile>>))
+#+end_src
+
+* blesh
+#+begin_src scheme :noweb-ref home-bashrc
+  (mixed-text-file
+   "bashrc-blesh"
+   "complete -W '' guix\n"
+   "[[ $- = *i* ]] && source " blesh "/share/blesh/ble.sh\n"
+   "bleopt prompt_xterm_title='\\d \\@ | \\w'")
+#+end_src
+
+* bluez                                                   :Firmware:Wireless:
+#+begin_src scheme :noweb-ref firmware
+  ibt-hw-firmware
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service bluetooth-service-type
+           (bluetooth-configuration
+            (auto-enable? #t)))
+#+end_src
+
+* btrbk                                                              :Backup:
+#+begin_src conf :tangle ../gen/files/plain/btrbk-dorphine.conf
+  transaction_log            /var/log/btrbk.log
+  lockfile                   /var/lock/btrbk.lock
+
+  snapshot_dir               @Snapshot
+  snapshot_create            onchange
+
+  snapshot_preserve          30d
+  snapshot_preserve_min      3d
+
+  volume /mnt/Mentha
+  subvolume @Data
+  subvolume @Home
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service btrbk-service-type
+           (btrbk-configuration
+            (config-file
+             (testament-file-object "btrbk-dorphine.conf"))))
+#+end_src
+
+* dbus
+#+begin_src scheme :noweb-ref home-service
+  (service home-dbus-service-type)
+#+end_src
+
+* direnv
+#+begin_src scheme :noweb-ref home-package
+  direnv
+  emacs-envrc
+#+end_src
+
+#+begin_src scheme :noweb-ref home-bashrc
+  (plain-file
+   "bashrc-direnv"
+   "eval \"$(direnv hook bash)\"")
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package envrc
+    :hook
+    (after-init . envrc-global-mode))
+#+end_src
+
+* emacs
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'home-emacs
+                  home-shepherd-service-type
+                  (list (shepherd-service
+                         (documentation "Run Emacs daemon.")
+                         (provision '(emacs))
+                         (start
+                          #~(make-forkexec-constructor
+                             (list #$(file-append emacs-pgtk "/bin/emacs")
+                                   "--fg-daemon")))
+                         (stop
+                          #~(make-forkexec-constructor
+                             (list #$(file-append emacs-pgtk "/bin/emacsclient")
+                                   "--eval" "(kill-emacs)"))))))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-environment-variable
+  ("EDITOR" . "emacsclient")
+  ("VISUAL" . "$EDITOR")
+#+end_src
+
+#+begin_src scheme :noweb-ref home-package
+  emacs-pgtk
+  emacs-gcmh
+  emacs-no-littering
+#+end_src
+
+#+name: emacs-init
+#+begin_src emacs-lisp
+  (gcmh-mode 1)
+
+  (setopt custom-file (locate-user-emacs-file "custom.el"))
+
+  (if (not (file-exists-p custom-file))
+      (make-empty-file custom-file)
+    (load-file custom-file))
+
+  (setopt
+   no-littering-etc-directory (or (getenv "XDG_CONFIG_HOME") "~/.config")
+   no-littering-var-directory (or (getenv "XDG_DATA_HOME") "~/.local/share"))
+
+  (no-littering-theme-backups)
+
+  (setopt use-package-always-defer t)
+#+end_src
+
+#+begin_src emacs-lisp :tangle ../gen/files/dot/.config/emacs/init.el :noweb yes
+  <<emacs-init>>
+
+  <<emacs-feature>>
+
+  (use-package display-fill-column-indicator
+    :hook prog-mode)
+
+  (use-package elec-pair
+    :hook
+    (after-init . electric-pair-mode))
+
+  (use-package emacs
+    :custom
+    (completion-ignore-case t)
+    (fill-column 80)
+    (read-buffer-completion-ignore-case t)
+    (tool-bar-mode nil)
+    (word-wrap-by-category t)
+    :init
+    (load-file (locate-user-emacs-file "font.el"))
+    :hook
+    (after-init . menu-bar-mode))
+
+  (use-package frame
+    :custom
+    (blink-cursor-mode nil))
+
+  (use-package fringe
+    :custom
+    (fringe-mode 0))
+
+  (use-package mb-depth
+    :custom
+    (enable-recursive-minibuffers t)
+    :hook
+    (after-init . minibuffer-depth-indicate-mode))
+
+  (use-package message
+    :bind
+    ("C-c M-m" . message-mark-inserted-region))
+
+  (use-package minibuffer
+    :custom
+    (read-file-name-completion-ignore-case t))
+
+  (use-package paren
+    :custom
+    (show-paren-context-when-offscreen 'overlay)
+    :hook
+    (after-init . show-paren-mode))
+
+  (use-package savehist
+    :hook after-init)
+
+  (use-package scroll-bar
+    :custom
+    (scroll-bar-mode nil))
+
+  (use-package simple
+    :custom
+    ;; TODO
+    ;; https://pement.org/emacs_tabs.htm
+    ;; https://github.com/jcsalomon/smarttabs
+    (indent-tabs-mode nil)
+    (read-extended-command-predicate #'command-completion-default-include-p)
+    :hook
+    (before-save . delete-trailing-whitespace))
+
+  (use-package startup
+    :custom
+    (inhibit-startup-screen t)
+    (initial-major-mode 'org-mode)
+    (initial-scratch-message "# ‘M-x butterfly’\n\n")
+    (user-full-name "Hilton Chain")
+    (user-mail-address "hako@ultrarare.space"))
+
+  (use-package tooltip
+    :custom
+    (tooltip-mode nil))
+
+  (use-package window
+    :bind
+    ([remap list-buffers] . switch-to-buffer))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-package
+  emacs-debbugs
+  emacs-markdown-mode
+  emacs-nftables-mode
+  emacs-web-mode
+#+end_src
+
+* emacs dabbrev
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package dabbrev
+    :bind
+    ([remap dabbrev-completion] . dabbrev-expand)
+    ([remap dabbrev-expand] . dabbrev-completion))
+#+end_src
+
+* emacs dired
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package dired
+    :custom
+    (dired-kill-when-opening-new-dired-buffer t))
+
+  (use-package dired-aux
+    :custom
+    (dired-compress-directory-default-suffix ".tar.zst")
+    (dired-create-destination-dirs 'ask)
+    (dired-create-destination-dirs-on-trailing-dirsep t)
+    (dired-vc-rename-file t))
+#+end_src
+
+* emacs eglot
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package eglot
+    :config
+    (add-to-list
+     'eglot-server-programs
+     `((c-mode c-ts-mode c++-mode c++-ts-mode)
+       . ("guix" "shell" "ccls" "--"
+          "ccls" ,(concat "--init="
+                          (json-serialize
+                           `((cache
+                              . ((directory . ,(concat (getenv "XDG_CACHE_HOME")
+                                                       "/ccls-cache"))))))))))
+    :hook
+    ((prog-mode sgml-mode tex-mode) . eglot-ensure))
+#+end_src
+
+* emacs isearch
+#+begin_src scheme :noweb-ref home-package
+  emacs-isearch-mb
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package isearch
+    :custom
+    (isearch-lazy-count t)
+    (isearch-wrap-pause 'no-ding)
+    (regexp-search-ring-max 200)
+    (search-ring-max 200)
+    :bind
+    ([remap isearch-forward] . isearch-forward-regexp)
+    ([remap isearch-backword] . isearch-backward-regexp))
+
+  (use-package isearch-mb
+    :hook after-init)
+#+end_src
+
+* emacs modus-themes
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package modus-themes
+    :custom
+    (modus-themes-italic-constructs t)
+    (modus-themes-region '(bg-only no-extend))
+    (modus-themes-syntax '(faint alt-syntax green-strings yellow-comments))
+    :init
+    (load-theme 'modus-operandi))
+#+end_src
+
+* emacs org
+#+begin_src scheme :noweb-ref home-package
+  emacs-org-rainbow-tags
+  emacs-ox-hugo
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package org
+    :custom
+    (org-babel-load-languages
+     '((emacs-lisp . t)
+       (python . t)
+       (scheme . t)
+       (shell . t)))
+    (org-id-track-globally t)
+    (org-insert-heading-respect-content t)
+    (org-log-into-drawer t)
+    (org-special-ctrl-a/e t)
+    (org-special-ctrl-k t)
+    (org-startup-folded 'content)
+    (org-todo-keywords '((sequence "TODO(t!)" "DOING(g!)" "|" "DONE(d!)"))))
+
+  (use-package org-rainbow-tags
+    :hook org-mode)
+
+  (use-package ox-hugo
+    :after (ox)
+    :demand t)
+#+end_src
+
+* emacs project
+#+begin_src scheme :noweb-ref home-package
+  emacs-magit
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package project
+    :config
+    (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+    :bind
+    (                                     ;XXX: Indentation
+     :map project-prefix-map
+     ("m" . magit-project-status)))
+#+end_src
+
+* emacs visual-line-mode
+#+begin_src scheme :noweb-ref home-package
+  emacs-adaptive-wrap
+  emacs-visual-fill-column
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package adaptive-wrap
+    :hook
+    (visual-line-mode . adaptive-wrap-prefix-mode))
+
+  (use-package visual-fill-column
+    :custom
+    (visual-fill-column-center-text t)
+    :hook visual-line-mode)
+#+end_src
+
+* emacs-citre
+#+begin_src scheme :noweb-ref home-package
+  emacs-citre
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package citre
+    :custom
+    (citre-default-create-tags-file-location 'global-cache)
+    (citre-edit-ctags-options-manually nil)
+    :bind
+    (("C-x c u" . citre-update-this-tags-file)
+     :map citre-mode-map
+     ("C-x c j" . citre-jump)
+     ("C-x c J" . citre-jump-back)
+     ("C-x c c" . citre-peek)
+     ("C-x c p" . citre-ace-peek)))
+
+  (use-package citre-config
+    :demand t)
+#+end_src
+
+* emacs-corfu
+#+begin_src scheme :noweb-ref home-package
+  emacs-corfu
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package corfu
+    :custom
+    (corfu-auto t)
+    :hook
+    (after-init . global-corfu-mode))
+#+end_src
+
+* emacs-doom-modeline
+#+begin_src scheme :noweb-ref home-package
+  emacs-doom-modeline
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package doom-modeline
+    :custom
+    (doom-modeline-icon nil)
+    (doom-modeline-height 18)
+    :hook after-init)
+#+end_src
+
+* emacs-format-all-the-code
+#+begin_src scheme :noweb-ref home-package
+  emacs-format-all-the-code
+  python-black
+  shfmt
+  tidy-html
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package format-all
+    :init
+    (defun hako/format-all ()
+      (format-all-ensure-formatter)
+      (format-all--buffer-from-hook))
+    (define-advice org-edit-src-exit (:before () format-code)
+      (hako/format-all))
+    (define-advice org-edit-src-save (:before () format-code)
+      (hako/format-all))
+    :hook
+    (before-save . hako/format-all))
+#+end_src
+
+* emacs-geiser
+#+begin_src scheme :noweb-ref home-package
+  emacs-geiser
+  emacs-geiser-guile
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package geiser
+    :custom
+    (geiser-mode-start-repl-p t)
+    (geiser-repl-query-on-kill-p nil)
+    (geiser-repl-use-other-window nil))
+#+end_src
+
+* emacs-guix
+#+begin_src scheme :noweb-ref home-package
+  emacs-guix
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package guix-build-config
+    :config
+    ;; Defined with `defconst', overwrite them after load.
+    (setopt
+     guix-config-scheme-compiled-directory nil
+     guix-config-guix-scheme-directory nil))
+
+  (use-package guix-devel
+    :hook scheme-mode)
+
+  ;; https://gitlab.com/emacs-guix/emacs-guix/-/issues/19
+  ;; See also: `guix-repl-guile-args'
+  (use-package guix-repl
+    :custom
+    (guix-guile-program '("guix" "repl"))
+    (guix-repl-use-latest nil)
+    (guix-repl-use-server nil)
+    :init
+    (setopt guix-load-path nil))
+#+end_src
+
+* emacs-helpful
+#+begin_src scheme :noweb-ref home-package
+  emacs-helpful
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package helpful
+    :bind
+    ([remap describe-function] . helpful-callable)
+    ([remap describe-variable] . helpful-variable)
+    ([remap describe-key]      . helpful-key)
+    ([remap describe-command]  . helpful-command)
+    ([remap describe-symbol]   . helpful-symbol)
+    ("C-c C-d" . helpful-at-point))
+#+end_src
+
+* emacs-hl-todo
+#+begin_src scheme :noweb-ref home-package
+  emacs-hl-todo
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package hl-todo
+    :custom
+    (hl-todo-highlight-punctuation ":")
+    :hook prog-mode)
+#+end_src
+
+* emacs-macrostep
+#+begin_src scheme :noweb-ref home-package
+  emacs-macrostep
+  emacs-macrostep-geiser
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package macrostep
+    :bind
+    ("C-c e" . macrostep-expand))
+
+  (use-package macrostep-geiser
+    :hook
+    (geiser-mode . macrostep-geiser-setup))
+#+end_src
+
+* emacs-marginalia
+#+begin_src scheme :noweb-ref home-package
+  emacs-marginalia
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package marginalia
+    :custom
+    (marginalia-mode t))
+#+end_src
+
+* emacs-mwim
+#+begin_src scheme :noweb-ref home-package
+  emacs-mwim
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package mwim
+    :bind
+    ([remap move-beginning-of-line] . mwim-beginning)
+    ([remap move-end-of-line] . mwim-end))
+#+end_src
+
+* emacs-orderless
+#+begin_src scheme :noweb-ref home-package
+  emacs-orderless
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-overrides '((file (styles basic partial-completion))))
+    (orderless-matching-styles
+     '(orderless-literal
+       orderless-flex
+       orderless-regexp)))
+#+end_src
+
+* emacs-puni
+#+begin_src scheme :noweb-ref home-package
+  emacs-puni
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package puni
+    :hook
+    (eval-expression-minibuffer-setup
+     nxml-mode
+     prog-mode
+     sgml-mode
+     tex-mode))
+#+end_src
+
+* emacs-rainbow-delimiters
+#+begin_src scheme :noweb-ref home-package
+  emacs-rainbow-delimiters
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package rainbow-delimiters
+    :hook prog-mode)
+#+end_src
+
+* emacs-rime
+#+begin_src scheme :noweb-ref home-package
+  emacs-rime
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package rime
+    :custom
+    (default-input-method "rime")
+    (rime-disable-predicates
+     '(rime-predicate-after-alphabet-char-p
+       rime-predicate-prog-in-code-p))
+    (rime-show-candidate 'posframe)
+    (rime-show-preedit t)
+    (rime-title "Rime")
+    (rime-posframe-properties '(:internal-border-width 1))
+    (rime-posframe-style 'simple))
+#+end_src
+
+* emacs-treesit-auto
+#+begin_src scheme :noweb-ref home-package
+  emacs-treesit-auto
+  tree-sitter-bash
+  tree-sitter-c
+  tree-sitter-cmake
+  tree-sitter-cpp
+  tree-sitter-c-sharp
+  tree-sitter-css
+  tree-sitter-dockerfile
+  tree-sitter-go
+  tree-sitter-gomod
+  tree-sitter-java
+  tree-sitter-javascript
+  tree-sitter-json
+  tree-sitter-python
+  tree-sitter-ruby
+  tree-sitter-rust
+  tree-sitter-typescript
+  tree-sitter-yaml
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package treesit-auto
+    :config
+    ;; FIXME: These modes aren't loaded automatically.
+    (require 'cmake-ts-mode)
+    (require 'go-ts-mode)
+    ;; https://github.com/renzmann/treesit-auto/issues/32#issuecomment-1826270447
+    (defun hako/get-tree-sitter-mode (mode)
+      (treesit-auto--set-major-remap)
+      (alist-get mode major-mode-remap-alist mode))
+    (define-advice org-src-get-lang-mode (:filter-return (mode) tree-sitter)
+      (hako/get-tree-sitter-mode mode))
+    :hook
+    (after-init . global-treesit-auto-mode))
+#+end_src
+
+* emacs-vertico
+#+begin_src scheme :noweb-ref home-package
+  emacs-vertico
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package vertico
+    :hook after-init)
+#+end_src
+
+* emacs-wanderlust                                                    :Email:
+#+begin_src scheme :noweb-ref home-package
+  emacs-wanderlust
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.config/wanderlust/folders
+  .inbox  "Box"
+  .hako@ultrarare.space/INBOX     "hako@ultrarare.space"
+
+  List {
+          .list/guix              "GNU Guix"
+          .list/guix-patches      "GNU Guix (Patches)"
+
+          .list/codeberg          "Codeberg"
+          .list/github            "GitHub"
+          .list/gitlab            "GitLab"
+  }
+
+  Archive {
+          .archive/admin          "Admin"
+          .archive/billing        "Billing"
+          .archive/support        "Support"
+          .archive/dmarc          "DMARC Reports"
+  }
+
+  +draft                          "Draft"
+  +trash                          "Trash"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package elmo-localdir
+    :custom
+    (elmo-localdir-folder-path "~/.local/share/mail"))
+
+  (use-package elmo-maildir
+    :custom
+    (elmo-maildir-folder-path "~/.local/share/mail"))
+
+  (use-package elmo-vars
+    :custom
+    (elmo-msgdb-extra-fields '("list-id")))
+
+  (use-package mime-def
+    :custom
+    (mime-header-accept-quoted-encoded-words t))
+
+  (use-package mime-edit
+    :custom
+    (mime-edit-pgp-signers '("F4C2D1DF3FDEEA63D1D30776ACC66D09CA528292")))
+
+  (use-package wl
+    :custom
+    (wl-smtp-authenticate-type "plain")
+    (wl-smtp-connection-type 'ssl)
+    (wl-smtp-posting-port 465)
+    (wl-smtp-posting-server "mail.boiledscript.com")
+    (wl-smtp-posting-user "hako@ultrarare.space")
+    (wl-summary-auto-refile-skip-marks nil)
+    (wl-summary-line-format "%n%T%P %Y-%M-%D(%W)%h:%m %t%[%17(%c %f%) %] %#%~%s")
+    (wl-summary-width nil)
+    :commands wl)
+
+  (use-package wl-draft
+    :custom
+    (mail-user-agent 'wl-user-agent)
+    :autoload wl-user-agent-compose
+    :init
+    (define-mail-user-agent 'wl-user-agent
+      'wl-user-agent-compose
+      'wl-draft-send
+      'wl-draft-kill))
+
+  (use-package wl-qs
+    :custom
+    (wl-quicksearch-folder "[]~/.local/share/mail!rgrep"))
+
+  (use-package wl-vars
+    :custom
+    (wl-default-folder ".inbox")
+    (wl-default-spec ".")
+    (wl-draft-always-delete-myself t)
+    (wl-fcc ".inbox")
+    (wl-fcc-force-as-read t)
+    (wl-local-domain "ultrarare.space")
+    (wl-plugged nil)
+    (wl-refile-rule-alist
+     '(("List-Id"
+        ("<\\(\\(bug\\|help\\|info\\)-\\)?guix\\(-devel\\)?\.gnu\.org>$" . ".list/guix")
+        ("<guix-patches\.gnu\.org>$" . ".list/guix-patches")
+        ("\.github\.com>$" . ".list/github")
+        ("\.gitlab\.com>$" . ".list/gitlab")))))
+#+end_src
+
+* emacs-which-key
+#+begin_src scheme :noweb-ref home-package
+  emacs-which-key
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package which-key
+    :config
+    (which-key-setup-side-window-right-bottom)
+    :hook after-init)
+#+end_src
+
+* fontconfig                                                        :Desktop:
+#+begin_src scheme :noweb-ref home-package
+  font-adobe-source-serif-pro
+  font-apple-new-york
+  font-apple-sf-pro
+  font-chiron-hei-hk
+  font-chiron-sung-hk
+  font-google-noto-emoji
+  font-victor-mono
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'extra-fontconfig
+                  home-fontconfig-service-type
+                  (let ((emoji "Noto Color Emoji")
+                        (sans "SF Pro Text")
+                        (serif "New York Medium")
+                        (mono "Victor Mono"))
+                    `((alias
+                       (family "sans-serif")
+                       (prefer
+                        (family ,sans)
+                        (family "Chiron Hei HK VF")
+                        (family ,emoji)))
+                      (alias
+                       (family "serif")
+                       (prefer
+                        (family ,serif)
+                        (family "Chiron Sung HK VF")
+                        (family ,emoji)))
+                      (alias
+                       (family "monospace")
+                       (prefer
+                        (family ,mono)
+                        (family "Chiron Sung HK VF")
+                        (family ,emoji)))
+
+                      ,@(map (lambda (name)
+                               `(alias
+                                 (family ,name)
+                                 (prefer
+                                  (family ,sans)
+                                  (family "sans-serif"))))
+                             '("BlinkMacSystemFont"
+                               "-apple-system"
+                               "system-ui"
+                               "ui-sans-serif"))
+                      (alias
+                       (family "ui-serif")
+                       (prefer
+                        (family ,serif)
+                        (family "serif")))
+                      (alias
+                       (family "ui-monospace")
+                       (prefer
+                        (family ,mono)
+                        (family "monospace"))))))
+#+end_src
+
+* git
+#+begin_src scheme :noweb-ref home-package
+  git
+  `(,git "send-email")
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.config/git/config
+  [commit]
+          gpgsign = true
+  [core]
+          quotePath = false
+  [init]
+          defaultBranch = trunk
+  [rerere]
+          enabled = true
+  [sendemail]
+          smtpEncryption = tls
+          smtpServer = mail.boiledscript.com
+          smtpUser = hako@ultrarare.space
+          smtpServerPort = 587
+  [user]
+          name = Hilton Chain
+          email = hako@ultrarare.space
+          signingkey = ACC66D09CA528292!
+#+end_src
+
+* gnupg
+#+begin_src scheme :noweb-ref home-package
+  password-store
+  rofi-wayland
+  tessen
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (service home-gpg-agent-service-type
+           (home-gpg-agent-configuration
+            (pinentry-program
+             (file-append pinentry-rofi "/bin/pinentry-rofi"))
+            (ssh-support? #t)))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service pcscd-service-type)
+  (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
+#+end_src
+
+#+begin_src scheme :noweb-ref hako-user-group
+  "plugdev"
+#+end_src
+
+* greetd                                                    :LoginManagement:
+#+begin_src scheme :noweb-ref service
+  (service greetd-service-type
+           (greetd-configuration
+            (terminals
+             (map (lambda (vtnr)
+                    (greetd-terminal-configuration
+                     (terminal-vt (number->string vtnr))
+                     (terminal-switch (eq? 1 vtnr))
+                     (default-session-command
+                       (greetd-agreety-session
+                        (command (file-append bash "/bin/bash"))))))
+                  (iota 6 1)))))
+#+end_src
+
+* isync                                                               :Email:
+#+begin_src scheme :noweb-ref home-package
+  emacs-mbsync
+  isync
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package mbsync
+    :custom
+    (mbsync-args
+     `("-a"
+       "--config"
+       ,(expand-file-name
+         "isync/mbsyncrc" (or (getenv "XDG_CONFIG_HOME") "~/.config")))))
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.config/isync/mbsyncrc
+  Create Both
+  Expunge Both
+  CopyArrivalDate yes
+
+  MaildirStore hako@ultrarare.space-local
+  Path ~/.local/share/mail/hako@ultrarare.space/
+  Inbox ~/.local/share/mail/hako@ultrarare.space/INBOX
+  Subfolders Verbatim
+
+  IMAPAccount hako@ultrarare.space
+  Host mail.boiledscript.com
+  User "hako@ultrarare.space"
+  PassCmd "pass com/boiledscript/mail"
+  TLSType IMAPS
+
+  IMAPStore hako@ultrarare.space-remote
+  Account hako@ultrarare.space
+
+  Channel hako@ultrarare.space
+  Far :hako@ultrarare.space-remote:
+  Near :hako@ultrarare.space-local:
+  Pattern *
+  SyncState *
+#+end_src
+
+* iwd                                                     :Firmware:Wireless:
+#+begin_src scheme :noweb-ref service
+  (service iwd-service-type
+           (iwd-configuration
+            (enable-network-configuration? #t)
+            (address-randomization 'network)))
+#+end_src
+
+#+begin_src scheme :noweb-ref firmware
+  iwlwifi-firmware
+#+end_src
+
+* librewolf
+#+begin_src scheme :noweb-ref home-package
+  librewolf
+#+end_src
+
+#+begin_src scheme :noweb-ref home-environment-variable
+  ("BROWSER" . "librewolf")
+#+end_src
+
+* light                                                             :Display:
+#+begin_src scheme :noweb-ref service
+  (udev-rules-service 'backlight light)
+#+end_src
+
+#+begin_src scheme :noweb-ref hako-user-group
+  "video"
+#+end_src
+
+* liquidprompt
+#+begin_src scheme :noweb-ref home-bashrc
+  (mixed-text-file
+   "bashrc-liquidprompt"
+   "[[ $- = *i* ]] && source " liquidprompt "/share/liquidprompt/liquidprompt")
+#+end_src
+
+* mcron
+#+begin_src scheme :noweb yes :noweb-ref home-service
+  (service home-mcron-service-type
+           (for-home
+            (mcron-configuration
+             (jobs
+              (list <<home-mcron-job>>)))))
+#+end_src
+
+* mihomo                                                          :DNS:Proxy:
+#+begin_src scheme :noweb yes :noweb-ref service
+  (service clash-service-type
+           (clash-configuration
+            (clash mihomo-bin)
+            (config
+             (mixed-text-file
+              "mihomo.yaml"
+              (sops-str '("mihomo")) "\n"
+              (testament-file-content "mihomo.yaml")))))
+#+end_src
+
+#+begin_src yaml :tangle ../gen/files/plain/mihomo.yaml
+  allow-lan: true
+  mode: "rule"
+  log-level: "error"
+  ipv6: true
+  find-process-mode: "strict"
+  external-controller: "127.0.0.1:9090"
+  external-ui: "ui"
+  external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+
+  profile:
+    store-selected: true
+
+  unified-delay: true
+  tcp-concurrent: true
+  global-client-fingerprint: "chrome"
+
+  geodata-mode: true
+  geodata-loader: "standard"
+  geo-auto-update: true
+  geo-update-interval: 24
+  geox-url:
+    geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+    geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+    mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+    asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+
+  dns:
+    enable: true
+    prefer-h3: true
+    listen: 0.0.0.0:53
+    ipv6: true
+    nameserver-policy:
+      "geosite:cn,private":
+        - "https://doh.pub/dns-query"
+        - "https://1.12.12.12/dns-query"
+        - "https://120.53.53.53/dns-query"
+        - "tls://1.12.12.12"
+        - "tls://120.53.53.53"
+        - "https://dns.alidns.com/dns-query"
+        - "tls://dns.alidns.com"
+        - "tls://223.5.5.5"
+        - "tls://223.6.6.6"
+        - "tcp://114.114.114.114"
+        - "tcp://114.114.115.115"
+        - "udp://1.2.4.8"
+        - "udp://210.2.4.8"
+    nameserver:
+      - "https://1.1.1.1/dns-query#Default"
+      - "https://1.0.0.1/dns-query#Default"
+      - "tls://1.1.1.1#Default"
+      - "tls://1.0.0.1#Default"
+      - "tls://1dot1dot1dot1.cloudflare-dns.com#Default"
+      - "tls://one.one.one.one#Default"
+      - "https://dns.google/dns-query#Default"
+      - "tls://dns.google#Default"
+      - "https://146.112.41.2/dns-query#Default"
+      - "https://dns.quad9.net/dns-query#Default"
+      - "tls://dns.quad9.net#Default"
+    proxy-server-nameserver:
+      - "https://1.1.1.1/dns-query"
+      - "https://8.8.8.8/dns-query"
+      - "https://1.0.0.1/dns-query"
+      - "https://8.8.4.4/dns-query"
+
+  sniffer:
+    enable: true
+    sniff:
+      HTTP:
+        ports: ["80", "8080-8880"]
+      TLS:
+        ports: ["443", "8443"]
+      QUIC:
+        ports: ["443", "8443"]
+
+  tproxy-port: 7890
+
+  proxy-groups:
+    - {
+        name: "Default",
+        type: "select",
+        proxies: ["All-Proxies", "Auto-Select", "DIRECT"],
+      }
+    - { name: "All-Proxies", <<: *use }
+    - { name: "Auto-Select", <<: *use, tolerance: 2, type: "url-test" }
+
+  rule-providers:
+    reject:
+      type: "http"
+      behavior: "domain"
+      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+      path: "./ruleset/reject.yaml"
+      interval: 86400
+    proxy:
+      type: "http"
+      behavior: "domain"
+      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+      path: "./ruleset/proxy.yaml"
+      interval: 86400
+    direct:
+      type: "http"
+      behavior: "domain"
+      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+      path: "./ruleset/direct.yaml"
+      interval: 86400
+    private:
+      type: "http"
+      behavior: "domain"
+      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
+      path: "./ruleset/private.yaml"
+      interval: 86400
+    cncidr:
+      type: "http"
+      behavior: "ipcidr"
+      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
+      path: "./ruleset/cncidr.yaml"
+      interval: 86400
+    lancidr:
+      type: "http"
+      behavior: "ipcidr"
+      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
+      path: "./ruleset/lancidr.yaml"
+      interval: 86400
+
+  rules:
+    - "DOMAIN,bordeaux.fsf.moe,DIRECT"
+    - "DOMAIN,us.download.nvidia.com,DIRECT"
+    - "DST-PORT,587,DIRECT"
+    - "PROCESS-NAME,.qbittorrent-nox-real,DIRECT"
+    - "PROCESS-NAME,rclone,DIRECT"
+    - "PROCESS-NAME,steam,DIRECT"
+    - "PROCESS-NAME,steamwebhelper,Default"
+    - "PROCESS-NAME,syncthing,DIRECT"
+    - "PROCESS-NAME,tailscaled,DIRECT"
+    - "RULE-SET,private,DIRECT"
+    - "RULE-SET,reject,REJECT"
+    - "RULE-SET,proxy,Default"
+    - "RULE-SET,direct,DIRECT"
+    - "RULE-SET,lancidr,DIRECT"
+    - "RULE-SET,cncidr,DIRECT"
+    - "GEOIP,lan,DIRECT"
+    - "GEOIP,cn,DIRECT"
+    - "PROCESS-NAME,wineserver,DIRECT"
+    - "MATCH,Default"
+#+end_src
+
+* modprobed-db
+#+begin_src conf :tangle ../gen/files/dot/.config/modprobed-db.conf
+  DBPATH="/home/hako/.config"
+  COLORS=light
+  IGNORE=(nvidia nvidia_drm nvidia_modeset nvidia_uvm)
+#+end_src
+
+#+begin_src scheme :noweb-ref home-mcron-job
+  #~(job next-hour-from
+         #$(file-append modprobed-db "/bin/modprobed-db storesilent"))
+#+end_src
+
+* mpv
+#+begin_src scheme :noweb-ref home-package
+  mpv/dolly
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.config/mpv/mpv.conf
+  blend-subtitles=video
+  deband=yes
+  fullscreen=yes
+  gpu-api=vulkan
+  hwdec=auto
+  interpolation=yes
+  profile=high-quality
+  scale=ewa_lanczossharp
+  screenshot-directory=~/Library/Pictures/MPV/
+  screenshot-template="%F %P"
+  sub-auto=fuzzy
+  tscale=oversample
+  video-sync=display-resample
+  vo=gpu-next
+#+end_src
+
+* nftables                                                   :Firewall:Proxy:
+#+begin_src nftables :tangle ../gen/files/plain/nftables-dorphine.conf
+  flush ruleset
+
+  table inet filter {
+      chain input {
+          type filter hook input priority 0; policy drop;
+
+          iifname lo accept \
+          comment "Accept any localhost traffic"
+
+          ct state { established, related } accept \
+          comment "Accept traffic originated from us"
+
+          ct state invalid drop \
+          comment "Drop invalid connections"
+
+          tcp dport 113 reject with icmpx type port-unreachable \
+          comment "Reject AUTH to make it fail fast"
+
+          # ICMPv4
+          ip protocol icmp icmp type {
+              echo-reply,              # type 0
+              destination-unreachable, # type 3
+              echo-request,            # type 8
+              time-exceeded,           # type 11
+              parameter-problem,       # type 12
+          } accept \
+          comment "Accept ICMP"
+
+          # ICMPv6
+          icmpv6 type {
+              destination-unreachable, # type 1
+              packet-too-big,          # type 2
+              time-exceeded,           # type 3
+              parameter-problem,       # type 4
+              echo-request,            # type 128
+              echo-reply,              # type 129
+          } accept \
+          comment "Accept basic IPv6 functionality"
+
+          icmpv6 type {
+              nd-router-solicit,   # type 133
+              nd-router-advert,    # type 134
+              nd-neighbor-solicit, # type 135
+              nd-neighbor-advert,  # type 136
+          } ip6 hoplimit 255 accept \
+          comment "Allow IPv6 SLAAC"
+
+          icmpv6 type {
+              mld-listener-query,     # type 130
+              mld-listener-report,    # type 131
+              mld-listener-reduction,  # type 132
+              mld2-listener-report,    # type 143
+          } ip6 saddr fe80::/10 accept \
+          comment "Allow IPv6 multicast listener discovery on link-local"
+
+          ip6 saddr fe80::/10 udp sport 547 udp dport 546 accept \
+          comment "Accept DHCPv6 replies from IPv6 link-local addresses"
+
+          udp dport { 4950, 4955 } accept
+          tcp dport 6695-6699 accept \
+          comment "Allow Warframe"
+
+          meta l4proto { tcp, udp } th dport 15308 accept \
+          comment "Allow qBittorrent"
+
+          udp dport 21027 accept \
+          comment "Allow Syncthing (for discovery broadcasts on IPv4 and multicasts on IPv6)"
+          meta l4proto { tcp, udp } th dport 22000 accept \
+          comment "Allow Syncthing (TCP and QUIC based sync protocol traffic)"
+
+          udp dport 41641 accept \
+          comment "Allow Tailscale"
+      }
+
+      chain forward {
+          type filter hook forward priority 0; policy drop;
+      }
+
+      chain output {
+          type filter hook output priority 0; policy accept;
+      }
+  }
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/plain/nftables-dorphine.conf
+  table inet proxy {
+      set IPv4_RESERVED {
+          typeof ip daddr
+          flags interval
+          elements = {
+              0.0.0.0/8,
+              10.0.0.0/8,
+              100.64.0.0/10,
+              127.0.0.0/8,
+              169.254.0.0/16,
+              172.16.0.0/12,
+              192.0.0.0/24,
+              192.0.2.0/24,
+              192.88.99.0/24,
+              192.168.0.0/16,
+              198.18.0.0/15,
+              198.51.100.0/24,
+              203.0.113.0/24,
+              224.0.0.0/4,
+              240.0.0.0/4
+          }
+      }
+
+      set IPv6_RESERVED {
+          typeof ip6 daddr
+          flags interval
+          elements = {
+              ::/128,
+              ::1/128,
+              ::ffff:0:0:0/96,
+              64:ff9b::/96,
+              100::/64,
+              2001::/32,
+              2001:20::/28,
+              2001:db8::/32,
+              2002::/16,
+              fc00::/7,
+              fe80::/10,
+              ff00::/8
+          }
+      }
+
+      chain prerouting {
+          type filter hook prerouting priority mangle; policy accept;
+          ip daddr @IPv4_RESERVED return
+          ip6 daddr @IPv6_RESERVED return
+          meta l4proto { tcp, udp } tproxy to :7890 meta mark set 38417
+      }
+
+      chain output {
+          type route hook output priority mangle; policy accept;
+          ip daddr @IPv4_RESERVED return
+          ip6 daddr @IPv6_RESERVED return
+          meta skgid clash return
+          meta l4proto { tcp, udp } meta mark set 38417
+      }
+  }
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service nftables-service-type
+           (nftables-configuration
+            (ruleset (testament-file-object "nftables-dorphine.conf"))))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'transparent-proxy
+                  shepherd-root-service-type
+                  (let ((ip (file-append iproute "/sbin/ip")))
+                    (list (shepherd-service
+                           (documentation "Set up route for transparent proxy.")
+                           (provision '(transparent-proxy))
+                           (requirement '(loopback))
+                           (start
+                            #~(make-system-constructor
+                               #$ip " rule add fwmark 38417 table 100 && "
+                               #$ip " route add local default dev lo table 100 && "
+                               #$ip " -6 rule add fwmark 38417 table 100 && "
+                               #$ip " -6 route add local default dev lo table 100"))
+                           (stop
+                            #~(make-system-destructor
+                               #$ip " route del local default dev lo table 100 && "
+                               #$ip " rule del fwmark 38417 table 100 && "
+                               #$ip " -6 route del local default dev lo table 100 && "
+                               #$ip " -6 rule del fwmark 38417 table 100"))))))
+#+end_src
+
+* node
+#+begin_src conf :tangle ../gen/files/dot/.config/npm/npmrc
+  prefix=${XDG_DATA_HOME}/npm
+  cache=${XDG_CACHE_HOME}/npm
+  init-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js
+  logs-dir=${XDG_STATE_HOME}/npm/logs
+#+end_src
+
+#+begin_src scheme :noweb-ref home-environment-variable
+  ("PATH" . "${PATH}:${XDG_DATA_HOME}/npm/bin")
+#+end_src
+
+* ntp
+#+begin_src scheme :noweb-ref service
+  (service ntp-service-type)
+#+end_src
+
+* nvidia-driver                                           :Firmware:Graphics:
+#+begin_src scheme :noweb-ref service
+  (service nvidia-service-type
+           (nvidia-configuration
+            (module nvidia-module-open)))
+#+end_src
+
+禁用 Linux 內核 nouveau 模塊。
+#+begin_src scheme :noweb-ref kernel-blocklist
+  "nouveau"
+#+end_src
+
+啓用 DRM KMS，Wayland 環境需要，詳見驅動自述文檔。
+#+begin_src scheme :noweb-ref kernel-argument
+  "nvidia_drm.modeset=1"
+#+end_src
+
+#+begin_src scheme :noweb-ref home-shell-profile
+  (plain-file
+   "shell-profile-nvidia" "\
+  if [ -d /proc/driver/nvidia ]; then
+      export __GLX_VENDOR_LIBRARY_NAME=nvidia
+      export __NV_PRIME_RENDER_OFFLOAD=1
+  fi")
+#+end_src
+
+* pam-uaccess                                               :LoginManagement:
+#+begin_src scheme :noweb-ref kernel-blocklist
+  "hid_nintendo"
+#+end_src
+
+;; See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
+
+#+name: controller-permission-udev-rule
+#+begin_src scheme
+  (udev-rule "60-controller-permission.rules" "\
+  KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
+  MODE=\"0660\", TAG+=\"uaccess\"")
+#+end_src
+
+#+begin_src scheme :noweb yes :noweb-ref service
+  (udev-rules-service 'controller <<controller-permission-udev-rule>>)
+  (udev-rules-service 'steam-devices steam-devices-udev-rules)
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'uaccess-pam-service pam-root-service-type
+                  (let ((uaccess-pam-entry
+                         (pam-entry
+                          (control "optional")
+                          (module (file-append
+                                   pam-uaccess
+                                   "/lib/security/pam_uaccess.so"))
+                          (arguments '("skip_ungrant")))))
+                    (list (pam-extension
+                           (transformer
+                            (lambda (pam)
+                              (if (string=? (pam-service-name pam)
+                                            "greetd")
+                                  (pam-service
+                                   (inherit pam)
+                                   (session
+                                    (append (pam-service-session pam)
+                                            (list uaccess-pam-entry))))
+                                  pam)))))))
+#+end_src
+
+* pipewire
+#+begin_src scheme :noweb-ref home-service
+  (service home-pipewire-service-type
+           (home-pipewire-configuration
+            (wireplumber wireplumber-minimal)))
+#+end_src
+
+* python
+#+begin_src scheme :noweb-ref home-environment-variable
+  ("PATH" . "${PATH}:${XDG_DATA_HOME}/python/bin")
+#+end_src
+
+* qbittorrent
+#+begin_src scheme :noweb-ref home-service
+  (service home-qbittorrent-service-type
+           (qbittorrent-configuration
+            (qbittorrent qbittorrent-enhanced-nox)
+            (webui-port 35951)))
+#+end_src
+
+* qemu-binfmt                                                :Virtualization:
+#+begin_src scheme :noweb-ref service
+  (service qemu-binfmt-service-type
+           (qemu-binfmt-configuration
+            (platforms
+             (lookup-qemu-platforms "aarch64" "riscv64"))))
+#+end_src
+
+* qogir-icon-theme                                                  :Desktop:
+#+begin_src scheme :noweb-ref home-package
+  adwaita-icon-theme
+  hicolor-icon-theme
+  qogir-icon-theme
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.config/gtk-3.0/settings.ini
+  [Settings]
+  gtk-cursor-theme-name=Qogir
+  gtk-cursor-theme-size=24
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.icons/default/index.theme
+  [icon theme]
+  Inherits=Qogir
+#+end_src
+
+* seatd                                                     :LoginManagement:
+#+begin_src scheme :noweb-ref hako-user-group
+  "seat"
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service seatd-service-type)
+#+end_src
+
+* sops
+#+begin_src scheme :noweb-ref home-service
+  (service home-sops-secrets-service-type
+           (home-sops-service-configuration
+            (config (testament-file-object "sops.yaml"))
+            (secrets
+             (list (sops-secret
+                    (key '("wlsunset"))
+                    (file dorphine.yaml))))))
+#+end_src
+
+#+begin_src scheme :noweb-ref definition
+  (define dorphine.yaml
+    (testament-file-object "dorphine.yaml"))
+
+  (define (sops-str key)
+    "The result will be publicly available in /gnu/store, YOU ARE WARNED."
+    (get-sops-secret key #:file dorphine.yaml))
+
+  (define (sops-num key)
+    "The result will be publicly available in /gnu/store, YOU ARE WARNED."
+    (get-sops-secret key #:file dorphine.yaml #:number? #t))
+#+end_src
+
+* steam
+#+begin_src scheme :noweb-ref home-package
+  steam-nvidia/dolly
+#+end_src
+
+#+begin_src scheme :noweb-ref home-environment-variable
+  ("GUIX_SANDBOX_EXTRA_SHARES" . "${HOME}/Downloads:${HOME}/Library/Pictures/Screenshots")
+#+end_src
+
+* sway                                                              :Desktop:
+Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard-layout=.
+#+begin_src scheme :noweb-ref definition
+  (define %keyboard-layout-sway
+    (keyboard-layout
+     "us,us"
+     ",dvorak"
+     #:options
+     '("ctrl:nocaps"
+       "grp:win_space_toggle")))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service screen-locker-service-type
+           (screen-locker-configuration
+            (name "swaylock")
+            (program (plain-file "empty" ""))
+            (using-setuid? #f)))
+#+end_src
+
+#+begin_src scheme :noweb yes :noweb-ref home-service
+  (service
+   home-sway-service-type
+   (sway-configuration
+    (variables
+     '((mod . "Mod4")))
+    (keybindings
+     (let ((screenshot "~/Library/Pictures/Screenshots/$(date +%Y%m%d-%H%M%S).png")
+           (lock-args #~(string-join
+                         (list "--clock"
+                               "--daemonize"
+                               "--ignore-empty-password"
+                               "--image"
+                               #$(testament-file-object "115008128_p0.jpg")))))
+       `(,@(append-map
+            (match-lambda
+              ((direction . key)
+               (list (cons (symbol-append '$mod+ key)
+                           (format #f "focus ~a" direction))
+                     (cons (symbol-append '$mod+Shift+ key)
+                           (format #f "move ~a" direction)))))
+            '(("left"  . Left)
+              ("down"  . Down)
+              ("up"    . Up)
+              ("right" . Right)))
+         ,@(append-map
+            (lambda (key)
+              (let ((number (if (zero? key) 10 key)))
+                (list (cons (string->symbol (format #f "$mod+~a" key))
+                            (format #f "workspace number ~a" number))
+                      (cons (string->symbol (format #f "$mod+Shift+~a" key))
+                            (format #f "move container to workspace number ~a" number)))))
+            (iota 10))
+         ($mod+f       . "fullscreen")
+         ($mod+v       . "floating toggle")
+         ($mod+Shift+m . "exec swaymsg exit")
+         ($mod+Shift+q . "kill")
+         ($mod+Return  . "exec emacsclient --create-frame --no-wait")
+         ($mod+t       . ,#~(string-append "exec " #$alacritty "/bin/alacritty"))
+         ($mod+r       . ,#~(string-append "exec rofi -modes combi -show combi"))
+         ($mod+Shift+t . ,#~(string-append "exec " #$stalonetray "/bin/stalonetray"))
+         ($mod+l       . ,#~(string-append "exec " #$swaylock-effects "/bin/swaylock " #$lock-args))
+         (Print        . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy output " #$screenshot))
+         ($mod+Print   . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy area " #$screenshot))
+         ;; TODO: Use wob (https://github.com/francma/wob/blob/master/contrib/README.md).
+         (XF86AudioMicMute      . ,#~(string-append "exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
+         (XF86AudioMute         . ,#~(string-append "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
+         (XF86AudioLowerVolume  . ,#~(string-append "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
+         (XF86AudioRaiseVolume  . ,#~(string-append "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.0"))
+         (XF86MonBrightnessDown . ,#~(string-append "exec " #$light "/bin/light -U 5"))
+         (XF86MonBrightnessUp   . ,#~(string-append "exec " #$light "/bin/light -A 5")))))
+    (packages
+     (list dconf
+           qtwayland-5
+           sway
+           wl-clipboard
+           xdg-desktop-portal
+           xdg-desktop-portal-gtk
+           xdg-desktop-portal-wlr
+           xdg-utils))
+    (inputs
+     (list (sway-input
+            (identifier "type:keyboard")
+            (layout %keyboard-layout-sway)
+            (extra-content
+             '("repeat_delay 300"
+               "repeat_rate 30")))
+           (sway-input
+            (identifier "type:touchpad")
+            (tap #t)
+            (extra-content
+             '("natural_scroll enabled")))
+           (sway-input
+            (identifier "1:1:AT_Translated_Set_2_keyboard")
+            (extra-content '("events disabled")))))
+    (outputs
+     (list (sway-output
+            (identifier "eDP-1")
+            (extra-content '("scale 1.5")))
+           (sway-output
+            (background (testament-file-object "91042519_p4.png")))))
+    (modes '())
+    (startup-programs
+     (list
+      (file-append dbus "/bin/dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
+      (file-append i3-autotiling "/bin/autotiling")
+      (file-append wlsunset "/bin/wlsunset -o eDP-1 $(cat ${XDG_RUNTIME_DIR}/secrets/wlsunset)")))
+    (extra-content
+     '("floating_modifier $mod normal"
+       "default_border none"
+       "default_floating_border none"
+       "gaps inner 5"
+       "gaps outer 20"
+       "mouse_warping container"
+       "\
+  for_window {
+      [shell=\"xwayland\"] title_format \"%title [XWayland]\"
+      [app_id=Alacritty] layout stacking
+      [class=steam] layout tabbed
+  }"
+       "bindswitch --reload --locked lid:on output eDP-1 disable"
+       "bindswitch --reload --locked lid:off output eDP-1 enable"))))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-shell-profile
+  (plain-file
+   "shell-profile-sway" "\
+  if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
+      export XDG_CURRENT_DESKTOP=sway
+      exec sway --unsupported
+  fi")
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.config/xdg-desktop-portal/portals.conf
+  [preferred]
+  default=gtk
+  org.freedesktop.impl.portal.Screenshot=wlr
+  org.freedesktop.impl.portal.ScreenCast=wlr
+#+end_src
+
+* syncthing
+#+begin_src scheme :noweb-ref home-service
+  (service home-syncthing-service-type
+           (for-home
+            (syncthing-configuration
+             (user "hako"))))
+#+end_src
+
+* tailscale                                                             :VPN:
+#+begin_src scheme :noweb-ref service
+  (service tailscale-service-type)
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'extra-hosts hosts-service-type
+                  (list (host "100.126.99.80" "crustum")
+                        (host "100.87.158.84" "gokuraku")
+                        (host "144.168.59.46" "paradise")))
+#+end_src
+
+* tlp                                                       :PowerManagement:
+#+begin_src scheme :noweb-ref service
+  (service tlp-service-type)
+#+end_src
+
+* udisks
+#+begin_src scheme :noweb-ref service
+  (service udisks-service-type)
+  polkit-wheel-service
+#+end_src
+
+* ungoogled-chromuim
+#+begin_src scheme :noweb-ref home-package
+  ublock-origin/chromium
+  ungoogled-chromium/dolly
+#+end_src
+
+* wget
+#+name: wget-config
+#+begin_src scheme
+  (plain-file
+   "wgetrc"
+   "hsts-file = ~/.cache/wget-hsts\n")
+#+end_src
+
+* zoxide
+#+begin_src scheme :noweb-ref home-package
+  zoxide
+#+end_src
+
+#+begin_src scheme :noweb-ref home-bashrc
+  (plain-file
+   "bashrc-zoxide"
+   "eval \"$(zoxide init --cmd cd bash)\"")
+#+end_src

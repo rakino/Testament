@@ -1,3 +1,13 @@
 [submodule "blobs"]
-	path = blobs
+	path = src/modules/blobs
 	url = git@github.com:rakino/testament-blobs.git
+[submodule "guix"]
+	path = dep/guix
+[submodule "nonguix"]
+	path = dep/nonguix
+[submodule "rosenthal"]
+	path = dep/rosenthal
+        url = https://codeberg.org/hako/Rosenthal.git
+[submodule "sops-guix"]
+	path = dep/sops-guix
+	url = https://github.com/fishinthecalculator/sops-guix
