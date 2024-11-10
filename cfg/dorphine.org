@@ -373,7 +373,8 @@
                            "-l"
                            "--human-readable")))))
             (bashrc
-             (list <<home-bashrc>>))))
+             (list <<bashrc-blesh>>
+                   <<home-bashrc>>))))
 
   (simple-service 'extra-shell-profiles
                   home-shell-profile-service-type
@@ -381,7 +382,8 @@
 #+end_src
 
 * blesh
-#+begin_src scheme :noweb-ref home-bashrc
+#+name: bashrc-blesh
+#+begin_src scheme
   (mixed-text-file
    "bashrc-blesh"
    "complete -W '' guix\n"
