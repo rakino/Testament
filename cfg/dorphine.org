@@ -952,20 +952,10 @@
 * emacs-treesit-auto
 #+begin_src scheme :noweb-ref home-package
   emacs-treesit-auto
-  tree-sitter-bash
-  tree-sitter-c
   tree-sitter-cmake
-  tree-sitter-cpp
-  tree-sitter-c-sharp
-  tree-sitter-css
   tree-sitter-dockerfile
   tree-sitter-go
   tree-sitter-gomod
-  tree-sitter-java
-  tree-sitter-javascript
-  tree-sitter-json
-  tree-sitter-python
-  tree-sitter-ruby
   tree-sitter-rust
   tree-sitter-typescript
   tree-sitter-yaml
