@@ -378,6 +378,7 @@
    "bashrc-blesh"
    "complete -W '' guix\n"
    "[[ $- = *i* ]] && source " blesh "/share/blesh/ble.sh\n"
+   "bind 'set completion-ignore-case on'\n"
    "bleopt prompt_xterm_title='\\d \\@ | \\w'")
 #+end_src
 
