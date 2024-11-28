@@ -574,6 +574,7 @@
 
 #+begin_src scheme :noweb-ref home-package
   emacs-debbugs
+  emacs-format-all-the-code
   emacs-markdown-mode
   emacs-nftables-mode
   emacs-web-mode
@@ -755,28 +756,6 @@
     (doom-modeline-icon nil)
     (doom-modeline-height 18)
     :hook after-init)
-#+end_src
-
-* emacs-format-all-the-code
-#+begin_src scheme :noweb-ref home-package
-  emacs-format-all-the-code
-  python-black
-  shfmt
-  tidy-html
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-feature
-  (use-package format-all
-    :init
-    (defun hako/format-all ()
-      (format-all-ensure-formatter)
-      (format-all--buffer-from-hook))
-    (define-advice org-edit-src-exit (:before () format-code)
-      (hako/format-all))
-    (define-advice org-edit-src-save (:before () format-code)
-      (hako/format-all))
-    :hook
-    (before-save . hako/format-all))
 #+end_src
 
 * emacs-geiser
