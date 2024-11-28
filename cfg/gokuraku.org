@@ -105,12 +105,6 @@
              (name "hako")
              (group "users")
              (supplementary-groups '("wheel")))
-            (user-account
-             (name "offload")
-             (group "nogroup")
-             (home-directory "/nonexistent")
-             (create-home-directory? #f)
-             (system? #t))
             %base-user-accounts))
 
     (packages %testament-base-packages)
@@ -470,9 +464,7 @@ Latest Guix installer image from Nonguix (weekly)
             (password-authentication? #f)
             (authorized-keys
              `(("hako" ,(plain-file "hako.pub" "ssh-ed25519 \
-  AAAAC3NzaC1lZDI1NTE5AAAAIFcTj1N3cL/bh2Uvwh5/YubhZplPFnvGk/iVHQs3FWV2"))
-               ("offload" ,(plain-file "offload.pub" "ssh-ed25519 \
-  AAAAC3NzaC1lZDI1NTE5AAAAIJum7e8nRsPFgs4ZzUadT58IY6OIJsgLXDJF12NHvJaY"))))))
+  AAAAC3NzaC1lZDI1NTE5AAAAIFcTj1N3cL/bh2Uvwh5/YubhZplPFnvGk/iVHQs3FWV2"))))))
 #+end_src
 
 * static-networking

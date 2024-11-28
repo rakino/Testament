@@ -251,15 +251,6 @@
                              "https://mirror.sjtu.edu.cn/guix"
                              "https://substitute.boiledscript.com"
                              "https://substitutes.nonguix.org"))
-                          (build-machines
-                           (list
-                            #~(build-machine
-                               (name "gokuraku")
-                               (systems '("x86_64-linux"))
-                               (host-key "ssh-ed25519 \
-  AAAAC3NzaC1lZDI1NTE5AAAAIAzNGrJA8dIJzb8FGFvOzP73+KcvwV3wh+93em8/B3TT")
-                               (user "offload")
-                               (private-key "/var/lib/guix/offload-key.sec"))))
                           (channels
                            (cons* %channel-guixcn
                                   %channel-nonguix
