@@ -247,8 +247,7 @@
                                   %guix-authorized-key-nonguix
                                   %default-authorized-guix-keys))
                           (substitute-urls
-                           '("https://bordeaux.fsf.moe"
-                             "https://mirror.sjtu.edu.cn/guix"
+                           `(,@%default-substitute-urls
                              "https://substitute.boiledscript.com"
                              "https://substitutes.nonguix.org"))
                           (channels
@@ -1451,7 +1450,6 @@
       interval: 86400
 
   rules:
-    - "DOMAIN,bordeaux.fsf.moe,DIRECT"
     - "DOMAIN,us.download.nvidia.com,DIRECT"
     - "DST-PORT,587,DIRECT"
     - "PROCESS-NAME,.qbittorrent-nox-real,DIRECT"
