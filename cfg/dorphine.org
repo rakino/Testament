@@ -416,6 +416,24 @@
              (testament-file-object "btrbk-dorphine.conf"))))
 #+end_src
 
+* controller
+#+begin_src scheme :noweb-ref kernel-blocklist
+  "hid_nintendo"
+#+end_src
+
+See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
+
+#+name: controller-permission-udev-rule
+#+begin_src scheme
+  (udev-rule "60-controller-permission.rules" "\
+  KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
+  MODE=\"0660\", GROUP=\"users\"")
+#+end_src
+
+#+begin_src scheme :noweb yes :noweb-ref service
+  (udev-rules-service 'controller <<controller-permission-udev-rule>>)
+#+end_src
+
 * dbus
 #+begin_src scheme :noweb-ref home-service
   (service home-dbus-service-type)
@@ -1687,47 +1705,6 @@
       export __GLX_VENDOR_LIBRARY_NAME=nvidia
       export __NV_PRIME_RENDER_OFFLOAD=1
   fi")
-#+end_src
-
-* pam-uaccess                                               :LoginManagement:
-#+begin_src scheme :noweb-ref kernel-blocklist
-  "hid_nintendo"
-#+end_src
-
-;; See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
-
-#+name: controller-permission-udev-rule
-#+begin_src scheme
-  (udev-rule "60-controller-permission.rules" "\
-  KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
-  MODE=\"0660\", TAG+=\"uaccess\"")
-#+end_src
-
-#+begin_src scheme :noweb yes :noweb-ref service
-  (udev-rules-service 'controller <<controller-permission-udev-rule>>)
-  (udev-rules-service 'steam-devices steam-devices-udev-rules)
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  (simple-service 'uaccess-pam-service pam-root-service-type
-                  (let ((uaccess-pam-entry
-                         (pam-entry
-                          (control "optional")
-                          (module (file-append
-                                   pam-uaccess
-                                   "/lib/security/pam_uaccess.so"))
-                          (arguments '("skip_ungrant")))))
-                    (list (pam-extension
-                           (transformer
-                            (lambda (pam)
-                              (if (string=? (pam-service-name pam)
-                                            "greetd")
-                                  (pam-service
-                                   (inherit pam)
-                                   (session
-                                    (append (pam-service-session pam)
-                                            (list uaccess-pam-entry))))
-                                  pam)))))))
 #+end_src
 
 * pipewire
