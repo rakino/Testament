@@ -740,8 +740,6 @@
 
 #+begin_src emacs-lisp :noweb-ref emacs-feature
   (use-package corfu
-    :custom
-    (corfu-auto t)
     :hook
     (after-init . global-corfu-mode))
 #+end_src
