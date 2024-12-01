@@ -18,13 +18,11 @@
 
 * 輔助腳本
 :PROPERTIES:
-:header-args: :mkdirp yes :shebang "#!/bin/sh"
+:header-args: :mkdirp yes :shebang "#!/usr/bin/env bash"
 :END:
 ** build-guix
 #+begin_src shell :tangle gen/scripts/build-guix
-  sh ./bootstrap
-  ./configure --localstatedir=/var --sysconfdir=/etc
-  make -j"$(nproc)"
+  sh ./bootstrap && ./configure && make -j"$(nproc)"
 #+end_src
 
 ** find-unused-module
