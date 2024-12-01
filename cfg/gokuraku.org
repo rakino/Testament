@@ -178,57 +178,7 @@
             (port 27254)))
 #+end_src
 
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'rosenthal)
-   (build '(channels rosenthal))
-   (channels
-    (cons (channel
-           (name 'rosenthal)
-           (url "https://codeberg.org/hako/rosenthal.git")
-           (branch "trunk"))
-          %default-channels))
-   (priority 5))
-#+end_src
-
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'nonguix-nvidia)
-   (build '(packages "nvidia-driver"
-                     "nvidia-driver-beta"
-                     "nvidia-firmware"
-                     "nvidia-firmware-beta"
-                     "nvidia-module"
-                     "nvidia-module-beta"
-                     "nvidia-module-open"
-                     "nvidia-module-open-beta"
-                     "nvidia-settings"
-                     "nvidia-settings-beta"
-                     "nvda"
-                     "nvdb"))
-   (channels
-    (cons (channel
-           (name 'nonguix)
-           (url "https://gitlab.com/hakourspace/nonguix.git")
-           (branch "nvidia-beta"))
-          %default-channels))
-   (priority 7))
-#+end_src
-
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'nonguix-xanmod)
-   (build '(packages "linux-xanmod"
-                     "linux-xanmod@6.6"))
-   (channels
-    (cons (channel
-           (name 'nonguix)
-           (url "https://gitlab.com/hakourspace/nonguix.git")
-           (branch "update-xanmod"))
-          %default-channels))
-   (priority 7))
-#+end_src
-
+** cuirass-job-guix-images
 Latest Guix installer images (weekly)
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
@@ -248,6 +198,7 @@ Latest Guix installer images (weekly)
    (period (* 60 60 24 7)))
 #+end_src
 
+** cuirass-job-guix-tarball
 Latest Guix binary tarball (weekly)
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
@@ -258,9 +209,45 @@ Latest Guix binary tarball (weekly)
            (job "binary-tarball.*")
            (type "archive")
            (path ""))))
-   (period (* 60 60 24 7)))
+   (period (* 60 60 24 7))
+   (systems '("aarch64-linux" "i686-linux" "x86_64-linux")))
 #+end_src
 
+** cuirass-job-guix-zig
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'guix-zig)
+   (build '(packages "zig"
+                     "zig@0.12"
+                     "zig@0.11"
+                     "zig@0.10"
+                     "zig@0.9"
+                     "zig-zls"
+                     "zig-zls@0.12"
+                     "zig-zls@0.10"))
+   (channels
+    (list (channel
+           (inherit %default-guix-channel)
+           (branch "wip-zig-bootstrap"))))
+   (priority 5))
+#+end_src
+
+** cuirass-job-rosenthal
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'rosenthal)
+   (build '(channels rosenthal))
+   (channels
+    (cons (channel
+           (name 'rosenthal)
+           (url "https://codeberg.org/hako/rosenthal.git")
+           (branch "trunk"))
+          %default-channels))
+   (priority 5)
+   (systems '("aarch64-linux" "x86_64-linux")))
+#+end_src
+
+** cuirass-job-nonguix-images
 Latest Guix installer image from Nonguix (weekly)
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
@@ -277,6 +264,32 @@ Latest Guix installer image from Nonguix (weekly)
            (type "image")
            (path ""))))
    (period (* 60 60 24 7)))
+#+end_src
+
+** cuirass-job-nonguix-nvidia
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'nonguix-nvidia)
+   (build '(packages "nvidia-driver"
+                     "nvidia-driver-beta"
+                     "nvidia-firmware"
+                     "nvidia-firmware-beta"
+                     "nvidia-module"
+                     "nvidia-module-beta"
+                     "nvidia-module-open"
+                     "nvidia-module-open-beta"
+                     "nvidia-settings"
+                     "nvidia-settings-beta"
+                     "nvda"
+                     "nvdb"))
+   (channels
+    (cons (channel
+           (name 'nonguix)
+           (url "https://gitlab.com/hakourspace/nonguix.git")
+           (branch "update-nvidia"))
+          %default-channels))
+   (priority 7)
+   (systems '("i686-linux" "x86_64-linux")))
 #+end_src
 
 * dbus
