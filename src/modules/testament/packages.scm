@@ -15,6 +15,7 @@
   #:use-module (guix build-system emacs)
   #:use-module (guix build-system pyproject)
 
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages android)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages chromium)
@@ -166,6 +167,18 @@ counterpart is unavailable.")
      (append
       (package-propagated-inputs mpv)
       (package-inputs mpv)))))
+
+(define-public shepherd-1.0.0rc2
+  (package
+    (inherit shepherd)
+    (version "1.0.0rc2")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://alpha.gnu.org/gnu/shepherd/shepherd-"
+                                  version ".tar.gz"))
+              (sha256
+               (base32
+                "1nr4aifixcqn6nvlc0hlf9n9k687835w0ngzn5crpgb3rsl9nv1i"))))))
 
 (define-public steam-nvidia/dolly
   (hidden-package

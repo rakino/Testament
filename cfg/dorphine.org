@@ -223,12 +223,21 @@
     (packages %testament-base-packages)
     (timezone "Asia/Hong_Kong")
 
+    (essential-services
+     (modify-services (operating-system-default-essential-services
+                       this-operating-system)
+       (shepherd-root-service-type
+        config => (shepherd-configuration
+                   (inherit config)
+                   (shepherd shepherd-1.0.0rc2)))))
+
     (services
      (cons* <<service>>
 
             (modify-services %base-services
               (delete login-service-type)
               (delete mingetty-service-type)
+              (delete syslog-service-type)
 
               (console-font-service-type
                _ => (map (lambda (vtnr)
@@ -1760,6 +1769,27 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 
 #+begin_src scheme :noweb-ref service
   (service seatd-service-type)
+#+end_src
+
+* shepherd
+#+begin_src scheme :noweb-ref service
+  (simple-service 'shepherd-log-rotation
+                  shepherd-root-service-type
+                  (list (shepherd-service
+                         (provision '(log-rotation))
+                         (modules '((shepherd service log-rotation)))
+                         (free-form #~(log-rotation-service)))))
+
+  (service (shepherd-service-type
+            'shepherd-system-log
+            (const (shepherd-service
+                    (documentation "Shepherd's built-in system log (syslogd).")
+                    (provision '(system-log syslogd))
+                    (modules '((shepherd service system-log)))
+                    (free-form #~(system-log-service))))
+            #t
+            (description
+             "Shepherd's built-in system log (syslogd).")))
 #+end_src
 
 * sops
