@@ -999,6 +999,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 #+begin_src conf :tangle ../gen/files/dot/.config/wanderlust/folders
   .inbox  "Box"
   .hako@ultrarare.space/INBOX     "hako@ultrarare.space"
+  .hako@ultrarare.space/Junk      "Junk"
 
   List {
           .list/guix              "GNU Guix"
@@ -1046,7 +1047,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     (wl-smtp-authenticate-type "plain")
     (wl-smtp-connection-type 'ssl)
     (wl-smtp-posting-port 465)
-    (wl-smtp-posting-server "mail.boiledscript.com")
+    (wl-smtp-posting-server "mx.boiledscript.com")
     (wl-smtp-posting-user "hako@ultrarare.space")
     (wl-summary-auto-refile-skip-marks nil)
     (wl-summary-line-format "%n%T%P %Y-%M-%D(%W)%h:%m %t%[%17(%c %f%) %] %#%~%s")
@@ -1172,7 +1173,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
           enabled = true
   [sendemail]
           smtpEncryption = tls
-          smtpServer = mail.boiledscript.com
+          smtpServer = mx.boiledscript.com
           smtpUser = hako@ultrarare.space
           smtpServerPort = 587
   [user]
@@ -1247,7 +1248,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   Subfolders Verbatim
 
   IMAPAccount hako@ultrarare.space
-  Host mail.boiledscript.com
+  Host mx.boiledscript.com
   User "hako@ultrarare.space"
   PassCmd "pass com/boiledscript/mail"
   TLSType IMAPS

@@ -26,6 +26,7 @@
 
     #:use-module (gnu services)
     #:use-module (gnu services base)
+    #:use-module (gnu services certbot)
     #:use-module (gnu services cuirass)
     #:use-module (gnu services databases)
     #:use-module (gnu services dbus)
@@ -36,6 +37,7 @@
     #:use-module (gnu services virtualization)
     #:use-module (rosenthal services child-error)
     #:use-module (rosenthal services file-systems)
+    #:use-module (rosenthal services mail)
     #:use-module (rosenthal services networking)
     #:use-module (rosenthal services web)
 
@@ -153,6 +155,15 @@
 
   volume /mnt/Lycoris
       subvolume @Data
+#+end_src
+
+* certbot
+#+begin_src scheme :noweb-ref service
+  (service certbot-service-type
+           (certbot-configuration
+            (certificates
+             (list (certificate-configuration
+                    (domains '("mx.boiledscript.com")))))))
 #+end_src
 
 * cloudflared                                                         :Proxy:
@@ -308,6 +319,70 @@ Latest Guix installer image from Nonguix (weekly)
             (enable-iptables? #f)))
 #+end_src
 
+* docker-mailserver
+#+name: rspamd-redis-conf
+#+begin_src scheme
+  (plain-file
+   "rspamd-redis.conf" "\
+  servers = \"127.0.0.1:6379\";
+  expand_keys = true;")
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/plain/rspamd-dkim-signing.conf
+  enabled = true;
+  sign_authenticated = true;
+  sign_local = true;
+
+  use_domain = "header";
+  use_redis = false;
+  use_esld = true;
+  check_pubkey = true;
+
+  domain {
+      boiledscript.com {
+          path = "/tmp/docker-mailserver/rspamd/dkim/rsa-2048-mail-boiledscript.com.private.txt";
+          selector = "mail";
+      }
+      ultrarare.space {
+          path = "/tmp/docker-mailserver/rspamd/dkim/rsa-2048-mail-ultrarare.space.private.txt";
+          selector = "mail";
+      }
+  }
+#+end_src
+
+#+begin_src scheme :noweb yes :noweb-ref service
+  (service docker-mailserver-service-type
+           (docker-mailserver-configuration
+            (shepherd-requirement
+             '(redis renew-certbot-certificates))
+            (options
+             '(("ENABLE_AMAVIS" . "0")
+               ("ENABLE_FAIL2BAN" . "1")
+               ("ENABLE_MTA_STS" . "1")
+               ("ENABLE_OPENDKIM" . "0")
+               ("ENABLE_OPENDMARC" . "0")
+               ("ENABLE_POLICYD_SPF" . "0")
+               ("ENABLE_RSPAMD" . "1")
+               ("ENABLE_RSPAMD_REDIS" . "0")
+               ("ENABLE_SPAMASSASSIN" . "0")
+               ("NETWORK_INTERFACE" . "enp0s31f6")
+               ("OVERRIDE_HOSTNAME" . "mx.boiledscript.com")
+               ("POSTMASTER_ADDRESS" . "admin@boiledscript.com")
+               ("RSPAMD_LEARN" . "1")
+               ("SPOOF_PROTECTION" . "1")
+               ("SSL_TYPE" . "letsencrypt")))
+            (extra-arguments
+             `("--cap-add=NET_ADMIN"      ;For fail2ban.
+               "--volume" "/etc/letsencrypt:/etc/letsencrypt:ro"
+               "--volume"
+               ,(file-append
+                 <<rspamd-redis-conf>> ":/etc/rspamd/local.d/redis.conf:ro")
+               "--volume"
+               ,(file-append
+                 (testament-file-object "rspamd-dkim-signing.conf")
+                 ":/etc/rspamd/override.d/dkim_signing.conf:ro")))))
+#+end_src
+
 * elogind                                                   :LoginManagement:
 #+begin_src scheme :noweb-ref service
   (service elogind-service-type)
@@ -435,8 +510,6 @@ Latest Guix installer image from Nonguix (weekly)
           tcp dport https accept
           tcp dport imap accept
           tcp dport imaps accept
-          tcp dport pop3 accept
-          tcp dport pop3s accept
           tcp dport smtp accept
           tcp dport smtps accept
           tcp dport ssh accept
