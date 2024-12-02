@@ -1982,8 +1982,7 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
 #+begin_src scheme :noweb-ref service
   (simple-service 'extra-hosts hosts-service-type
                   (list (host "100.126.99.80" "crustum")
-                        (host "100.87.158.84" "gokuraku")
-                        (host "144.168.59.46" "paradise")))
+                        (host "100.87.158.84" "gokuraku")))
 #+end_src
 
 * tlp                                                       :PowerManagement:
