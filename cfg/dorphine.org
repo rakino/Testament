@@ -787,45 +787,15 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     :hook after-init)
 #+end_src
 
-* emacs-geiser
-#+begin_src scheme :noweb-ref home-package
-  emacs-geiser
-  emacs-geiser-guile
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-feature
-  (use-package geiser
-    :custom
-    (geiser-mode-start-repl-p t)
-    (geiser-repl-query-on-kill-p nil)
-    (geiser-repl-use-other-window nil))
-#+end_src
-
 * emacs-guix
 #+begin_src scheme :noweb-ref home-package
   emacs-guix
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-feature
-  (use-package guix-build-config
-    :config
-    ;; Defined with `defconst', overwrite them after load.
-    (setopt
-     guix-config-scheme-compiled-directory nil
-     guix-config-guix-scheme-directory nil))
-
-  (use-package guix-devel
-    :hook scheme-mode)
-
-  ;; https://gitlab.com/emacs-guix/emacs-guix/-/issues/19
-  ;; See also: `guix-repl-guile-args'
-  (use-package guix-repl
+  (use-package geiser-mode
     :custom
-    (guix-guile-program '("guix" "repl"))
-    (guix-repl-use-latest nil)
-    (guix-repl-use-server nil)
-    :init
-    (setopt guix-load-path nil))
+    (geiser-mode-auto-p nil))
 #+end_src
 
 * emacs-helpful
@@ -859,17 +829,12 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 * emacs-macrostep
 #+begin_src scheme :noweb-ref home-package
   emacs-macrostep
-  emacs-macrostep-geiser
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-feature
   (use-package macrostep
     :bind
     ("C-c e" . macrostep-expand))
-
-  (use-package macrostep-geiser
-    :hook
-    (geiser-mode . macrostep-geiser-setup))
 #+end_src
 
 * emacs-marginalia
