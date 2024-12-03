@@ -759,16 +759,37 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package citre-xref-adapter
+    :after citre
+    :demand t
+    :config
+    (defvar citre-dumb-jump-backend
+      (citre-xref-backend-to-citre-backend
+       'dumb-jump
+       (lambda () t)))
+    (defvar citre-elisp-backend
+      (citre-xref-backend-to-citre-backend
+       'elisp
+       (lambda () (derived-mode-p 'emacs-lisp-mode))))
+    (citre-register-backend 'dumb-jump citre-dumb-jump-backend)
+    (citre-register-backend 'elisp citre-elisp-backend))
+
+  (use-package citre-backend-interface
+    :custom
+    (citre-find-definition-backends
+     '(eglot elisp tags dumb-jump))
+    (citre-find-reference-backends
+     '(eglot elisp dumb-jump)))
+
   (use-package citre
     :custom
     (citre-default-create-tags-file-location 'global-cache)
     (citre-edit-ctags-options-manually nil)
     :bind
     (("C-x c u" . citre-update-this-tags-file)
-     :map citre-mode-map
-     ("C-x c j" . citre-jump)
-     ("C-x c J" . citre-jump-back)
-     ("C-x c c" . citre-peek)
+     ([remap xref-find-definitions] . citre-jump)
+     ([remap xref-find-references] . citre-jump-to-reference)
+     ([remap xref-go-back] . citre-jump-back)
      ("C-x c p" . citre-ace-peek)))
 
   (use-package citre-config
