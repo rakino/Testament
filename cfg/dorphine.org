@@ -739,6 +739,20 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     :hook visual-line-mode)
 #+end_src
 
+* emacs-dumb-jump
+#+begin_src scheme :noweb-ref home-package
+  emacs-dumb-jump
+  ripgrep
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package dumb-jump
+    :after xref
+    :demand t
+    :config
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
+#+end_src
+
 * emacs-citre
 #+begin_src scheme :noweb-ref home-package
   emacs-citre
