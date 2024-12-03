@@ -739,6 +739,39 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     :hook visual-line-mode)
 #+end_src
 
+* emacs-arei
+#+begin_src scheme :noweb-ref home-package
+  emacs-arei
+#+end_src
+
+Arei requires a nREPL server, which can be started with:
+#+begin_src shell
+  guix shell guile-next guile-ares-rs -- guile -c '((@ (ares server) run-nrepl-server))'
+#+end_src
+
+Load paths are from the server's environment.  Not setting a service here for flexibility.
+
+Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffer-location= but Citre expects =xref-file-location=.
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package arei
+    :after xref
+    :demand t
+    :config
+    (defun hako/arei--xref-backend () 'hako/arei)
+    (defun hako/arei-xref--make-xref-loc (identifier)
+      (when-let* ((info (arei-xref--request-lookup identifier))
+                  (file (arei-nrepl-dict-get info "file"))
+                  (line (arei-nrepl-dict-get info "line"))
+                  (column (arei-nrepl-dict-get info "column")))
+        (xref-make-file-location file line column)))
+    (cl-defmethod xref-backend-identifier-at-point ((_backend (eql hako/arei)))
+      (thing-at-point 'symbol t))
+    (cl-defmethod xref-backend-definitions ((_backend (eql hako/arei)) identifier)
+      (when (arei-connected-p)
+        (when-let* ((loc (hako/arei-xref--make-xref-loc identifier)))
+          (list (xref-make identifier loc))))))
+#+end_src
+
 * emacs-dumb-jump
 #+begin_src scheme :noweb-ref home-package
   emacs-dumb-jump
@@ -763,6 +796,10 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     :after citre
     :demand t
     :config
+    (defvar citre-arei-backend
+      (citre-xref-backend-to-citre-backend
+       'hako/arei
+       (lambda () (derived-mode-p 'scheme-mode))))
     (defvar citre-dumb-jump-backend
       (citre-xref-backend-to-citre-backend
        'dumb-jump
@@ -771,13 +808,14 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
       (citre-xref-backend-to-citre-backend
        'elisp
        (lambda () (derived-mode-p 'emacs-lisp-mode))))
+    (citre-register-backend 'arei citre-arei-backend)
     (citre-register-backend 'dumb-jump citre-dumb-jump-backend)
     (citre-register-backend 'elisp citre-elisp-backend))
 
   (use-package citre-backend-interface
     :custom
     (citre-find-definition-backends
-     '(eglot elisp tags dumb-jump))
+     '(eglot arei elisp tags dumb-jump))
     (citre-find-reference-backends
      '(eglot elisp dumb-jump)))
 
