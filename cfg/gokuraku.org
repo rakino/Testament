@@ -221,19 +221,19 @@ Latest Guix binary tarball (weekly)
            (type "archive")
            (path ""))))
    (period (* 60 60 24 7))
-   (systems '("aarch64-linux" "i686-linux" "x86_64-linux")))
+   (systems '("i686-linux" "x86_64-linux")))
 #+end_src
 
 ** cuirass-job-guix-zig
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
    (name 'guix-zig)
-   (build '(packages "zig"
+   (build '(packages "zig@0.13"
                      "zig@0.12"
                      "zig@0.11"
                      "zig@0.10"
                      "zig@0.9"
-                     "zig-zls"
+                     "zig-zls@0.13"
                      "zig-zls@0.12"
                      "zig-zls@0.10"))
    (channels
@@ -254,8 +254,7 @@ Latest Guix binary tarball (weekly)
            (url "https://codeberg.org/hako/rosenthal.git")
            (branch "trunk"))
           %default-channels))
-   (priority 5)
-   (systems '("aarch64-linux" "x86_64-linux")))
+   (priority 5))
 #+end_src
 
 ** cuirass-job-nonguix-images
