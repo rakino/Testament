@@ -19,8 +19,10 @@
   #:use-module (gnu packages android)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages chromium)
+  #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages gl)
+  #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages video)
   #:use-module (nongnu packages game-client)
   #:use-module (nongnu packages nvidia)
@@ -99,6 +101,23 @@
     (synopsis "")
     (description "")
     (license license:asl2.0)))
+
+(define-public emacs-eglot-booster/dolly
+  (hidden-package
+   (package
+     (inherit emacs-eglot-booster)
+     (arguments
+      (list #:phases
+            #~(modify-phases %standard-phases
+                (add-after 'unpack 'fix-command-reference
+                  (lambda* (#:key inputs #:allow-other-keys)
+                    (substitute* "eglot-booster.el"
+                      (("(['d].\")(emacs-lsp-booster)" _ prefix command)
+                       (string-append
+                        prefix
+                        (search-input-file
+                         inputs (string-append "bin/" command))))))))))
+     (inputs (list emacs-lsp-booster)))))
 
 (define-public emacs-isearch-mb
   (package

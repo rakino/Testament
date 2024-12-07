@@ -635,6 +635,10 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 #+end_src
 
 * emacs eglot
+#+begin_src scheme :noweb-ref home-package
+  emacs-eglot-booster/dolly
+#+end_src
+
 #+begin_src emacs-lisp :noweb-ref emacs-feature
   (use-package eglot
     :config
@@ -646,6 +650,14 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
                            `((cache
                               . ((directory . ,(concat (getenv "XDG_CACHE_HOME")
                                                        "/ccls-cache")))))))))))
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package eglot-booster
+    :after eglot
+    :demand t
+    :config
+    (eglot-booster-mode))
 #+end_src
 
 * emacs isearch
