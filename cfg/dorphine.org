@@ -641,14 +641,11 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     (add-to-list
      'eglot-server-programs
      `((c-mode c-ts-mode c++-mode c++-ts-mode)
-       . ("guix" "shell" "ccls" "--"
-          "ccls" ,(concat "--init="
+       . ("ccls" ,(concat "--init="
                           (json-serialize
                            `((cache
                               . ((directory . ,(concat (getenv "XDG_CACHE_HOME")
-                                                       "/ccls-cache"))))))))))
-    :hook
-    ((prog-mode sgml-mode tex-mode) . eglot-ensure))
+                                                       "/ccls-cache")))))))))))
 #+end_src
 
 * emacs isearch
