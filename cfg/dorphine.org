@@ -1133,8 +1133,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
     (wl-plugged nil)
     (wl-refile-rule-alist
      '(("List-Id"
-        ("<\\(\\(bug\\|help\\|info\\)-\\)?guix\\(-devel\\)?\.gnu\.org>$" . ".list/guix")
-        ("<guix-patches\.gnu\.org>$" . ".list/guix-patches")
         ("\.github\.com>$" . ".list/github")
         ("\.gitlab\.com>$" . ".list/gitlab")))))
 #+end_src
