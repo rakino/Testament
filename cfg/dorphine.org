@@ -318,6 +318,7 @@
   (let ((filename "alacritty.toml"))
     (mixed-text-file
      filename
+     "[general]\n"
      "import = [ \"" <<alacritty-theme>> "\" ]\n"
      (testament-file-content filename)))
 #+end_src
@@ -1946,7 +1947,6 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
            qtwayland-5
            sway
            wl-clipboard
-           xdg-desktop-portal
            xdg-desktop-portal-gtk
            xdg-desktop-portal-wlr
            xdg-utils))
