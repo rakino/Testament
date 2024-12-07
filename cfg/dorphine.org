@@ -286,6 +286,10 @@
                        (service home-files-service-type
                                 `((".guile" ,%default-dotguile)))
 
+                       (service home-shepherd-service-type
+                                (home-shepherd-configuration
+                                 (shepherd shepherd-1.0.0rc2)))
+
                        (service home-xdg-configuration-files-service-type
                                 `(("alacritty/alacritty.toml" ,<<alacritty-config>>)
                                   ("gdb/gdbinit" ,%default-gdbinit)
