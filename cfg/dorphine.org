@@ -223,14 +223,6 @@
     (packages %testament-base-packages)
     (timezone "Asia/Hong_Kong")
 
-    (essential-services
-     (modify-services (operating-system-default-essential-services
-                       this-operating-system)
-       (shepherd-root-service-type
-        config => (shepherd-configuration
-                   (inherit config)
-                   (shepherd shepherd-1.0.0rc2)))))
-
     (services
      (cons* <<service>>
 
@@ -285,10 +277,6 @@
 
                        (service home-files-service-type
                                 `((".guile" ,%default-dotguile)))
-
-                       (service home-shepherd-service-type
-                                (home-shepherd-configuration
-                                 (shepherd shepherd-1.0.0rc2)))
 
                        (service home-xdg-configuration-files-service-type
                                 `(("alacritty/alacritty.toml" ,<<alacritty-config>>)
