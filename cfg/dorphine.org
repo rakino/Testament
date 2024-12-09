@@ -610,10 +610,6 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 
 * emacs dired
 #+begin_src emacs-lisp :noweb-ref emacs-feature
-  (use-package dired
-    :custom
-    (dired-kill-when-opening-new-dired-buffer t))
-
   (use-package dired-aux
     :custom
     (dired-compress-directory-default-suffix ".tar.zst")
