@@ -1921,10 +1921,10 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
          (Print        . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy output " #$screenshot))
          ($mod+Print   . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy area " #$screenshot))
          ;; TODO: Use wob (https://github.com/francma/wob/blob/master/contrib/README.md).
-         (XF86AudioMicMute      . ,#~(string-append "exec wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
-         (XF86AudioMute         . ,#~(string-append "exec wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
-         (XF86AudioLowerVolume  . ,#~(string-append "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
-         (XF86AudioRaiseVolume  . ,#~(string-append "exec wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.0"))
+         (XF86AudioMicMute      . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
+         (XF86AudioMute         . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
+         (XF86AudioLowerVolume  . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
+         (XF86AudioRaiseVolume  . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.0"))
          (XF86MonBrightnessDown . ,#~(string-append "exec " #$light "/bin/light -U 5"))
          (XF86MonBrightnessUp   . ,#~(string-append "exec " #$light "/bin/light -A 5")))))
     (gestures '())
@@ -1947,8 +1947,7 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
            (sway-input
             (identifier "type:touchpad")
             (tap #t)
-            (extra-content
-             '("natural_scroll enabled")))
+            (extra-content '("natural_scroll enabled")))
            (sway-input
             (identifier "1:1:AT_Translated_Set_2_keyboard")
             (extra-content '("events disabled")))))
