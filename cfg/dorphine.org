@@ -655,10 +655,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     (isearch-lazy-count t)
     (isearch-wrap-pause 'no-ding)
     (regexp-search-ring-max 200)
-    (search-ring-max 200)
-    :bind
-    ([remap isearch-forward] . isearch-forward-regexp)
-    ([remap isearch-backword] . isearch-backward-regexp))
+    (search-ring-max 200))
 
   (use-package isearch-mb
     :hook after-init)
