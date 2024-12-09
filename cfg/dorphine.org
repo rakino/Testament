@@ -1224,10 +1224,9 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   [rerere]
           enabled = true
   [sendemail]
-          smtpEncryption = tls
+          smtpEncryption = ssl
           smtpServer = mx.boiledscript.com
           smtpUser = hako@ultrarare.space
-          smtpServerPort = 587
   [user]
           name = Hilton Chain
           email = hako@ultrarare.space
@@ -1499,7 +1498,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
   rules:
     - "DOMAIN,us.download.nvidia.com,DIRECT"
-    - "DST-PORT,587,DIRECT"
     - "PROCESS-NAME,.qbittorrent-nox-real,DIRECT"
     - "PROCESS-NAME,rclone,DIRECT"
     - "PROCESS-NAME,steam,DIRECT"
