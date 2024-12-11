@@ -189,41 +189,6 @@
             (port 27254)))
 #+end_src
 
-** cuirass-job-guix-images
-Latest Guix installer images (weekly)
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'guix-images)
-   (build 'images)
-   (build-outputs
-    (map (lambda (job)
-           (build-output
-            (job job)
-            (type "image")
-            (path "")))
-         '("hurd-barebones\\.qcow2"
-           "iso9660-image.*"
-           "pine64-barebones-raw-image"
-           "pinebook-pro-barebones-raw-image"
-           "visionfive2-barebones-raw-image")))
-   (period (* 60 60 24 7)))
-#+end_src
-
-** cuirass-job-guix-tarball
-Latest Guix binary tarball (weekly)
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'guix-tarball)
-   (build 'tarball)
-   (build-outputs
-    (list (build-output
-           (job "binary-tarball.*")
-           (type "archive")
-           (path ""))))
-   (period (* 60 60 24 7))
-   (systems '("i686-linux" "x86_64-linux")))
-#+end_src
-
 ** cuirass-job-guix-zig
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
@@ -257,25 +222,6 @@ Latest Guix binary tarball (weekly)
    (priority 5))
 #+end_src
 
-** cuirass-job-nonguix-images
-Latest Guix installer image from Nonguix (weekly)
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'nonguix-images)
-   (build '(custom (nongnu ci)))
-   (channels
-    (cons (channel
-           (name 'nonguix)
-           (url "https://gitlab.com/nonguix/nonguix"))
-          %default-channels))
-   (build-outputs
-    (list (build-output
-           (job "nonfree-iso9660-image.*")
-           (type "image")
-           (path ""))))
-   (period (* 60 60 24 7)))
-#+end_src
-
 ** cuirass-job-nonguix-nvidia
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
@@ -300,6 +246,21 @@ Latest Guix installer image from Nonguix (weekly)
           %default-channels))
    (priority 7)
    (systems '("i686-linux" "x86_64-linux")))
+#+end_src
+
+** cuirass-job-nonguix-xanmod
+#+begin_src scheme :noweb-ref cuirass-specification
+  (specification
+   (name 'nonguix-xanmod)
+   (build '(packages "linux-xanmod@6.11"
+                     "linux-xanmod@6.6"))
+   (channels
+    (cons (channel
+           (name 'nonguix)
+           (url "https://gitlab.com/hakourspace/nonguix.git")
+           (branch "update-xanmod"))
+          %default-channels))
+   (priority 7))
 #+end_src
 
 * dbus
