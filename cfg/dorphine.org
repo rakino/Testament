@@ -1960,7 +1960,15 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
     (outputs
      (list (sway-output
             (identifier "eDP-1")
+            (position
+             (point (x 0)
+                    (y 0)))
             (extra-content '("scale 1.5")))
+           (sway-output
+            (identifier "HDMI-A-1")
+            (position
+             (point (x 1706)
+                    (y 0))))
            (sway-output
             (background (testament-file-object "91042519_p4.png")))))
     (modes '())
@@ -1968,7 +1976,8 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
      (list
       (file-append dbus "/bin/dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
       (file-append papersway "/bin/papersway")
-      (file-append wlsunset "/bin/wlsunset -o eDP-1 $(cat ${XDG_RUNTIME_DIR}/secrets/wlsunset)")))
+      (file-append sway "/bin/swaymsg move workspace to output eDP-1")
+      (file-append wlsunset "/bin/wlsunset $(cat ${XDG_RUNTIME_DIR}/secrets/wlsunset)")))
     (extra-content
      '("floating_modifier $mod normal"
        "default_border none"
