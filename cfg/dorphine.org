@@ -977,15 +977,15 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+begin_src emacs-lisp :noweb-ref emacs-feature
   (use-package rime
     :custom
-    (default-input-method "rime")
-    (rime-disable-predicates
-     '(rime-predicate-after-alphabet-char-p
-       rime-predicate-prog-in-code-p))
     (rime-show-candidate 'posframe)
     (rime-show-preedit t)
     (rime-title "Rime")
     (rime-posframe-properties '(:internal-border-width 1))
     (rime-posframe-style 'simple))
+
+  (use-package mule-cmds
+    :custom
+    (default-input-method "rime"))
 #+end_src
 
 * emacs-treesit-auto
