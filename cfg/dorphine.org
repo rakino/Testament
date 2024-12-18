@@ -1310,6 +1310,12 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 * librewolf
 #+begin_src scheme :noweb-ref home-package
   librewolf
+  adaptive-tab-bar-colour/icecat
+  livemarks/icecat
+  miniflux-injector/icecat
+  privacy-redirect/icecat
+  sidebery/icecat
+  ublock-origin/icecat
 #+end_src
 
 #+begin_src scheme :noweb-ref home-environment-variable
