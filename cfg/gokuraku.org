@@ -23,6 +23,7 @@
     #:use-module (gnu system file-systems)
     #:use-module (gnu system linux-initrd)
     #:use-module (gnu system shadow)
+    #:use-module (nongnu system linux-initrd)
 
     #:use-module (gnu services)
     #:use-module (gnu services base)
@@ -65,6 +66,7 @@
                  (bootloader grub-bootloader)
                  (targets '("/dev/nvme1n1"))))
 
+    (initrd microcode-initrd)
     (firmware '())
     (host-name "gokuraku")
 

@@ -37,6 +37,7 @@
     #:use-module (gnu system mapped-devices)
     #:use-module (gnu system pam)
     #:use-module (gnu system shadow)
+    #:use-module (nongnu system linux-initrd)
 
     #:use-module (gnu services)
     #:use-module (gnu services base)
@@ -74,6 +75,7 @@
     #:use-module (gnu packages bash)
     #:use-module (gnu packages bittorrent)
     #:use-module (gnu packages browser-extensions)
+    #:use-module (gnu packages disk)
     #:use-module (gnu packages emacs)
     #:use-module (gnu packages emacs-xyz)
     #:use-module (gnu packages fonts)
@@ -102,6 +104,7 @@
     #:use-module (nongnu packages linux)
     #:use-module (nongnu packages nvidia)
     #:use-module (rosenthal packages binaries)
+    #:use-module (rosenthal packages busybox)
     #:use-module (rosenthal packages tree-sitter))
 #+end_src
 
@@ -140,8 +143,21 @@
      (keyboard-layout "us" "dvorak"
                       #:options '("ctrl:nocaps")))
 
+    (initrd
+     (lambda (file-systems . rest)
+       (apply microcode-initrd
+              file-systems
+              #:initrd raw-initrd
+              #:helper-packages
+              (list btrfs-progs/static
+                    busybox/static
+                    fatfsck/static
+                    loadkeys-static)
+              rest)))
+
     (initrd-modules
-     (cons* ;; USB 3.0
+     (cons* "btrfs"
+            ;; USB 3.0
             "xhci_hcd"
             "xhci_pci"
             %base-initrd-modules))
