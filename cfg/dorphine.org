@@ -303,7 +303,6 @@
                        (simple-service 'extra-environment-variables
                                        home-environment-variables-service-type
                                        `(,@%testament-xdg-base-directory-env-vars
-                                         ("PATH" . "${PATH}:${HOME}/.local/bin")
                                          <<home-environment-variable>>))))))))
 #+end_src
 
@@ -1735,10 +1734,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   logs-dir=${XDG_STATE_HOME}/npm/logs
 #+end_src
 
-#+begin_src scheme :noweb-ref home-environment-variable
-  ("PATH" . "${PATH}:${XDG_DATA_HOME}/npm/bin")
-#+end_src
-
 * ntp
 #+begin_src scheme :noweb-ref service
   (service ntp-service-type)
@@ -1775,11 +1770,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   (service home-pipewire-service-type
            (home-pipewire-configuration
             (wireplumber wireplumber-minimal)))
-#+end_src
-
-* python
-#+begin_src scheme :noweb-ref home-environment-variable
-  ("PATH" . "${PATH}:${XDG_DATA_HOME}/python/bin")
 #+end_src
 
 * qbittorrent
