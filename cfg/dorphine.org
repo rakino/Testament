@@ -289,8 +289,7 @@
                                 `((".guile" ,%default-dotguile)))
 
                        (service home-xdg-configuration-files-service-type
-                                `(("alacritty/alacritty.toml" ,<<alacritty-config>>)
-                                  ("gdb/gdbinit" ,%default-gdbinit)
+                                `(("gdb/gdbinit" ,%default-gdbinit)
                                   ("nano/nanorc" ,%default-nanorc)
                                   ("wgetrc" ,<<wget-config>>)))
 
@@ -307,39 +306,6 @@
 
 #+begin_src scheme :noweb-ref hako-user-group
   "adbusers"
-#+end_src
-
-* alacritty
-#+name: alacritty-config
-#+begin_src scheme :noweb yes
-  (let ((filename "alacritty.toml"))
-    (mixed-text-file
-     filename
-     "[general]\n"
-     "import = [ \"" <<alacritty-theme>> "\" ]\n"
-     (testament-file-content filename)))
-#+end_src
-
-#+name: alacritty-theme
-#+begin_src scheme
-  (origin
-    (method url-fetch)
-    (uri (string-append "https://github.com/catppuccin/alacritty" "/raw/"
-                        "f6cb5a5c2b404cdaceaff193b9c52317f62c62f7"
-                        "/catppuccin-latte.toml"))
-    (sha256
-     (base32 "061lraysrma94md83296166c6cgn29p5yxmv0am8n3ciyq505m5d")))
-#+end_src
-
-#+begin_src toml :tangle ../gen/files/plain/alacritty.toml
-  [font]
-  size = 12.0
-
-  [scrolling]
-  history = 100000
-
-  [window]
-  opacity = 0.8
 #+end_src
 
 * amdgpu                                          :Display:Firmware:Graphics:
@@ -1920,7 +1886,6 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
          ($mod+Shift+m . "exec swaymsg exit")
          ($mod+Shift+q . "kill")
          ($mod+Return  . "exec emacsclient --create-frame --no-wait")
-         ($mod+t       . ,#~(string-append "exec " #$alacritty "/bin/alacritty"))
          ($mod+r       . ,#~(string-append "exec rofi -show run"))
          ($mod+Shift+t . ,#~(string-append "exec " #$stalonetray "/bin/stalonetray"))
          ($mod+l       . ,#~(string-append "exec " #$swaylock-effects "/bin/swaylock " #$lock-args))
