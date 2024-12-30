@@ -195,14 +195,7 @@
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
    (name 'guix-zig)
-   (build '(packages "zig@0.13"
-                     "zig@0.12"
-                     "zig@0.11"
-                     "zig@0.10"
-                     "zig@0.9"
-                     "zig-zls@0.13"
-                     "zig-zls@0.12"
-                     "zig-zls@0.10"))
+   (build '(manifests "etc/teams/zig/zig-manifest.scm"))
    (channels
     (list (channel
            (inherit %default-guix-channel)
@@ -254,7 +247,7 @@
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
    (name 'nonguix-xanmod)
-   (build '(packages "linux-xanmod@6.11"
+   (build '(packages "linux-xanmod@6.12"
                      "linux-xanmod@6.6"))
    (channels
     (cons (channel
