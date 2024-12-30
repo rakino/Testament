@@ -266,13 +266,7 @@
                           (substitute-urls
                            `(,@%default-substitute-urls
                              "https://substitute.boiledscript.com"
-                             "https://substitutes.nonguix.org"))
-                          (channels
-                           (cons* %channel-guixcn
-                                  %channel-nonguix
-                                  %channel-rosenthal
-                                  %channel-sops-guix
-                                  %default-channels))))))))
+                             "https://substitutes.nonguix.org"))))))))
 #+end_src
 
 * Guix Home
