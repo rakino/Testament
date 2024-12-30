@@ -303,6 +303,7 @@
                        (simple-service 'extra-environment-variables
                                        home-environment-variables-service-type
                                        `(,@%testament-xdg-base-directory-env-vars
+                                         ("TZ" . "Asia/Hong_Kong")
                                          <<home-environment-variable>>))))))))
 #+end_src
 
