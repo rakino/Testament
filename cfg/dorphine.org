@@ -1174,6 +1174,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   font-apple-sf-pro
   font-chiron-hei-hk
   font-chiron-sung-hk
+  font-google-noto
   font-google-noto-emoji
   font-victor-mono
 #+end_src
