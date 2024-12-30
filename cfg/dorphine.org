@@ -1978,10 +1978,7 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
            (sway-input
             (identifier "type:touchpad")
             (tap #t)
-            (extra-content '("natural_scroll enabled")))
-           (sway-input
-            (identifier "1:1:AT_Translated_Set_2_keyboard")
-            (extra-content '("events disabled")))))
+            (extra-content '("natural_scroll enabled")))))
     (outputs
      (list (sway-output
             (identifier "eDP-1")
