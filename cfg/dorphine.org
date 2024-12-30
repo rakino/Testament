@@ -1022,6 +1022,18 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+begin_src emacs-lisp :noweb-ref emacs-feature
   (use-package vertico
     :hook after-init)
+
+  (use-package vertico-directory
+    :after vertico
+    :bind
+    (;; More convenient directory navigation commands
+     :map vertico-map
+     ("RET" . vertico-directory-enter)
+     ("DEL" . vertico-directory-delete-char)
+     ("M-DEL" . vertico-directory-delete-word))
+    :hook
+    ;; Tidy shadowed file names
+    (rfn-eshadow-update-overlay . vertico-directory-tidy))
 #+end_src
 
 * emacs-wanderlust                                                    :Email:
