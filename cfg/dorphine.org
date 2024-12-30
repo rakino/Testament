@@ -1077,6 +1077,30 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
       'wl-draft-send
       'wl-draft-kill))
 
+  (use-package wl-highlight
+    :after (modus-themes)
+    :init
+    (modus-themes-with-colors
+      (custom-set-faces
+       `(wl-highlight-message-headers ((,c :inherit message-header-name)))
+       `(wl-highlight-message-header-contents ((,c :inherit message-header-other)))
+       `(wl-highlight-message-important-header-contents ((,c :inherit message-header-subject)))
+       `(wl-highlight-message-important-header-contents2 ((,c :inherit message-header-to)))
+       `(wl-highlight-message-citation-header ((,c :inherit italic)))
+       `(wl-highlight-message-unimportant-header-contents (( )))
+       `(wl-highlight-message-signature ((,c :inherit modus-themes-bold :foreground ,string)))
+       `(wl-highlight-header-separator-face ((,c :inherit message-separator)))
+       `(wl-highlight-message-cited-text-1 ((,c :inherit message-cited-text-1)))
+       `(wl-highlight-message-cited-text-2 ((,c :inherit message-cited-text-2)))
+       `(wl-highlight-message-cited-text-3 ((,c :inherit message-cited-text-3)))
+       `(wl-highlight-message-cited-text-4 ((,c :inherit message-cited-text-4)))
+       `(wl-highlight-message-cited-text-5 ((,c :inherit message-cited-text-1)))
+       `(wl-highlight-message-cited-text-6 ((,c :inherit message-cited-text-2)))
+       `(wl-highlight-message-cited-text-7 ((,c :inherit message-cited-text-3)))
+       `(wl-highlight-message-cited-text-8 ((,c :inherit message-cited-text-4)))
+       `(wl-highlight-message-cited-text-9 ((,c :inherit message-cited-text-1)))
+       `(wl-highlight-message-cited-text-10 ((,c :inherit message-cited-text-2))))))
+
   (use-package wl-qs
     :custom
     (wl-quicksearch-folder "[]~/.local/share/mail!rgrep"))
