@@ -1807,7 +1807,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   (service qemu-binfmt-service-type
            (qemu-binfmt-configuration
             (platforms
-             (lookup-qemu-platforms "aarch64" "riscv64"))))
+             (lookup-qemu-platforms "aarch64" "ppc64le" "riscv64"))))
 #+end_src
 
 * qogir-icon-theme                                                  :Desktop:
