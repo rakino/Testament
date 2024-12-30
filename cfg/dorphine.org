@@ -565,6 +565,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   emacs-markdown-mode
   emacs-nftables-mode
   emacs-web-mode
+  emacs-zig-mode
 #+end_src
 
 * emacs dabbrev
