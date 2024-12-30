@@ -1150,7 +1150,9 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
     (wl-refile-rule-alist
      '(("List-Id"
         ("\.github\.com>$" . ".list/github")
-        ("\.gitlab\.com>$" . ".list/gitlab")))))
+        ("\.gitlab\.com>$" . ".list/gitlab"))
+       ("To"
+        ("dmarc@boiledscript\.com" . ".archive/dmarc")))))
 #+end_src
 
 * emacs-which-key
