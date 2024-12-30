@@ -20,11 +20,6 @@
 :PROPERTIES:
 :header-args: :mkdirp yes :shebang "#!/usr/bin/env bash"
 :END:
-** build-guix
-#+begin_src shell :tangle gen/scripts/build-guix
-  sh ./bootstrap && ./configure && make -j"$(nproc)"
-#+end_src
-
 ** find-unused-module
 #+begin_src shell :tangle gen/scripts/find-unused-module
   find "${testament_path}/"{gen,src} -name '*.scm' -print0 |
