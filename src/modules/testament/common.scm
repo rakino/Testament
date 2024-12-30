@@ -50,13 +50,14 @@ repository.  Return a string of path to the file, or #f if file not found."
   "Return a string (or number if NUMBER? is set to #t) of SOPS secret for KEY
 stored in FILE.  The result will be publicly available in '/gnu/store', YOU ARE
 WARNED."
-  (let* ((file (lowered-gexp-sexp
-                (with-store store
-                  (run-with-store store
-                    (lower-gexp #~#$file)))))
-         (cmd (format #f "sops --decrypt --extract '~a' '~a'"
-                      (sanitize-sops-key key)
-                      file))
+  (let* ((file-path
+          (with-store store
+            (run-with-store store
+              (lower-object file))))
+         (cmd
+          (format #f "sops --decrypt --extract '~a' '~a'"
+                  (sanitize-sops-key key)
+                  file-path))
          (port (open-input-pipe cmd))
          (secret (get-string-all port)))
     (close-pipe port)
