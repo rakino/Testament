@@ -435,22 +435,6 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 #+end_src
 
 * emacs
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'home-emacs
-                  home-shepherd-service-type
-                  (list (shepherd-service
-                         (documentation "Run Emacs daemon.")
-                         (provision '(emacs))
-                         (start
-                          #~(make-forkexec-constructor
-                             (list #$(file-append emacs-pgtk "/bin/emacs")
-                                   "--fg-daemon")))
-                         (stop
-                          #~(make-forkexec-constructor
-                             (list #$(file-append emacs-pgtk "/bin/emacsclient")
-                                   "--eval" "(kill-emacs)"))))))
-#+end_src
-
 #+begin_src scheme :noweb-ref home-environment-variable
   ("EDITOR" . "emacsclient")
   ("VISUAL" . "$EDITOR")
@@ -1916,7 +1900,7 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
          ($mod+Shift+0      . "exec papersway-msg move_workspace next")
          ($mod+Shift+m . "exec swaymsg exit")
          ($mod+Shift+q . "kill")
-         ($mod+Return  . "exec emacsclient --create-frame --no-wait")
+         ($mod+Return  . "exec $EDITOR --alternate-editor='' --create-frame --no-wait")
          ($mod+r       . ,#~(string-append "exec rofi -show run"))
          ($mod+Shift+t . ,#~(string-append "exec " #$stalonetray "/bin/stalonetray"))
          ($mod+l       . ,#~(string-append "exec " #$swaylock-effects "/bin/swaylock " #$lock-args))
