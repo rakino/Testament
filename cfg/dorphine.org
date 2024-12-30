@@ -266,7 +266,14 @@
                           (substitute-urls
                            `(,@%default-substitute-urls
                              "https://substitute.boiledscript.com"
-                             "https://substitutes.nonguix.org"))))))))
+                             "https://substitutes.nonguix.org")))))))
+
+    (sudoers-file
+     (plain-file
+      "sudoers"
+      (string-append
+       (plain-file-content %sudoers-specification)
+       "Defaults env_keep += \"TERMINFO\""))))
 #+end_src
 
 * Guix Home
@@ -786,6 +793,31 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
     (doom-modeline-icon nil)
     (doom-modeline-height 18)
     :hook after-init)
+#+end_src
+
+* emacs-eat
+#+begin_src scheme :noweb-ref home-package
+  emacs-eat
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package eat
+    :custom
+    (eat-kill-buffer-on-exit t))
+
+  (use-package project
+    :config
+    (add-to-list 'project-switch-commands '(eat-project "Eat") t)
+    :bind
+    (                                     ;XXX: Indentation.
+     :map project-prefix-map
+     ("t" . eat-project)))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-bashrc
+  (plain-file
+   "bashrc-eat"
+   "source \"$EAT_SHELL_INTEGRATION_DIR/bash\"")
 #+end_src
 
 * emacs-guix
