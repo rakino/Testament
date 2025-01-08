@@ -23,17 +23,14 @@
 ** find-unused-module
 #+begin_src shell :tangle gen/scripts/find-unused-module
   find "${testament_path}/"{gen,src} -name '*.scm' -print0 |
-          guix shell guile-next -- \
-                  xargs -0 "${testament_path}/dep/guix/pre-inst-env" guild compile \
-                  -Wunused-module
+      guix shell guile-next -- xargs -0 guild compile -Wunused-module
 #+end_src
 
 ** reconfigure
 #+begin_src shell :tangle gen/scripts/reconfigure
   mount -v /efi
   guix shell btrbk -- btrbk run &&
-          "${testament_path}/dep/guix/pre-inst-env" guix system reconfigure \
-                  "${testament_path}/gen/modules/dorphine.scm" "$@"
+      guix system reconfigure "${testament_path}/gen/modules/dorphine.scm" "$@"
   umount -v /efi
 
   user=${SUDO_USER:-${USER}}
