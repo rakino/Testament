@@ -1068,10 +1068,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
     :custom
     (elmo-maildir-folder-path "~/.local/share/mail"))
 
-  (use-package elmo-vars
-    :custom
-    (elmo-msgdb-extra-fields '("list-id")))
-
   (use-package mime-def
     :custom
     (mime-header-accept-quoted-encoded-words t))
@@ -1140,10 +1136,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
     (wl-local-domain "ultrarare.space")
     (wl-plugged nil)
     (wl-refile-rule-alist
-     '(("List-Id"
-        ("\.github\.com>$" . ".list/github")
-        ("\.gitlab\.com>$" . ".list/gitlab"))
-       ("To"
+     '(("To"
         ("dmarc@boiledscript\.com" . ".archive/dmarc")))))
 #+end_src
 
