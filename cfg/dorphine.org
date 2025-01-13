@@ -327,17 +327,6 @@
 #+begin_src scheme :noweb yes :noweb-ref home-service
   (service home-bash-service-type
            (home-bash-configuration
-            (aliases
-             `(("ls" . ,(string-join
-                         '("ls"
-                           "--classify"
-                           "--color"
-                           "--group-directories-first")))
-               ("ll" . ,(string-join
-                         '("ls"
-                           "--all"
-                           "-l"
-                           "--human-readable")))))
             (bashrc
              (list <<bashrc-blesh>>
                    <<home-bashrc>>))))
@@ -569,12 +558,22 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 
 * emacs dired
 #+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package dired
+    :custom
+    (dired-listing-switches "-lv --all --group-directories-first --human-readable"))
+
   (use-package dired-aux
     :custom
     (dired-compress-directory-default-suffix ".tar.zst")
     (dired-create-destination-dirs 'ask)
     (dired-create-destination-dirs-on-trailing-dirsep t)
     (dired-vc-rename-file t))
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-feature
+  (use-package dired-async
+    :custom
+    (dired-async-mode t))
 #+end_src
 
 * emacs eglot
