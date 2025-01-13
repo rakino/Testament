@@ -1277,19 +1277,10 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 * isync                                                               :Email:
-#+begin_src scheme :noweb-ref home-package
-  emacs-mbsync
-  isync
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-feature
-  (use-package mbsync
-    :custom
-    (mbsync-args
-     `("-a"
-       "--config"
-       ,(expand-file-name
-         "isync/mbsyncrc" (or (getenv "XDG_CONFIG_HOME") "~/.config")))))
+#+begin_src scheme :noweb-ref home-mcron-job
+  #~(job '(next-minute (range 0 60 15))
+         (string-append #$isync "/bin/mbsync -a --config "
+                        (in-vicinity (getenv "HOME") ".config/isync/mbsyncrc")))
 #+end_src
 
 #+begin_src conf :tangle ../gen/files/dot/.config/isync/mbsyncrc
@@ -1305,7 +1296,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   IMAPAccount hako@ultrarare.space
   Host mx.boiledscript.com
   User "hako@ultrarare.space"
-  PassCmd "pass com/boiledscript/mail"
+  PassCmd "cat ${XDG_RUNTIME_DIR}/secrets/mail"
   TLSType IMAPS
 
   IMAPStore hako@ultrarare.space-remote
@@ -1907,6 +1898,9 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
             (config (testament-file-object "sops.yaml"))
             (secrets
              (list (sops-secret
+                    (key '("mail"))
+                    (file dorphine.yaml))
+                   (sops-secret
                     (key '("wlsunset"))
                     (file dorphine.yaml))))))
 #+end_src
