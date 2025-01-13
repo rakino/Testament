@@ -61,6 +61,7 @@
     #:use-module (gnu home services gnupg)
     #:use-module (gnu home services mcron)
     #:use-module (gnu home services shells)
+    #:use-module (gnu home services shepherd)
     #:use-module (gnu home services sound)
     #:use-module (gnu home services sway)
     #:use-module (gnu home services syncthing)
@@ -1035,16 +1036,16 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 #+begin_src conf :tangle ../gen/files/dot/.config/wanderlust/folders
   .inbox  "Box"
-  .hako@ultrarare.space/INBOX     "hako@ultrarare.space"
+  .hako@ultrarare.space/INBOX     "New"
   .hako@ultrarare.space/Junk      "Junk"
 
   List {
-          .list/guix              "GNU Guix"
-          .list/guix-patches      "GNU Guix (Patches)"
-
-          .list/codeberg          "Codeberg"
-          .list/github            "GitHub"
-          .list/gitlab            "GitLab"
+          .hako@ultrarare.space/Lists/emacs-devel  "emacs-devel"
+          .hako@ultrarare.space/Lists/guile-devel  "guile-devel"
+          .hako@ultrarare.space/Lists/guix-bugs    "guix-bugs"
+          .hako@ultrarare.space/Lists/guix-devel   "guix-devel"
+          .hako@ultrarare.space/Lists/guix-patches "guix-patches"
+          .hako@ultrarare.space/Lists/guix-user    "guix-user"
   }
 
   Archive {
@@ -1334,6 +1335,62 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 #+begin_src scheme :noweb-ref firmware
   iwlwifi-firmware
+#+end_src
+
+* l2md
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'l2md
+                  home-shepherd-service-type
+                  (list (shepherd-service
+                         (documentation "Run l2md.")
+                         (provision '(l2md))
+                         (start
+                          #~(make-forkexec-constructor
+                             (list #$(file-append l2md "/bin/l2md") "--verbose")))
+                         (stop
+                          #~(make-kill-destructor)))))
+#+end_src
+
+#+begin_src conf :tangle ../gen/files/dot/.config/l2md/config
+  [general]
+          base = ~/.local/share/l2md/
+          period = 900
+
+  # emacs-devel@gnu.org
+  [repo emacs-devel]
+          url = https://yhetil.org/emacs-devel/0
+          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/emacs-devel
+          initial_import = 100
+
+  # guile-devel@gnu.org
+  [repo guile-devel]
+          url = https://yhetil.org/guile-devel/0
+          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guile-devel
+          initial_import = 100
+
+  # bug-guix@gnu.org
+  [repo guix-bugs]
+          url = https://yhetil.org/guix-bugs/0
+          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-bugs
+          initial_import = 100
+
+  # guix-devel@gnu.org
+  [repo guix-devel]
+          url = https://yhetil.org/guix-devel/0
+          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-devel
+          initial_import = 100
+
+  # guix-patches@gnu.org
+  [repo guix-patches]
+          url = https://yhetil.org/guix-patches/1
+          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-patches
+          initial_import = 100
+
+  # help-guix@gnu.org
+  [repo guix-user]
+          url = https://yhetil.org/guix-user/0
+          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-user
+          initial_import = 100
 #+end_src
 
 * librewolf
