@@ -11,7 +11,7 @@
 
 * Modules
 #+name: modules
-#+begin_src scheme :noweb yes
+#+begin_src scheme
   (define-module (dorphine)
     #:use-module (ice-9 match)
     #:use-module (srfi srfi-1)
