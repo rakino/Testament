@@ -237,7 +237,6 @@
             (modify-services %base-services
               (delete login-service-type)
               (delete mingetty-service-type)
-              (delete syslog-service-type)
 
               (console-font-service-type
                _ => (map (lambda (vtnr)
@@ -276,27 +275,28 @@
                 (packages
                  (list <<home-package>>))
                 (services
-                 (list <<home-service>>
+                 (cons* <<home-service>>
 
-                       (service home-dotfiles-service-type
-                                (home-dotfiles-configuration
-                                 (directories
-                                  '("<<get-testament-path()>>/gen/files/dot"
-                                    "<<get-testament-path()>>/src/files/dot"))))
+                        (service home-dotfiles-service-type
+                                 (home-dotfiles-configuration
+                                  (directories
+                                   '("<<get-testament-path()>>/gen/files/dot"
+                                     "<<get-testament-path()>>/src/files/dot"))))
 
-                       (service home-files-service-type
-                                `((".guile" ,%default-dotguile)))
+                        (service home-files-service-type
+                                 `((".guile" ,%default-dotguile)))
 
-                       (service home-xdg-configuration-files-service-type
-                                `(("gdb/gdbinit" ,%default-gdbinit)
-                                  ("nano/nanorc" ,%default-nanorc)
-                                  ("wgetrc" ,<<wget-config>>)))
+                        (service home-xdg-configuration-files-service-type
+                                 `(("gdb/gdbinit" ,%default-gdbinit)
+                                   ("nano/nanorc" ,%default-nanorc)
+                                   ("wgetrc" ,<<wget-config>>)))
 
-                       (simple-service 'extra-environment-variables
-                                       home-environment-variables-service-type
-                                       `(,@%testament-xdg-base-directory-env-vars
-                                         ("TZ" . "Asia/Hong_Kong")
-                                         <<home-environment-variable>>))))))))
+                        (simple-service 'extra-environment-variables
+                                        home-environment-variables-service-type
+                                        `(,@%testament-xdg-base-directory-env-vars
+                                          ("TZ" . "Asia/Hong_Kong")
+                                          <<home-environment-variable>>))
+                        %base-home-services))))))
 #+end_src
 
 * adb
@@ -1868,27 +1868,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 #+begin_src scheme :noweb-ref service
   (service seatd-service-type)
-#+end_src
-
-* shepherd
-#+begin_src scheme :noweb-ref service
-  (simple-service 'shepherd-log-rotation
-                  shepherd-root-service-type
-                  (list (shepherd-service
-                         (provision '(log-rotation))
-                         (modules '((shepherd service log-rotation)))
-                         (free-form #~(log-rotation-service)))))
-
-  (service (shepherd-service-type
-            'shepherd-system-log
-            (const (shepherd-service
-                    (documentation "Shepherd's built-in system log (syslogd).")
-                    (provision '(system-log syslogd))
-                    (modules '((shepherd service system-log)))
-                    (free-form #~(system-log-service))))
-            #t
-            (description
-             "Shepherd's built-in system log (syslogd).")))
 #+end_src
 
 * sops
