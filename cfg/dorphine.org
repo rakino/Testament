@@ -1035,9 +1035,15 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 #+begin_src conf :tangle ../gen/files/dot/.config/wanderlust/folders
-  .inbox  "Box"
   .hako@ultrarare.space/INBOX     "New"
-  .hako@ultrarare.space/Junk      "Junk"
+  .inbox  "Box"
+
+  Archive {
+          .archive/admin          "Admin"
+          .archive/billing        "Billing"
+          .archive/support        "Support"
+          .archive/dmarc          "DMARC Reports"
+  }
 
   List {
           .hako@ultrarare.space/Lists/emacs-devel  "emacs-devel"
@@ -1048,15 +1054,9 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
           .hako@ultrarare.space/Lists/guix-user    "guix-user"
   }
 
-  Archive {
-          .archive/admin          "Admin"
-          .archive/billing        "Billing"
-          .archive/support        "Support"
-          .archive/dmarc          "DMARC Reports"
-  }
-
   +draft                          "Draft"
   +trash                          "Trash"
+  .hako@ultrarare.space/Junk      "Junk"
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-feature
