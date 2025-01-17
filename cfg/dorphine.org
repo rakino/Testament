@@ -1907,17 +1907,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 * sway                                                              :Desktop:
-Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard-layout=.
-#+begin_src scheme :noweb-ref definition
-  (define %keyboard-layout-sway
-    (keyboard-layout
-     "us,us"
-     ",dvorak"
-     #:options
-     '("ctrl:nocaps"
-       "grp:win_space_toggle")))
-#+end_src
-
 #+begin_src scheme :noweb-ref service
   (service screen-locker-service-type
            (screen-locker-configuration
@@ -1988,7 +1977,7 @@ Workaround for =keyboard-layout= being overwritten by =operating-system-keyboard
     (inputs
      (list (sway-input
             (identifier "type:keyboard")
-            (layout %keyboard-layout-sway)
+            (layout keyboard-layout)
             (extra-content
              '("repeat_delay 300"
                "repeat_rate 30")))
