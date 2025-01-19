@@ -81,6 +81,7 @@
     #:use-module (gnu packages gnome-xyz)
     #:use-module (gnu packages gnupg)
     #:use-module (gnu packages librewolf)
+    #:use-module (gnu packages license)
     #:use-module (gnu packages linux)
     #:use-module (gnu packages mail)
     #:use-module (gnu packages password-utils)
@@ -1214,8 +1215,10 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 * git
 #+begin_src scheme :noweb-ref home-package
+  b4
   git
   `(,git "send-email")
+  reuse
 #+end_src
 
 #+begin_src conf :tangle ../gen/files/dot/.config/git/config
