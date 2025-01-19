@@ -3,8 +3,6 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (testament packages)
-  #:use-module (ice-9 match)
-
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix download)
   #:use-module (guix gexp)
@@ -20,49 +18,10 @@
   #:use-module (gnu packages chromium)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages fonts)
-  #:use-module (gnu packages gl)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages video)
   #:use-module (nongnu packages game-client)
-  #:use-module (nongnu packages nvidia)
-  #:use-module (nongnu packages video)
-  #:use-module (nonguix multiarch-container)
-  #:export (use-nvda
-            use-nvda*))
-
-
-;;;
-;;; Helper procedures
-;;;
-
-
-(define ffmpeg/nvenc
-  (package
-    (inherit ffmpeg)
-    (replacement
-     (package
-       (inherit ffmpeg-nvenc)
-       (name "ffmpeg")))))
-
-(define mesa/fake
-  (@@ (nongnu packages nvidia) mesa/fake))
-
-(define use-nvda
-  (package-input-rewriting
-   `((,ffmpeg . ,ffmpeg/nvenc)
-     (,mesa . ,mesa/fake))))
-
-(define (use-nvda* packages)
-  (map (match-lambda
-         (((? string? label) (? file-like? pkg) (? string? out))
-          `(,label ,(use-nvda pkg) ,out))
-         (((? string? label) (? file-like? pkg))
-          `(,label ,(use-nvda pkg)))
-         (((? file-like? pkg) (? string? out))
-          `(,(use-nvda pkg) ,out))
-         ((? file-like? pkg)
-          (use-nvda pkg)))
-       packages))
+  #:use-module (nonguix multiarch-container))
 
 
 ;;;
