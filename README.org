@@ -1,7 +1,7 @@
-# -*- org-confirm-babel-evaluate: nil; -*-
+# SPDX-FileCopyrightText: 2023, 2024, 2025 Hilton Chain <hako@ultrarare.space>
+# SPDX-License-Identifier: CC0-1.0
+
 #+TITLE: Testament - Personal dot(?)files
-#+AUTHOR: Hilton Chain
-#+EMAIL: hako@ultrarare.space
 
 * 目錄結構
 + cfg/：按主機劃分的 Org 文件，用以生成對應 Guix 配置

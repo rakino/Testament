@@ -1,3 +1,7 @@
+# SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 keys:
     - &hako     576C8A836723183D34C98D12C66DF7E30ED48083
     - &dorphine 3B6C92CB84BB392FD8DF3609D7428FE2857261AE

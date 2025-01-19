@@ -142,11 +142,8 @@
     ;; password-store
     ("PASSWORD_STORE_DIR" . "$XDG_DATA_HOME/pass")
     ;; python
-    ;; TODO: When using Python 3.13, remove PYTHONSTARTUP and set PYTHON_HISTORY
-    ("PYTHONPYCACHEPREFIX" . "$XDG_CACHE_HOME/python")
-    ("PYTHONSTARTUP" . "$XDG_CONFIG_HOME/pythonstartup.py")
-    ("PYTHONUSERBASE" . "$XDG_DATA_HOME/python")
-    ;; ("PYTHON_HISTORY" . "$XDG_STATE_HOME/python/history")
+    ;; TODO: Python 3.13.
+    ("PYTHON_HISTORY" . "$XDG_STATE_HOME/python/history")
     ;; rust
     ("CARGO_HOME" . "$XDG_DATA_HOME/cargo")
     ;; sqlite

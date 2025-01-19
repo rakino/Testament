@@ -1,3 +1,8 @@
+# -*- mode: conf -*-
+# SPDX-FileCopyrightText: 2023, 2024 Hilton Chain <hako@ultrarare.space>
+#
+# SPDX-License-Identifier: CC0-1.0
+
 [submodule "blobs"]
 	path = src/modules/blobs
 	url = git@github.com:rakino/testament-blobs.git

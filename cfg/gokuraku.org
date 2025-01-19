@@ -1,7 +1,9 @@
 # -*- org-confirm-babel-evaluate: nil; -*-
+# SPDX-FileCopyrightText: 2024, 2025 Hilton Chain <hako@ultrarare.space>
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
 #+TITLE: gokuarku (Server)
-#+AUTHOR: Hilton Chain
-#+EMAIL: hako@ultrarare.space
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
 * Modules
