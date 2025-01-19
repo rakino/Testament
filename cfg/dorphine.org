@@ -907,7 +907,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
     :custom
     (modus-themes-italic-constructs t)
     :config
-    (load-theme 'modus-operandi-tinted))
+    (load-theme 'modus-operandi-tinted t))
 #+end_src
 
 * emacs-mwim
