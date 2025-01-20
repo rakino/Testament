@@ -238,9 +238,6 @@
      (cons* <<service>>
 
             (modify-services %base-services
-              (delete login-service-type)
-              (delete mingetty-service-type)
-
               (console-font-service-type
                _ => (map (lambda (vtnr)
                            (let* ((path "/share/consolefonts/ter-132n")
@@ -409,6 +406,11 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   (use-package envrc
     :hook
     (after-init . envrc-global-mode))
+#+end_src
+
+* elogind                                                   :LoginManagement:
+#+begin_src scheme :noweb-ref service
+  (service elogind-service-type)
 #+end_src
 
 * emacs
@@ -1253,21 +1255,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   "plugdev"
 #+end_src
 
-* greetd                                                    :LoginManagement:
-#+begin_src scheme :noweb-ref service
-  (service greetd-service-type
-           (greetd-configuration
-            (terminals
-             (map (lambda (vtnr)
-                    (greetd-terminal-configuration
-                     (terminal-vt (number->string vtnr))
-                     (terminal-switch (eq? 1 vtnr))
-                     (default-session-command
-                       (greetd-agreety-session
-                        (command (file-append fish "/bin/fish"))))))
-                  (iota 6 1)))))
-#+end_src
-
 * isync                                                               :Email:
 #+begin_src scheme :noweb-ref home-mcron-job
   #~(job '(next-minute (range 0 60 15))
@@ -1807,9 +1794,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 * pipewire
 #+begin_src scheme :noweb-ref home-service
-  (service home-pipewire-service-type
-           (home-pipewire-configuration
-            (wireplumber wireplumber-minimal)))
+  (service home-pipewire-service-type)
 #+end_src
 
 * qbittorrent
@@ -1844,15 +1829,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+begin_src conf :tangle ../gen/files/dot/.icons/default/index.theme
   [icon theme]
   Inherits=Qogir
-#+end_src
-
-* seatd                                                     :LoginManagement:
-#+begin_src scheme :noweb-ref hako-user-group
-  "seat"
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  (service seatd-service-type)
 #+end_src
 
 * sops
@@ -1943,10 +1919,10 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
          (Print        . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy output " #$screenshot))
          ($mod+Print   . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy area " #$screenshot))
          ;; TODO: Use wob (https://github.com/francma/wob/blob/master/contrib/README.md).
-         (XF86AudioMicMute      . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
-         (XF86AudioMute         . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
-         (XF86AudioLowerVolume  . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
-         (XF86AudioRaiseVolume  . ,#~(string-append "exec " #$wireplumber-minimal "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.0"))
+         (XF86AudioMicMute      . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
+         (XF86AudioMute         . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
+         (XF86AudioLowerVolume  . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
+         (XF86AudioRaiseVolume  . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.0"))
          (XF86MonBrightnessDown . ,#~(string-append "exec " #$light "/bin/light -U 5"))
          (XF86MonBrightnessUp   . ,#~(string-append "exec " #$light "/bin/light -A 5")))))
     (gestures '())
