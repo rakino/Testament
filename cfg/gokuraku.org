@@ -344,6 +344,13 @@
   (service elogind-service-type)
 #+end_src
 
+* forgejo
+#+begin_src scheme :noweb-ref service
+  (service forgejo-service-type
+           (forgejo-configuration
+            (config-file (testament-file-object "forgejo.ini"))))
+#+end_src
+
 * jellyfin                                                       :WebService:
 #+begin_src scheme :noweb-ref service
   (service jellyfin-service-type

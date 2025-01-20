@@ -13,7 +13,8 @@
   #:use-module ((gnu packages rsync) #:select (rsync))
   #:use-module ((gnu packages ssh) #:select (mosh openssh-sans-x))
   #:use-module ((sops packages sops) #:select (sops))
-  #:export (%channel-guixcn
+  #:export (%channel-guix
+            %channel-guixcn
             %channel-nonguix
             %channel-rosenthal
             %channel-sops-guix
@@ -32,6 +33,10 @@
 ;;; Channels
 ;;;
 
+(define %channel-guix
+  (channel
+   (inherit %default-guix-channel)
+   (url "https://git.boiledscript.com/mirror/guix.git")))
 
 (define %channel-guixcn
   (channel
@@ -46,7 +51,7 @@
 (define %channel-nonguix
   (channel
    (name 'nonguix)
-   (url "https://gitlab.com/nonguix/nonguix")
+   (url "https://git.boiledscript.com/mirror/nonguix.git")
    (introduction
     (make-channel-introduction
      "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
@@ -56,7 +61,7 @@
 (define %channel-rosenthal
   (channel
    (name 'rosenthal)
-   (url "https://codeberg.org/hako/rosenthal.git")
+   (url "https://git.boiledscript.com/hako/Rosenthal.git")
    (branch "trunk")
    (introduction
     (make-channel-introduction
