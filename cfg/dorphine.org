@@ -8,7 +8,7 @@
 
 #+name: get-testament-path
 #+begin_src shell
-  echo "${testament_path}"
+  echo "$testament_path"
 #+end_src
 
 * Modules
@@ -70,7 +70,6 @@
     #:use-module (sops home services sops)
 
     #:use-module (gnu packages android)
-    #:use-module (gnu packages bash)
     #:use-module (gnu packages bittorrent)
     #:use-module (gnu packages browser-extensions)
     #:use-module (gnu packages disk)
@@ -90,6 +89,7 @@
     #:use-module (gnu packages qt)
     #:use-module (gnu packages rust-apps)
     #:use-module (gnu packages security-token)
+    #:use-module (gnu packages shells)
     #:use-module (gnu packages shellutils)
     #:use-module (gnu packages tree-sitter)
     #:use-module (gnu packages version-control)
@@ -228,7 +228,7 @@
              (group "users")
              (supplementary-groups
               '(<<hako-user-group>> "audio" "wheel"))
-             (home-directory "/home/hako"))
+             (shell (file-append fish "/bin/fish")))
             %base-user-accounts))
 
     (packages %testament-base-packages)
@@ -280,6 +280,10 @@
                 (services
                  (cons* <<home-service>>
 
+                        (service home-fish-service-type
+                                 (home-fish-configuration
+                                  (config (list <<home-fish-config>>))))
+
                         (service home-dotfiles-service-type
                                  (home-dotfiles-configuration
                                   (directories
@@ -299,6 +303,11 @@
                                         `(,@%testament-xdg-base-directory-env-vars
                                           ("TZ" . "Asia/Hong_Kong")
                                           <<home-environment-variable>>))
+
+                        (simple-service 'extra-shell-profiles
+                                        home-shell-profile-service-type
+                                        (list <<home-shell-profile>>))
+
                         %base-home-services))))))
 #+end_src
 
@@ -321,34 +330,10 @@
   atuin-bin
 #+end_src
 
-#+begin_src scheme :noweb-ref home-bashrc
+#+begin_src scheme :noweb-ref home-fish-config
   (plain-file
-   "bashrc-atuin"
-   "eval \"$(atuin init bash)\"")
-#+end_src
-
-* bash
-#+begin_src scheme :noweb yes :noweb-ref home-service
-  (service home-bash-service-type
-           (home-bash-configuration
-            (bashrc
-             (list <<bashrc-blesh>>
-                   <<home-bashrc>>))))
-
-  (simple-service 'extra-shell-profiles
-                  home-shell-profile-service-type
-                  (list <<home-shell-profile>>))
-#+end_src
-
-* blesh
-#+name: bashrc-blesh
-#+begin_src scheme
-  (mixed-text-file
-   "bashrc-blesh"
-   "complete -W '' guix\n"
-   "[[ $- = *i* ]] && source " blesh "/share/blesh/ble.sh\n"
-   "bind 'set completion-ignore-case on'\n"
-   "bleopt prompt_xterm_title='\\d \\@ | \\w'")
+   "fish-config-atuin"
+   "atuin init fish | source")
 #+end_src
 
 * bluez                                                   :Firmware:Wireless:
@@ -414,10 +399,10 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   emacs-envrc
 #+end_src
 
-#+begin_src scheme :noweb-ref home-bashrc
+#+begin_src scheme :noweb-ref home-fish-config
   (plain-file
-   "bashrc-direnv"
-   "eval \"$(direnv hook bash)\"")
+   "fish-config-direnv"
+   "direnv hook fish | source")
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-feature
@@ -793,7 +778,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 * emacs-eat
 #+begin_src scheme :noweb-ref home-package
-  emacs-eat
+  emacs-eat/dolly
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-feature
@@ -810,10 +795,12 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
      ("t" . eat-project)))
 #+end_src
 
-#+begin_src scheme :noweb-ref home-bashrc
+#+begin_src scheme :noweb-ref home-fish-config
   (plain-file
-   "bashrc-eat"
-   "[ -n \"$EAT_SHELL_INTEGRATION_DIR\" ] && source \"$EAT_SHELL_INTEGRATION_DIR/bash\"")
+   "fish-config-eat" "\
+  if test -n $EAT_SHELL_INTEGRATION_DIR
+      source $EAT_SHELL_INTEGRATION_DIR/fish
+  end")
 #+end_src
 
 * emacs-guix
@@ -1277,7 +1264,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                      (terminal-switch (eq? 1 vtnr))
                      (default-session-command
                        (greetd-agreety-session
-                        (command (file-append bash "/bin/bash"))))))
+                        (command (file-append fish "/bin/fish"))))))
                   (iota 6 1)))))
 #+end_src
 
@@ -1404,13 +1391,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 #+begin_src scheme :noweb-ref hako-user-group
   "video"
-#+end_src
-
-* liquidprompt
-#+begin_src scheme :noweb-ref home-bashrc
-  (mixed-text-file
-   "bashrc-liquidprompt"
-   "[[ $- = *i* ]] && source " liquidprompt "/share/liquidprompt/liquidprompt")
 #+end_src
 
 * mcron
@@ -2026,13 +2006,15 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
        "bindswitch --reload --locked lid:off output eDP-1 enable"))))
 #+end_src
 
-#+begin_src scheme :noweb-ref home-shell-profile
+#+begin_src scheme :noweb-ref home-fish-config
   (plain-file
-   "shell-profile-sway" "\
-  if [ -z \"${WAYLAND_DISPLAY}\" ] && [ \"${XDG_VTNR}\" -eq 1 ]; then
-      export XDG_CURRENT_DESKTOP=sway
-      exec sway --unsupported
-  fi")
+   "fish-config-sway" "\
+  if status is-login
+      if test -z \"$WAYLAND_DISPLAY\" -a \"$XDG_VTNR\" = 1
+          export XDG_CURRENT_DESKTOP=sway
+          exec sway
+      end
+  end")
 #+end_src
 
 #+begin_src conf :tangle ../gen/files/dot/.config/xdg-desktop-portal/portals.conf
@@ -2091,8 +2073,8 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   zoxide
 #+end_src
 
-#+begin_src scheme :noweb-ref home-bashrc
+#+begin_src scheme :noweb-ref home-fish-config
   (plain-file
-   "bashrc-zoxide"
-   "eval \"$(zoxide init --cmd cd bash)\"")
+   "fish-config-zoxide"
+   "zoxide init --cmd cd fish | source")
 #+end_src
