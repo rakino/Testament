@@ -2030,12 +2030,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   polkit-wheel-service
 #+end_src
 
-* ungoogled-chromuim
-#+begin_src scheme :noweb-ref home-package
-  ublock-origin/chromium
-  ungoogled-chromium/dolly
-#+end_src
-
 * wget
 #+name: wget-config
 #+begin_src scheme
