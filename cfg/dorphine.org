@@ -1221,8 +1221,16 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
           gpgsign = true
   [core]
           quotePath = false
+  [diff "scheme"]
+          xfuncname = "^(\\(define.*)$"
+
+  [diff "texinfo"]
+          xfuncname = "^@node[[:space:]]+([^,]+).*$"
   [init]
           defaultBranch = trunk
+  [pull]
+          rebase = true
+
   [rerere]
           enabled = true
   [sendemail]
