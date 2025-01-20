@@ -192,29 +192,19 @@
             (port 27254)))
 #+end_src
 
-** cuirass-job-guix-zig
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'guix-zig)
-   (build '(manifests "etc/teams/zig/zig-manifest.scm"))
-   (channels
-    (list (channel
-           (inherit %default-guix-channel)
-           (branch "wip-zig-bootstrap"))))
-   (priority 5))
-#+end_src
-
 ** cuirass-job-rosenthal
 #+begin_src scheme :noweb-ref cuirass-specification
   (specification
    (name 'rosenthal)
    (build '(channels rosenthal))
    (channels
-    (cons (channel
+    (list (channel
            (name 'rosenthal)
-           (url "https://codeberg.org/hako/rosenthal.git")
+           (url "https://git.boiledscript.com/hako/rosenthal.git")
            (branch "trunk"))
-          %default-channels))
+          (channel
+           (inherit %default-guix-channel)
+           (url "https://git.boiledscript.com/mirror/guix.git"))))
    (priority 5))
 #+end_src
 
@@ -223,40 +213,27 @@
   (specification
    (name 'nonguix-nvidia)
    (build '(packages "nvidia-driver"
-                     "nvidia-driver-beta"
                      "nvidia-firmware"
-                     "nvidia-firmware-beta"
                      "nvidia-module"
-                     "nvidia-module-beta"
                      "nvidia-module-open"
-                     "nvidia-module-open-beta"
                      "nvidia-settings"
-                     "nvidia-settings-beta"
                      "nvda"
+                     "nvidia-driver-beta"
+                     "nvidia-firmware-beta"
+                     "nvidia-module-beta"
+                     "nvidia-module-open-beta"
+                     "nvidia-settings-beta"
                      "nvdb"))
    (channels
-    (cons (channel
+    (list (channel
            (name 'nonguix)
-           (url "https://gitlab.com/hakourspace/nonguix.git")
+           (url "https://git.boiledscript.com/hako/nonguix.git")
            (branch "update-nvidia"))
-          %default-channels))
+          (channel
+           (inherit %default-guix-channel)
+           (url "https://git.boiledscript.com/mirror/guix.git"))))
    (priority 7)
    (systems '("i686-linux" "x86_64-linux")))
-#+end_src
-
-** cuirass-job-nonguix-xanmod
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'nonguix-xanmod)
-   (build '(packages "linux-xanmod@6.12"
-                     "linux-xanmod@6.6"))
-   (channels
-    (cons (channel
-           (name 'nonguix)
-           (url "https://gitlab.com/hakourspace/nonguix.git")
-           (branch "update-xanmod"))
-          %default-channels))
-   (priority 7))
 #+end_src
 
 * dbus
