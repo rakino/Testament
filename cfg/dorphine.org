@@ -250,6 +250,10 @@
               (guix-service-type
                config => (guix-configuration
                           (inherit config)
+                          (channels
+                           (list %channel-guix
+                                 %channel-nonguix
+                                 %channel-rosenthal))
                           (authorized-keys
                            (cons* %guix-authorized-key-gokuraku
                                   %guix-authorized-key-nonguix
