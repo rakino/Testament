@@ -37,6 +37,7 @@
     #:use-module (gnu services docker)
     #:use-module (gnu services networking)
     #:use-module (gnu services ssh)
+    #:use-module (gnu services sysctl)
     #:use-module (rosenthal services child-error)
     #:use-module (rosenthal services file-systems)
     #:use-module (rosenthal services mail)
@@ -130,7 +131,14 @@
                                   %default-authorized-guix-keys))
                           (substitute-urls
                            `(,@%default-substitute-urls
-                             "https://substitutes.nonguix.org")))))))
+                             "https://substitutes.nonguix.org"))))
+              (sysctl-service-type
+               _ => (sysctl-configuration
+                     (settings
+                      `(;; https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+                        ("net.core.rmem_max" . "7500000")
+                        ("net.core.wmem_max" . "7500000")
+                        ,@%default-sysctl-settings)))))))
 
     (sudoers-file
      (plain-file
