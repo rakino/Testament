@@ -45,6 +45,7 @@
 
     #:use-module (gnu packages databases)
     #:use-module (gnu packages fonts)
+    #:use-module (gnu packages shells)
     #:use-module (gnu packages ssh)
     #:use-module (nongnu packages linux))
 #+end_src
@@ -109,7 +110,8 @@
      (cons* (user-account
              (name "hako")
              (group "users")
-             (supplementary-groups '("wheel")))
+             (supplementary-groups '("wheel"))
+             (shell (file-append fish "/bin/fish")))
             %base-user-accounts))
 
     (packages %testament-base-packages)
