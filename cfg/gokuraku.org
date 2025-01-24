@@ -352,6 +352,14 @@
                   (file-append font-google-noto-sans-cjk path ":/usr" path))))))
 #+end_src
 
+* komga                                                          :WebService:
+#+begin_src scheme :noweb-ref service
+  (service komga-service-type
+           (komga-configuration
+            (auto-start? #f)
+            (port 44293)))
+#+end_src
+
 * miniflux                                                       :WebService:
 #+begin_src scheme :noweb-ref service
   (service miniflux-service-type
