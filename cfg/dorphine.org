@@ -565,12 +565,6 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     (dired-vc-rename-file t))
 #+end_src
 
-#+begin_src emacs-lisp :noweb-ref emacs-feature
-  (use-package dired-async
-    :custom
-    (dired-async-mode t))
-#+end_src
-
 * emacs eglot
 #+begin_src scheme :noweb-ref home-package
   emacs-eglot-booster/dolly
