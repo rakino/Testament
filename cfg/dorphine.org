@@ -663,6 +663,24 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
    (options '((geiser-mode-auto-p . #f))))
 #+end_src
 
+* emacs-denote
+#+begin_src scheme :noweb-ref emacs-package
+  (emacs-package
+   (name 'denote)
+   (package emacs-denote)
+   (extra-packages (list emacs-denote-menu))
+   (options
+    '((denote-directory . "~/.local/share/denote")
+      (denote-known-keywords . #f)
+      (denote-rename-buffer-mode . #t)))
+   (hooks '((dired-mode . denote-dired-mode)))
+   (keys-global
+    '(("C-c n n" . denote)
+      ("C-c n r" . denote-rename-file)
+      ("C-c n l" . denote-link)
+      ("C-c n b" . denote-backlinks))))
+#+end_src
+
 * emacs-dumb-jump
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package

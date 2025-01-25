@@ -34,7 +34,7 @@
   umount -v /efi
 
   user=${SUDO_USER:-${USER}}
-  chown --no-dereference --recursive "${user}" "/home/${user}/.cache/guile"
+  chown --no-dereference --recursive "${user}" "/home/${user}/.cache/"{guile,guix}
 #+end_src
 
 ** remove-go
