@@ -218,34 +218,6 @@
    (priority 5))
 #+end_src
 
-** cuirass-job-nonguix-nvidia
-#+begin_src scheme :noweb-ref cuirass-specification
-  (specification
-   (name 'nonguix-nvidia)
-   (build '(packages "nvidia-driver"
-                     "nvidia-firmware"
-                     "nvidia-module"
-                     "nvidia-module-open"
-                     "nvidia-settings"
-                     "nvda"
-                     "nvidia-driver-beta"
-                     "nvidia-firmware-beta"
-                     "nvidia-module-beta"
-                     "nvidia-module-open-beta"
-                     "nvidia-settings-beta"
-                     "nvdb"))
-   (channels
-    (list (channel
-           (name 'nonguix)
-           (url "https://git.boiledscript.com/hako/nonguix.git")
-           (branch "update-nvidia"))
-          (channel
-           (inherit %default-guix-channel)
-           (url "https://git.boiledscript.com/mirror/guix.git"))))
-   (priority 7)
-   (systems '("i686-linux" "x86_64-linux")))
-#+end_src
-
 * dbus
 #+begin_src scheme :noweb-ref service
   (service dbus-root-service-type)
