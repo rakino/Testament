@@ -363,6 +363,8 @@
                (redis
                 . ((host . localhost)
                    (port . 6379)))
+               (fulltextSearch
+                . ((provider . sqlLike)))
                (id . "aid")
                (clusterLimit . 4)
                (outgoingAddressFamily . dual)
