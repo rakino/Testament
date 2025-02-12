@@ -114,6 +114,7 @@
     (kernel linux-xanmod)
     (kernel-arguments
      (list <<kernel-argument>>
+           "kernel.sysrq=244"             ;#b011110100
            "zswap.enabled=1"
            "zswap.max_pool_percent=90"
            (string-append "modprobe.blacklist="
