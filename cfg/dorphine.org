@@ -878,6 +878,17 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
           orderless-regexp)))))
 #+end_src
 
+* emacs-pinentry
+#+begin_src scheme :noweb-ref emacs-package
+  (emacs-package
+   (name 'pinentry)
+   (package emacs-pinentry)
+   (load-force? #t)
+   (options '((epg-pinentry-mode . loopback)))
+   (extra-after-load
+    (list #%(pinentry-start))))
+#+end_src
+
 * emacs-puni
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
@@ -1163,16 +1174,13 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 * gnupg
-#+begin_src scheme :noweb-ref home-package
-  rofi-wayland
-#+end_src
-
 #+begin_src scheme :noweb-ref home-service
   (service home-gpg-agent-service-type
            (home-gpg-agent-configuration
             (pinentry-program
-             (file-append pinentry-rofi "/bin/pinentry-rofi"))
-            (ssh-support? #t)))
+             (file-append pinentry-emacs "/bin/pinentry-emacs"))
+            (ssh-support? #t)
+            (extra-content "allow-loopback-pinentry")))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
