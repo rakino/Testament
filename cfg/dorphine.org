@@ -79,7 +79,6 @@
     #:use-module (gnu packages emacs-xyz)
     #:use-module (gnu packages fonts)
     #:use-module (gnu packages freedesktop)
-    #:use-module (gnu packages glib)
     #:use-module (gnu packages gnome)
     #:use-module (gnu packages gnome-xyz)
     #:use-module (gnu packages gnupg)
@@ -512,7 +511,10 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
 
                    (emacs-package
                     (name 'window)
-                    (keys-global '(("<remap> <list-buffers>" . switch-to-buffer))))))))
+                    (keys-global '(("<remap> <list-buffers>" . switch-to-buffer))))))
+            (servers
+             (list (emacs-server
+                    (name "server"))))))
 #+end_src
 
 * emacs dired
@@ -1827,52 +1829,54 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                                "--daemonize"
                                "--ignore-empty-password"
                                "--image"
-                               #$(testament-file-object "115008128_p0.jpg")))))
+                               #$(testament-file-object "115008128_p0.jpg"))))
+           (grimshot (file-append grimshot "/bin/grimshot"))
+           (light    (file-append light "/bin/light"))
+           (rofi     (file-append rofi-wayland "/bin/rofi"))
+           (swaylock (file-append swaylock-effects "/bin/swaylock"))
+           (wpctl    (file-append wireplumber "/bin/wpctl")))
        `(,@(append-map
             (match-lambda
               ((direction . key)
                (list (cons (symbol-append '$mod+ key)
-                           (string-append "exec papersway-msg focus " direction))
+                           (format #f "focus ~a" direction))
                      (cons (symbol-append '$mod+Shift+ key)
-                           (string-append "exec papersway-msg move " direction)))))
+                           (format #f "move ~a" direction)))))
             '(("left"  . Left)
+              ("down"  . Down)
+              ("up"    . Up)
               ("right" . Right)))
-         ($mod+f            . "exec papersway-msg monocle toggle")
-         ($mod+o            . "exec papersway-msg other column")
-         ($mod+a            . "exec papersway-msg fresh-workspace")
-         ($mod+n            . "exec papersway-msg fresh-workspace take")
-         ($mod+Shift+n      . "exec papersway-msg fresh-workspace send")
-         ($mod+bracketleft  . "exec papersway-msg cols decr")
-         ($mod+bracketright . "exec papersway-msg cols incr")
-         ($mod+9            . "exec papersway-msg workspace prev")
-         ($mod+Shift+9      . "exec papersway-msg move_workspace prev")
-         ($mod+0            . "exec papersway-msg workspace next")
-         ($mod+Shift+0      . "exec papersway-msg move_workspace next")
-         ($mod+Shift+m . "exec swaymsg exit")
-         ($mod+Shift+q . "kill")
-         ($mod+Return  . "exec $EDITOR --alternate-editor='' --create-frame --no-wait")
-         ($mod+r       . ,#~(string-append "exec rofi -show run"))
-         ($mod+Shift+t . ,#~(string-append "exec " #$stalonetray "/bin/stalonetray"))
-         ($mod+l       . ,#~(string-append "exec " #$swaylock-effects "/bin/swaylock " #$lock-args))
-         (Print        . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy output " #$screenshot))
-         ($mod+Print   . ,#~(string-append "exec " #$grimshot "/bin/grimshot savecopy area " #$screenshot))
-         ;; TODO: Use wob (https://github.com/francma/wob/blob/master/contrib/README.md).
-         (XF86AudioMicMute      . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
-         (XF86AudioMute         . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-mute @DEFAULT_AUDIO_SINK@ toggle"))
-         (XF86AudioLowerVolume  . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-"))
-         (XF86AudioRaiseVolume  . ,#~(string-append "exec " #$wireplumber "/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%+ --limit 1.0"))
-         (XF86MonBrightnessDown . ,#~(string-append "exec " #$light "/bin/light -U 5"))
-         (XF86MonBrightnessUp   . ,#~(string-append "exec " #$light "/bin/light -A 5")))))
+         ,@(append-map
+            (lambda (key)
+              (let ((number (if (zero? key) 10 key)))
+                (list (cons (string->symbol (format #f "$mod+~a" key))
+                            (format #f "workspace number ~a" number))
+                      (cons (string->symbol (format #f "$mod+Shift+~a" key))
+                            (format #f "move container to workspace number ~a" number)))))
+            (iota 10))
+         ($mod+F       . "fullscreen")
+         ($mod+V       . "floating toggle")
+         ($mod+Shift+Q . "kill")
+         ($mod+Shift+E . "exec swaymsg exit")
+         ($mod+D       . ,#~(string-append "exec " #$rofi " -modes combi -show combi"))
+         ($mod+L       . ,#~(string-append "exec " #$swaylock " " #$lock-args))
+         ($mod+Return  . "exec $EDITOR --create-frame --no-wait")
+         (Print        . ,#~(string-append "exec " #$grimshot " savecopy area " #$screenshot))
+         (Ctrl+Print   . ,#~(string-append "exec " #$grimshot " savecopy output " #$screenshot))
+         (Alt+Print    . ,#~(string-append "exec " #$grimshot " savecopy window " #$screenshot))
+         (XF86AudioMicMute      . ,#~(string-append "exec " #$wpctl " set-mute @DEFAULT_AUDIO_SOURCE@ toggle"))
+         (XF86AudioMute         . ,#~(string-append "exec " #$wpctl " set-mute @DEFAULT_AUDIO_SINK@ toggle"))
+         (XF86AudioLowerVolume  . ,#~(string-append "exec " #$wpctl " set-volume @DEFAULT_AUDIO_SINK@ 0.1-"))
+         (XF86AudioRaiseVolume  . ,#~(string-append "exec " #$wpctl " set-volume @DEFAULT_AUDIO_SINK@ 0.1+ --limit 1.0"))
+         (XF86MonBrightnessDown . ,#~(string-append "exec " #$light " -U 5"))
+         (XF86MonBrightnessUp   . ,#~(string-append "exec " #$light " -A 5")))))
     (gestures '())
     (packages
-     (list dconf
-           papersway
-           qtwayland-5
+     (list qtwayland-5
            sway
            wl-clipboard
            xdg-desktop-portal-gtk
-           xdg-desktop-portal-wlr
-           xdg-utils))
+           xdg-desktop-portal-wlr))
     (inputs
      (list (sway-input
             (identifier "type:keyboard")
@@ -1890,7 +1894,9 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
             (position
              (point (x 0)
                     (y 0)))
-            (extra-content '("scale 1.5")))
+            (extra-content
+             '("scale 1.5"
+               "adaptive_sync on")))
            (sway-output
             (identifier "HDMI-A-1")
             (position
@@ -1900,22 +1906,14 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
             (background (testament-file-object "91042519_p4.png")))))
     (modes '())
     (startup-programs
-     (list
-      (file-append dbus "/bin/dbus-update-activation-environment DISPLAY I3SOCK SWAYSOCK WAYLAND_DISPLAY XDG_CURRENT_DESKTOP")
-      (file-append papersway "/bin/papersway")
-      (file-append sway "/bin/swaymsg move workspace to output eDP-1")
-      (file-append wlsunset "/bin/wlsunset $(cat ${XDG_RUNTIME_DIR}/secrets/wlsunset)")))
+     (list "swaymsg move workspace to eDP-1"))
     (extra-content
-     '("floating_modifier $mod normal"
+     '("xwayland disable"
+       "floating_modifier $mod normal"
        "default_border none"
        "default_floating_border none"
        "gaps inner 5"
        "gaps outer 20"
-       "mouse_warping container"
-       "\
-  for_window {
-      [shell=\"xwayland\"] title_format \"%title [XWayland]\"
-  }"
        "bindswitch --reload --locked lid:on output eDP-1 disable"
        "bindswitch --reload --locked lid:off output eDP-1 enable"))))
 #+end_src
