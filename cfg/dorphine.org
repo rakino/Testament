@@ -1980,6 +1980,11 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
    "hsts-file = ~/.cache/wget-hsts\n")
 #+end_src
 
+* xwayland
+#+begin_src scheme :noweb-ref service
+  (service x11-socket-directory-service-type)
+#+end_src
+
 * zoxide
 #+begin_src scheme :noweb-ref home-package
   zoxide
