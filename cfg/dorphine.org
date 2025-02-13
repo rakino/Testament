@@ -286,6 +286,11 @@
                                  (home-fish-configuration
                                   (config (list <<home-fish-config>>))))
 
+                        (service home-shepherd-service-type
+                                 (home-shepherd-configuration
+                                  ;; Start in WM configuration.
+                                  (auto-start? #f)))
+
                         (service home-dotfiles-service-type
                                  (home-dotfiles-configuration
                                   (directories
@@ -1857,7 +1862,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
          ($mod+F       . "fullscreen")
          ($mod+V       . "floating toggle")
          ($mod+Shift+Q . "kill")
-         ($mod+Shift+E . "exec swaymsg exit")
+         ($mod+Shift+E . "exec herd stop root && swaymsg exit")
          ($mod+D       . ,#~(string-append "exec " #$rofi " -modes combi -show combi"))
          ($mod+L       . ,#~(string-append "exec " #$swaylock " " #$lock-args))
          ($mod+Return  . "exec $EDITOR --create-frame --no-wait")
@@ -1906,7 +1911,8 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
             (background (testament-file-object "91042519_p4.png")))))
     (modes '())
     (startup-programs
-     (list "swaymsg move workspace to eDP-1"))
+     (list "swaymsg move workspace to eDP-1"
+           "pgrep --uid $USER shepherd > /dev/null || shepherd"))
     (extra-content
      '("xwayland disable"
        "floating_modifier $mod normal"
