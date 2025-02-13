@@ -1966,12 +1966,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   (service tlp-service-type)
 #+end_src
 
-* udisks
-#+begin_src scheme :noweb-ref service
-  (service udisks-service-type)
-  polkit-wheel-service
-#+end_src
-
 * wget
 #+name: wget-config
 #+begin_src scheme
