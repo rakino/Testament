@@ -98,6 +98,7 @@
     #:use-module (nongnu packages fonts)
     #:use-module (nongnu packages linux)
     #:use-module (nongnu packages nvidia)
+    #:use-module (rosenthal packages admin)
     #:use-module (rosenthal packages binaries)
     #:use-module (rosenthal packages busybox)
     #:use-module (rosenthal packages tree-sitter))
@@ -412,11 +413,6 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
    (package emacs-envrc)
    (extra-packages (list direnv))
    (hooks '((after-init . envrc-global-mode))))
-#+end_src
-
-* elogind                                                   :LoginManagement:
-#+begin_src scheme :noweb-ref service
-  (service elogind-service-type)
 #+end_src
 
 * emacs
@@ -1776,6 +1772,19 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   Inherits=Qogir
 #+end_src
 
+* seatd
+#+begin_src scheme :noweb-ref service
+  (service dumb-runtime-dir-service-type)
+
+  (service seatd-service-type
+           (seatd-configuration
+            (seatd seatd-sans-logind)))
+#+end_src
+
+#+begin_src scheme :noweb-ref hako-user-group
+  "seat"
+#+end_src
+
 * sops
 #+begin_src scheme :noweb-ref home-service
   (service home-sops-secrets-service-type
@@ -1928,7 +1937,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   (plain-file
    "fish-config-sway" "\
   if status is-login
-      if test -z \"$WAYLAND_DISPLAY\" -a \"$XDG_VTNR\" = 1
+      if test -z \"$WAYLAND_DISPLAY\" -a \"$(tty)\" = /dev/tty1
           export XDG_CURRENT_DESKTOP=sway
           exec sway
       end
