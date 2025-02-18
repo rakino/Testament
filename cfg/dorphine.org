@@ -34,7 +34,6 @@
     #:use-module (gnu system file-systems)
     #:use-module (gnu system keyboard)
     #:use-module (gnu system linux-initrd)
-    #:use-module (gnu system mapped-devices)
     #:use-module (gnu system shadow)
     #:use-module (nongnu system linux-initrd)
 
@@ -74,7 +73,6 @@
     #:use-module (gnu packages bittorrent)
     #:use-module (gnu packages browser-extensions)
     #:use-module (gnu packages cpp)
-    #:use-module (gnu packages disk)
     #:use-module (gnu packages emacs)
     #:use-module (gnu packages emacs-xyz)
     #:use-module (gnu packages fonts)
@@ -100,7 +98,6 @@
     #:use-module (nongnu packages nvidia)
     #:use-module (rosenthal packages admin)
     #:use-module (rosenthal packages binaries)
-    #:use-module (rosenthal packages busybox)
     #:use-module (rosenthal packages tree-sitter))
 #+end_src
 
@@ -129,7 +126,7 @@
     (bootloader
      (bootloader-configuration
       (bootloader grub-efi-luks2-removable-bootloader)
-      (targets '("/efi"))
+      (targets '("/boot/efi"))
       (theme
        (grub-theme
         (inherit (grub-theme))
@@ -140,33 +137,9 @@
      (keyboard-layout "us" "dvorak"
                       #:options '("ctrl:nocaps")))
 
-    (initrd
-     (lambda (file-systems . rest)
-       (apply microcode-initrd
-              file-systems
-              #:initrd raw-initrd
-              #:helper-packages
-              (list btrfs-progs/static
-                    busybox/static
-                    fatfsck/static
-                    loadkeys-static)
-              rest)))
-
-    (initrd-modules
-     (cons* "btrfs"
-            ;; USB 3.0
-            "xhci_hcd"
-            "xhci_pci"
-            %base-initrd-modules))
-
+    (initrd microcode-initrd)
     (firmware (list <<firmware>>))
     (host-name "dorphine")
-
-    (mapped-devices
-     (list (mapped-device
-            (source (uuid "1c149dec-2eb1-4866-b43b-1fc41f391f75"))
-            (target "Mentha")
-            (type luks-device-mapping))))
 
     (file-systems
      (let ((file-system-base
@@ -174,8 +147,7 @@
               (type "btrfs")
               (mount-point "/")
               (device (uuid "13fc13ea-0007-420a-b2b9-26eb2e2016fe"))
-              (create-mount-point? #t)
-              (dependencies mapped-devices)))
+              (create-mount-point? #t)))
            (options-for-subvolume
             (cut string-append "compress=zstd,subvol=" <>)))
        (append
@@ -194,20 +166,12 @@
         ;; Bootloader
         (list (file-system
                 (type "vfat")
-                (mount-point "/efi")
+                (mount-point "/boot/efi")
                 (device (uuid "F5BB-DCAF" 'fat))
-                (mount? #f)
                 (create-mount-point? #t)))
 
         ;; Devices
         (list (file-system
-                (type "btrfs")
-                (mount-point "/mnt/Myosotis")
-                (device (uuid "537de57b-30b7-4273-868f-83771074b6af"))
-                (options "compress=zstd,subvolid=5")
-                (mount? #f)
-                (create-mount-point? #t))
-              (file-system
                 (inherit file-system-base)
                 (mount-point "/mnt/Mentha")
                 (options "compress=zstd,subvolid=5")
@@ -1818,6 +1782,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 #+begin_src scheme :noweb-ref home-environment-variable
+  ("GUIX_SANDBOX_HOME" . "/mnt/Mentha/@Sandbox")
   ("GUIX_SANDBOX_EXTRA_SHARES" . "${HOME}/Downloads:${HOME}/Library/Pictures/Screenshots")
 #+end_src
 

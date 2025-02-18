@@ -68,7 +68,7 @@
              (uri "https://codeberg.org/akib/emacs-eat/pulls/133.patch")
              (sha256
               (base32
-               "18kjwmpz88i3f7dm33hkqcmabdd73wyzvm2w1h451wf4zlwcnp37")))))))
+               "1vsq76k1gbaabiwqnx47ksq5s5pfhdvhmwxxywvjc5y9gmp3yglz")))))))
 
 (define-public emacs-eglot-booster/dolly
   (hidden-package
