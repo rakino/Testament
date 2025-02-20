@@ -646,6 +646,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
    (extra-packages (list emacs-denote-menu))
    (options
     '((denote-directory . "~/.local/share/denote")
+      (denote-journal-extras-title-format . day-date-month-year)
       (denote-known-keywords . #f)
       (denote-rename-buffer-mode . #t)))
    (hooks '((dired-mode . denote-dired-mode)))
