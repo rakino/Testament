@@ -483,6 +483,13 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
                     (name "server"))))))
 #+end_src
 
+* emacs browse-url
+#+begin_src scheme :noweb-ref emacs-package
+  (emacs-package
+   (name 'browse-url)
+   (options '((browse-url-firefox-program . "librewolf"))))
+#+end_src
+
 * emacs dired
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
