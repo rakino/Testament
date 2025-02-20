@@ -36,6 +36,7 @@
     #:use-module (gnu services desktop)
     #:use-module (gnu services docker)
     #:use-module (gnu services networking)
+    #:use-module (gnu services security)
     #:use-module (gnu services ssh)
     #:use-module (gnu services sysctl)
     #:use-module (rosenthal services child-error)
@@ -476,7 +477,16 @@
 
 * openssh
 #+begin_src scheme :noweb-ref service
-  (service openssh-service-type
+  (service (fail2ban-jail-service
+            openssh-service-type
+            (fail2ban-jail-configuration
+             (name "sshd")
+             (enabled? #t)
+             (extra-content
+              (list (plain-file "filter" "filter=sshd[_daemon='sshd-session']")))
+             (action
+              (list (fail2ban-jail-action-configuration
+                     (name "nftables"))))))
            (openssh-configuration
             (openssh openssh-sans-x)
             (password-authentication? #f)
