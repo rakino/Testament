@@ -650,7 +650,8 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
       (denote-rename-buffer-mode . #t)))
    (hooks '((dired-mode . denote-dired-mode)))
    (keys-global
-    '(("C-c n n" . denote)
+    '(("C-c n m" . denote-menu-list-notes)
+      ("C-c n n" . denote)
       ("C-c n r" . denote-rename-file)
       ("C-c n l" . denote-link)
       ("C-c n b" . denote-backlinks))))
