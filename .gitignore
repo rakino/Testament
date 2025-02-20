@@ -1,6 +1,7 @@
 # -*- mode: conf -*-
-# SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
+# SPDX-FileCopyrightText: 2024, 2025 Hilton Chain <hako@ultrarare.space>
 #
 # SPDX-License-Identifier: CC0-1.0
 
-/gen/
+*.go
+/config/*.scm

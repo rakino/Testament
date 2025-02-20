@@ -1,15 +1,9 @@
-# -*- org-confirm-babel-evaluate: nil; -*-
 # SPDX-FileCopyrightText: 2022, 2023, 2024, 2025 Hilton Chain <hako@ultrarare.space>
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
 #+TITLE: dorphine (Laptop)
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
-
-#+name: get-testament-path
-#+begin_src shell
-  echo "$testament_path"
-#+end_src
 
 * Modules
 #+name: modules
@@ -103,7 +97,7 @@
 #+end_src
 
 * Guix System
-#+begin_src scheme :tangle ../gen/modules/dorphine.scm :noweb yes
+#+begin_src scheme :tangle dorphine.scm :noweb yes
   <<modules>>
 
   <<definition>>
@@ -260,7 +254,7 @@
                         (service home-dotfiles-service-type
                                  (home-dotfiles-configuration
                                   (directories
-                                   '("<<get-testament-path()>>/gen/files/dot"))))
+                                   '("../files/dotfiles"))))
 
                         (service home-files-service-type
                                  `((".guile" ,%default-dotguile)))
@@ -320,21 +314,6 @@
 #+end_src
 
 * btrbk                                                              :Backup:
-#+begin_src conf :tangle ../gen/files/plain/btrbk-dorphine.conf
-  transaction_log            /var/log/btrbk.log
-  lockfile                   /var/lock/btrbk.lock
-
-  snapshot_dir               @Snapshot
-  snapshot_create            onchange
-
-  snapshot_preserve          30d
-  snapshot_preserve_min      3d
-
-  volume /mnt/Mentha
-  subvolume @Data
-  subvolume @Home
-#+end_src
-
 #+begin_src scheme :noweb-ref service
   (service btrbk-service-type
            (btrbk-configuration
@@ -376,6 +355,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   (emacs-package
    (name 'envrc)
    (package emacs-envrc)
+   (extra-packages (list direnv))
    (hooks '((after-init . envrc-global-mode))))
 #+end_src
 
@@ -955,31 +935,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 * emacs-wanderlust                                                    :Email:
-#+begin_src conf :tangle ../gen/files/dot/.config/wanderlust/folders
-  .hako@ultrarare.space/INBOX     "New"
-  .inbox  "Box"
-
-  Archive {
-          .archive/admin          "Admin"
-          .archive/billing        "Billing"
-          .archive/support        "Support"
-          .archive/dmarc          "DMARC Reports"
-  }
-
-  List {
-          .hako@ultrarare.space/Lists/emacs-devel  "emacs-devel"
-          .hako@ultrarare.space/Lists/guile-devel  "guile-devel"
-          .hako@ultrarare.space/Lists/guix-bugs    "guix-bugs"
-          .hako@ultrarare.space/Lists/guix-devel   "guix-devel"
-          .hako@ultrarare.space/Lists/guix-patches "guix-patches"
-          .hako@ultrarare.space/Lists/guix-user    "guix-user"
-  }
-
-  +draft                          "Draft"
-  +trash                          "Trash"
-  .hako@ultrarare.space/Junk      "Junk"
-#+end_src
-
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
    (name 'wl)
@@ -1127,33 +1082,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   reuse
 #+end_src
 
-#+begin_src conf :tangle ../gen/files/dot/.config/git/config
-  [commit]
-          gpgsign = true
-  [core]
-          quotePath = false
-  [diff "scheme"]
-          xfuncname = "^(\\(define.*)$"
-
-  [diff "texinfo"]
-          xfuncname = "^@node[[:space:]]+([^,]+).*$"
-  [init]
-          defaultBranch = trunk
-  [pull]
-          rebase = true
-
-  [rerere]
-          enabled = true
-  [sendemail]
-          smtpEncryption = ssl
-          smtpServer = mx.boiledscript.com
-          smtpUser = hako@ultrarare.space
-  [user]
-          name = Hilton Chain
-          email = hako@ultrarare.space
-          signingkey = ACC66D09CA528292!
-#+end_src
-
 * gnupg
 #+begin_src scheme :noweb-ref home-service
   (service home-gpg-agent-service-type
@@ -1180,32 +1108,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                         (in-vicinity (getenv "HOME") ".config/isync/mbsyncrc")))
 #+end_src
 
-#+begin_src conf :tangle ../gen/files/dot/.config/isync/mbsyncrc
-  Create Both
-  Expunge Both
-  CopyArrivalDate yes
-
-  MaildirStore hako@ultrarare.space-local
-  Path ~/.local/share/mail/hako@ultrarare.space/
-  Inbox ~/.local/share/mail/hako@ultrarare.space/INBOX
-  Subfolders Verbatim
-
-  IMAPAccount hako@ultrarare.space
-  Host mx.boiledscript.com
-  User "hako@ultrarare.space"
-  PassCmd "cat ${XDG_RUNTIME_DIR}/secrets/mail"
-  TLSType IMAPS
-
-  IMAPStore hako@ultrarare.space-remote
-  Account hako@ultrarare.space
-
-  Channel hako@ultrarare.space
-  Far :hako@ultrarare.space-remote:
-  Near :hako@ultrarare.space-local:
-  Pattern *
-  SyncState *
-#+end_src
-
 * iwd                                                     :Firmware:Wireless:
 #+begin_src scheme :noweb-ref service
   (service iwd-service-type
@@ -1230,48 +1132,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                              (list #$(file-append l2md "/bin/l2md") "--verbose")))
                          (stop
                           #~(make-kill-destructor)))))
-#+end_src
-
-#+begin_src conf :tangle ../gen/files/dot/.config/l2md/config
-  [general]
-          base = ~/.local/share/l2md/
-          period = 900
-
-  # emacs-devel@gnu.org
-  [repo emacs-devel]
-          url = https://yhetil.org/emacs-devel/0
-          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/emacs-devel
-          initial_import = 100
-
-  # guile-devel@gnu.org
-  [repo guile-devel]
-          url = https://yhetil.org/guile-devel/0
-          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guile-devel
-          initial_import = 100
-
-  # bug-guix@gnu.org
-  [repo guix-bugs]
-          url = https://yhetil.org/guix-bugs/0
-          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-bugs
-          initial_import = 100
-
-  # guix-devel@gnu.org
-  [repo guix-devel]
-          url = https://yhetil.org/guix-devel/0
-          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-devel
-          initial_import = 100
-
-  # guix-patches@gnu.org
-  [repo guix-patches]
-          url = https://yhetil.org/guix-patches/1
-          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-patches
-          initial_import = 100
-
-  # help-guix@gnu.org
-  [repo guix-user]
-          url = https://yhetil.org/guix-user/0
-          maildir = ~/.local/share/mail/hako@ultrarare.space/Lists/guix-user
-          initial_import = 100
 #+end_src
 
 * librewolf
@@ -1320,157 +1180,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
               (testament-file-content "mihomo.yaml")))))
 #+end_src
 
-#+begin_src yaml :tangle ../gen/files/plain/mihomo.yaml
-  allow-lan: true
-  mode: "rule"
-  log-level: "error"
-  ipv6: true
-  find-process-mode: "strict"
-  external-controller: "127.0.0.1:9090"
-  external-ui: "ui"
-  external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
-
-  profile:
-    store-selected: true
-
-  unified-delay: true
-  tcp-concurrent: true
-  global-client-fingerprint: "chrome"
-
-  geodata-mode: true
-  geodata-loader: "standard"
-  geo-auto-update: true
-  geo-update-interval: 24
-  geox-url:
-    geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
-    geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
-    mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
-    asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
-
-  dns:
-    enable: true
-    prefer-h3: true
-    listen: 0.0.0.0:53
-    ipv6: true
-    nameserver-policy:
-      "geosite:cn,private":
-        - "https://doh.pub/dns-query"
-        - "https://1.12.12.12/dns-query"
-        - "https://120.53.53.53/dns-query"
-        - "tls://1.12.12.12"
-        - "tls://120.53.53.53"
-        - "https://dns.alidns.com/dns-query"
-        - "tls://dns.alidns.com"
-        - "tls://223.5.5.5"
-        - "tls://223.6.6.6"
-        - "tcp://114.114.114.114"
-        - "tcp://114.114.115.115"
-        - "udp://1.2.4.8"
-        - "udp://210.2.4.8"
-    nameserver:
-      - "https://1.1.1.1/dns-query#Default"
-      - "https://1.0.0.1/dns-query#Default"
-      - "tls://1.1.1.1#Default"
-      - "tls://1.0.0.1#Default"
-      - "tls://1dot1dot1dot1.cloudflare-dns.com#Default"
-      - "tls://one.one.one.one#Default"
-      - "https://dns.google/dns-query#Default"
-      - "tls://dns.google#Default"
-      - "https://146.112.41.2/dns-query#Default"
-      - "https://dns.quad9.net/dns-query#Default"
-      - "tls://dns.quad9.net#Default"
-    proxy-server-nameserver:
-      - "https://1.1.1.1/dns-query"
-      - "https://8.8.8.8/dns-query"
-      - "https://1.0.0.1/dns-query"
-      - "https://8.8.4.4/dns-query"
-
-  sniffer:
-    enable: true
-    sniff:
-      HTTP:
-        ports: ["80", "8080-8880"]
-      TLS:
-        ports: ["443", "8443"]
-      QUIC:
-        ports: ["443", "8443"]
-
-  tproxy-port: 7890
-
-  proxy-groups:
-    - {
-        name: "Default",
-        type: "select",
-        proxies: ["All-Proxies", "Auto-Select", "DIRECT"],
-      }
-    - { name: "All-Proxies", <<: *use }
-    - { name: "Auto-Select", <<: *use, tolerance: 2, type: "url-test" }
-
-  rule-providers:
-    reject:
-      type: "http"
-      behavior: "domain"
-      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
-      path: "./ruleset/reject.yaml"
-      interval: 86400
-    proxy:
-      type: "http"
-      behavior: "domain"
-      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
-      path: "./ruleset/proxy.yaml"
-      interval: 86400
-    direct:
-      type: "http"
-      behavior: "domain"
-      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
-      path: "./ruleset/direct.yaml"
-      interval: 86400
-    private:
-      type: "http"
-      behavior: "domain"
-      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
-      path: "./ruleset/private.yaml"
-      interval: 86400
-    cncidr:
-      type: "http"
-      behavior: "ipcidr"
-      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
-      path: "./ruleset/cncidr.yaml"
-      interval: 86400
-    lancidr:
-      type: "http"
-      behavior: "ipcidr"
-      url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
-      path: "./ruleset/lancidr.yaml"
-      interval: 86400
-
-  rules:
-    - "DOMAIN,us.download.nvidia.com,DIRECT"
-    - "PROCESS-NAME,.qbittorrent-nox-real,DIRECT"
-    - "PROCESS-NAME,rclone,DIRECT"
-    - "PROCESS-NAME,steam,DIRECT"
-    - "PROCESS-NAME,steamwebhelper,Default"
-    - "PROCESS-NAME,syncthing,DIRECT"
-    - "PROCESS-NAME,tailscaled,DIRECT"
-    - "RULE-SET,private,DIRECT"
-    - "RULE-SET,reject,REJECT"
-    - "RULE-SET,proxy,Default"
-    - "RULE-SET,direct,DIRECT"
-    - "RULE-SET,lancidr,DIRECT"
-    - "RULE-SET,cncidr,DIRECT"
-    - "GEOIP,lan,DIRECT"
-    - "GEOIP,cn,DIRECT"
-    - "PROCESS-NAME,wineserver,DIRECT"
-    - "MATCH,Default"
-#+end_src
-
 * modprobed-db
-#+begin_src conf :tangle ../gen/files/dot/.config/modprobed-db.conf
-  DBPATH="/home/hako/.config"
-  COLORS=light
-  IGNORE=(nvidia nvidia_drm nvidia_modeset nvidia_uvm)
-#+end_src
-
 #+begin_src scheme :noweb-ref home-mcron-job
   #~(job next-hour-from
          #$(file-append modprobed-db "/bin/modprobed-db storesilent"))
@@ -1481,173 +1191,11 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   mpv/dolly
 #+end_src
 
-#+begin_src conf :tangle ../gen/files/dot/.config/mpv/mpv.conf
-  blend-subtitles=video
-  deband=yes
-  fullscreen=yes
-  gpu-api=vulkan
-  hwdec=auto
-  interpolation=yes
-  profile=high-quality
-  scale=ewa_lanczossharp
-  screenshot-directory=~/Library/Pictures/MPV/
-  screenshot-template="%F %P"
-  sub-auto=fuzzy
-  tscale=oversample
-  video-sync=display-resample
-  vo=gpu-next
-#+end_src
-
 * nftables                                                   :Firewall:Proxy:
-#+begin_src nftables :tangle ../gen/files/plain/nftables-dorphine.conf
-  flush ruleset
-
-  table inet filter {
-      chain input {
-          type filter hook input priority 0; policy drop;
-
-          iifname lo accept \
-          comment "Accept any localhost traffic"
-
-          ct state { established, related } accept \
-          comment "Accept traffic originated from us"
-
-          ct state invalid drop \
-          comment "Drop invalid connections"
-
-          tcp dport 113 reject with icmpx type port-unreachable \
-          comment "Reject AUTH to make it fail fast"
-
-          # ICMPv4
-          ip protocol icmp icmp type {
-              echo-reply,              # type 0
-              destination-unreachable, # type 3
-              echo-request,            # type 8
-              time-exceeded,           # type 11
-              parameter-problem,       # type 12
-          } accept \
-          comment "Accept ICMP"
-
-          # ICMPv6
-          icmpv6 type {
-              destination-unreachable, # type 1
-              packet-too-big,          # type 2
-              time-exceeded,           # type 3
-              parameter-problem,       # type 4
-              echo-request,            # type 128
-              echo-reply,              # type 129
-          } accept \
-          comment "Accept basic IPv6 functionality"
-
-          icmpv6 type {
-              nd-router-solicit,   # type 133
-              nd-router-advert,    # type 134
-              nd-neighbor-solicit, # type 135
-              nd-neighbor-advert,  # type 136
-          } ip6 hoplimit 255 accept \
-          comment "Allow IPv6 SLAAC"
-
-          icmpv6 type {
-              mld-listener-query,     # type 130
-              mld-listener-report,    # type 131
-              mld-listener-reduction,  # type 132
-              mld2-listener-report,    # type 143
-          } ip6 saddr fe80::/10 accept \
-          comment "Allow IPv6 multicast listener discovery on link-local"
-
-          ip6 saddr fe80::/10 udp sport 547 udp dport 546 accept \
-          comment "Accept DHCPv6 replies from IPv6 link-local addresses"
-
-          udp dport { 4950, 4955 } accept
-          tcp dport 6695-6699 accept \
-          comment "Allow Warframe"
-
-          meta l4proto { tcp, udp } th dport 15308 accept \
-          comment "Allow qBittorrent"
-
-          udp dport 21027 accept \
-          comment "Allow Syncthing (for discovery broadcasts on IPv4 and multicasts on IPv6)"
-          meta l4proto { tcp, udp } th dport 22000 accept \
-          comment "Allow Syncthing (TCP and QUIC based sync protocol traffic)"
-
-          udp dport 41641 accept \
-          comment "Allow Tailscale"
-      }
-
-      chain forward {
-          type filter hook forward priority 0; policy drop;
-      }
-
-      chain output {
-          type filter hook output priority 0; policy accept;
-      }
-  }
-#+end_src
-
-#+begin_src conf :tangle ../gen/files/plain/nftables-dorphine.conf
-  table inet proxy {
-      set IPv4_RESERVED {
-          typeof ip daddr
-          flags interval
-          elements = {
-              0.0.0.0/8,
-              10.0.0.0/8,
-              100.64.0.0/10,
-              127.0.0.0/8,
-              169.254.0.0/16,
-              172.16.0.0/12,
-              192.0.0.0/24,
-              192.0.2.0/24,
-              192.88.99.0/24,
-              192.168.0.0/16,
-              198.18.0.0/15,
-              198.51.100.0/24,
-              203.0.113.0/24,
-              224.0.0.0/4,
-              240.0.0.0/4
-          }
-      }
-
-      set IPv6_RESERVED {
-          typeof ip6 daddr
-          flags interval
-          elements = {
-              ::/128,
-              ::1/128,
-              ::ffff:0:0:0/96,
-              64:ff9b::/96,
-              100::/64,
-              2001::/32,
-              2001:20::/28,
-              2001:db8::/32,
-              2002::/16,
-              fc00::/7,
-              fe80::/10,
-              ff00::/8
-          }
-      }
-
-      chain prerouting {
-          type filter hook prerouting priority mangle; policy accept;
-          ip daddr @IPv4_RESERVED return
-          ip6 daddr @IPv6_RESERVED return
-          meta l4proto { tcp, udp } tproxy to :7890 meta mark set 38417
-      }
-
-      chain output {
-          type route hook output priority mangle; policy accept;
-          ip daddr @IPv4_RESERVED return
-          ip6 daddr @IPv6_RESERVED return
-          meta skgid clash return
-          meta l4proto { tcp, udp } meta mark set 38417
-      }
-  }
-#+end_src
-
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
            (nftables-configuration
-            (ruleset (testament-file-object "nftables-dorphine.conf"))))
+            (ruleset (testament-file-object "nftables-dorphine.nft"))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
@@ -1670,14 +1218,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                                #$ip " rule del fwmark 38417 table 100 && "
                                #$ip " -6 route del local default dev lo table 100 && "
                                #$ip " -6 rule del fwmark 38417 table 100"))))))
-#+end_src
-
-* node
-#+begin_src conf :tangle ../gen/files/dot/.config/npm/npmrc
-  prefix=${XDG_DATA_HOME}/npm
-  cache=${XDG_CACHE_HOME}/npm
-  init-module=${XDG_CONFIG_HOME}/npm/config/npm-init.js
-  logs-dir=${XDG_STATE_HOME}/npm/logs
 #+end_src
 
 * ntp
@@ -1737,17 +1277,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
   adwaita-icon-theme
   hicolor-icon-theme
   qogir-icon-theme
-#+end_src
-
-#+begin_src conf :tangle ../gen/files/dot/.config/gtk-3.0/settings.ini
-  [Settings]
-  gtk-cursor-theme-name=Qogir
-  gtk-cursor-theme-size=24
-#+end_src
-
-#+begin_src conf :tangle ../gen/files/dot/.icons/default/index.theme
-  [icon theme]
-  Inherits=Qogir
 #+end_src
 
 * seatd
@@ -1921,13 +1450,6 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
           exec sway
       end
   end")
-#+end_src
-
-#+begin_src conf :tangle ../gen/files/dot/.config/xdg-desktop-portal/portals.conf
-  [preferred]
-  default=gtk
-  org.freedesktop.impl.portal.Screenshot=wlr
-  org.freedesktop.impl.portal.ScreenCast=wlr
 #+end_src
 
 * syncthing

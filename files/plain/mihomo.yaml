@@ -1,0 +1,145 @@
+# SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+allow-lan: true
+mode: "rule"
+log-level: "error"
+ipv6: true
+find-process-mode: "strict"
+external-controller: "127.0.0.1:9090"
+external-ui: "ui"
+external-ui-url: "https://github.com/MetaCubeX/metacubexd/archive/refs/heads/gh-pages.zip"
+
+profile:
+  store-selected: true
+
+unified-delay: true
+tcp-concurrent: true
+global-client-fingerprint: "chrome"
+
+geodata-mode: true
+geodata-loader: "standard"
+geo-auto-update: true
+geo-update-interval: 24
+geox-url:
+  geoip: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geoip.dat"
+  geosite: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/geosite.dat"
+  mmdb: "https://testingcf.jsdelivr.net/gh/MetaCubeX/meta-rules-dat@release/country.mmdb"
+  asn: "https://github.com/xishang0128/geoip/releases/download/latest/GeoLite2-ASN.mmdb"
+
+dns:
+  enable: true
+  prefer-h3: true
+  listen: 0.0.0.0:53
+  ipv6: true
+  nameserver-policy:
+    "geosite:cn,private":
+      - "https://doh.pub/dns-query"
+      - "https://1.12.12.12/dns-query"
+      - "https://120.53.53.53/dns-query"
+      - "tls://1.12.12.12"
+      - "tls://120.53.53.53"
+      - "https://dns.alidns.com/dns-query"
+      - "tls://dns.alidns.com"
+      - "tls://223.5.5.5"
+      - "tls://223.6.6.6"
+      - "tcp://114.114.114.114"
+      - "tcp://114.114.115.115"
+      - "udp://1.2.4.8"
+      - "udp://210.2.4.8"
+  nameserver:
+    - "https://1.1.1.1/dns-query#Default"
+    - "https://1.0.0.1/dns-query#Default"
+    - "tls://1.1.1.1#Default"
+    - "tls://1.0.0.1#Default"
+    - "tls://1dot1dot1dot1.cloudflare-dns.com#Default"
+    - "tls://one.one.one.one#Default"
+    - "https://dns.google/dns-query#Default"
+    - "tls://dns.google#Default"
+    - "https://146.112.41.2/dns-query#Default"
+    - "https://dns.quad9.net/dns-query#Default"
+    - "tls://dns.quad9.net#Default"
+  proxy-server-nameserver:
+    - "https://1.1.1.1/dns-query"
+    - "https://8.8.8.8/dns-query"
+    - "https://1.0.0.1/dns-query"
+    - "https://8.8.4.4/dns-query"
+
+sniffer:
+  enable: true
+  sniff:
+    HTTP:
+      ports: ["80", "8080-8880"]
+    TLS:
+      ports: ["443", "8443"]
+    QUIC:
+      ports: ["443", "8443"]
+
+tproxy-port: 7890
+
+proxy-groups:
+  - {
+      name: "Default",
+      type: "select",
+      proxies: ["All-Proxies", "Auto-Select", "DIRECT"],
+    }
+  - { name: "All-Proxies", <<: *use }
+  - { name: "Auto-Select", <<: *use, tolerance: 2, type: "url-test" }
+
+rule-providers:
+  reject:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/reject.txt"
+    path: "./ruleset/reject.yaml"
+    interval: 86400
+  proxy:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/proxy.txt"
+    path: "./ruleset/proxy.yaml"
+    interval: 86400
+  direct:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/direct.txt"
+    path: "./ruleset/direct.yaml"
+    interval: 86400
+  private:
+    type: "http"
+    behavior: "domain"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/private.txt"
+    path: "./ruleset/private.yaml"
+    interval: 86400
+  cncidr:
+    type: "http"
+    behavior: "ipcidr"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/cncidr.txt"
+    path: "./ruleset/cncidr.yaml"
+    interval: 86400
+  lancidr:
+    type: "http"
+    behavior: "ipcidr"
+    url: "https://cdn.jsdelivr.net/gh/Loyalsoldier/clash-rules@release/lancidr.txt"
+    path: "./ruleset/lancidr.yaml"
+    interval: 86400
+
+rules:
+  - "DOMAIN,us.download.nvidia.com,DIRECT"
+  - "PROCESS-NAME,.qbittorrent-nox-real,DIRECT"
+  - "PROCESS-NAME,rclone,DIRECT"
+  - "PROCESS-NAME,steam,DIRECT"
+  - "PROCESS-NAME,steamwebhelper,Default"
+  - "PROCESS-NAME,syncthing,DIRECT"
+  - "PROCESS-NAME,tailscaled,DIRECT"
+  - "RULE-SET,private,DIRECT"
+  - "RULE-SET,reject,REJECT"
+  - "RULE-SET,proxy,Default"
+  - "RULE-SET,direct,DIRECT"
+  - "RULE-SET,lancidr,DIRECT"
+  - "RULE-SET,cncidr,DIRECT"
+  - "GEOIP,lan,DIRECT"
+  - "GEOIP,cn,DIRECT"
+  - "PROCESS-NAME,wineserver,DIRECT"
+  - "MATCH,Default"

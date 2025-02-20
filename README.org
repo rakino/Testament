@@ -3,43 +3,52 @@
 
 #+TITLE: Testament - Personal dot(?)files
 
-* 目錄結構
-+ cfg/：按主機劃分的 Org 文件，用以生成對應 Guix 配置
-+ dep/：外部依賴，以 Git submodule 形式存放
-+ gen/：由本倉庫生成
-  - files/
-    + dot/：供 home-dotfiles-service-type 使用
-    + plain/：其中文件會在處理後使用
-  - modules/：供 Guix 配置使用的 Scheme 模塊
-  - scripts/：可執行腳本
-+ src/：結構大致與 gen 相同，包含獨立存放效果更好的內容
-+ .envrc：[[https://direnv.net/][direnv]] 配置
-+ .sops.yaml：[[https://getsops.io/][SOPS]] 配置
+This repository contains my dotfiles and Guix System literate configurations (with Guix Home configured via ~guix-home-service-type~).
 
-* 輔助腳本
-:PROPERTIES:
-:header-args: :mkdirp yes :shebang "#!/usr/bin/env bash"
-:END:
-** find-unused-module
-#+begin_src shell :tangle gen/scripts/find-unused-module
-  find "${testament_path}/"{gen,src} -name '*.scm' -print0 |
-      guix shell guile-next -- xargs -0 guild compile -Wunused-module
-#+end_src
+I'm also managing Guix channels manually, which makes it easier to maintain a temporary Guix fork and avoids recompiling all Guix modules for trivial updates.  See =Usage= below and take a look at [[file:.envrc][.envrc]] and [[file:Makefile][Makefile]] if you are interested in my approach.
 
-** reconfigure
-#+begin_src shell :tangle gen/scripts/reconfigure
-  mount -v /efi
-  guix shell btrbk -- btrbk run &&
-      guix system reconfigure "${testament_path}/gen/modules/dorphine.scm" "$@"
-  umount -v /efi
+** Structure
++ [[file:config][config]]: Guix System configurations.
++ [[file:external][external]]: External dependencies (Guix channels) saved as Git submodules.
++ [[file:modules][modules]]: Scheme modules.
++ [[file:files/blobs][files/blobs]]: Private files.
++ [[file:files/dotfiles][files/dotfiles]]: Dotfiles for ~home-dotfiles-service-type~.
++ [[file:files/plain][files/plain]]: Files to be referenced in Guix configurations.
++ [[file:.envrc][.envrc]]: direnv configuration to manage environment variables.
++ [[file:.sops.yaml][.sops.yaml]] -> [[file:files/plain/sops.yaml][files/plain/sops.yaml]]: SOPS configuration for secrets management.
 
-  user=${SUDO_USER:-${USER}}
-  chown --no-dereference --recursive "${user}" "/home/${user}/.cache/"{guile,guix}
-#+end_src
+** Usage
+This section is for demonstration purpose only, as some of the submodules are private.
 
-** remove-go
-#+begin_src shell :tangle gen/scripts/remove-go
-  find . -name '*.go' -print0 |
-          xargs -0 grep -RZl "<$1>" |
-          xargs -0 rm -v
-#+end_src
+Dependencies:
++ direnv
++ emacs
++ guix
++ sops (invoked by ~get-sops-secret~ in [[file:modules/testament/common.scm][~(testament common)~]])
++ sudo
+
+1. Clone repository and set up direnv, channels (other than the =guix= channel to be compiled next) will be available to =guix= command.
+  #+begin_src shell
+  git clone --recursive https://git.boiledscript.com/hako/Testament.git
+  cd Testament
+  direnv allow
+  #+end_src
+
+2. Authenticate commits.
+  #+begin_src shell
+  make authenticate
+  #+end_src
+
+3. Compile Guix and reload direnv, =guix= command and channel will be replaced to ours.
+  #+begin_src shell
+  make compile-guix
+  direnv reload
+  #+end_src
+
+4. See [[file:Makefile][Makefile]] for all available phony targets.
+
+5. In case of ABI incompatibility in updates, remove compiled object files, then follow step 3 to compile Guix again.
+  #+begin_src shell
+  make clean
+  direnv reload
+  #+end_src

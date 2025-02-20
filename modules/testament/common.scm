@@ -26,13 +26,12 @@
   (getenv "testament_path"))
 
 (define (testament-find-file name)
-  "Find a file in the \"files\" directory (fallback to \"blobs\") of Testament
-repository.  Return a string of path to the file, or #f if file not found."
+  "Find file NAME under \"files/plain\" directory (fallback to \"files/blobs\")
+of Testament repository.  Return file path as a string, or #f when not found."
   (or (search-path
-       (map (cut string-append testament-path <>)
-            '("/gen/files/plain"
-              "/src/files/plain"
-              "/src/modules/blobs"))
+       (map (cut in-vicinity testament-path <>)
+            '("files/plain"
+              "files/blobs"))
        name)
       (leave (G_ "file '~a' not found.~%") name)))
 
