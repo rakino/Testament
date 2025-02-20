@@ -402,6 +402,11 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
                     (hooks '((after-init . electric-pair-mode))))
 
                    (emacs-package
+                    (name 'electric)
+                    (extra-after-load
+                     (list #%(setopt electric-indent-inhibit t))))
+
+                   (emacs-package
                     (name 'emacs)
                     (options
                      '((blink-cursor-mode . #f)
@@ -438,9 +443,6 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
                    (emacs-package
                     (name 'simple)
                     (options
-                     ;; TODO
-                     ;; https://pement.org/emacs_tabs.htm
-                     ;; https://github.com/jcsalomon/smarttabs
                      '((indent-tabs-mode . #f)
                        (read-extended-command-predicate
                         . command-completion-default-include-p)))
