@@ -9,56 +9,16 @@
   #:use-module (guix git-download)
   #:use-module (guix packages)
 
-  #:use-module (guix build-system copy)
   #:use-module (guix build-system emacs)
-  #:use-module (guix build-system pyproject)
 
-  #:use-module (gnu packages android)
-  #:use-module (gnu packages bash)
-  #:use-module (gnu packages chromium)
   #:use-module (gnu packages emacs-xyz)
-  #:use-module (gnu packages fonts)
   #:use-module (gnu packages rust-apps)
-  #:use-module (gnu packages video)
-  #:use-module (nongnu packages game-client)
-  #:use-module (nonguix multiarch-container))
+  #:use-module (gnu packages video))
 
 
 ;;;
 ;;; Packages
 ;;;
-
-(define-public better-adb-sync
-  (package
-    (name "better-adb-sync")
-    (version "1.4.0")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/jb2170/better-adb-sync")
-             (commit (string-append "v" version))))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "06ri9a8r0a4i9ih0cqdj5j19dbkbqwd5m5g8ch220rh4firaj4w2"))))
-    (build-system pyproject-build-system)
-    (arguments
-     (list #:tests? #f                  ;No tests.
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'unpack 'fix-path
-                 (lambda* (#:key inputs #:allow-other-keys)
-                   (let ((adb-path (search-input-file inputs "bin/adb")))
-                     (substitute* "src/BetterADBSync/argparsing.py"
-                       (("'adb' ie whatever is on path")
-                        (string-append "'" adb-path "'"))
-                       (("\"adb\"")
-                        (string-append "\"" adb-path "\"")))))))))
-    (inputs (list adb))
-    (home-page "")
-    (synopsis "")
-    (description "")
-    (license license:asl2.0)))
 
 (define-public emacs-eat/dolly
   (hidden-package
@@ -154,43 +114,3 @@ counterpart is unavailable.")
      (append
       (package-propagated-inputs mpv)
       (package-inputs mpv)))))
-
-(define-public steam-nvidia/dolly
-  (hidden-package
-   (nonguix-container->package
-    (nonguix-container
-     (inherit steam-nvidia-container)
-     (union64
-      (fhs-union
-       (modify-inputs
-        (@@ (nongnu packages game-client) steam-nvidia-container-libs)
-        (prepend font-chiron-hei-hk
-                 font-chiron-sung-hk
-                 font-google-noto-emoji))
-       #:name "fhs-union-64"))))))
-
-(define-public ungoogled-chromium/dolly
-  (let ((base ungoogled-chromium))
-    (hidden-package
-     (package
-       (inherit base)
-       (source #f)
-       (build-system copy-build-system)
-       (arguments
-        (list #:phases
-              #~(modify-phases %standard-phases
-                  (delete 'unpack)
-                  (replace 'install
-                    (lambda* (#:key inputs #:allow-other-keys)
-                      (let ((file "chromium"))
-                        (call-with-output-file file
-                          (lambda (port)
-                            (format port "#!~a
-exec ~a --ozone-platform-hint=auto $@~%"
-                                    (search-input-file inputs "bin/bash")
-                                    (search-input-file inputs "bin/chromium"))))
-                        (chmod file #o555)
-                        (install-file file (string-append #$output "/bin"))))))))
-       (inputs (list bash-minimal base))
-       (propagated-inputs '())
-       (native-inputs '())))))

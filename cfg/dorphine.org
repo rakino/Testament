@@ -94,6 +94,7 @@
     #:use-module (gnu packages wm)
     #:use-module (gnu packages xdisorg)
     #:use-module (nongnu packages fonts)
+    #:use-module (nongnu packages game-client)
     #:use-module (nongnu packages linux)
     #:use-module (nongnu packages nvidia)
     #:use-module (rosenthal packages admin)
@@ -302,9 +303,9 @@
 #+end_src
 
 #+begin_src scheme :noweb-ref home-fish-config
-  (plain-file
+  (mixed-text-file
    "fish-config-atuin"
-   "atuin init fish | source")
+   atuin-bin "/bin/atuin init fish | source")
 #+end_src
 
 * bluez                                                   :Firmware:Wireless:
@@ -366,16 +367,15 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 
 * direnv
 #+begin_src scheme :noweb-ref home-fish-config
-  (plain-file
+  (mixed-text-file
    "fish-config-direnv"
-   "direnv hook fish | source")
+   direnv "/bin/direnv hook fish | source")
 #+end_src
 
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
    (name 'envrc)
    (package emacs-envrc)
-   (extra-packages (list direnv))
    (hooks '((after-init . envrc-global-mode))))
 #+end_src
 
@@ -1778,7 +1778,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 
 * steam
 #+begin_src scheme :noweb-ref home-package
-  steam-nvidia/dolly
+  steam-nvidia
 #+end_src
 
 #+begin_src scheme :noweb-ref home-environment-variable
@@ -1954,12 +1954,8 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 * zoxide
-#+begin_src scheme :noweb-ref home-package
-  zoxide
-#+end_src
-
 #+begin_src scheme :noweb-ref home-fish-config
-  (plain-file
+  (mixed-text-file
    "fish-config-zoxide"
-   "zoxide init --cmd cd fish | source")
+   zoxide "/bin/zoxide init --cmd cd fish | source")
 #+end_src
