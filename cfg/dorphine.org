@@ -400,6 +400,7 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
                    emacs-no-littering
                    emacs-zig-mode))
             (package-serializer %emacs-use-package-serializer)
+            (native-compile? #f)
             (default-init
               (emacs-configuration
                (extra-init-files
