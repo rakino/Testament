@@ -908,7 +908,11 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
    (extra-after-load
     (list ;; FIXME: These modes aren't loaded automatically.
           #%(require 'cmake-ts-mode)
+          #%(require 'dockerfile-ts-mode)
           #%(require 'go-ts-mode)
+          #%(require 'rust-ts-mode)
+          #%(require 'typescript-ts-mode)
+          #%(require 'yaml-ts-mode)
           ;; https://github.com/renzmann/treesit-auto/issues/32#issuecomment-1826270447
           #%(defun hako/get-tree-sitter-mode (mode)
               (treesit-auto--set-major-remap)
