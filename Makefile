@@ -35,15 +35,14 @@ load_dirs = \
 objects = $(subst .scm,.go,$(shell $(FIND) $(load_dirs) -name '*.scm'))
 
 .PHONY: compile compile-guix compile-deps
-compile: config/dorphine.go config/gokuraku.go
+compile: compile-deps config/dorphine.go config/gokuraku.go
 compile-guix:
 	@[ -x external/guix/scripts/guix ] || \
 		(cd external/guix && ./bootstrap && ./configure)
 	$(MAKE) -C external/guix
 
 compile-deps: compile-guix $(objects)
-config/dorphine.go: files/blobs/dorphine.yaml compile-deps
-config/gokuraku.go: files/blobs/gokuraku.yaml compile-deps
+config/dorphine.go config/gokuraku.go: $(objects)
 
 .PHONY: build build-dorphine build-gokuraku
 build: build-dorphine build-gokuraku

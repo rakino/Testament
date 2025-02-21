@@ -18,7 +18,7 @@ I'm also managing Guix channels manually, which makes it easier to maintain a te
 + [[file:.sops.yaml][.sops.yaml]] -> [[file:files/plain/sops.yaml][files/plain/sops.yaml]]: SOPS configuration for secrets management.
 
 ** Usage
-This section is for demonstration purpose only, as some of the submodules are private.
+This section is for demonstration purpose only, as some submodules are private.
 
 Dependencies:
 + direnv
@@ -27,7 +27,7 @@ Dependencies:
 + sops (invoked by ~get-sops-secret~ in [[file:modules/testament/common.scm][~(testament common)~]])
 + sudo
 
-1. Clone repository and set up direnv, channels (other than the =guix= channel to be compiled next) will be available to =guix= command.
+1. Clone repository and set up direnv, external channels (except =guix=, which will be compiled later) will be available to system =guix= command.
   #+begin_src shell
   git clone --recursive https://git.boiledscript.com/hako/Testament.git
   cd Testament
@@ -47,7 +47,7 @@ Dependencies:
 
 4. See [[file:Makefile][Makefile]] for all available phony targets.
 
-5. In case of ABI incompatibility in updates, remove compiled object files, then follow step 3 to compile Guix again.
+5. In case of ABI incompatibility from updates, remove compiled object files and follow step 3 to compile Guix again.
   #+begin_src shell
   make clean
   direnv reload
