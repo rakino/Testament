@@ -372,7 +372,8 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
            (home-emacs-configuration
             (emacs emacs-pgtk)
             (extra-packages
-             (list emacs-debbugs
+             (list emacs-daemons
+                   emacs-debbugs
                    emacs-gcmh
                    emacs-guix
                    emacs-markdown-mode
