@@ -44,10 +44,10 @@ compile-guix:
 compile-deps: compile-guix $(objects)
 config/dorphine.go config/gokuraku.go: $(objects)
 
-.PHONY: build build-dorphine build-gokuraku
+.PHONY: build
 build: build-dorphine build-gokuraku
-build-dorphine build-gokuraku: config/dorphine.scm config/gokuraku.scm compile-deps
-	$(GUIX) system build $(subst build-,config/,$@).scm $(ARGS)
+build-%: config/%.scm compile-deps
+	$(GUIX) system build $< $(ARGS)
 
 .PHONY: reconfigure
 reconfigure: config/dorphine.scm compile-deps
