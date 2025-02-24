@@ -39,7 +39,7 @@ compile: compile-deps config/dorphine.go config/gokuraku.go
 compile-guix:
 	@[ -x external/guix/scripts/guix ] || \
 		(cd external/guix && ./bootstrap && ./configure)
-	$(MAKE) -C external/guix --no-print-directory
+	$(MAKE) -C external/guix --no-print-directory make-go
 
 compile-deps: compile-guix $(objects)
 config/dorphine.go config/gokuraku.go: $(objects)
