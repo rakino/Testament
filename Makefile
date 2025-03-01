@@ -34,32 +34,29 @@ load_dirs = \
 
 objects = $(subst .scm,.go,$(shell $(FIND) $(load_dirs) -name '*.scm'))
 
-.PHONY: compile compile-guix compile-deps
-compile: compile-deps config/dorphine.go config/gokuraku.go
+.PHONY: compile compile-guix
+compile: compile-guix $(objects)
 compile-guix:
 	@[ -x external/guix/scripts/guix ] || \
 		(cd external/guix && ./bootstrap && ./configure)
 	$(MAKE) -C external/guix --no-print-directory make-go
 
-compile-deps: compile-guix $(objects)
-config/dorphine.go config/gokuraku.go: $(objects)
-
 .PHONY: build
 build: build-dorphine build-gokuraku
-build-%: config/%.scm compile-deps
+build-%: config/%.scm compile
 	$(GUIX) system build $< $(ARGS)
 
 .PHONY: reconfigure
-reconfigure: config/dorphine.scm compile-deps
+reconfigure: config/dorphine.scm compile
 	$(SUDO) $(GUIX) system reconfigure $< $(ARGS)
 
 .PHONY: deploy
-deploy: config/gokuraku.scm compile-deps
+deploy: config/gokuraku.scm compile
 	$(GUIX) deploy files/blobs/deploy $(ARGS)
 
 .PHONY: ares
 # Load reader extensions before starting nREPL server.
-ares: compile-deps
+ares: compile
 	@$(GUIX) shell guile-next guile-ares-rs -- guile -c \
 	"(begin \
 	   (use-modules (guix gexp) \
@@ -73,5 +70,5 @@ authenticate:
 
 .PHONY: clean
 clean:
-	-$(RM) --recursive config/*.go config/*.scm $(objects)
+	-$(RM) --recursive config/*.scm $(objects)
 	$(MAKE) -C external/guix clean
