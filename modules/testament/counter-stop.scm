@@ -3,16 +3,8 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (testament counter-stop)
-  #:use-module ((testament common) #:select (delete-package-from-list))
-  #:use-module ((srfi srfi-1) #:select (fold))
   #:use-module (guix channels)
   #:use-module ((guix gexp) #:select (plain-file))
-  #:use-module ((gnu system) #:select (%base-packages))
-  #:use-module ((gnu packages compression) #:select (zstd))
-  #:use-module ((gnu packages gnupg) #:select (gnupg))
-  #:use-module ((gnu packages rsync) #:select (rsync))
-  #:use-module ((gnu packages ssh) #:select (mosh openssh-sans-x))
-  #:use-module ((sops packages sops) #:select (sops))
   #:export (%channel-guix
             %channel-guixcn
             %channel-nonguix
@@ -23,7 +15,6 @@
             %guix-authorized-key-gokuraku
             %guix-authorized-key-nonguix
 
-            %testament-base-packages
             %testament-xdg-base-directory-env-vars)
   #:re-export (%default-channels
                %default-guix-channel))
@@ -114,20 +105,6 @@
 ;;; Variables
 ;;;
 
-
-(define %testament-base-packages
-  (cons* gnupg
-         mosh
-         openssh-sans-x
-         rsync
-         sops
-         zstd
-         (fold delete-package-from-list
-               %base-packages
-               '(;; From %base-packages-interactive
-                 "mg" "nvi"
-                 ;; From %base-packages-networking
-                 "isc-dhcp" "iw" "wireless-tools"))))
 
 ;; Source: <https://wiki.archlinux.org/title/XDG_Base_Directory>
 (define %testament-xdg-base-directory-env-vars
