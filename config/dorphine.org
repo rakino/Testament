@@ -665,37 +665,6 @@ To use NVK, mesa should be installed into a profile.
 
 [[file:../files/plain/niri.kdl][niri.kdl]]
 
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'swaybg
-      home-shepherd-service-type
-    (list (shepherd-service
-            (provision '(swaybg))
-            (requirement '(graphical-session wayland-display))
-            (start
-             #~(make-forkexec-constructor
-                (list #$(file-append swaybg "/bin/swaybg")
-                      "--image" #$(testament-file-object "125905835_p0.png")
-                      "--mode" "fill")))
-            (stop #~(make-kill-destructor)))))
-#+end_src
-
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'gammastep
-      home-shepherd-service-type
-    (list (shepherd-service
-            (provision '(gammastep))
-            (requirement '(graphical-session wayland-display home-sops-secrets))
-            (modules '((ice-9 textual-ports)
-                       (shepherd support)))
-            (start
-             #~(make-forkexec-constructor
-                `(#$(file-append gammastep "/bin/gammastep")
-                  ,@(call-with-input-file
-                        (in-vicinity %user-runtime-dir "secrets/gammastep")
-                      (compose string-tokenize get-string-all)))))
-            (stop #~(make-kill-destructor)))))
-#+end_src
-
 ** light
 #+begin_src scheme :noweb-ref group
   "video"
@@ -1530,7 +1499,10 @@ Required for using Rime in minibuffer.
 [[file:../files/dotfiles/.config/wanderlust/folders][~/.config/wanderlust/folders]]
 * Miscellaneous
 #+begin_src scheme :noweb-ref module
+  #:use-module (gnu system hurd)
   #:use-module (gnu services mcron)
+  #:use-module (gnu services ssh)
+  #:use-module (gnu services virtualization)
   #:use-module (rosenthal services bittorrent)
   #:use-module (rosenthal services file-systems)
   #:use-module (gnu home services mcron)
@@ -1545,6 +1517,9 @@ Required for using Rime in minibuffer.
   #:use-module (gnu packages mail)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu packages video)
+  #:use-module (gnu packages wm)
+  #:use-module (gnu packages xdisorg)
   #:use-module (nongnu packages game-client)
 #+end_src
 
@@ -1568,12 +1543,6 @@ Required for using Rime in minibuffer.
 [[file:../files/plain/btrbk-dorphine.conf][btrbk-dorphine.conf]]
 
 ** childhurd
-#+begin_src scheme :noweb-ref module
-  #:use-module (gnu system hurd)
-  #:use-module (gnu services ssh)
-  #:use-module (gnu services virtualization)
-#+end_src
-
 #+begin_src scheme :noweb yes :noweb-ref service
   (service hurd-vm-service-type
     (hurd-vm-configuration
@@ -1608,6 +1577,24 @@ Required for using Rime in minibuffer.
                          ("hako" ,hako.pub)))))))))
 #+end_src
 
+** gammastep
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'gammastep
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(gammastep))
+            (requirement '(graphical-session wayland-display home-sops-secrets))
+            (modules '((ice-9 textual-ports)
+                       (shepherd support)))
+            (start
+             #~(make-forkexec-constructor
+                `(#$(file-append gammastep "/bin/gammastep")
+                  ,@(call-with-input-file
+                        (in-vicinity %user-runtime-dir "secrets/gammastep")
+                      (compose string-tokenize get-string-all)))))
+            (stop #~(make-kill-destructor)))))
+#+end_src
+
 ** git
 #+begin_src scheme :noweb-ref home-package
   git
@@ -1624,6 +1611,19 @@ Required for using Rime in minibuffer.
 #+end_src
 
 [[file:../files/plain/mbsync.conf][mbsync.conf]]
+
+** jellyfin-mpv-shim
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'jellyfin-mpv-shim
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(jellyfin-mpv-shim))
+            (requirement '(graphical-session x11-display))
+            (start
+             #~(make-forkexec-constructor
+                '(#$(file-append jellyfin-mpv-shim "/bin/jellyfin-mpv-shim"))))
+            (stop #~(make-kill-destructor)))))
+#+end_src
 
 ** libfido2
 #+begin_src scheme :noweb-ref group
@@ -1717,6 +1717,21 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   (udev-rule "60-controller-permission.rules" "\
   KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
   MODE=\"0660\", GROUP=\"users\"")
+#+end_src
+
+** swaybg
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'swaybg
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(swaybg))
+            (requirement '(graphical-session wayland-display))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append swaybg "/bin/swaybg")
+                      "--image" #$(testament-file-object "125905835_p0.png")
+                      "--mode" "fill")))
+            (stop #~(make-kill-destructor)))))
 #+end_src
 
 ** syncthing
