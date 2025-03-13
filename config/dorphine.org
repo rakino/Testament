@@ -833,8 +833,13 @@ To use NVK, mesa should be installed into a profile.
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages rust)
   #:use-module (gnu packages shells)
   #:use-module (gnu packages tree-sitter)
+  #:use-module (gnu packages zig)
+  #:use-module (gnu packages zig-xyz)
   #:use-module (rosenthal packages tree-sitter)
 #+end_src
 
@@ -1028,20 +1033,41 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
 #+end_src
 
 *** emacs eglot
+#+begin_src scheme :noweb-ref home-package
+  python-next
+  rust
+  `(,rust "cargo")
+  zig
+#+end_src
+
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
     (name 'eglot)
     (extra-after-load
-     (list #%(add-to-list
-              'eglot-server-programs
-              `((c-mode c-ts-mode c++-mode c++-ts-mode)
-                . (#$(file-append ccls "/bin/ccls")
-                   ,(concat "--init="
-                            (json-serialize
-                             `((cache
-                                . ((directory
-                                    . ,(concat (getenv "XDG_CACHE_HOME")
-                                               "/ccls-cache")))))))))))))
+     (list #%(dolist
+              (program
+               `(((rust-ts-mode rust-mode)
+                  . (#$(file-append rust-analyzer "/bin/rust-analyzer")))
+                 ((python-mode python-ts-mode)
+                  . (#$(file-append python-lsp-server "/bin/pylsp")))
+                 ((c-mode c-ts-mode c++-mode c++-ts-mode)
+                  . (#$(file-append ccls "/bin/ccls")
+                     ,(concat "--init="
+                              (json-serialize
+                               `((cache
+                                  . ((directory
+                                      . ,(concat (getenv "XDG_CACHE_HOME")
+                                                 "/ccls-cache")))))))))
+                 ((zig-mode)
+                  . (#$(file-append zig-zls "/bin/zls")))))
+              (add-to-list 'eglot-server-programs program))))
+    (hooks
+     (map (cut cons <> 'eglot-ensure)
+          '(                              ;XXX: Indentation.
+            rust-ts-mode rust-mode
+            python-mode python-ts-mode
+            c-mode c-ts-mode c++-mode c++-ts-mode
+            zig-mode))))
 #+end_src
 
 *** emacs-macrostep
