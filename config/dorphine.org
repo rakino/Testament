@@ -895,7 +895,8 @@ For consistency, use this field order:
   (emacs-package
     (name 'emacs)
     (options
-     '((auth-sources . "~/.local/share/authinfo.gpg")
+     '((auth-source-gpg-encrypt-to . ("220F98D95E86204C0036DA7B6DEC4360408B4185"))
+       (auth-sources . ("~/.local/share/authinfo.gpg"))
        (blink-cursor-mode . #f)
        (browse-url-firefox-program . "librewolf")
        (completion-ignore-case . #t)
