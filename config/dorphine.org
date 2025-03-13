@@ -1148,7 +1148,7 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                      (eshell t))))))
     (extra-after-load
      (list #%(dolist
-              (module '(eshell-elecslash eshell-smart eshell-xtra))
+              (module '(eshell-elecslash eshell-smart eshell-tramp eshell-xtra))
               (add-to-list 'eshell-modules-list module t))
            #%(defalias 'eshell/v 'eshell-exec-visual)))
     (keys-global '(("s-t" . hako/eshell)))
