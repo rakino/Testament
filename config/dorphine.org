@@ -799,6 +799,7 @@ To use NVK, mesa should be installed into a profile.
 * Emacs
 #+begin_src scheme :noweb-ref module
   #:use-module (gnu home services emacs)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages cpp)
   #:use-module (gnu packages emacs)
   #:use-module (gnu packages emacs-xyz)
@@ -806,6 +807,7 @@ To use NVK, mesa should be installed into a profile.
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rust)
   #:use-module (gnu packages shells)
+  #:use-module (gnu packages shellutils)
   #:use-module (gnu packages tree-sitter)
   #:use-module (gnu packages zig)
   #:use-module (gnu packages zig-xyz)
@@ -914,9 +916,21 @@ Arei requires a nREPL server, which can be started with:
   guix shell guile-next guile-ares-rs -- guile -c '((@ (ares server) run-nrepl-server))'
 #+end_src
 
-If reader extensions are needed, relevant modules should be loaded before starting the server.  See =ares= target in Makefile for example.
+Load paths are inherited from the server's environment.  If reader extensions are needed, relevant modules should be loaded before starting the server.  See =ares= target in Makefile for example.
 
-Load paths are inherited from the server's environment.  Not setting a Guix service here for flexibility.
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'ares-rs
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(ares))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append direnv "/bin/direnv") "exec"
+                      "/home/hako/Workspace/Testament"
+                      #$(file-append gnu-make "/bin/make") "ares" "-C"
+                      "/home/hako/Workspace/Testament")))
+            (stop #~(make-kill-destructor)))))
+#+end_src
 
 Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffer-location= but Citre expects =xref-file-location=.
 #+begin_src scheme :noweb-ref emacs-package
@@ -940,6 +954,8 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                              (when-let* ((loc (hako/arei-xref--make-xref-loc identifier)))
                                         (list (xref-make identifier loc))))))))
 #+end_src
+
+In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to connect to the server.
 
 *** emacs-citre
 #+begin_src scheme :noweb-ref emacs-package
