@@ -1525,6 +1525,7 @@ Required for using Rime in minibuffer.
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services syncthing)
   #:use-module (gnu packages android)
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages browser-extensions)
   #:use-module (gnu packages games)
@@ -1600,14 +1601,12 @@ Required for using Rime in minibuffer.
     (list (shepherd-service
             (provision '(gammastep))
             (requirement '(graphical-session wayland-display home-sops-secrets))
-            (modules '((ice-9 textual-ports)
-                       (shepherd support)))
             (start
              #~(make-forkexec-constructor
-                `(#$(file-append gammastep "/bin/gammastep")
-                  ,@(call-with-input-file
-                        (in-vicinity %user-runtime-dir "secrets/gammastep")
-                      (compose string-tokenize get-string-all)))))
+                (list #$(file-append bash-minimal "/bin/sh") "-c"
+                      (string-append
+                       #$gammastep "/bin/gammastep "
+                       "$(cat $XDG_RUNTIME_DIR/secrets/gammastep)"))))
             (stop #~(make-kill-destructor)))))
 #+end_src
 
