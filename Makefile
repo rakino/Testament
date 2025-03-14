@@ -7,7 +7,6 @@ ARGS  := --verbosity=1
 # Required from host environment.
 EMACS := emacs
 GUIX  := guix
-SUDO  := sudo --preserve-env
 
 # Available in guix shell environment, set up direnv to load.
 FIND  := find
@@ -48,7 +47,7 @@ build-%: config/%.scm compile
 
 .PHONY: reconfigure
 reconfigure: config/dorphine.scm compile
-	$(SUDO) $(GUIX) system reconfigure $< $(ARGS)
+	$(GUIX) system reconfigure $< $(ARGS)
 
 .PHONY: deploy
 deploy: config/gokuraku.scm compile

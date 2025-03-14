@@ -25,7 +25,6 @@ Dependencies:
 + emacs
 + guix
 + sops (invoked by ~get-sops-secret~ in [[file:modules/testament/common.scm][~(testament common)~]])
-+ sudo
 
 1. Clone repository and set up direnv, external channels (except =guix=, which will be compiled later) will be available to system =guix= command.
   #+begin_src shell
