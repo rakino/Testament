@@ -282,13 +282,32 @@ https://github.com/fishinthecalculator/sops-guix
 * Kernel
 #+begin_src scheme :noweb-ref module
   #:use-module (ice-9 format)
+  #:use-module (guix packages)
+  #:use-module (guix download)
+  #:use-module (gnu packages linux)
   #:use-module (nongnu system linux-initrd)
   #:use-module (nongnu packages linux)
 #+end_src
 
 #+name: kernel
 #+begin_src scheme
-  linux-6.13
+  (customize-linux
+   #:name "linux-dorphine"
+   #:linux linux-6.13
+   #:source
+   (origin
+     (inherit (package-source linux-6.13))
+     (patches
+      (list (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://patchwork.kernel.org/project/bluetooth/patch/"
+                    "20241121180742.156230-1-greyxor@protonmail.com"
+                    "/raw/"))
+              (file-name "btusb-wcn785x.patch")
+              (sha256
+               (base32
+                "13mx0skz9sv0lijzhqsg0ysan4yghrdbwwrs0047rm69h2q0fkn7")))))))
 #+end_src
 
 #+name: firmware
