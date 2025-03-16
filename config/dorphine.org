@@ -846,7 +846,6 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
       (extra-packages
        (list emacs-gcmh
              emacs-no-littering
-             emacs-daemons
              emacs-debbugs
              emacs-markdown-mode
              emacs-nftables-mode
@@ -1401,6 +1400,14 @@ Required for using Rime in minibuffer.
 #+end_src
 
 ** Miscellaneous
+*** emacs-daemons
+#+begin_src scheme :noweb-ref emacs-package
+  (emacs-package
+    (name 'daemons)
+    (package emacs-daemons)
+    (options '((daemons-list-fill-frame . #t))))
+#+end_src
+
 *** emacs dired
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
