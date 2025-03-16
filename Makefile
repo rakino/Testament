@@ -14,13 +14,9 @@ GIT   := git
 GUILD := guild
 
 %.scm: %.org
-	@$(EMACS) -Q --batch --eval \
-	"(progn \
-	   (require 'ob-tangle) \
-	   (setopt org-babel-load-languages '((shell . t)) \
-	           org-confirm-babel-evaluate nil) \
-	   (with-current-buffer (find-file-noselect \"$<\") \
-	     (org-babel-tangle)))"
+	@$(EMACS) -Q --batch \
+	--eval "(require 'ob-tangle)" \
+	--eval "(org-babel-tangle-file \"$<\")"
 
 %.go: %.scm
 	$(GUILD) compile --output=$@ $<
