@@ -1124,90 +1124,6 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
             tex-mode))))
 #+end_src
 
-** Terminal Emulation & Shell
-*** emacs-eat
-#+begin_src scheme :noweb-ref emacs-package
-  (emacs-package
-    (name 'eat)
-    (package emacs-eat)
-    (hooks '((eshell-load . eat-eshell-visual-command-mode))))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (sudoers-file
-       (plain-file
-        "sudoers"
-        (string-append
-         (plain-file-content %sudoers-specification)
-         "Defaults env_keep += \"TERMINFO\"")))))
-#+end_src
-
-*** emacs-envrc
-#+begin_src scheme :noweb-ref emacs-package
-  (emacs-package
-    (name 'envrc)
-    (package emacs-envrc)
-    (hooks '((after-init . envrc-global-mode))))
-#+end_src
-
-*** emacs eshell
-#+begin_src scheme :noweb-ref emacs-package
-  (emacs-package
-    (name 'eshell)
-    (options
-     '((eshell-review-quick-commands . not-even-short-output)
-       (eshell-smart-space-goes-to-end . #f)))
-    (extra-init
-     (list #%(require 'esh-mode)          ;eshell-mode-map
-           #%(require 'em-rebind)         ;eshell-delchar-or-maybe-eof
-           #%(defun hako/eshell ()
-               (interactive)
-               (let* ((parent
-                       (if (buffer-file-name)
-                           (file-name-directory (buffer-file-name))
-                           default-directory))
-                      (name (car (last (split-string parent "/" t))))
-                      (eshell-buffer-name (concat "*eshell: " name "*"))
-                      (eshell-buffer (get-buffer eshell-buffer-name)))
-                 (if (and eshell-buffer (not current-prefix-arg))
-                     (pop-to-buffer eshell-buffer)
-                     (eshell t))))))
-    (extra-after-load
-     (list #%(dolist
-              (module '(eshell-elecslash eshell-smart eshell-xtra))
-              (add-to-list 'eshell-modules-list module t))
-           #%(defalias 'eshell/v 'eshell-exec-visual)))
-    (keys-global '(("s-t" . hako/eshell)))
-    (keys-local
-     (list (emacs-keymap
-             (name 'eshell-mode-map)
-             (keys '(("C-d" . eshell-delchar-or-maybe-eof)))))))
-#+end_src
-
-*** emacs-eshell-atuin
-#+begin_src scheme :noweb-ref emacs-package
-  (emacs-package
-    (name 'eshell-atuin)
-    (package emacs-eshell-atuin)
-    (hooks '((eshell-mode . eshell-atuin-mode)))
-    (keys-local
-     (list (emacs-keymap
-             (name 'eshell-hist-mode-map)
-             (keys '(("C-c C-l" . eshell-atuin-history)
-                     ("M-r" . eshell-atuin-history)))))))
-#+end_src
-
-*** emacs-eshell-syntax-highlighting
-#+begin_src scheme :noweb-ref emacs-package
-  (emacs-package
-    (name 'eshell-syntax-highlighting)
-    (package emacs-eshell-syntax-highlighting)
-    (hooks '((after-init . eshell-syntax-highlighting-global-mode))))
-#+end_src
-
 ** Appearance & Interface
 *** emacs-adaptive-wrap
 #+begin_src scheme :noweb-ref emacs-package
@@ -1426,6 +1342,20 @@ Required for using Rime in minibuffer.
        (dired-vc-rename-file . #t))))
 #+end_src
 
+*** emacs-envrc
+#+begin_src scheme :noweb-ref emacs-package
+  (emacs-package
+    (name 'envrc)
+    (package emacs-envrc)
+    (hooks '((after-init . envrc-global-mode))))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-fish-config
+  (mixed-text-file
+   "fish-config-direnv"
+   direnv "/bin/direnv hook fish | source")
+#+end_src
+
 *** emacs-magit
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
@@ -1464,6 +1394,63 @@ Required for using Rime in minibuffer.
        (rime-title . "Rime")
        (rime-posframe-properties . (:internal-border-width 1))
        (rime-posframe-style . simple))))
+#+end_src
+
+*** emacs-vterm
+#+begin_src scheme :noweb-ref emacs-package
+  (emacs-package
+    (name 'vterm)
+    (package emacs-vterm)
+    (options
+     `((vterm-enable-manipulate-selection-data-by-osc52 . #t)
+       (vterm-max-scrollback . 100000)
+       (vterm-shell . ,(file-append fish "/bin/fish"))
+       ;; Improve responsiveness.
+       (vterm-timer-delay . 0.01)))
+    (extra-init
+     (list #%(defun hako/vterm ()
+               (interactive)
+               (let* ((parent
+                       (if (buffer-file-name)
+                           (file-name-directory (buffer-file-name))
+                           default-directory))
+                      (name (car (last (split-string parent "/" t))))
+                      (vterm-buffer-name (concat "*vterm: " name "*"))
+                      (vterm-buffer (get-buffer vterm-buffer-name)))
+                 (if (and vterm-buffer (not current-prefix-arg))
+                     (pop-to-buffer vterm-buffer)
+                     (vterm t))))
+           #%(defun hako/vterm-project (&optional arg)
+               (interactive "P")
+               (require 'project)
+               (let* ((default-directory (project-root (project-current t)))
+                      (vterm-buffer-name (project-prefixed-buffer-name "vterm")))
+                 (vterm arg)))))
+    (hooks '((vterm-mode . compilation-shell-minor-mode)))
+    (keys-global '(("s-t" . hako/vterm)))
+    (keys-local
+     (list (emacs-keymap
+             (name 'vterm-mode-map)
+             (keys '(("C-q" . vterm-send-next-key)))))))
+
+  (emacs-package
+    (name 'project)
+    (extra-after-load
+     (list
+      #%(add-to-list 'project-switch-commands '(hako/vterm-project "Vterm") t)
+      #%(add-to-list 'project-kill-buffer-conditions  '(major-mode . vterm-mode))))
+    (keys-local
+     (list (emacs-keymap
+             (name 'project-prefix-map)
+             (keys '(("t" . hako/vterm-project)))))))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-fish-config
+  (plain-file
+   "fish-config-vterm" "\
+  if test \"$INSIDE_EMACS\" = 'vterm'
+      source $EMACS_VTERM_PATH/etc/emacs-vterm.fish
+  end")
 #+end_src
 
 *** emacs-wanderlust
@@ -1558,12 +1545,14 @@ Required for using Rime in minibuffer.
   #:use-module (gnu packages librewolf)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mail)
+  #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (nongnu packages game-client)
+  #:use-module (rosenthal packages rust-apps)
 #+end_src
 
 ** adb
@@ -1573,6 +1562,13 @@ Required for using Rime in minibuffer.
 
 #+begin_src scheme :noweb-ref service
   (udev-rules-service 'android android-udev-rules #:groups '("adbusers"))
+#+end_src
+
+** atuin
+#+begin_src scheme :noweb-ref home-fish-config
+  (mixed-text-file
+   "fish-config-atuin"
+   atuin "/bin/atuin init fish | source")
 #+end_src
 
 ** btrbk
@@ -1781,4 +1777,11 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
     (for-home
      (syncthing-configuration
        (user "hako"))))
+#+end_src
+
+** zoxide
+#+begin_src scheme :noweb-ref home-fish-config
+  (mixed-text-file
+   "fish-config-zoxide"
+   zoxide "/bin/zoxide init --cmd cd fish | source")
 #+end_src
