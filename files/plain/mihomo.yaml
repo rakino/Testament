@@ -61,10 +61,9 @@ proxy-groups:
   - {
       name: "Default",
       type: "select",
-      proxies: ["All-Proxies", "Auto-Select", "DIRECT"],
+      proxies: ["All-Proxies", "DIRECT"],
     }
   - { name: "All-Proxies", <<: *use }
-  - { name: "Auto-Select", <<: *use, tolerance: 2, type: "url-test" }
 
 rule-providers:
   reject:
@@ -104,9 +103,10 @@ rules:
   - "RULE-SET,direct,DIRECT"
   - "RULE-SET,lancidr,DIRECT"
   - "RULE-SET,cncidr,DIRECT"
-  - "GEOIP,lan,DIRECT"
   - "GEOIP,cn,DIRECT"
+  - "GEOSITE,cn,DIRECT"
   - "PROCESS-NAME,.qbittorrent-nox-real,DIRECT"
+  - "PROCESS-NAME,cs2,DIRECT"
   - "PROCESS-NAME,rclone,DIRECT"
   - "PROCESS-NAME,steam,DIRECT"
   - "PROCESS-NAME,syncthing,DIRECT"

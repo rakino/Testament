@@ -149,11 +149,10 @@
       (services
        (modify-services (operating-system-user-services os)
          (console-font-service-type
-          _ => (map (lambda (vtnr)
+          _ => (map (lambda (num)
                       (let* ((path "/share/consolefonts/ter-132n")
                              (font (file-append font-terminus path))
-                             (vtnr (number->string vtnr))
-                             (tty (string-append "tty" vtnr)))
+                             (tty (string-append "tty" (number->string num))))
                         (cons tty font)))
                     (iota 6 1)))))))
 #+end_src
@@ -388,6 +387,7 @@ https://github.com/fishinthecalculator/sops-guix
   (service iwd-service-type
     (iwd-configuration
       (address-randomization 'network)
+      ;; Required by Qualcomm FastConnect 7800 / WCN785x.
       (control-port-over-nl80211? #f)))
 #+end_src
 
@@ -500,9 +500,7 @@ https://github.com/fishinthecalculator/sops-guix
     (let ((uaccess-pam-entry
            (pam-entry
              (control "optional")
-             (module (file-append
-                      pam-uaccess
-                      "/lib/security/pam_uaccess.so"))
+             (module (file-append pam-uaccess "/lib/security/pam_uaccess.so"))
              (arguments '("skip_ungrant")))))
       (list (pam-extension
               (transformer
@@ -709,7 +707,8 @@ To use NVK, mesa should be installed into a profile.
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'extra-fontconfig
       home-fontconfig-service-type
-    (let ((emoji "Noto Color Emoji")
+    (let ((cjk "Chiron Hei HK VF")
+          (emoji "Noto Color Emoji")
           (sans "SF Pro Text")
           (serif "New York Medium")
           (mono "Victor Mono"))
@@ -717,19 +716,19 @@ To use NVK, mesa should be installed into a profile.
          (family "sans-serif")
          (prefer
           (family ,sans)
-          (family "Chiron Hei HK VF")
+          (family ,cjk)
           (family ,emoji)))
         (alias
          (family "serif")
          (prefer
           (family ,serif)
-          (family "Chiron Sung HK VF")
+          (family ,cjk)
           (family ,emoji)))
         (alias
          (family "monospace")
          (prefer
           (family ,mono)
-          (family "Chiron Sung HK VF")
+          (family ,cjk)
           (family ,emoji)))
 
         ,@(map (lambda (name)
@@ -1766,7 +1765,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
             (start
              #~(make-forkexec-constructor
                 (list #$(file-append swaybg "/bin/swaybg")
-                      "--image" #$(testament-file-object "125905835_p0.png")
+                      "--image" #$(testament-file-object "101361103_p0.jpg")
                       "--mode" "fill")))
             (stop #~(make-kill-destructor)))))
 #+end_src
