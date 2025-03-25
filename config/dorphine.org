@@ -1039,7 +1039,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
   python-next
   rust
   `(,rust "cargo")
-  zig
+  zig-0.14
 #+end_src
 
 #+begin_src scheme :noweb-ref emacs-package
@@ -1061,7 +1061,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
                                       . ,(concat (getenv "XDG_CACHE_HOME")
                                                  "/ccls-cache")))))))))
                  ((zig-mode)
-                  . (#$(file-append zig-zls "/bin/zls")))))
+                  . (#$(file-append zig-zls-0.14 "/bin/zls")))))
               (add-to-list 'eglot-server-programs program))))
     (hooks
      (map (cut cons <> 'eglot-ensure)
