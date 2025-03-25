@@ -1696,6 +1696,19 @@ Required for using Rime in minibuffer.
 
 [[file:../files/dotfiles/.config/l2md/config][~/.config/l2md/config]]
 
+** mako
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'mako
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(mako))
+            (requirement '(graphical-session wayland-display))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append mako "/bin/mako"))))
+            (stop #~(make-kill-destructor)))))
+#+end_src
+
 ** mcron
 #+begin_src scheme :noweb yes :noweb-ref home-service
   (service home-mcron-service-type
