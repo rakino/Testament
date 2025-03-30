@@ -804,6 +804,7 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
        (list emacs-gcmh
              emacs-no-littering
              emacs-debbugs
+             emacs-json-mode
              emacs-markdown-mode
              emacs-nftables-mode
              emacs-zig-mode))
@@ -1501,6 +1502,7 @@ Required for using Rime in minibuffer.
   #:use-module (gnu packages librewolf)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages mail)
+  #:use-module (gnu packages pulseaudio)
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages security-token)
   #:use-module (gnu packages version-control)
@@ -1747,6 +1749,41 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
      (syncthing-configuration
        (user "hako"))))
 #+end_src
+
+** waybar
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'waybar
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(waybar))
+            (requirement '(graphical-session wayland-display))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append waybar "/bin/waybar"))))
+            (stop #~(make-kill-destructor)))))
+#+end_src
+
+#+begin_src scheme :noweb yes :noweb-ref home-xdg-configuration-file
+  ("waybar/config.jsonc" ,<<waybar-config>>)
+#+end_src
+
+#+name: waybar-config
+#+begin_src scheme
+  (with-imported-modules '((guix build utils))
+    (computed-file
+     "waybar.jsonc"
+     #~(begin
+         (use-modules (guix build utils))
+         (let ((inputs '#$(list light pavucontrol wireplumber)))
+           (copy-file #$(testament-file-object "waybar.jsonc") #$output)
+           (substitute* #$output
+             (("\\$\\$(.*)\\$\\$" _ program)
+              (search-path inputs program)))))))
+#+end_src
+
+[[file:../files/plain/waybar.jsonc][waybar.jsonc]]
+
+[[file:../files/dotfiles/.config/waybar/style.css][~/.config/waybar/style.css]]
 
 ** zoxide
 #+begin_src scheme :noweb-ref home-fish-config
