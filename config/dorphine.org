@@ -1405,7 +1405,7 @@ Required for using Rime in minibuffer.
        (vterm-max-scrollback . 100000)
        (vterm-shell . ,(file-append fish "/bin/fish"))
        ;; Improve responsiveness.
-       (vterm-timer-delay . 0.01)))
+       (vterm-timer-delay . 0.05)))
     (extra-init
      (list #%(defun hako/vterm ()
                (interactive)
@@ -1425,7 +1425,6 @@ Required for using Rime in minibuffer.
                (let* ((default-directory (project-root (project-current t)))
                       (vterm-buffer-name (project-prefixed-buffer-name "vterm")))
                  (vterm arg)))))
-    (hooks '((vterm-mode . compilation-shell-minor-mode)))
     (keys-global '(("s-t" . hako/vterm)))
     (keys-local
      (list (emacs-keymap
