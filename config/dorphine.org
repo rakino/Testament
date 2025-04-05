@@ -1344,6 +1344,15 @@ Required for using Rime in minibuffer.
    direnv "/bin/direnv hook fish | source")
 #+end_src
 
+*** emacs-forge
+#+begin_src scheme :noweb-ref emacs-package
+  (emacs-package
+    (name 'forge)
+    (package emacs-forge)
+    (load-after-packages '(magit))
+    (load-force? #t))
+#+end_src
+
 *** emacs-magit
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
