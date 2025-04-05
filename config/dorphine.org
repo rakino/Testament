@@ -684,7 +684,7 @@ To use NVK, mesa should be installed into a profile.
 
 ** fontconfig
 #+begin_src scheme :noweb-ref home-package
-  font-awesome
+  font-awesome-nonfree
   font-adobe-source-serif-pro
   font-apple-new-york
   font-apple-sf-pro
@@ -834,7 +834,6 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
       (extra-packages
        (list emacs-gcmh
              emacs-no-littering
-             emacs-debbugs
              emacs-json-mode
              emacs-markdown-mode
              emacs-nftables-mode
