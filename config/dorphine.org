@@ -1051,14 +1051,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
                                                  "/ccls-cache")))))))))
                  ((zig-mode)
                   . (#$(file-append zig-zls-0.14 "/bin/zls")))))
-              (add-to-list 'eglot-server-programs program))))
-    (hooks
-     (map (cut cons <> 'eglot-ensure)
-          '(                              ;XXX: Indentation.
-            rust-ts-mode rust-mode
-            python-mode python-ts-mode
-            c-mode c-ts-mode c++-mode c++-ts-mode
-            zig-mode))))
+              (add-to-list 'eglot-server-programs program)))))
 #+end_src
 
 *** emacs-macrostep
