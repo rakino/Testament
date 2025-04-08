@@ -1721,6 +1721,12 @@ Required for using Rime in minibuffer.
 
 [[../files/dotfiles/.config/mpv/mpv.conf][~/.config/mpv/mpv.conf]]
 
+** obs
+#+begin_src scheme :noweb-ref home-package
+  obs
+  obs-wlrobs
+#+end_src
+
 ** qbittorrent
 #+begin_src scheme :noweb-ref home-service
   (service home-qbittorrent-service-type
