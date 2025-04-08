@@ -562,6 +562,7 @@ https://github.com/fishinthecalculator/sops-guix
   #:use-module (gnu packages gnome-xyz)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages qt)
+  #:use-module (gnu packages terminals)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (nongnu packages fonts)
@@ -674,7 +675,8 @@ To use NVK, mesa should be installed into a profile.
      #~(begin
          (use-modules (guix build utils))
          (let ((inputs
-                '#$(list light
+                '#$(list alacritty
+                         light
                          rofi-wayland
                          swaylock-effects
                          wireplumber
@@ -1414,25 +1416,12 @@ Required for using Rime in minibuffer.
        ;; Improve responsiveness.
        (vterm-timer-delay . 0.05)))
     (extra-init
-     (list #%(defun hako/vterm ()
-               (interactive)
-               (let* ((parent
-                       (if (buffer-file-name)
-                           (file-name-directory (buffer-file-name))
-                           default-directory))
-                      (name (car (last (split-string parent "/" t))))
-                      (vterm-buffer-name (concat "*vterm: " name "*"))
-                      (vterm-buffer (get-buffer vterm-buffer-name)))
-                 (if (and vterm-buffer (not current-prefix-arg))
-                     (pop-to-buffer vterm-buffer)
-                     (vterm t))))
-           #%(defun hako/vterm-project (&optional arg)
+     (list #%(defun hako/vterm-project (&optional arg)
                (interactive "P")
                (require 'project)
                (let* ((default-directory (project-root (project-current t)))
                       (vterm-buffer-name (project-prefixed-buffer-name "vterm")))
                  (vterm arg)))))
-    (keys-global '(("s-t" . hako/vterm)))
     (keys-local
      (list (emacs-keymap
              (name 'vterm-mode-map)
@@ -1568,6 +1557,31 @@ Required for using Rime in minibuffer.
 
 #+begin_src scheme :noweb-ref service
   (udev-rules-service 'android android-udev-rules #:groups '("adbusers"))
+#+end_src
+
+** alacritty
+#+begin_src scheme :noweb yes :noweb-ref home-xdg-configuration-file
+  ("alacritty/alacritty.toml" ,<<alacritty-config>>)
+#+end_src
+
+#+name: alacritty-config
+#+begin_src scheme
+  (let ((theme
+         (origin
+           (method url-fetch)
+           (uri (string-append "https://github.com/catppuccin/alacritty" "/raw/"
+                               "f6cb5a5c2b404cdaceaff193b9c52317f62c62f7"
+                               "/catppuccin-latte.toml"))
+           (sha256
+            (base32 "061lraysrma94md83296166c6cgn29p5yxmv0am8n3ciyq505m5d")))))
+    (with-imported-modules '((guix build utils))
+      (computed-file
+       "alacritty.toml"
+       #~(begin
+           (use-modules (guix build utils))
+           (copy-file #$(testament-file-object "alacritty.toml") #$output)
+           (substitute* #$output
+             (("\\$\\$THEME\\$\\$") #$theme))))))
 #+end_src
 
 ** atuin
