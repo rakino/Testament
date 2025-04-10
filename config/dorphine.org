@@ -575,6 +575,9 @@ https://github.com/fishinthecalculator/sops-guix
 通常用 nvidia-driver，出問題時換 nouveau。
 
 *** nvidia-driver
+:PROPERTIES:
+:ID:       15223ce6-bb6b-427b-b598-30998cdd9bdd
+:END:
 禁用 Linux 內核 nouveau 模塊。
 #+begin_src scheme :noweb-ref disabled-module
   "nouveau"
@@ -1626,17 +1629,12 @@ Required for using Rime in minibuffer.
 #+end_src
 
 ** ffmpeg
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (services
-       (modify-services (operating-system-user-services os)
-         (guix-home-service-type
-          config => (with-transformation
-                        (package-input-grafting
-                         `((,ffmpeg . ,ffmpeg-nvenc)))
-                      config))))))
+An extra graft is done in [[id:15223ce6-bb6b-427b-b598-30998cdd9bdd][nvidia-driver section]], since =nv-codec-headers= dependents on =nvidia-driver=, which must be grafted to a functional driver bundle.
+
+#+begin_src scheme :noweb-ref definition
+  (define replace-ffmpeg
+    (package-input-grafting
+     `((,ffmpeg . ,ffmpeg-nvenc))))
 #+end_src
 
 ** gammastep
@@ -1751,14 +1749,14 @@ Required for using Rime in minibuffer.
 
 ** mpv
 #+begin_src scheme :noweb-ref home-package
-  mpv/dolly
+  (replace-ffmpeg mpv/dolly)
 #+end_src
 
 [[../files/dotfiles/.config/mpv/mpv.conf][~/.config/mpv/mpv.conf]]
 
 ** obs
 #+begin_src scheme :noweb-ref home-package
-  obs
+  (replace-ffmpeg obs)
   obs-wlrobs
 #+end_src
 
