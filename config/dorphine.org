@@ -695,7 +695,7 @@ To use NVK, mesa should be installed into a profile.
 ** fontconfig
 #+begin_src scheme :noweb-ref home-package
   font-awesome-nonfree
-  font-adobe-source-serif-pro
+  font-adobe-source-serif
   font-apple-new-york
   font-apple-sf-pro
   font-chiron-hei-hk
