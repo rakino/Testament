@@ -1501,10 +1501,8 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
   (guix download)
   (guix packages)
   (guix utils)
-  (gnu services mcron)
   (rosenthal services bittorrent)
   (rosenthal services file-systems)
-  (gnu home services mcron)
   (gnu home services shepherd)
   (gnu home services syncthing)
   (gnu packages android)
@@ -1693,18 +1691,14 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
             (stop #~(make-kill-destructor)))))
 #+end_src
 
-** mcron
-#+begin_src scheme :noweb yes :noweb-ref home-service
-  (service home-mcron-service-type
-    (for-home
-     (mcron-configuration
-       (jobs (list <<home-mcron-job>>)))))
-#+end_src
-
 ** modprobed-db
-#+begin_src scheme :noweb-ref home-mcron-job
-  #~(job next-hour-from
-         #$(file-append modprobed-db "/bin/modprobed-db storesilent"))
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'modprobed-db
+      home-shepherd-service-type
+    (list (shepherd-timer
+           '(update-modprobed-db)
+           #~(calendar-event #:minutes '(0))
+           #~(#$(file-append modprobed-db "/bin/modprobed-db") "storesilent"))))
 #+end_src
 
 [[file:../files/dotfiles/.config/modprobed-db.conf][~/.config/modprobed-db.conf]]
