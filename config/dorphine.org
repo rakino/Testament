@@ -752,8 +752,7 @@ To use NVK, mesa should be installed into a profile.
      #~(begin
          (use-modules (guix build utils))
          (let ((inputs
-                '#$(pkgs "alacritty"
-                         "light"
+                '#$(pkgs "light"
                          "rofi-wayland"
                          "swaylock-effects"
                          "wireplumber"
@@ -1520,16 +1519,10 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
 
 * Miscellaneous
 #+begin_src scheme :noweb-ref module
-  (guix download)
-  (guix packages)
-  (guix utils)
   (rosenthal services bittorrent)
   (rosenthal services file-systems)
   (gnu home services shepherd)
   (gnu home services syncthing)
-  (gnu packages shellutils)
-  (gnu packages rust-apps)
-  (rosenthal packages rust-apps)
 #+end_src
 
 ** adb
@@ -1539,31 +1532,6 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
 
 #+begin_src scheme :noweb-ref service
   (udev-rules-service 'android (pkg "android-udev-rules") #:groups '("adbusers"))
-#+end_src
-
-** alacritty
-#+begin_src scheme :noweb yes :noweb-ref home-xdg-configuration-file
-  ("alacritty/alacritty.toml" ,<<alacritty-config>>)
-#+end_src
-
-#+name: alacritty-config
-#+begin_src scheme
-  (let ((theme
-         (origin
-           (method url-fetch)
-           (uri (string-append "https://github.com/catppuccin/alacritty" "/raw/"
-                               "f6cb5a5c2b404cdaceaff193b9c52317f62c62f7"
-                               "/catppuccin-latte.toml"))
-           (sha256
-            (base32 "061lraysrma94md83296166c6cgn29p5yxmv0am8n3ciyq505m5d")))))
-    (with-imported-modules '((guix build utils))
-      (computed-file
-       "alacritty.toml"
-       #~(begin
-           (use-modules (guix build utils))
-           (copy-file #$(testament-file-object "alacritty.toml") #$output)
-           (substitute* #$output
-             (("\\$\\$THEME\\$\\$") #$theme))))))
 #+end_src
 
 ** atuin
@@ -1821,5 +1789,5 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 #+begin_src scheme :noweb-ref home-fish-config
   (mixed-text-file
    "fish-config-zoxide"
-   zoxide "/bin/zoxide init --cmd cd fish | source")
+   (pkg "zoxide") "/bin/zoxide init --cmd cd fish | source")
 #+end_src
