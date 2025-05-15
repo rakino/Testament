@@ -6,6 +6,7 @@ ARGS  :=
 OPTS  := $(ARGS) --verbosity=1
 GUIX  := guix
 EMACS := $(GUIX) shell emacs-next-minimal -- emacs
+SUDO  := sudo -E
 
 %.scm: %.org
 	@$(EMACS) -Q --batch \
@@ -24,7 +25,7 @@ build-%: config/%.scm
 .PHONY: reconfigure
 reconfigure: reconfigure-dorphine
 reconfigure-%: config/%.scm
-	$(GUIX) system reconfigure $< $(OPTS)
+	$(SUDO) $(GUIX) system reconfigure $< $(OPTS)
 
 .PHONY: home-build
 home-build: home-build-dorphine
@@ -40,6 +41,11 @@ home-reconfigure-%: config/%.scm
 deploy: config/gokuraku.scm
 	$(GUIX) deploy files/blobs/deploy $(OPTS)
 
+.PHONY: authenticate
+authenticate:
+	@$(GUIX) git authenticate c5d46fdfdfbc84fe413f1d930049d1f703f9a0ff \
+		"F4C2 D1DF 3FDE EA63 D1D3  0776 ACC6 6D09 CA52 8292"
+
 .PHONY: ares
 # Load reader extensions before starting nREPL server.
 ares:
@@ -48,11 +54,6 @@ ares:
 	   (use-modules (guix gexp) \
 	                (gnu home services emacs)) \
 	   ((@ (ares server) run-nrepl-server)))"
-
-.PHONY: authenticate
-authenticate:
-	@$(GUIX) git authenticate c5d46fdfdfbc84fe413f1d930049d1f703f9a0ff \
-		"F4C2 D1DF 3FDE EA63 D1D3  0776 ACC6 6D09 CA52 8292"
 
 .PHONY: clean
 clean:
