@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
-#+TITLE: gokuarku
+#+TITLE: gokuraku
 #+PROPERTY: header-args :noweb-prefix no
 
 * Guix System
@@ -148,22 +148,11 @@ No need to install less used ones, prefer ‘guix shell’.
 #+end_src
 
 ** Guix Daemon
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (services
-       (modify-services (operating-system-user-services os)
-         (guix-service-type
-          config => (guix-configuration
-                     (inherit config)
-                     (authorized-keys
-                      (cons* %guix-authorized-key-dorphine
-                             %guix-authorized-key-nonguix
-                             %default-authorized-guix-keys))
-                     (substitute-urls
-                      `(,@%default-substitute-urls
-                        "https://substitutes.nonguix.org"))))))))
+#+begin_src scheme :noweb-ref service
+  (simple-service 'guix-extension-dorphine
+      guix-service-type
+    (guix-extension
+     (authorized-keys (list %guix-authorized-key-dorphine))))
 #+end_src
 
 ** SOPS Secrets
