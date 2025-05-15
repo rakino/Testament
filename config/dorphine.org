@@ -48,6 +48,7 @@
   (gnu home services shells)
   (gnu home services shepherd)
   (sops home services sops)
+  (gnu services ssh)
   (rosenthal services keyboard)
   (sops services sops)
 #+end_src
@@ -198,9 +199,21 @@
 #+end_src
 
 ** Users
+Generate password hash:
+#+begin_src shell
+  echo <password> | guix shell openssl passwd -6 -stdin
+#+end_src
+
+Generate random password hash:
+#+begin_src shell
+  guix shell pwgen -- pwgen -sync 16 1 | guix shell openssl -- openssl passwd -6 -stdin
+#+end_src
+
+Personal account.
 #+begin_src scheme :noweb yes :noweb-ref user
   (user-account
     (name "hako")
+    (password "$6$KC5RtFkRZBpkNFHg$tnl.h.9tzVMOxFy37WTGl8QBBmt.ZiZmxuLD8/9YCimYvFkU26xR6YTcHqhUeMQPiQZxZA3yEjeDBi6nST8ue/")
     (group "users")
     (supplementary-groups '(<<group>> "wheel"))
     (shell (file-append (pkg "fish") "/bin/fish")))
@@ -210,6 +223,41 @@
   (service home-fish-service-type
     (home-fish-configuration
       (config (list <<home-fish-config>>))))
+#+end_src
+
+Administration accounts.
+#+begin_src scheme :noweb-ref user
+  (user-account
+    (inherit %root-account)
+    (password "$6$KGxgY56Yzwn1vU6l$F3/7C4UA3PtqHPTs5qbwUyruV9qMC.MZ0SzwPteegfL/oj/DHBSHf0/1znMpdCi3jiAnR74D.A.lnaLsUIljA0"))
+
+  (user-account
+    (name "deploy")
+    (password "$6$U2m1GLm8ETSZpLXw$jaItvEaziaOWqDlaKIIogWWXoll631h.VxnIN2Pl4q/fbcr4OW4dDoOnOFOendkt2Jg8KMAPTOoa6L3y0MjT00")
+    (group "users")
+    (comment "User for 'guix deploy'")
+    (create-home-directory? #f))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'add-user-ssh-keys
+      openssh-service-type
+    `(("deploy"
+       ,(plain-file
+         "hako.pub"
+         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFcTj1N3cL/bh2Uvwh5/YubhZplPFnvGk/iVHQs3FWV2"))))
+#+end_src
+
+#+begin_src scheme :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (sudoers-file
+       (plain-file
+        "sudoers"
+        (string-append
+         (plain-file-content (operating-system-sudoers-file os))
+         "deploy ALL = NOPASSWD: ALL\n")))))
 #+end_src
 
 ** Packages
@@ -272,6 +320,39 @@ No need to install less used ones, prefer ‘guix shell’.
 #+end_src
 
 ** SOPS Secrets
+Create GPG home directory specifically for use with SOPS.
+#+begin_src shell
+  MY_GPGHOME="<GPG homedir>"
+
+  mkdir --parents --mode=0700 "$MY_GPGHOME"
+  cat <<EOF > "$MY_GPGHOME/gpg.conf"
+  pinentry-mode loopback
+  EOF
+  cat <<EOF > "$MY_GPGHOME/gpg-agent.conf"
+  allow-loopback-pinentry
+  EOF
+
+  unset MY_GPGHOME
+#+end_src
+
+Generate passwordless ECC key:
+#+begin_src shell
+  MY_GPGHOME="<GPG homedir>"
+  MY_NAME="<Your Name>"
+
+  gpg --homedir "$MY_GPGHOME" --batch --generate-key <<EOF
+  %no-protection
+  Key-Type: EDDSA
+  Key-Curve: ed25519
+  Subkey-Type: ECDH
+  Subkey-Curve: cv25519
+  Name-Real: $MY_NAME
+  Expire-Date: 0
+  EOF
+
+  unset MY_GPGHOME MY_NAME
+#+end_src
+
 #+begin_src scheme :noweb-ref package
   "gnupg"
   "sops"
@@ -505,6 +586,22 @@ No need to install less used ones, prefer ‘guix shell’.
                         (append (pam-service-session pam)
                                 (list uaccess-pam-entry))))
                      pam)))))))
+#+end_src
+
+* SSH
+#+begin_src scheme :noweb-ref module
+  (gnu services ssh)
+#+end_src
+
+#+begin_src scheme :noweb-ref package
+  "mosh"
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service openssh-service-type
+    (openssh-configuration
+      (openssh (pkg "openssh-sans-x"))
+      (password-authentication? #f)))
 #+end_src
 
 * Containers & Virtualization
@@ -791,12 +888,6 @@ To use NVK, mesa should be installed into a profile.
        (file-append (pkg "pinentry-emacs") "/bin/pinentry-emacs"))
       (ssh-support? #t)
       (extra-content "allow-loopback-pinentry")))
-#+end_src
-
-因爲啓用了 SSH 支持，順帶也把相關軟件包放這了。
-#+begin_src scheme :noweb-ref home-package
-  "mosh"
-  "openssh-sans-x"
 #+end_src
 
 * Emacs

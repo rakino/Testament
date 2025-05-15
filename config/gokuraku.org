@@ -30,6 +30,7 @@
   (srfi srfi-26)
   (ice-9 match)
   (sops secrets)
+  (gnu services ssh)
   (sops services sops)
 #+end_src
 
@@ -91,12 +92,53 @@
 #+end_src
 
 ** Users
+Personal account.
 #+begin_src scheme :noweb-ref user
   (user-account
     (name "hako")
+    (password "$6$w0.1nJP5izI6Z/fc$EnWXCvbnFlwdO5dMp8Ir1J3NKRoVlPrTbv90cmPPe.t3Hxtalwt1jabylQIzTQlR3MHe4iNgiEyytwdVv3W55/")
     (group "users")
     (supplementary-groups '("wheel"))
     (shell (file-append (pkg "fish") "/bin/fish")))
+#+end_src
+
+Administration accounts.
+#+begin_src scheme :noweb-ref user
+  (user-account
+    (inherit %root-account)
+    (password "$6$d8f88gM9iuPYdXyB$bbRdv9MchAZ1RJOXN4PpvB/CgJ4IqOBKsmzrus8WyLscy7D/ZUucGalLnlvN5zndkZKosd7Y7wFtEX8yPMR3c."))
+
+  (user-account
+    (name "deploy")
+    (password "$6$7Gxaa7QJDruyGqOP$BWqPRPh8sqwHxfbWamR6pRdD41pvrZswQf4VFRaURK4OxpP30ziSP5RREzvzLJF3IBce5bagTp3MDTi8yW38a0")
+    (group "users")
+    (comment "User for 'guix deploy'")
+    (create-home-directory? #f))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'add-user-ssh-keys
+      openssh-service-type
+    `(("deploy"
+       ,(plain-file
+         "hako.pub"
+         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFcTj1N3cL/bh2Uvwh5/YubhZplPFnvGk/iVHQs3FWV2"))
+      ("hako"
+       ,(plain-file
+         "hako.pub"
+         "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIFcTj1N3cL/bh2Uvwh5/YubhZplPFnvGk/iVHQs3FWV2"))))
+#+end_src
+
+#+begin_src scheme :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (sudoers-file
+       (plain-file
+        "sudoers"
+        (string-append
+         (plain-file-content (operating-system-sudoers-file os))
+         "deploy ALL = NOPASSWD: ALL\n")))))
 #+end_src
 
 ** Packages
@@ -250,7 +292,6 @@ No need to install less used ones, prefer ‘guix shell’.
 
 * SSH
 #+begin_src scheme :noweb-ref module
-  (gnu services security)
   (gnu services ssh)
 #+end_src
 
@@ -259,34 +300,10 @@ No need to install less used ones, prefer ‘guix shell’.
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (service (fail2ban-jail-service
-            openssh-service-type
-            (fail2ban-jail-configuration
-              (name "sshd")
-              (enabled? #t)
-              (extra-content
-               (list (plain-file "filter" "filter=sshd[_daemon='sshd-session']")))
-              (action
-               (list (fail2ban-jail-action-configuration
-                       (name "nftables"))))))
+  (service openssh-service-type
     (openssh-configuration
       (openssh (pkg "openssh-sans-x"))
-      (password-authentication? #f)
-      (authorized-keys
-       `(("hako" ,(plain-file "hako.pub" "ssh-ed25519 \
-  AAAAC3NzaC1lZDI1NTE5AAAAIFcTj1N3cL/bh2Uvwh5/YubhZplPFnvGk/iVHQs3FWV2"))))))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (sudoers-file
-       (plain-file
-        "sudoers"
-        (string-append
-         (plain-file-content %sudoers-specification)
-         "hako ALL = NOPASSWD: ALL\n")))))
+      (password-authentication? #f)))
 #+end_src
 
 * Containers
