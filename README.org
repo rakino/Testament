@@ -11,7 +11,8 @@ This repository contains my dotfiles and Guix System literate configurations (wi
 ** Structure
 + [[file:config][config]]: Guix System configurations.
 + [[file:files/blobs][files/blobs]]: Private files.
-+ [[file:files/dotfiles][files/dotfiles]]: Dotfiles for ~home-dotfiles-service-type~.
++ [[file:files/deploy][files/deploy]]: Configurations for ~guix deploy~.
++ [[file:files/dotfiles][files/dotfiles]]: Dotfiles for =home-dotfiles-service-type=.
 + [[file:files/plain][files/plain]]: Files to be referenced in configurations.
 
 Guix channels in use:

@@ -31,7 +31,7 @@ build-home-%: config/%.scm
 # option.
 deploy: deploy-dorphine deploy-gokuraku
 deploy-%: config/%.scm
-	./pre-inst-env $(GUIX) deploy files/blobs/deploy/$(notdir $<) $(OPTS)
+	./pre-inst-env $(GUIX) deploy files/deploy/$(notdir $<) $(OPTS)
 
 .PHONY: authenticate
 # Authenticate commits.
