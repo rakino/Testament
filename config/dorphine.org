@@ -394,7 +394,7 @@ Generate passwordless ECC key:
       (list (sops-secret
               (key '("cloudflared"))
               (file dorphine.yaml)
-              (user "nobody"))))))
+              (user "cloudflared"))))))
 #+end_src
 
 [[file:../files/plain/sops.yaml][sops.yaml]]
