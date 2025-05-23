@@ -652,17 +652,17 @@ Generate passwordless ECC key:
 #+begin_src scheme
   (with-imported-modules '((guix build utils))
     (computed-file
-     "Caddyfile"
+     "dorphine.caddyfile"
      #~(begin
          (use-modules (guix build utils))
          (let ((inputs '#$(pkgs "ai-robots-txt")))
-           (copy-file #$(testament-file-object "dorphine-caddyfile") #$output)
+           (copy-file #$(testament-file-object "dorphine.caddyfile") #$output)
            (substitute* #$output
              (("\\$\\$(.*)\\$\\$" _ file)
               (search-path inputs file)))))))
 #+end_src
 
-[[file:../files/plain/dorphine-caddyfile][dorphine-caddyfile]]
+[[file:../files/plain/dorphine.caddyfile][dorphine.caddyfile]]
 
 ** cloudflared
 #+begin_src scheme :noweb-ref service
