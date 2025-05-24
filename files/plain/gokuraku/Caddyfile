@@ -63,7 +63,7 @@ mail.boiledscript.com {
 # Forgejo
 http://git.boiledscript.com {
 	import block_bots
-	import $$ROBOTS_forgejo$$
+	import $$robots.txt/forgejo$$
 	import logging forgejo
 	reverse_proxy localhost:48071
 }
