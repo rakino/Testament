@@ -3,6 +3,7 @@
 # SPDX-License-Identifier: CC0-1.0
 
 {
+	dns cloudflare {file./run/secrets/cloudflare}
 	acme_dns cloudflare {file./run/secrets/cloudflare}
 	ech hello.boiledscript.com
 	log {
