@@ -307,7 +307,7 @@ No need to install less used ones, prefer ‘guix shell’.
                      (inherit config)
                      (substitute-urls
                       `(,@(guix-configuration-substitute-urls config)
-                        "https://ci.ultrarare.space"))))))))
+                        "https://ci.boiledscript.com"))))))))
 #+end_src
 
 ** Shepherd
@@ -441,6 +441,7 @@ Generate passwordless ECC key:
 
 * Networking
 #+begin_src scheme :noweb-ref module
+  (guix modules)
   (gnu services desktop)
   (gnu services networking)
   (gnu services shepherd)
@@ -504,6 +505,11 @@ Generate passwordless ECC key:
 #+end_src
 
 [[file:../files/plain/smartdns.conf][smartdns.conf]]
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'etc-resolv-conf etc-service-type
+    `(("resolv.conf" ,(plain-file "resolv.conf" "nameserver 127.0.0.1\n"))))
+#+end_src
 
 ** ntp
 #+begin_src scheme :noweb-ref service
@@ -626,30 +632,20 @@ Generate passwordless ECC key:
 
 * Continuous Integration
 #+begin_src scheme :noweb-ref module
-  (guix store)
-  (gnu system linux-container)
-  (gnu services cuirass)
-  (gnu services shepherd)
+  (rosenthal services cuirass)
 #+end_src
 
 ** cuirass-remote-worker
 #+begin_src scheme :noweb-ref service
-  (simple-service 'cuirass-remote-worker
-      shepherd-root-service-type
-    (list (shepherd-service
-            (provision '(cuirass-remote-worker))
-            (requirement '(guix-daemon user-processes))
-            (start
-             #~(make-forkexec-constructor
-                (list #$(with-store store
-                          (run-with-store store
-                            (container-script
-                             ((load "cuirass-worker.scm") "dorphine")
-                             #:shared-network? #t)))
-                      "--expose=/etc/guix"
-                      "--share=/var/guix/daemon-socket/socket")))
-            (stop
-             #~(make-kill-destructor)))))
+  (service cuirass-worker-container-service-type
+    (cuirass-worker-container-configuration
+      (host-name "dorphine")
+      (server "ci.boiledscript.com:5555")
+      (supported-systems
+       '("x86_64-linux" "i686-linux"))
+      (substitute-urls
+       `(,@%default-substitute-urls
+         "https://ci.boiledscript.com"))))
 #+end_src
 
 * Web Servers
@@ -926,6 +922,7 @@ To use NVK, mesa should be installed into a profile.
 
 * Emacs
 #+begin_src scheme :noweb-ref module
+  (guix packages)
   (gnu home services emacs)
 #+end_src
 

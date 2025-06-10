@@ -18,12 +18,12 @@ pull:
 
 .PHONY: build
 build: build-dorphine build-gokuraku
-build-%: config/%.scm config/cuirass-worker.scm
+build-%: config/%.scm
 	$(GUIX) system build $< $(OPTS)
 
 .PHONY: deploy
 deploy: deploy-dorphine deploy-gokuraku
-deploy-%: config/%.scm config/cuirass-worker.scm
+deploy-%: config/%.scm
 	$(GUIX) deploy files/deploy/$(notdir $<) $(OPTS)
 
 .PHONY: authenticate
