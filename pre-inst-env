@@ -6,7 +6,7 @@
 load_path_guix="$HOME/Workspace/Guix"
 load_path_nonguix="$HOME/Workspace/Nonguix"
 load_path_rosenthal="$HOME/Workspace/Rosenthal/modules"
-load_path_sops="$(dirname $(realpath $XDG_CONFIG_HOME/guix/current/share/guile/site/3.0/sops))"
+load_path_sops="$HOME/Workspace/sops-guix/modules"
 
 for path in "$load_path_nonguix" "$load_path_rosenthal" "$load_path_sops"; do
     extra_load_paths="$path${extra_load_paths:+:}$extra_load_paths"

@@ -5,13 +5,17 @@
 (use-modules (ice-9 match)
              (ice-9 popen)
              (ice-9 textual-ports)
-             (rosenthal utils file)
-             (rosenthal utils packages)
-             (sops secrets)
              (guix diagnostics)
+             (guix download)
              (guix gexp)
              (guix i18n)
-             (guix store))
+             (guix packages)
+             (guix store)
+             (nonguix transformations)
+             (rosenthal utils file)
+             (rosenthal utils packages)
+             (rosenthal utils transformations)
+             (sops secrets))
 
 ;;;
 ;;; Common
@@ -56,6 +60,21 @@ WARNED."
     (if number?
         (string->number secret)
         secret)))
+
+;; Using newer firmware will trigger an ath12k driver issue:
+;; https://bugzilla.kernel.org/show_bug.cgi?id=220108
+(define %my-linux-firmware
+  (package
+    (inherit (pkg "linux-firmware"))
+    (version "20250410")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "mirror://kernel.org/linux/kernel/firmware/"
+                           "linux-firmware-" version ".tar.xz"))
+       (sha256
+        (base32
+         "1y90banizlmm9mj99f1h6sy22mv2y6c59q8ayd5xa3wkv2ramria"))))))
 
 
 ;;;
