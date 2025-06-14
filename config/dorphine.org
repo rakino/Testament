@@ -1682,12 +1682,25 @@ Send
        ;; Improve responsiveness.
        (vterm-timer-delay . 0.05)))
     (extra-init
-     (list #%(defun hako/vterm-project (&optional arg)
+     (list #%(defun hako/vterm ()
+               (interactive)
+               (let* ((parent
+                       (if (buffer-file-name)
+                           (file-name-directory (buffer-file-name))
+                           default-directory))
+                      (name (car (last (split-string parent "/" t))))
+                      (vterm-buffer-name (concat "*vterm: " name "*"))
+                      (vterm-buffer (get-buffer vterm-buffer-name)))
+                 (if (and vterm-buffer (not current-prefix-arg))
+                     (pop-to-buffer vterm-buffer)
+                     (vterm t))))
+           #%(defun hako/vterm-project (&optional arg)
                (interactive "P")
                (require 'project)
                (let* ((default-directory (project-root (project-current t)))
                       (vterm-buffer-name (project-prefixed-buffer-name "vterm")))
                  (vterm arg)))))
+    (keys-global '(("s-t" . hako/vterm)))
     (keys-local
      (list (emacs-keymap
              (name 'vterm-mode-map)
