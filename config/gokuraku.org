@@ -19,7 +19,7 @@
       (file-systems (append <<file-systems>> %base-file-systems))
       (host-name "gokuraku")
       (users (cons* <<user>> %base-user-accounts))
-      (packages (append (pkgs+out <<package>>) %base-packages))
+      (packages (append (specs->pkgs+out <<package>>) %base-packages))
       (services (cons* <<service>> %base-services))))
 
   ((compose <<transformation>>)
@@ -81,7 +81,7 @@
       shepherd-root-service-type
     (list (shepherd-timer '(btrbk)
             #~(calendar-event #:minutes '(0))
-            #~(#$(file-append (pkg "btrbk") "/bin/btrbk") "run"
+            #~(#$(file-append (spec->pkg "btrbk") "/bin/btrbk") "run"
                "-c" #$(local-file (testament-plain "gokuraku/btrbk.conf")))
             #:requirement '(user-processes))))
 #+end_src
@@ -109,7 +109,7 @@ Personal account.
     (password "$6$w0.1nJP5izI6Z/fc$EnWXCvbnFlwdO5dMp8Ir1J3NKRoVlPrTbv90cmPPe.t3Hxtalwt1jabylQIzTQlR3MHe4iNgiEyytwdVv3W55/")
     (group "users")
     (supplementary-groups '("wheel"))
-    (shell (file-append (pkg "fish") "/bin/fish")))
+    (shell (file-append (spec->pkg "fish") "/bin/fish")))
 #+end_src
 
 Nonguix sysadmins:
@@ -118,14 +118,14 @@ Nonguix sysadmins:
     (name "jonathan")
     (password "$6$0UzuLvTjtcBQGxke$5hUTyIJOumsgaG3y2QvD65SWWG3pqlj5FujOmSCFItoN74G5VpUOgWEPt4VVMIKe0UCV4L5pMpev8CVXl6hLn/")
     (group "users")
-    (shell (file-append (pkg "fish") "/bin/fish"))
+    (shell (file-append (spec->pkg "fish") "/bin/fish"))
     (comment "Jonathan Brielmaier"))
 
   (user-account
     (name "podiki")
     (password "$6$FJMvZ5TbFamapsiC$kODPSRELkpXH1BauLekqbyiKTWwtxfTyYM0sbNUd32BYpw9ZWxVxfBRx2BXF.6anynMciqcPuWYtsbVE0P7mN/")
     (group "users")
-    (shell (file-append (pkg "fish") "/bin/fish")))
+    (shell (file-append (spec->pkg "fish") "/bin/fish")))
 #+end_src
 
 Administration accounts.
@@ -227,7 +227,7 @@ No need to install less used ones, prefer ‘guix shell’.
 #+begin_src scheme :noweb-ref service
   (service sops-secrets-service-type
     (sops-service-configuration
-      (sops (pkg "sops"))
+      (sops (spec->pkg "sops"))
       (config (local-file (testament-plain "sops.yaml")))
       (gnupg-home "/var/lib/sops")
       (secrets
@@ -260,7 +260,7 @@ No need to install less used ones, prefer ‘guix shell’.
   (lambda (os)
     (operating-system
       (inherit os)
-      (kernel (pkg "linux-libre@6.12"))
+      (kernel (spec->pkg "linux-libre@6.12"))
       (kernel-arguments
        (cons* "kernel.sysrq=0"
               "zswap.enabled=1"
@@ -346,7 +346,7 @@ No need to install less used ones, prefer ‘guix shell’.
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
-      (openssh (pkg "openssh-sans-x"))
+      (openssh (spec->pkg "openssh-sans-x"))
       (password-authentication? #f)))
 #+end_src
 
@@ -376,7 +376,7 @@ No need to install less used ones, prefer ‘guix shell’.
 #+begin_src scheme :noweb-ref service
   (service postgresql-service-type
     (postgresql-configuration
-      (postgresql (pkg "postgresql@15"))))
+      (postgresql (spec->pkg "postgresql@15"))))
 #+end_src
 
 ** redis
@@ -398,7 +398,7 @@ Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
   (service cuirass-service-type/hako
     (cuirass-configuration
-      (cuirass (pkg "cuirass-hako"))
+      (cuirass (spec->pkg "cuirass-hako"))
       ;; 6 hours
       (interval (* 6 3600))
       (remote-server
@@ -615,7 +615,7 @@ Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
   (service caddy-service-type
     (caddy-configuration
-      (caddy (pkg "caddy-hako"))
+      (caddy (spec->pkg "caddy-hako"))
       (caddyfile <<caddy-config>>)))
 #+end_src
 
@@ -625,7 +625,7 @@ Remember to open TCP port 5555 and 5556.
    "gokuraku.caddyfile"
    (local-file (testament-plain "gokuraku/Caddyfile"))
    (cons (testament-plain)
-         (pkgs "ai-robots-txt")))
+         (specs->pkgs "ai-robots-txt")))
 #+end_src
 
 [[file:../files/plain/gokuraku/Caddyfile][gokuraku/Caddyfile]]
