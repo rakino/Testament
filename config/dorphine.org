@@ -49,7 +49,6 @@
   (rosenthal bootloader grub)
   (gnu home services dotfiles)
   (gnu home services shells)
-  (gnu home services shepherd)
   (sops home services sops)
   (gnu services ssh)
   (rosenthal services keyboard)
@@ -207,7 +206,7 @@ Maintenance:
       shepherd-root-service-type
     (list (shepherd-timer '(btrbk)
             #~(calendar-event #:minutes '(0))
-            #~(#$(file-append (pkg "btrbk") "/bin/btrbk")
+            #~(#$(file-append (pkg "btrbk") "/bin/btrbk") "run"
                "-c" #$(local-file (testament-plain "dorphine/btrbk.conf")))
             #:requirement '(user-processes))))
 #+end_src

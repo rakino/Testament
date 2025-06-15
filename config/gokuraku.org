@@ -81,7 +81,7 @@
       shepherd-root-service-type
     (list (shepherd-timer '(btrbk)
             #~(calendar-event #:minutes '(0))
-            #~(#$(file-append (pkg "btrbk") "/bin/btrbk")
+            #~(#$(file-append (pkg "btrbk") "/bin/btrbk") "run"
                "-c" #$(local-file (testament-plain "gokuraku/btrbk.conf")))
             #:requirement '(user-processes))))
 #+end_src
