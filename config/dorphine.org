@@ -1628,12 +1628,15 @@ Frontend
     (package (spec->pkg "emacs-notmuch"))
     (options
      '((mail-user-agent . notmuch-user-agent)
+       (message-hidden-headers . ("^Face:" "^X-Face:" "^X-Draft-From:"))
        (message-kill-buffer-on-exit . #t)
        (mml-secure-openpgp-encrypt-to-self . #t)
        (mml-secure-openpgp-signers . ("220F98D95E86204C0036DA7B6DEC4360408B4185"))
        (notmuch-show-logo . #f)
        (notmuch-draft-folder . "Drafts")
        (notmuch-fcc-dirs . "Sent")
+       (notmuch-message-headers
+        . ("Subject" "To" "Cc" "Date" "Message-ID" "In-Reply-To" "References"))
        (notmuch-search-oldest-first . #f)))
     (extra-after-load
      (list
