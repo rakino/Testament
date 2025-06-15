@@ -437,34 +437,35 @@ Remember to open TCP port 5555 and 5556.
 #+end_src
 
 ** manage-cuirass
-#+begin_src scheme :noweb-ref definition
-  (define %manage-cuirass-script
-    (program-file
-     "manage-cuirass.scm"
-     #~(begin
-         (use-modules (ice-9 format) (ice-9 match))
-         (define %services
-           '("cuirass"
-             "cuirass-remote-server"
-             "cuirass-web"
-             "cuirass-worker-container"))
-         (define %actions
-           '("status"
-             "start"
-             "stop"
-             "restart"
-             "enable"
-             "disable"))
-         (define (service? service)
-           (member service %services))
-         (define (action? action)
-           (member action %actions))
+#+name: manage-cuirass
+#+begin_src scheme
+  (let ((script
+         (program-file
+          "manage-cuirass.scm"
+          #~(begin
+              (use-modules (ice-9 format) (ice-9 match))
+              (define %services
+                '("cuirass"
+                  "cuirass-remote-server"
+                  "cuirass-web"
+                  "cuirass-worker-container"))
+              (define %actions
+                '("status"
+                  "start"
+                  "stop"
+                  "restart"
+                  "enable"
+                  "disable"))
+              (define (service? service)
+                (member service %services))
+              (define (action? action)
+                (member action %actions))
 
-         (match (cdr (command-line))
-           (((? service? service) (? action? action))
-            (system* "herd" action service))
-           (_
-            (format (current-error-port) "~
+              (match (cdr (command-line))
+                (((? service? service) (? action? action))
+                 (system* "herd" action service))
+                (_
+                 (format (current-error-port) "~
   Usage: manage-cuirass SERVICE ACTION
 
   SERVICE:
@@ -473,9 +474,7 @@ Remember to open TCP port 5555 and 5556.
   ACTION:
   ~{- ~a
   ~}" %services %actions)
-            (exit 1))))))
-
-  (define %manage-cuirass
+                 (exit 1)))))))
     (package
       (name "manage-cuirass")
       (version "0.0.0")
@@ -502,7 +501,7 @@ Remember to open TCP port 5555 and 5556.
     perror(*argv);
     return 127;
   }~%"
-                            #$%manage-cuirass-script)))
+                            #$script)))
                 (invoke "gcc" "manage-cuirass.c" "-o" "manage-cuirass")
                 (install-file "manage-cuirass" (in-vicinity #$output "bin")))))))
       (home-page "")
@@ -511,13 +510,13 @@ Remember to open TCP port 5555 and 5556.
       (license #f)))
 #+end_src
 
-#+begin_src scheme :noweb-ref transformation
+#+begin_src scheme :noweb yes :noweb-ref transformation
   (lambda (os)
     (operating-system
       (inherit os)
       (privileged-programs
        (cons* (privileged-program
-                (program (file-append %manage-cuirass "/bin/manage-cuirass"))
+                (program (file-append <<manage-cuirass>> "/bin/manage-cuirass"))
                 (setuid? #t))
               (operating-system-privileged-programs os)))))
 #+end_src
