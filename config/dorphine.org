@@ -1121,8 +1121,9 @@ Load paths are inherited from the server's environment.  If reader extensions ar
             (provision '(ares))
             (start
              #~(make-forkexec-constructor
-                (list "guix" "shell" "guile-next" "guile-ares-rs"
-                      "--" "guile" "-c" (format #f "~
+                (list "/home/hako/Workspace/Testament/pre-inst-env"
+                      "guix" "shell" "guile-next" "guile-ares-rs" "--"
+                      "guile" "-c" (format #f "~
   (begin ~
      (use-modules (guix gexp) ~
                   (gnu home services emacs)) ~
