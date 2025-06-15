@@ -1027,7 +1027,7 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
 #+begin_src scheme :noweb-ref home-service :noweb yes
   (service home-emacs-service-type
     (home-emacs-configuration
-      (emacs (spec->pkg "emacs-next-pgtk"))
+      (emacs (spec->pkg "emacs-pgtk"))
       (package-serializer %emacs-use-package-serializer)
       (native-compile? #f)
       (default-init
@@ -1279,10 +1279,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
     (name 'ox-hugo)
-    (package
-      ((package-input-rewriting
-        `((,(spec->pkg "emacs-minimal") . ,(spec->pkg "emacs-next-minimal"))))
-       (spec->pkg "emacs-ox-hugo")))
+    (package (spec->pkg "emacs-ox-hugo"))
     (load-after-packages '(ox))
     (load-force? #t))
 #+end_src
