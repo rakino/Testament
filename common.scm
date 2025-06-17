@@ -2,7 +2,9 @@
 ;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(use-modules (ice-9 match)
+(use-modules (srfi srfi-1)
+             (srfi srfi-26)
+             (ice-9 match)
              (ice-9 popen)
              (ice-9 textual-ports)
              (guix diagnostics)
@@ -13,7 +15,14 @@
              (rosenthal utils file)
              (rosenthal utils packages)
              (rosenthal utils transformations)
-             (sops secrets))
+             (sops secrets)
+
+             (gnu)
+             (gnu services guix)
+             (gnu services shepherd)
+             (gnu home)
+             (gnu home services)
+             (gnu home services shepherd))
 
 ;;;
 ;;; Common

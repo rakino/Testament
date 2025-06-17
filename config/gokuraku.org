@@ -8,7 +8,7 @@
 * Guix System
 #+begin_src scheme :tangle gokuraku.scm :noweb yes
   (load "../common.scm")
-  (use-modules (gnu) (gnu services shepherd) <<module>>)
+  (use-modules <<module>>)
 
   <<definition>>
 
@@ -28,8 +28,6 @@
 
 * Base
 #+begin_src scheme :noweb-ref module
-  (srfi srfi-26)
-  (ice-9 match)
   (sops secrets)
   (gnu services ssh)
   (sops services sops)

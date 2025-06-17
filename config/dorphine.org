@@ -8,7 +8,7 @@
 * Guix System
 #+begin_src scheme :tangle dorphine.scm :noweb yes
   (load "../common.scm")
-  (use-modules (gnu) (gnu services shepherd) <<module>>)
+  (use-modules <<module>>)
 
   <<definition>>
 
@@ -27,13 +27,6 @@
 #+end_src
 
 * Guix Home
-#+begin_src scheme :noweb-ref module
-  (gnu services guix)
-  (gnu home)
-  (gnu home services)
-  (gnu home services shepherd)
-#+end_src
-
 #+begin_src scheme :noweb yes :noweb-ref service
   (service guix-home-service-type
     `(("hako" ,(home-environment
@@ -43,8 +36,6 @@
 
 * Base
 #+begin_src scheme :noweb-ref module
-  (srfi srfi-26)
-  (ice-9 match)
   (sops secrets)
   (rosenthal bootloader grub)
   (gnu home services dotfiles)
