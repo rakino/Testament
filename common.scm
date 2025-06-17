@@ -80,21 +80,12 @@ WARNED."
   (curve Ed25519)
   (q #A279175682D0DAE3E11268E67E1F3FA47C38D7E509F7725567CF891E248E719F#)))"))
 
-;; https://substitute.boiledscript.com/signing-key.pub
 (define %guix-authorized-key-gokuraku
   (plain-file "gokuraku.pub" "
 (public-key
  (ecc
   (curve Ed25519)
   (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))"))
-
-;; https://substitutes.nonguix.org/signing-key.pub
-(define %guix-authorized-key-nonguix
-  (plain-file "nonguix.pub" "
-(public-key
- (ecc
-  (curve Ed25519)
-  (q #C1FD53E5D4CE971933EC50C9F307AE2171A2D3B52C804642A7A35F84F3A4EA98#)))"))
 
 
 ;;;
