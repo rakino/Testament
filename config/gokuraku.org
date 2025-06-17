@@ -401,6 +401,9 @@ Remember to open TCP port 5555 and 5556.
       (cuirass (spec->pkg "cuirass-hako"))
       ;; 6 hours
       (interval (* 6 3600))
+      (parameters
+       (plain-file "cuirass-parameters"
+         "(%cuirass-url \"https://ci.boiledscript.com\")\n"))
       (remote-server
        (cuirass-remote-server-configuration
          (trigger-url "http://localhost:49637")
