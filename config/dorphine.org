@@ -30,6 +30,7 @@
 #+begin_src scheme :noweb yes :noweb-ref service
   (service guix-home-service-type
     `(("hako" ,(home-environment
+                 (packages (replace-mesa (specs->pkgs+out <<home-package>>)))
                  (services (cons* <<home-service>> %base-home-services))))))
 #+end_src
 
@@ -1399,7 +1400,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
 #+end_src
 
 *** emacs-treesit-auto
-#+begin_src scheme :noweb-ref package
+#+begin_src scheme :noweb-ref home-package
   "tree-sitter-cmake"
   "tree-sitter-dockerfile"
   "tree-sitter-go"
