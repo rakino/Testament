@@ -361,7 +361,8 @@ No need to install less used ones, prefer ‘guix shell’.
   (service home-shepherd-service-type
     (home-shepherd-configuration
       ;; Start by WM to inherit environment variables for graphical session.
-      (auto-start? #f)))
+      (auto-start? #f)
+      (daemonize? #f)))
 #+end_src
 
 ** SOPS Secrets
@@ -714,12 +715,9 @@ To use NVK, mesa should be installed into a profile.
 ** Wayland
 *** niri
 #+begin_src scheme :noweb-ref package
+  "niri"
   "qtwayland@5"
   "wl-clipboard"
-#+end_src
-
-#+begin_src scheme :noweb-ref package
-  "niri"
 #+end_src
 
 #+begin_src scheme :noweb yes :noweb-ref home-xdg-configuration-file
@@ -1757,7 +1755,7 @@ To use fcitx5 in QT applications, install =fcitx5-qt= and set environment variab
       home-shepherd-service-type
     (list (shepherd-service
             (provision '(fcitx5))
-            (requirement '(dbus))
+            (requirement '(dbus graphical-session))
             (start
              #~(make-forkexec-constructor
                 (list #$(file-append (spec->pkg "fcitx5") "/bin/fcitx5"))))

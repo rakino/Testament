@@ -73,8 +73,7 @@ binds {
 
 prefer-no-csd
 screenshot-path "/mnt/Mentha/@Library/Pictures/Screenshots/%Y%m%d-%H%M%S.png"
-spawn-at-startup "sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
-
+spawn-at-startup "/bin/sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
 environment {
     DISPLAY ":233"
 }
