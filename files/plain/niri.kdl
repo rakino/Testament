@@ -65,7 +65,7 @@ binds {
     XF86MonBrightnessDown allow-when-locked=true { spawn "$$bin/light$$" "-U" "5"; }
     XF86MonBrightnessUp   allow-when-locked=true { spawn "$$bin/light$$" "-A" "5"; }
 
-    Mod+Space   { spawn "$$bin/rofi$$" "-modes" "combi" "-show" "combi"; }
+    Mod+Space   { spawn "$$bin/rofi$$" "-show" "drun"; }
     Mod+L       { spawn "$$bin/swaylock$$" "--clock" "--daemonize" "--ignore-empty-password" "--image" "$$115008128_p0.jpg$$"; }
     Mod+Return  { spawn "emacsclient" "--create-frame" "--no-wait"; }
     Mod+Shift+E { quit; }
@@ -73,7 +73,8 @@ binds {
 
 prefer-no-csd
 screenshot-path "/mnt/Mentha/@Library/Pictures/Screenshots/%Y%m%d-%H%M%S.png"
-spawn-at-startup "/bin/sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
+spawn-at-startup "sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
+spawn-at-startup "$$bin/xwayland-satellite$$" ":233"
 environment {
     DISPLAY ":233"
 }
