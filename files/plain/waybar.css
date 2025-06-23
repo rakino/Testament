@@ -4,7 +4,6 @@
 @import "$$waybar-colors.css$$";
 
 * {
-    font-family: "SF Pro Text";
     font-size: 1.2rem;
     background-color: transparent;
     border-radius: 5px;

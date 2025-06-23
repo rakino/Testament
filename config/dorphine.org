@@ -682,7 +682,6 @@ To use NVK, mesa should be installed into a profile.
 *** niri
 #+begin_src scheme :noweb-ref package
   "niri"
-  "qtwayland"
   "wl-clipboard"
 #+end_src
 
@@ -703,13 +702,6 @@ To use NVK, mesa should be installed into a profile.
 #+end_src
 
 [[file:../files/plain/niri.kdl][niri.kdl]]
-
-#+begin_src scheme :noweb-ref home-service
-  (service home-graphical-session-service-type
-    (home-graphical-session-configuration
-      (wayland? #t)
-      (x11? #t)))
-#+end_src
 
 *** xdg-desktop-portal
 #+begin_src scheme :noweb-ref package
@@ -760,7 +752,7 @@ To use NVK, mesa should be installed into a profile.
       home-shepherd-service-type
     (list (shepherd-service
             (provision '(gammastep))
-            (requirement '(graphical-session home-sops-secrets))
+            (requirement '(home-sops-secrets))
             (start
              #~(make-forkexec-constructor
                 (list #$(file-append (spec->pkg "bash-minimal") "/bin/sh") "-c"
@@ -770,15 +762,14 @@ To use NVK, mesa should be installed into a profile.
 #+end_src
 
 ** qogir-icon-theme
-#+begin_src scheme :noweb-ref package
-  "adwaita-icon-theme"
-  "hicolor-icon-theme"
-  "qogir-icon-theme"
+#+begin_src scheme :noweb-ref home-service
+  (service home-theme-service-type
+    (home-theme-configuration
+      (packages (specs->pkgs "qogir-icon-theme"))
+      (icon-theme "Qogir")
+      (cursor-theme "Qogir")
+      (key-theme "Emacs")))
 #+end_src
-
-[[file:../files/dotfiles/.config/gtk-3.0/settings.ini][~/.config/gtk-3.0/settings.ini]]
-
-[[file:../files/dotfiles/.icons/default/index.theme][~/.icons/default/index.theme]]
 
 ** fontconfig
 #+begin_src scheme :noweb-ref package
@@ -848,7 +839,6 @@ To use NVK, mesa should be installed into a profile.
       home-shepherd-service-type
     (list (shepherd-service
             (provision '(jellyfin-mpv-shim))
-            (requirement '(graphical-session x11-display))
             (start
              #~(make-forkexec-constructor
                 '(#$(file-append (spec->pkg "jellyfin-mpv-shim") "/bin/jellyfin-mpv-shim"))))
@@ -931,17 +921,11 @@ home-emacs-service-type from [[https://issues.guix.gnu.org/64620][#64620]]
         (emacs-configuration
           (extra-init-files
            `(("font.el" . ,(local-file (testament-plain "emacs-font.el")))))
-          (variables
-           '((no-littering-etc-directory . "~/.config")
-             (no-littering-var-directory . "~/.local/share")))
           (modes '((gcmh-mode . #t)))
           (extra-init (list #%(no-littering-theme-backups)))))
       (configured-packages
        (list <<emacs-package>>))
-      (servers
-       (list (emacs-server
-               (name "server")
-               (shepherd-requirements '(graphical-session)))))))
+      (servers (list (emacs-server (name "server"))))))
 #+end_src
 
 [[file:../files/plain/emacs-font.el][emacs-font.el]]
@@ -1009,28 +993,14 @@ Arei requires a nREPL server, which can be started with:
   guix shell guile-next guile-ares-rs -- guile -c '((@ (ares server) run-nrepl-server))'
 #+end_src
 
-Load paths are inherited from the server's environment.  If reader extensions are needed, relevant modules should be loaded before starting the server.  See =ares= target in Makefile for example.
+Load paths are inherited from the server's environment.  If reader extensions
+are needed, relevant modules should be loaded before starting the server.  See
+=ares= target in Makefile for example.
 
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'ares-rs
-      home-shepherd-service-type
-    (list (shepherd-service
-            (provision '(ares))
-            (start
-             #~(make-forkexec-constructor
-                (list "/home/hako/Workspace/Testament/pre-inst-env"
-                      "guix" "shell" "guile-next" "guile-ares-rs" "--"
-                      "guile" "-c" (format #f "~
-  (begin ~
-     (use-modules (guix gexp) ~
-                  (gnu home services emacs)) ~
-     ((@ (ares server) run-nrepl-server)))"))))
-            (stop #~(make-kill-destructor)))))
-#+end_src
-
-Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffer-location= but Citre expects =xref-file-location=.
+Custom xref backend for Citre.  Arei's builtin xref backend provides
+=xref-buffer-location= but Citre expects =xref-file-location=.
 #+begin_src scheme :noweb-ref emacs-package
-  (emacs-package
+  #;(emacs-package
     (name 'arei)
     (package (spec->pkg "emacs-arei"))
     (load-after-packages '(xref))
@@ -1051,7 +1021,8 @@ Custom xref backend for Citre.  Arei's builtin xref backend provides =xref-buffe
                                         (list (xref-make identifier loc))))))))
 #+end_src
 
-In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to connect to the server.
+In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to
+connect to the server.
 
 *** emacs-citre
 #+begin_src scheme :noweb-ref emacs-package
@@ -1073,7 +1044,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
     (load-after-packages '(citre))
     (load-force? #t)
     (extra-after-load
-     (list #%(defvar citre-arei-backend
+     (list #;#%(defvar citre-arei-backend
                (citre-xref-backend-to-citre-backend
                 'hako/arei
                 (lambda () (derived-mode-p 'scheme-mode))))
@@ -1085,7 +1056,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
                (citre-xref-backend-to-citre-backend
                 'elisp
                 (lambda () (derived-mode-p 'scheme-mode))))
-           #%(citre-register-backend 'arei citre-arei-backend)
+           #;#%(citre-register-backend 'arei citre-arei-backend)
            #%(citre-register-backend 'dumb-jump citre-dumb-jump-backend)
            #%(citre-register-backend 'elisp citre-elisp-backend))))
 
@@ -1093,7 +1064,7 @@ In Emacs, run ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to co
     (name 'citre-backend-interface)
     (options
      '((citre-find-definition-backends
-        . (eglot arei elisp tags dumb-jump))
+        . (eglot #;arei elisp tags dumb-jump))
        (citre-find-reference-backends
         . (eglot elisp dumb-jump)))))
 
