@@ -54,11 +54,12 @@
   (gnu home services shells)
   (sops home services sops)
   (gnu services ssh)
+  (gnu services sysctl)
   (rosenthal services keyboard)
   (sops services sops)
 #+end_src
 
-** Bootloader
+** Bootloader & Kernel
 #+name: bootloader
 #+begin_src scheme :noweb yes
   (bootloader-configuration
@@ -71,6 +72,39 @@
        (inherit (grub-theme))
        (image (local-file (testament-blobs "grub.png"))))))
 #+end_src
+
+#+begin_src scheme :noweb-ref service
+  ;; https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
+  (simple-service 'udp-buffer-size
+      sysctl-service-type
+    '(("net.core.rmem_max" . "7500000")
+      ("net.core.wmem_max" . "7500000")))
+#+end_src
+
+#+begin_src scheme :noweb-ref transformation
+  (nonguix-transformation-linux
+   #:linux (spec->pkg "linux@6.12"))
+
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (kernel-arguments
+       (cons* "kernel.sysrq=1"
+              "zswap.enabled=1"
+              "zswap.max_pool_percent=90"
+              "modprobe.blacklist=pcspkr"
+              (operating-system-user-kernel-arguments os)))))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'modprobed-db
+      home-shepherd-service-type
+    (list (shepherd-timer '(update-modprobed-db)
+            #~(calendar-event #:minutes '(0))
+            #~(#$(file-append (spec->pkg "modprobed-db") "/bin/modprobed-db") "storesilent"))))
+#+end_src
+
+[[file:../files/dotfiles/.config/modprobed-db.conf][~/.config/modprobed-db.conf]]
 
 ** File Systems
 Disk layout:
@@ -312,6 +346,32 @@ Administration accounts.
           "deploy ALL = NOPASSWD: ALL\n")))))
 #+end_src
 
+** Shell Utilities
+*** atuin
+#+begin_src scheme :noweb-ref home-fish-config
+  (mixed-text-file "atuin.fish"
+    (spec->pkg "atuin") "/bin/atuin init fish | source")
+#+end_src
+
+*** direnv
+#+begin_src scheme :noweb-ref home-fish-config
+  (mixed-text-file "direnv.fish"
+    (spec->pkg "direnv") "/bin/direnv hook fish | source")
+#+end_src
+
+*** zoxide
+#+begin_src scheme :noweb-ref home-fish-config
+  (mixed-text-file "zoxide.fish"
+    (spec->pkg "zoxide") "/bin/zoxide init --cmd cd fish | source")
+#+end_src
+
+** Packages
+Frequently used packages.
+#+begin_src scheme :noweb-ref package
+  "rsync"
+  "unzip"
+#+end_src
+
 ** Guix Daemon
 #+begin_src scheme :noweb-ref transformation
   (nonguix-transformation-guix)
@@ -424,47 +484,10 @@ Generate passwordless ECC key:
 
 [[file:../files/plain/sops.yaml][sops.yaml]]
 
-* Kernel
-#+begin_src scheme :noweb-ref module
-  (gnu services sysctl)
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  ;; https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
-  (simple-service 'udp-buffer-size
-      sysctl-service-type
-    '(("net.core.rmem_max" . "7500000")
-      ("net.core.wmem_max" . "7500000")))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (nonguix-transformation-linux
-   #:linux (spec->pkg "linux@6.12"))
-
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (kernel-arguments
-       (cons* "kernel.sysrq=1"
-              "zswap.enabled=1"
-              "zswap.max_pool_percent=90"
-              "modprobe.blacklist=pcspkr"
-              (operating-system-user-kernel-arguments os)))))
-#+end_src
-
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'modprobed-db
-      home-shepherd-service-type
-    (list (shepherd-timer '(update-modprobed-db)
-            #~(calendar-event #:minutes '(0))
-            #~(#$(file-append (spec->pkg "modprobed-db") "/bin/modprobed-db") "storesilent"))))
-#+end_src
-
-[[file:../files/dotfiles/.config/modprobed-db.conf][~/.config/modprobed-db.conf]]
-
-* Networking
+* Networking & SSH
 #+begin_src scheme :noweb-ref module
   (gnu services networking)
+  (gnu services ssh)
   (rosenthal services networking)
   (rosenthal services dns)
 #+end_src
@@ -540,11 +563,7 @@ Generate passwordless ECC key:
 
 [[file:../files/plain/mihomo.yaml][mihomo.yaml]]
 
-* SSH
-#+begin_src scheme :noweb-ref module
-  (gnu services ssh)
-#+end_src
-
+** openssh
 #+begin_src scheme :noweb-ref package
   "mosh"
 #+end_src
@@ -554,6 +573,36 @@ Generate passwordless ECC key:
     (openssh-configuration
       (openssh (spec->pkg "openssh-sans-x"))
       (password-authentication? #f)))
+#+end_src
+
+* OpenPGP & Security Token
+#+begin_src scheme :noweb-ref module
+  (gnu services security-token)
+  (gnu home services gnupg)
+#+end_src
+
+** pcscd
+#+begin_src scheme :noweb-ref service
+  (service pcscd-service-type)
+#+end_src
+
+** gnupg
+#+begin_src scheme :noweb-ref home-service
+  (service home-gpg-agent-service-type
+    (home-gpg-agent-configuration
+      (pinentry-program
+       (file-append (spec->pkg "pinentry-emacs") "/bin/pinentry-emacs"))
+      (ssh-support? #t)
+      (extra-content "allow-loopback-pinentry")))
+#+end_src
+
+** libfido2
+#+begin_src scheme :noweb-ref group
+  "plugdev"
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (udev-rules-service 'u2f (spec->pkg "libfido2") #:groups '("plugdev"))
 #+end_src
 
 * Containers & Virtualization
@@ -702,6 +751,9 @@ To use NVK, mesa should be installed into a profile.
 #+begin_src scheme :noweb-ref package
   "niri"
   "wl-clipboard"
+  "xdg-desktop-portal"
+  "xdg-desktop-portal-gnome"
+  "xdg-desktop-portal-gtk"
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
@@ -721,13 +773,6 @@ To use NVK, mesa should be installed into a profile.
 #+end_src
 
 [[file:../files/plain/niri.kdl][niri.kdl]]
-
-*** xdg-desktop-portal
-#+begin_src scheme :noweb-ref package
-  "xdg-desktop-portal"
-  "xdg-desktop-portal-gnome"
-  "xdg-desktop-portal-gtk"
-#+end_src
 
 *** waybar
 #+begin_src scheme :noweb-ref home-service
@@ -851,7 +896,33 @@ To use NVK, mesa should be installed into a profile.
           (family "monospace"))))))
 #+end_src
 
-* Multimedia
+** fcitx5
+#+begin_src scheme :noweb-ref home-service
+  (service home-fcitx5-service-type
+    (home-fcitx5-configuration
+      (themes (specs->pkgs "fcitx5-material-color-theme"))
+      (input-method-editors (specs->pkgs "fcitx5-rime"))))
+#+end_src
+
+** librewolf
+#+begin_src scheme :noweb-ref package
+  "librewolf"
+  "adaptive-tab-bar-colour-icecat"
+  "bitwarden-icecat"
+  "livemarks-icecat"
+  "miniflux-injector-icecat"
+  "ohmyech-icecat"
+  "privacy-redirect-icecat"
+  "ublock-origin-icecat"
+#+end_src
+
+* Multimedia & Miscellaneous
+#+begin_src scheme :noweb-ref module
+  (rosenthal services bittorrent)
+  (rosenthal services file-systems)
+  (gnu home services syncthing)
+#+end_src
+
 ** jellyfin-mpv-shim
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'jellyfin-mpv-shim
@@ -876,34 +947,78 @@ To use NVK, mesa should be installed into a profile.
   "obs"
 #+end_src
 
-* OpenPGP & Security Token
-#+begin_src scheme :noweb-ref module
-  (gnu services security-token)
-  (gnu home services gnupg)
+** steam
+#+begin_src scheme :noweb-ref package
+  "steam-nvidia"
 #+end_src
 
-** pcscd
-#+begin_src scheme :noweb-ref service
-  (service pcscd-service-type)
+#+begin_src scheme :noweb-ref home-environment-variable
+  ("GUIX_SANDBOX_HOME" . "/mnt/Mentha/@Sandbox")
+  ("GUIX_SANDBOX_EXTRA_SHARES" . "$HOME/Downloads:/mnt/Mentha/@Library/Pictures/Screenshots")
 #+end_src
 
-** gnupg
-#+begin_src scheme :noweb-ref home-service
-  (service home-gpg-agent-service-type
-    (home-gpg-agent-configuration
-      (pinentry-program
-       (file-append (spec->pkg "pinentry-emacs") "/bin/pinentry-emacs"))
-      (ssh-support? #t)
-      (extra-content "allow-loopback-pinentry")))
+My game controller provides both Xbox and Nintendo interfaces but doesn't offer a toggle.
+#+begin_src scheme :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (kernel-arguments
+       (cons "modprobe.blacklist=hid_nintendo"
+             (operating-system-user-kernel-arguments os)))))
 #+end_src
 
-** libfido2
+#+begin_src scheme :noweb yes :noweb-ref service
+  (udev-rules-service 'steam-devices (spec->pkg "steam-devices-udev-rules"))
+  (udev-rules-service 'controller <<controller-permission-udev-rule>>)
+#+end_src
+
+See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
+#+name: controller-permission-udev-rule
+#+begin_src scheme
+  (udev-rule "60-controller-permission.rules" "\
+  KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
+  MODE=\"0660\", GROUP=\"users\"")
+#+end_src
+
+** adb
 #+begin_src scheme :noweb-ref group
-  "plugdev"
+  "adbusers"
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (udev-rules-service 'u2f (spec->pkg "libfido2") #:groups '("plugdev"))
+  (udev-rules-service 'android (spec->pkg "android-udev-rules") #:groups '("adbusers"))
+#+end_src
+
+** git
+#+begin_src scheme :noweb-ref package
+  "git"
+#+end_src
+
+[[file:../files/dotfiles/.config/git/config][~/.config/git/config]]
+
+** guix-label-teams
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'guix-label-teams
+      home-shepherd-service-type
+    (list (shepherd-timer '(guix-label-teams)
+            #~(calendar-event #:minutes '(0))
+            #~("/home/hako/Workspace/guix-label-teams.scm"))))
+#+end_src
+
+** qbittorrent
+#+begin_src scheme :noweb-ref home-service
+  (service home-qbittorrent-service-type
+    (qbittorrent-configuration
+      (qbittorrent (spec->pkg "qbittorrent-enhanced-no-x"))
+      (webui-port 35951)))
+#+end_src
+
+** syncthing
+#+begin_src scheme :noweb-ref home-service
+  (service home-syncthing-service-type
+    (for-home
+     (syncthing-configuration
+       (user "hako"))))
 #+end_src
 
 * Emacs
@@ -1400,11 +1515,6 @@ connect to the server.
     (hooks '((after-init . envrc-global-mode))))
 #+end_src
 
-#+begin_src scheme :noweb-ref home-fish-config
-  (mixed-text-file "direnv.fish"
-    (spec->pkg "direnv") "/bin/direnv hook fish | source")
-#+end_src
-
 *** emacs-forge
 #+begin_src scheme :noweb-ref emacs-package
   (emacs-package
@@ -1607,124 +1717,4 @@ Send
   if test \"$INSIDE_EMACS\" = 'vterm'
       source $EMACS_VTERM_PATH/etc/emacs-vterm.fish
   end")
-#+end_src
-
-* Miscellaneous
-#+begin_src scheme :noweb-ref module
-  (rosenthal services bittorrent)
-  (rosenthal services file-systems)
-  (gnu home services syncthing)
-#+end_src
-
-** adb
-#+begin_src scheme :noweb-ref group
-  "adbusers"
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  (udev-rules-service 'android (spec->pkg "android-udev-rules") #:groups '("adbusers"))
-#+end_src
-
-** atuin
-#+begin_src scheme :noweb-ref home-fish-config
-  (mixed-text-file "atuin.fish"
-    (spec->pkg "atuin") "/bin/atuin init fish | source")
-#+end_src
-
-** fcitx5
-#+begin_src scheme :noweb-ref home-service
-  (service home-fcitx5-service-type
-    (home-fcitx5-configuration
-      (themes (specs->pkgs "fcitx5-material-color-theme"))
-      (input-method-editors (specs->pkgs "fcitx5-rime"))))
-#+end_src
-
-** git
-#+begin_src scheme :noweb-ref package
-  "git"
-#+end_src
-
-[[file:../files/dotfiles/.config/git/config][~/.config/git/config]]
-
-** guix-label-teams
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'guix-label-teams
-      home-shepherd-service-type
-    (list (shepherd-timer '(guix-label-teams)
-            #~(calendar-event #:minutes '(0))
-            #~("/home/hako/Workspace/guix-label-teams.scm"))))
-#+end_src
-
-** librewolf
-#+begin_src scheme :noweb-ref package
-  "librewolf"
-  "adaptive-tab-bar-colour-icecat"
-  "bitwarden-icecat"
-  "livemarks-icecat"
-  "miniflux-injector-icecat"
-  "ohmyech-icecat"
-  "privacy-redirect-icecat"
-  "ublock-origin-icecat"
-#+end_src
-
-** qbittorrent
-#+begin_src scheme :noweb-ref home-service
-  (service home-qbittorrent-service-type
-    (qbittorrent-configuration
-      (qbittorrent (spec->pkg "qbittorrent-enhanced-no-x"))
-      (webui-port 35951)))
-#+end_src
-
-** steam
-#+begin_src scheme :noweb-ref package
-  "steam-nvidia"
-#+end_src
-
-#+begin_src scheme :noweb-ref home-environment-variable
-  ("GUIX_SANDBOX_HOME" . "/mnt/Mentha/@Sandbox")
-  ("GUIX_SANDBOX_EXTRA_SHARES" . "$HOME/Downloads:/mnt/Mentha/@Library/Pictures/Screenshots")
-#+end_src
-
-My game controller provides both Xbox and Nintendo interfaces but doesn't offer a toggle.
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (kernel-arguments
-       (cons "modprobe.blacklist=hid_nintendo"
-             (operating-system-user-kernel-arguments os)))))
-#+end_src
-
-#+begin_src scheme :noweb yes :noweb-ref service
-  (udev-rules-service 'steam-devices (spec->pkg "steam-devices-udev-rules"))
-  (udev-rules-service 'controller <<controller-permission-udev-rule>>)
-#+end_src
-
-See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
-#+name: controller-permission-udev-rule
-#+begin_src scheme
-  (udev-rule "60-controller-permission.rules" "\
-  KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
-  MODE=\"0660\", GROUP=\"users\"")
-#+end_src
-
-** syncthing
-#+begin_src scheme :noweb-ref home-service
-  (service home-syncthing-service-type
-    (for-home
-     (syncthing-configuration
-       (user "hako"))))
-#+end_src
-
-** zoxide
-#+begin_src scheme :noweb-ref home-fish-config
-  (mixed-text-file "zoxide.fish"
-    (spec->pkg "zoxide") "/bin/zoxide init --cmd cd fish | source")
-#+end_src
-
-** Extra Packages
-No need to install less used ones, prefer ‘guix shell’.
-#+begin_src scheme :noweb-ref package
-  "rsync"
-  "unzip"
 #+end_src
