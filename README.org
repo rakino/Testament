@@ -23,10 +23,11 @@ actively):
 
 * Systems
 + [[file:config/dorphine.org][dorphine]] (x86_64-linux, laptop)
-    [[file:files/plain/assets/dorphine-1.png]]
-    [[file:files/plain/assets/dorphine-2.png]]
+[[file:files/plain/assets/dorphine-1.png]]
+[[file:files/plain/assets/dorphine-2.png]]
+
 + [[file:config/gokuraku.org][gokuraku]] (x86_64-linux, server)
-    [[file:files/plain/assets/gokuraku-1.png]]
+[[file:files/plain/assets/gokuraku-1.png]]
 
 * Resources
 + [[https://files.spritely.institute/papers/scheme-primer.html][A Scheme Primer]] :: Nice short guide to get you started with Scheme.
