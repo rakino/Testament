@@ -310,6 +310,12 @@ Personal account.
 
 #+begin_src scheme :noweb-ref home-service
   (service home-fish-service-type)
+
+  ;; Disable fish greeting.
+  (simple-service 'fish-greeting
+      home-xdg-configuration-files-service-type
+    `(("fish/functions/fish_greeting.fish"
+       ,(plain-file "fish_greeting.fish" ""))))
 #+end_src
 
 Administration accounts.
