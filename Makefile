@@ -10,6 +10,8 @@ EMACS := $(GUIX) shell emacs-minimal -- emacs
 %.scm: %.org
 	@$(EMACS) -Q --batch \
 	--eval "(require 'ob-tangle)" \
+	--eval "(setopt org-babel-load-languages '((shell . t)))" \
+	--eval "(setopt org-confirm-babel-evaluate nil)" \
 	--eval "(org-babel-tangle-file \"$<\")"
 
 
@@ -23,12 +25,12 @@ pull:
 .PHONY: build
 build: build-dorphine build-gokuraku
 build-%: config/%.scm
-	guix system build $< $(OPTS)
+	$(GUIX) system build $< $(OPTS)
 
 .PHONY: deploy
 deploy: deploy-dorphine deploy-gokuraku
 deploy-%: config/%.scm
-	guix deploy files/deploy/$(notdir $<) $(OPTS)
+	$(GUIX) deploy files/deploy/$(notdir $<) $(OPTS)
 
 .PHONY: authenticate
 # Authenticate commits.

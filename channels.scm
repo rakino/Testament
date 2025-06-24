@@ -46,4 +46,5 @@
 
 (cons* %channel-nonguix
        %channel-rosenthal
+       %channel-sops-guix
        %default-channels)

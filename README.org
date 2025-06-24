@@ -14,10 +14,9 @@ This repository contains my dotfiles and Guix System literate configurations.
 
 See [[file:Makefile][Makefile]] for usage.
 
-Guix channels I'm using (personal forks are temporary, I'm not updating them
-actively):
-+ [[https://codeberg.org/guix/guix.git][guix]] ([[https://git.boiledscript.com/hako/guix.git][personal fork]])
-+ [[https://gitlab.com/nonguix/nonguix][nonguix]] ([[https://git.boiledscript.com/hako/nonguix.git][personal fork]])
+Guix channels in use:
++ [[https://codeberg.org/guix/guix.git][guix]]
++ [[https://gitlab.com/nonguix/nonguix][nonguix]]
 + [[https://codeberg.org/hako/rosenthal.git][rosenthal]]
 + [[https://github.com/fishinthecalculator/sops-guix][sops-guix]]
 
