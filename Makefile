@@ -14,9 +14,11 @@ EMACS := $(GUIX) shell emacs-minimal -- emacs
 
 
 .PHONY: pull
+# Run ‘guix time-machine’ once to make cache of the build output.
 pull:
 	guix pull --channels=channels.scm $(OPTS) && \
-	guix describe --format=channels > channels.lock
+	guix describe --format=channels > channels.lock && \
+	guix time-machine --channels=channels.lock
 
 .PHONY: build
 build: build-dorphine build-gokuraku
