@@ -499,17 +499,10 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb yes :noweb-ref service
   (service smartdns-service-type
     (smartdns-configuration
-      (config-file <<smartdns-config>>)))
-#+end_src
-
-#+name: smartdns-config
-#+begin_src scheme
-  (let ((conf-dir (file-append (spec->pkg "dnsmasq-china-list") "/share/dnsmasq-china-list/")))
-    (mixed-text-file "smartdns.conf"
-      (file-content (testament-plain "smartdns.conf")) "\n"
-      "conf-file " (file-append conf-dir "accelerated-domains.china.smartdns.conf") "\n"
-      "conf-file " (file-append conf-dir "apple.china.smartdns.conf") "\n"
-      "conf-file " (file-append conf-dir "bogus-nxdomain.china.smartdns.conf") "\n"))
+      (config-file
+       (computed-substitution-with-inputs "smartdns.conf"
+         (local-file (testament-plain "smartdns.conf"))
+         (specs->pkgs "dnsmasq-china-list")))))
 #+end_src
 
 [[file:../files/plain/smartdns.conf][smartdns.conf]]
