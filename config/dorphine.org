@@ -56,6 +56,7 @@
   (gnu services ssh)
   (gnu services sysctl)
   (rosenthal services keyboard)
+  (rosenthal services shellutils)
   (sops services sops)
 #+end_src
 
@@ -307,10 +308,8 @@ Personal account.
     (shell (file-append (spec->pkg "fish") "/bin/fish")))
 #+end_src
 
-#+begin_src scheme :noweb yes :noweb-ref home-service
-  (service home-fish-service-type
-    (home-fish-configuration
-      (config (list <<home-fish-config>>))))
+#+begin_src scheme :noweb-ref home-service
+  (service home-fish-service-type)
 #+end_src
 
 Administration accounts.
@@ -348,21 +347,24 @@ Administration accounts.
 
 ** Shell Utilities
 *** atuin
-#+begin_src scheme :noweb-ref home-fish-config
-  (mixed-text-file "atuin.fish"
-    (spec->pkg "atuin") "/bin/atuin init fish | source")
+#+begin_src scheme :noweb-ref home-service
+  (service home-atuin-service-type
+    (home-atuin-configuration
+      (shells '(fish))))
 #+end_src
 
 *** direnv
-#+begin_src scheme :noweb-ref home-fish-config
-  (mixed-text-file "direnv.fish"
-    (spec->pkg "direnv") "/bin/direnv hook fish | source")
+#+begin_src scheme :noweb-ref home-service
+  (service home-direnv-service-type
+    (home-direnv-configuration
+      (shells '(fish))))
 #+end_src
 
 *** zoxide
-#+begin_src scheme :noweb-ref home-fish-config
-  (mixed-text-file "zoxide.fish"
-    (spec->pkg "zoxide") "/bin/zoxide init --cmd cd fish | source")
+#+begin_src scheme :noweb-ref home-service
+  (service home-zoxide-service-type
+    (home-zoxide-configuration
+      (shells '(fish))))
 #+end_src
 
 ** Packages
@@ -1712,9 +1714,13 @@ Send
              (keys '(("t" . hako/vterm-project)))))))
 #+end_src
 
-#+begin_src scheme :noweb-ref home-fish-config
-  (plain-file "vterm.fish" "\
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'fish-vterm
+      home-fish-service-type
+    (home-fish-extension
+      (config
+       (list (plain-file "vterm.fish" "\
   if test \"$INSIDE_EMACS\" = 'vterm'
       source $EMACS_VTERM_PATH/etc/emacs-vterm.fish
-  end")
+  end")))))
 #+end_src
