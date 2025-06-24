@@ -469,6 +469,32 @@ Generate passwordless ECC key:
   (rosenthal services dns)
 #+end_src
 
+** network-manager
+#+begin_src scheme :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (services
+       (modify-services (operating-system-user-services os)
+         (network-manager-service-type
+          config => (network-manager-configuration
+                      (inherit config)
+                      (dns "none")
+                      (extra-configuration-files
+                       `(("wifi_rand_mac.conf"
+                          ,(plain-file "wifi_rand_mac.conf" "\
+  # Generate a random MAC for each network connection and associate the two
+  # permanently.
+  [connection-mac-randomization]
+  ethernet.cloned-mac-address=stable
+  wifi.cloned-mac-address=stable\n"))
+                         ("ip6-privacy.conf"
+                          ,(plain-file "ip6-privacy.conf" "\
+  # Use IPv6 Privacy Extensions.
+  [connection]
+  ipv6.ip6-privacy=2\n"))))))))))
+#+end_src
+
 ** smartdns
 #+begin_src scheme :noweb yes :noweb-ref service
   (service smartdns-service-type
