@@ -76,7 +76,8 @@ Changes to the configuration file will be applied immediately.
   # Open terminal emulator (Super + T)
 
   # Make the configuration file writable.
-  $ chmod +w ~/.config/niri/config.kdl
+  $ cd ~/.config/niri
+  $ chmod +w config.kdl
 
   # Edit the configuration using editor of your choice.
   $ nano config.kdl
