@@ -69,7 +69,7 @@ Default keybindings:
 + =Super + D= :: Open application launcher, [[https://github.com/lbonn/rofi][rofi-wayland]] is used.
 
 To change keyboard layout, edit niri configuration at
-=~/.config/niri/config.kdl~= (see [[https://github.com/YaLTeR/niri/wiki/Configuration:-Input#keyboard][its documentation for keyboard layout]]).
+=~/.config/niri/config.kdl= (see [[https://github.com/YaLTeR/niri/wiki/Configuration:-Input#keyboard][its documentation for keyboard layout]]).
 Changes to the configuration file will be applied immediately.
 
 #+begin_src shell
