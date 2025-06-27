@@ -125,11 +125,15 @@ Empty password
   (gnu packages package-management)
 #+end_src
 
+Lock channels to avoid building Guix when using the LiveCD.
 #+begin_src scheme :noweb-ref transformation
   ;; Nonguix substitute server currently unavailable for IPv4.
   ;; https://gitlab.com/nonguix/nonguix/-/issues/395
-  (nonguix-transformation-guix #:substitutes? #f)
-  (rosenthal-transformation-guix)
+  (nonguix-transformation-guix
+   #:substitutes? #f
+   #:channel? #f)
+  (rosenthal-transformation-guix
+   #:channel? #f)
 
   (lambda (os)
     (operating-system
@@ -139,8 +143,8 @@ Empty password
          (guix-service-type
           config => (guix-configuration
                       (inherit config)
-                      (guix (guix-for-channels
-                             (channel-list '(file . "../channels.lock"))))))))))
+                      (channels (channel-list '((channel-file . "channels.lock"))))
+                      (guix (guix-for-channels channels))))))))
 #+end_src
 
 * Graphical Session
