@@ -18,7 +18,24 @@
       (bootloader <<bootloader>>)
       (file-systems %base-file-systems)
       (users (cons* <<user>> %base-user-accounts))
-      (skeletons %rosenthal-skeletons)
+      (skeletons
+       (append `(;; Hide a few desktop entries from the application launcher.
+                 (".local/share/applications/emacsclient.desktop"
+                  ,(hidden-desktop-entry "emacsclient.desktop"
+                     (file-append (spec->pkg "emacs-pgtk") "/share/applications/emacsclient.desktop")))
+                 (".local/share/applications/foot-server.desktop"
+                  ,(hidden-desktop-entry "foot-server.desktop"
+                     (file-append (spec->pkg "foot") "/share/applications/foot-server.desktop")))
+                 (".local/share/applications/footclient.desktop"
+                  ,(hidden-desktop-entry "footclient.desktop"
+                     (file-append (spec->pkg "foot") "/share/applications/footclient.desktop")))
+                 (".local/share/applications/rofi.desktop"
+                  ,(hidden-desktop-entry "rofi.desktop"
+                     (file-append (spec->pkg "rofi") "/share/applications/rofi.desktop")))
+                 (".local/share/applications/rofi-theme-selector.desktop"
+                  ,(hidden-desktop-entry "rofi-theme-selector.desktop"
+                     (file-append (spec->pkg "rofi") "/share/applications/rofi-theme-selector.desktop"))))
+               %rosenthal-skeletons))
       (packages
        (append (specs->pkgs+out <<package>>)
                (list %rosenthal-set-keymap)
