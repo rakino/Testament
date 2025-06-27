@@ -21,6 +21,7 @@
       (skeletons %rosenthal-skeletons)
       (packages
        (append (specs->pkgs+out <<package>>)
+               (list %rosenthal-set-keymap)
                (@@ (gnu system install) %installer-disk-utilities)
                %base-packages))
       (services
@@ -285,9 +286,13 @@ Empty password
   (simple-service 'fish-greeting
       home-xdg-configuration-files-service-type
     `(("fish/functions/fish_greeting.fish"
-       ,(plain-file "fish_greeting.fish" "\
-  echo \"\nWelcome to the LiveCD!\n
-  Configuration examples are under the `/etc/configuration' directory.\n\n\""))))
+       ,(plain-file "fish_greeting.fish" "echo \"
+  Welcome to the LiveCD!  You can use `set-keymap' to set up keyboard
+  layout.
+
+  Configuration examples are under the `/etc/configuration' directory.
+
+  \""))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service

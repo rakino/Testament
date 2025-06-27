@@ -19,7 +19,8 @@
       (file-systems %base-file-systems)
       (users (cons* <<user>> %base-user-accounts))
       (packages
-       (append (@@ (gnu system install) %installer-disk-utilities)
+       (append (list %rosenthal-set-keymap)
+               (@@ (gnu system install) %installer-disk-utilities)
                %base-packages))
       (services
        (cons* <<service>>
@@ -142,7 +143,8 @@ Password: =rosenthal=.
           config => (login-configuration
                       (inherit config)
                       (motd (plain-file "motd" "
-  Welcome to the LiveCD!  You can use `sudo nmtui' to configure network.
+  Welcome to the LiveCD!  You can use `set-keymap' to set up keyboard
+  layout and `sudo nmtui' to configure network.
 
   Configuration examples are under the `/etc/configuration' directory.
 
