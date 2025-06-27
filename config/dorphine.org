@@ -351,21 +351,12 @@ Administration accounts.
 #+end_src
 
 ** Shell Utilities
-*** atuin
 #+begin_src scheme :noweb-ref home-service
-  (service home-atuin-service-type
-    (home-atuin-configuration
-      (shells '(fish))))
+  (service home-fish-plugin-atuin-service-type)
+  (service home-fish-plugin-direnv-service-type)
+  (service home-fish-plugin-zoxide-service-type)
 #+end_src
 
-*** direnv
-#+begin_src scheme :noweb-ref home-service
-  (service home-direnv-service-type
-    (home-direnv-configuration
-      (shells '(fish))))
-#+end_src
-
-*** vterm
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'fish-vterm
       home-fish-service-type
@@ -375,13 +366,6 @@ Administration accounts.
   if test \"$INSIDE_EMACS\" = 'vterm'
       source $EMACS_VTERM_PATH/etc/emacs-vterm.fish
   end")))))
-#+end_src
-
-*** zoxide
-#+begin_src scheme :noweb-ref home-service
-  (service home-zoxide-service-type
-    (home-zoxide-configuration
-      (shells '(fish))))
 #+end_src
 
 ** Packages

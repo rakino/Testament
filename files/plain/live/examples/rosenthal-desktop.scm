@@ -143,18 +143,9 @@
                      (cons* (service home-keyboard-service-type %my-keyboard-layout)
 
                             (service home-fish-service-type)
-
-                            (service home-atuin-service-type
-                              (home-atuin-configuration
-                                (shells '(fish))))
-
-                            (service home-direnv-service-type
-                              (home-direnv-configuration
-                                (shells '(fish))))
-
-                            (service home-zoxide-service-type
-                              (home-zoxide-configuration
-                                (shells '(fish))))
+                            (service home-fish-plugin-atuin-service-type)
+                            (service home-fish-plugin-direnv-service-type)
+                            (service home-fish-plugin-zoxide-service-type)
 
                             ;; Disable fish greeting.
                             (simple-service 'fish-greeting

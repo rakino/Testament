@@ -95,25 +95,10 @@ Empty password
   (rosenthal services shellutils)
 #+end_src
 
-** atuin
 #+begin_src scheme :noweb-ref home-service
-  (service home-atuin-service-type
-    (home-atuin-configuration
-      (shells '(fish))))
-#+end_src
-
-** direnv
-#+begin_src scheme :noweb-ref home-service
-  (service home-direnv-service-type
-    (home-direnv-configuration
-      (shells '(fish))))
-#+end_src
-
-** zoxide
-#+begin_src scheme :noweb-ref home-service
-  (service home-zoxide-service-type
-    (home-zoxide-configuration
-      (shells '(fish))))
+  (service home-fish-plugin-atuin-service-type)
+  (service home-fish-plugin-direnv-service-type)
+  (service home-fish-plugin-zoxide-service-type)
 #+end_src
 
 * Guix Daemon
