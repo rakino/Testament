@@ -5,9 +5,7 @@
              (rosenthal)
 
              (gnu services networking)
-             (gnu services ssh)
-
-             (nongnu packages linux))
+             (gnu services ssh))
 
 (define %my-os
   (operating-system
