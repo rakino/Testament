@@ -55,7 +55,7 @@ FIXME: Using =microcode-initrd= will make the system image unbootable.
          (console-font-service-type
           _ => (map (lambda (num)
                       (let* ((path "/share/consolefonts/ter-132n")
-                             (font (file-append (spec->pkg "font-terminus") path))
+                             (font (file-append (specification->package "font-terminus") path))
                              (tty (string-append "tty" (number->string num))))
                         (cons tty font)))
                     (iota 6 1)))))))
@@ -75,7 +75,7 @@ FIXME: Using =microcode-initrd= will make the system image unbootable.
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
-      (openssh (spec->pkg "openssh-sans-x"))
+      (openssh (specification->package "openssh-sans-x"))
       (port-number 20202)
       (password-authentication? #t)))
 #+end_src
@@ -88,7 +88,7 @@ Password: =rosenthal=.
     (password "$6$hM4MtbNEeHUtCljJ$nVVCLLMgOn3Id/g7ycNdW2FV/R1Is9RysHDRkLY8h31cwjFZRdA/4ynRNv.vbz0cSS5OyamMppy51Be3hEddY/")
     (group "users")
     (supplementary-groups '("audio" "video" "wheel"))
-    (shell (file-append (spec->pkg "fish") "/bin/fish")))
+    (shell (file-append (specification->package "fish") "/bin/fish")))
 #+end_src
 
 #+begin_src scheme :noweb-ref user

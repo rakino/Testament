@@ -22,22 +22,22 @@
        (append `(;; Hide a few desktop entries from the application launcher.
                  (".local/share/applications/emacsclient.desktop"
                   ,(hidden-desktop-entry "emacsclient.desktop"
-                     (file-append (spec->pkg "emacs-pgtk") "/share/applications/emacsclient.desktop")))
+                     (file-append (specification->package "emacs-pgtk") "/share/applications/emacsclient.desktop")))
                  (".local/share/applications/foot-server.desktop"
                   ,(hidden-desktop-entry "foot-server.desktop"
-                     (file-append (spec->pkg "foot") "/share/applications/foot-server.desktop")))
+                     (file-append (specification->package "foot") "/share/applications/foot-server.desktop")))
                  (".local/share/applications/footclient.desktop"
                   ,(hidden-desktop-entry "footclient.desktop"
-                     (file-append (spec->pkg "foot") "/share/applications/footclient.desktop")))
+                     (file-append (specification->package "foot") "/share/applications/footclient.desktop")))
                  (".local/share/applications/rofi.desktop"
                   ,(hidden-desktop-entry "rofi.desktop"
-                     (file-append (spec->pkg "rofi") "/share/applications/rofi.desktop")))
+                     (file-append (specification->package "rofi") "/share/applications/rofi.desktop")))
                  (".local/share/applications/rofi-theme-selector.desktop"
                   ,(hidden-desktop-entry "rofi-theme-selector.desktop"
-                     (file-append (spec->pkg "rofi") "/share/applications/rofi-theme-selector.desktop"))))
+                     (file-append (specification->package "rofi") "/share/applications/rofi-theme-selector.desktop"))))
                %rosenthal-skeletons))
       (packages
-       (append (specs->pkgs+out <<package>>)
+       (append (specifications->packages '(<<package>>))
                (list %rosenthal-set-keymap)
                (@@ (gnu system install) %installer-disk-utilities)
                %base-packages))
@@ -83,7 +83,7 @@ Empty password
     (password "")
     (group "users")
     (supplementary-groups '("audio" "video" "wheel"))
-    (shell (file-append (spec->pkg "fish") "/bin/fish")))
+    (shell (file-append (specification->package "fish") "/bin/fish")))
 #+end_src
 
 #+begin_src scheme :noweb-ref user
@@ -193,8 +193,12 @@ Lock channels to avoid building Guix when using the LiveCD.
 
   (service home-fcitx5-service-type
     (home-fcitx5-configuration
-      (themes (specs->pkgs "fcitx5-material-color-theme"))
-      (input-method-editors (specs->pkgs "fcitx5-chinese-addons" "fcitx5-rime"))))
+      (themes
+       (map specification->package
+            '("fcitx5-material-color-theme")))
+      (input-method-editors
+       (map specification->package
+            '("fcitx5-chinese-addons" "fcitx5-rime")))))
 #+end_src
 
 ** Theme
