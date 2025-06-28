@@ -65,7 +65,8 @@ Since Rosenthal is still unstable, they are considered experimental.
 ** [[file:config/live-console.org][console]]
 Username: =live=, password: =rosenthal=.
 
-This LiveCD starts a SSH daemon listening on port =20202=.
+To facilitate remote installation, this LiveCD starts a SSH daemon.  Remember to
+change the password when logged in if the machine is exposed to the Internet ;)
 
 [[file:files/plain/assets/live-console-1.jpg]]
 
