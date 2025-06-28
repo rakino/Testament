@@ -84,6 +84,7 @@ Default keybindings:
 
 [[file:files/plain/assets/live-desktop-1.png]]
 [[file:files/plain/assets/live-desktop-2.png]]
+[[file:files/plain/assets/live-desktop-3.png]]
 
 * Resources
 + [[https://files.spritely.institute/papers/scheme-primer.html][A Scheme Primer]] :: Nice short guide to get you started with Scheme.
