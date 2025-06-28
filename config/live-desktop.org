@@ -347,6 +347,18 @@ Lock channels to avoid building Guix when using the LiveCD.
 
 * LiveCD specific
 #+begin_src scheme :noweb-ref home-service
+  (simple-service 'writable-skeletons
+      home-fish-service-type
+    (home-fish-extension
+      (config
+       (list (plain-file "writable-skeletons.fish" "\
+  if status --is-login
+      # Make skeletons writable.
+      chown -R +w ~
+  end\n")))))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
   (simple-service 'fish-greeting
       home-xdg-configuration-files-service-type
     `(("fish/functions/fish_greeting.fish"
