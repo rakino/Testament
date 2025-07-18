@@ -370,9 +370,7 @@ Frequently used packages.
 
 ** Guix Daemon
 #+begin_src scheme :noweb-ref transformation
-  ;; Nonguix substitute server currently unavailable for IPv4.
-  ;; https://gitlab.com/nonguix/nonguix/-/issues/395
-  (nonguix-transformation-guix #:substitutes? #f)
+  (nonguix-transformation-guix)
   (rosenthal-transformation-guix)
 #+end_src
 
