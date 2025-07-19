@@ -204,6 +204,8 @@ Frequently used packages.
 #+end_src
 
 #+begin_src scheme :noweb-ref transformation
+  (nonguix-transformation-guix)
+
   (lambda (os)
     (operating-system
       (inherit os)
@@ -417,7 +419,8 @@ Remember to open TCP port 5555 and 5556.
        '("x86_64-linux" "i686-linux"))
       (substitute-urls
        `(,@%default-substitute-urls
-         "https://ci.ultrarare.space"))))
+         "https://ci.boiledscript.com"
+         "https://substitutes.nonguix.org"))))
 #+end_src
 
 ** manage-cuirass
