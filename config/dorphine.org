@@ -482,6 +482,33 @@ Generate passwordless ECC key:
 
 [[file:../files/plain/sops.yaml][sops.yaml]]
 
+* Power Management
+#+begin_src scheme :noweb-ref module
+  (gnu services pm)
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service tlp-service-type)
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'auto-power-off
+      shepherd-root-service-type
+    (list (shepherd-timer '(auto-power-off)
+            #~(calendar-event #:minutes '(0 10 20 30 40 50))
+            #~(#$(program-file "auto-power-off"
+                   #~(begin
+                       (use-modules (ice-9 textual-ports))
+
+                       (define %battery-capacity
+                         (call-with-input-file
+                             "/sys/class/power_supply/BAT1/capacity"
+                           (compose string->number get-line)))
+
+                       (when (<= %battery-capacity 10)
+                         (system* "loginctl" "poweroff"))))))))
+#+end_src
+
 * Networking & SSH
 #+begin_src scheme :noweb-ref module
   (gnu services networking)
