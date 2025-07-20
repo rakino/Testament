@@ -150,6 +150,7 @@ Root file system layout:
   ├─/swap         btrfs System/@Swap
   ├─/var/guix     btrfs System/@Guix
   ├─/var/lib      btrfs @Data
+  ├─/var/lock     tmpfs
   ├─/var/log      btrfs System/@Log
   └─/var/tmp      btrfs System/@Tmp
 #+end_example
@@ -166,7 +167,15 @@ Root file system layout:
           (device (uuid "2574-B3EC" 'fat))
           (mount-point "/efi")
           (type "vfat")
-          (create-mount-point? #t)))
+          (create-mount-point? #t))
+
+        (file-system
+          (device "tmpfs")
+          (mount-point "/var/lock")
+          (type "tmpfs")
+          (options "mode=0755,size=25%")
+          (create-mount-point? #t)
+          (check? #f)))
 #+end_src
 
 #+begin_src scheme :noweb yes :noweb-ref file-systems
