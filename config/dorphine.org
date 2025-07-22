@@ -295,7 +295,6 @@ Personal account.
 #+begin_src scheme :noweb yes :noweb-ref user
   (user-account
     (name "hako")
-    (password "$6$KC5RtFkRZBpkNFHg$tnl.h.9tzVMOxFy37WTGl8QBBmt.ZiZmxuLD8/9YCimYvFkU26xR6YTcHqhUeMQPiQZxZA3yEjeDBi6nST8ue/")
     (group "users")
     (supplementary-groups '(<<group>> "audio" "video" "wheel"))
     (shell (file-append (spec->pkg "fish") "/bin/fish")))
@@ -319,7 +318,6 @@ Administration accounts.
 
   (user-account
     (name "deploy")
-    (password #f)
     (group "users")
     (comment "User for 'guix deploy'")
     (create-home-directory? #f))
