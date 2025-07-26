@@ -196,7 +196,9 @@ Frequently used packages.
   (simple-service 'guix-extension-dorphine
       guix-service-type
     (guix-extension
-      (authorized-keys (list %guix-authorized-key-dorphine))))
+      (authorized-keys
+       (list %guix-authorized-key-dorphine
+             %guix-authorized-key-sin))))
 #+end_src
 
 #+begin_src scheme :noweb-ref transformation
