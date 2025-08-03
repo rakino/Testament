@@ -20,7 +20,8 @@
       (file-systems (append <<file-systems>> %base-file-systems))
       (users (cons* <<user>> %base-user-accounts))
       (packages (append (specs->pkgs+out <<package>>) %base-packages))
-      (services (cons* <<service>> %base-services))))
+      (services (cons* <<service>> %base-services))
+      (name-service-switch %default-nss)))
 
   ((compose <<transformation>>)
    %os)
@@ -95,6 +96,16 @@
                (discard? #t))))))
 #+end_src
 
+Maintenance:
+#+begin_src scheme :noweb-ref service
+  (simple-service 'btrfs-scrub
+      shepherd-root-service-type
+    (list (shepherd-timer '(btrfs-scrub)
+            #~(calendar-event #:hours '(0))
+            #~(#$(file-append (spec->pkg "btrfs-progs") "/bin/btrfs") "scrub" "start" "/mnt/Lycoris")
+            #:requirement '(user-processes))))
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (simple-service 'btrbk
       shepherd-root-service-type
@@ -162,7 +173,8 @@ Administration accounts.
        (plain-file "sudoers"
          (string-append
           (plain-file-content (operating-system-sudoers-file os))
-          "deploy ALL = NOPASSWD: ALL\n")))))
+          "deploy ALL = NOPASSWD: ALL\n"
+          "hako ALL = NOPASSWD: ALL\n")))))
 #+end_src
 
 ** Packages
@@ -176,9 +188,7 @@ Frequently used packages.
   (simple-service 'guix-extension-dorphine
       guix-service-type
     (guix-extension
-      (authorized-keys
-       (list %guix-authorized-key-dorphine
-             %guix-authorized-key-sin))))
+      (authorized-keys %hako-guix-authorized-keys-head)))
 #+end_src
 
 #+begin_src scheme :noweb-ref transformation
@@ -193,6 +203,18 @@ Frequently used packages.
           config => (guix-configuration
                       (inherit config)
                       (extra-options '("--cores=4" "--max-jobs=2"))))))))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service guix-publish-service-type
+    (guix-publish-configuration
+      (port 49637)
+      (compression '(("zstd" 19)))
+      (cache "/var/cache/guix/publish")
+      ;; 30 days
+      (ttl (* 30 24 3600))
+      ;; 2 minutes
+      (negative-ttl (* 2 60))))
 #+end_src
 
 ** SOPS Secrets
@@ -232,13 +254,14 @@ Frequently used packages.
              (sops-secret
                (key '("cuirass" "forgejo"))
                (file gokuraku.yaml)
-               (user "cuirass"))))))
+               (user "caddy"))))))
 #+end_src
 
 [[file:../files/plain/sops.yaml][sops.yaml]]
 
 * Networking & SSH
 #+begin_src scheme :noweb-ref module
+  (gnu services avahi)
   (gnu services networking)
   (gnu services ssh)
   (rosenthal services networking)
@@ -262,8 +285,7 @@ Frequently used packages.
                       (gateway (sops-str (list "network" version "gateway")))))
                   '("v4" "v6")))
             (name-servers
-             '("100.100.100.100"
-               "1.1.1.1"
+             '("1.1.1.1"
                "1.0.0.1"
                "2606:4700:4700::1111"
                "2606:4700:4700::1001")))))
@@ -272,6 +294,11 @@ Frequently used packages.
 ** ntp
 #+begin_src scheme :noweb-ref service
   (service ntp-service-type)
+#+end_src
+
+** avahi
+#+begin_src scheme :noweb-ref service
+  (service avahi-service-type)
 #+end_src
 
 ** nftables
@@ -359,14 +386,13 @@ Frequently used packages.
 
 * Continuous Integration
 #+begin_src scheme :noweb-ref module
-  (rosenthal services cuirass)
   (gnu services cuirass)
 #+end_src
 
 ** cuirass
 Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
-  (service cuirass-service-type/hako
+  (service cuirass-service-type
     (cuirass-configuration
       (cuirass (spec->pkg "cuirass-hako"))
       ;; 6 hours
@@ -382,26 +408,13 @@ Remember to open TCP port 5555 and 5556.
       (specifications #~(list <<cuirass-spec>>))))
 #+end_src
 
-** guix-publish
-#+begin_src scheme :noweb-ref service
-  (service guix-publish-service-type
-    (guix-publish-configuration
-      (port 49637)
-      (compression '(("zstd" 19)))
-      (cache "/var/cache/guix/publish")
-      ;; 30 days
-      (ttl (* 30 24 3600))
-      ;; 2 minutes
-      (negative-ttl (* 2 60))))
-#+end_src
-
 ** cuirass-remote-worker
 #+begin_src scheme :noweb-ref service
-  (service cuirass-worker-container-service-type
-    (cuirass-worker-container-configuration
-      (host-name "gokuraku")
+  (service cuirass-remote-worker-service-type
+    (cuirass-remote-worker-configuration
+      (publish-port 5558)
       (workers 2)
-      (supported-systems '("x86_64-linux" "aarch64-linux" "i686-linux"))
+      (systems '("x86_64-linux" "aarch64-linux" "i686-linux"))
       (server "127.0.0.1:5555")
       (substitute-urls
        `("https://ci.ultrarare.space"
@@ -439,8 +452,8 @@ Remember to open TCP port 5555 and 5556.
                "993d200265630e9c408028a022f32f34acacdf29"
                (openpgp-fingerprint
                 "7EBE A494 60CE 5E2C 0875  7FDB 3B5A A993 E1A2 DFF0"))))))
-    (priority 7)
-    (systems '("x86_64-linux" "i686-linux")))
+    (priority 5)
+    (systems '("x86_64-linux" "aarch64-linux" "i686-linux")))
 #+end_src
 
 #+begin_src scheme :noweb-ref cuirass-spec
@@ -460,7 +473,7 @@ Remember to open TCP port 5555 and 5556.
                (openpgp-fingerprint
                 "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5"))))))
     (priority 5)
-    (systems '("x86_64-linux" "i686-linux")))
+    (systems '("x86_64-linux" "aarch64-linux" "i686-linux")))
 #+end_src
 
 #+begin_src scheme :noweb-ref cuirass-spec
