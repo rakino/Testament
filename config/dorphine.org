@@ -552,24 +552,6 @@ Generate passwordless ECC key:
   ipv6.ip6-privacy=2\n"))))))))))
 #+end_src
 
-** smartdns
-#+begin_src scheme :noweb yes :noweb-ref service
-  (service smartdns-service-type
-    (smartdns-configuration
-      (config-file
-       (computed-substitution-with-inputs "smartdns.conf"
-         (local-file (testament-plain "smartdns.conf"))
-         (specs->pkgs "dnsmasq-china-list")))))
-#+end_src
-
-[[file:../files/plain/smartdns.conf][smartdns.conf]]
-
-#+begin_src scheme :noweb-ref service
-  (simple-service 'etc-resolv-conf
-      etc-service-type
-    `(("resolv.conf" ,(plain-file "resolv.conf" "nameserver 127.0.0.1\n"))))
-#+end_src
-
 ** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
