@@ -31,7 +31,6 @@
 #+begin_src scheme :noweb-ref module
   (sops secrets)
   (gnu services ssh)
-  (gnu services sysctl)
   (sops services sops)
 #+end_src
 
@@ -41,14 +40,6 @@
   (bootloader-configuration
     (bootloader grub-bootloader)
     (targets '("/dev/nvme1n1")))
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  ;; https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
-  (simple-service 'udp-buffer-size
-      sysctl-service-type
-    '(("net.core.rmem_max" . "7500000")
-      ("net.core.wmem_max" . "7500000")))
 #+end_src
 
 #+begin_src scheme :noweb-ref transformation
@@ -247,10 +238,6 @@ Frequently used packages.
                (key '("cloudflare"))
                (file gokuraku.yaml)
                (user "caddy"))
-             (sops-secret
-               (key '("cloudflared"))
-               (file gokuraku.yaml)
-               (user "cloudflared"))
              (sops-secret
                (key '("cuirass" "forgejo"))
                (file gokuraku.yaml)
@@ -544,14 +531,6 @@ Remember to open TCP port 5555 and 5556.
 [[file:../files/plain/gokuraku/Caddyfile][gokuraku/Caddyfile]]
 
 [[file:../files/plain/robots.txt/forgejo][robots.txt/forgejo]]
-
-** cloudflared
-#+begin_src scheme :noweb-ref service
-  (service cloudflare-tunnel-service-type
-    (cloudflare-tunnel-configuration
-      (log-level "error")
-      (token-file "/run/secrets/cloudflared")))
-#+end_src
 
 * Web Services
 #+begin_src scheme :noweb-ref module
