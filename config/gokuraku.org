@@ -332,7 +332,6 @@ Frequently used packages.
 * Containers & Virtualization
 #+begin_src scheme :noweb-ref module
   (gnu services docker)
-  (gnu services virtualization)
 #+end_src
 
 ** containerd
@@ -345,13 +344,6 @@ Frequently used packages.
   (service docker-service-type
     (docker-configuration
       (enable-iptables? #f)))
-#+end_src
-
-** binfmt_misc
-#+begin_src scheme :noweb-ref service
-  (service qemu-binfmt-service-type
-    (qemu-binfmt-configuration
-      (platforms (lookup-qemu-platforms "aarch64"))))
 #+end_src
 
 * Databases
@@ -401,7 +393,7 @@ Remember to open TCP port 5555 and 5556.
     (cuirass-remote-worker-configuration
       (publish-port 5558)
       (workers 2)
-      (systems '("x86_64-linux" "aarch64-linux" "i686-linux"))
+      (systems '("x86_64-linux" "i686-linux"))
       (server "127.0.0.1:5555")
       (substitute-urls
        `("https://ci.ultrarare.space"
