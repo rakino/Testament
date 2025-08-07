@@ -279,7 +279,7 @@ Frequently used packages.
                       (inherit config)
                       (discover? #t)
                       (extra-options '("--cores=4" "--max-jobs=4"))
-                      (tmpdir "/mnt/Mentha/System/@Build")))))))
+                      (tmpdir "/mnt/Lancea/System/@Build")))))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
