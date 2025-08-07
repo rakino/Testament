@@ -66,6 +66,14 @@ input {
     warp-mouse-to-focus
 }
 
+output "eDP-2" {
+    mode "2560x1440@239.999"
+}
+
+output "DP-1" {
+    focus-at-startup
+}
+
 binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
