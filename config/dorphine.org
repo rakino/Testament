@@ -536,7 +536,6 @@ Generate passwordless ECC key:
          (network-manager-service-type
           config => (network-manager-configuration
                       (inherit config)
-                      (dns "none")
                       (extra-configuration-files
                        `(("wifi_rand_mac.conf"
                           ,(plain-file "wifi_rand_mac.conf" "\

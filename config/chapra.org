@@ -282,16 +282,11 @@ Frequently used packages.
   (rosenthal services networking)
 #+end_src
 
-** wpa-supplicant
-#+begin_src scheme :noweb-ref service
-  (service wpa-supplicant-service-type)
-#+end_src
-
 ** network-manager
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
     (network-manager-configuration
-      (dns "none")
+      (shepherd-requirement '())
       (extra-configuration-files
        `(("wifi_rand_mac.conf"
           ,(plain-file "wifi_rand_mac.conf" "\
