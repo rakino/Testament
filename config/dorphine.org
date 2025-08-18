@@ -55,6 +55,7 @@
   (gnu home services dotfiles)
   (gnu home services shells)
   (sops home services sops)
+  (gnu services linux)
   (gnu services ssh)
   (gnu services sysctl)
   (rosenthal services keyboard)
@@ -86,20 +87,17 @@
               "zswap.enabled=1"
               "zswap.max_pool_percent=90"
               "modprobe.blacklist=pcspkr"
-              (operating-system-user-kernel-arguments os)))
-      (initrd-modules
-       (cons* "tcp_bbr"
-              (operating-system-initrd-modules os)))))
+              (operating-system-user-kernel-arguments os)))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
+  (simple-service 'add-extra-modules
+      kernel-module-loader-service-type
+    '("tcp_bbr"))
+
   (simple-service 'add-sysctl-rules
       sysctl-service-type
-    '(;; https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
-      ("net.core.rmem_max" . "7500000")
-      ("net.core.wmem_max" . "7500000")
-
-      ("net.core.default_qdisc" . "fq_pie")
+    '(("net.core.default_qdisc" . "fq_pie")
       ("net.ipv4.tcp_congestion_control" . "bbr")))
 #+end_src
 
@@ -876,7 +874,6 @@ To use NVK, mesa should be installed into a profile.
   "adaptive-tab-bar-colour-icecat"
   "bitwarden-icecat"
   "livemarks-icecat"
-  "miniflux-injector-icecat"
   "ohmyech-icecat"
   "privacy-redirect-icecat"
   "ublock-origin-icecat"
