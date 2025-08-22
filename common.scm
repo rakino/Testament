@@ -183,7 +183,8 @@ WARNED."
               "category-dev"
               "cn"
               "gfw"
-              "private"))
+              "private"
+              "stripe"))
        (map geoip
             '("cn"
               "telegram")))))
@@ -200,7 +201,9 @@ WARNED."
   (define %proxy-rules
     '((("rule_set" . "geosite-gfw"))
       (("rule_set" . "geosite-category-dev"))
-      (("domain_suffix" . ".boiledscript.com"))
+      (("rule_set" . "geosite-stripe"))
+      (("domain_suffix" . "boiledscript.com"))
+      (("domain_suffix" . "freedesktop.org"))
       (("rule_set" . "geoip-telegram"))
       (("inbound" . "IN: Proxy"))))
 

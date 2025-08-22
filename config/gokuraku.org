@@ -388,7 +388,7 @@ Remember to open TCP port 5555 and 5556.
       (systems '("x86_64-linux" "i686-linux"))
       (server "127.0.0.1:5555")
       (substitute-urls
-       `("https://ci.ultrarare.space"
+       `("https://ci.boiledscript.com"
          ,@%default-substitute-urls))))
 #+end_src
 
@@ -467,8 +467,7 @@ Remember to open TCP port 5555 and 5556.
   (service caddy-service-type
     (caddy-configuration
       (caddy (spec->pkg "caddy-hako"))
-      (caddyfile <<caddy-config>>)
-      (shepherd-requirement '(networking tailscaled))))
+      (caddyfile <<caddy-config>>)))
 #+end_src
 
 #+name: caddy-config
