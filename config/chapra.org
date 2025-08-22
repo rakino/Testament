@@ -186,7 +186,7 @@ Maintenance:
   (simple-service 'btrfs-scrub
       shepherd-root-service-type
     (list (shepherd-timer '(btrfs-scrub)
-            #~(calendar-event #:days-of-week '(sunday))
+            #~(calendar-event #:days-of-week '(sunday) #:hours '(0) #:minutes '(0))
             #~(#$(file-append (spec->pkg "btrfs-progs") "/bin/btrfs") "scrub" "start" "/mnt/Eriope")
             #:requirement '(user-processes))))
 #+end_src
