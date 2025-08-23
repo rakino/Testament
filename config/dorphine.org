@@ -382,10 +382,7 @@ Frequently used packages.
     (guix-publish-configuration
       (port 23575)
       (host "0.0.0.0")
-      (advertise? #t)
-      (compression '(("zstd" 19)))
-      ;; 30 days
-      (ttl (* 30 24 3600))))
+      (advertise? #t)))
 #+end_src
 
 ** SOPS Secrets
