@@ -385,7 +385,7 @@ Frequently used packages.
 #+begin_src scheme :noweb-ref service
   (service guix-publish-service-type
     (guix-publish-configuration
-      (port 23575)
+      (port 49637)
       (host "0.0.0.0")
       (advertise? #t)))
 #+end_src
