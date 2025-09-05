@@ -8,6 +8,10 @@
 	ech hello.boiledscript.com
 	log {
 		format filter {
+			request>remote_ip ip_mask {
+				ipv4 20
+				ipv6 44
+			}
 			request>client_ip ip_mask {
 				ipv4 20
 				ipv6 44
