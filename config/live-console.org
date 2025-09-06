@@ -63,6 +63,7 @@ FIXME: Using =microcode-initrd= will make the system image unbootable.
 
 * Networking & SSH
 #+begin_src scheme :noweb-ref module
+  (gnu services avahi)
   (gnu services networking)
   (gnu services ssh)
 #+end_src
@@ -70,6 +71,11 @@ FIXME: Using =microcode-initrd= will make the system image unbootable.
 #+begin_src scheme :noweb-ref service
   (service wpa-supplicant-service-type)
   (service network-manager-service-type)
+#+end_src
+
+Allow substitute server discovery.
+#+begin_src scheme :noweb-ref service
+  (service avahi-service-type)
 #+end_src
 
 #+begin_src scheme :noweb-ref service
