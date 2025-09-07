@@ -145,6 +145,18 @@ Frequently used packages.
       (authorized-keys %hako-guix-authorized-keys-head)))
 #+end_src
 
+#+begin_src scheme :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (services
+       (modify-services (operating-system-user-services os)
+         (guix-service-type
+          config => (guix-configuration
+                      (inherit config)
+                      (extra-options '("--cores=4" "--max-jobs=2"))))))))
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service guix-publish-service-type
     (guix-publish-configuration
@@ -377,6 +389,7 @@ rsync://cache.boiledscript.com
   (service cuirass-remote-worker-service-type
     (cuirass-remote-worker-configuration
       (publish-port 5558)
+      (workers 2)
       (systems '("x86_64-linux" "i686-linux"))
       (server "127.0.0.1:5555")
       (substitute-urls
