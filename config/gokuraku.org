@@ -338,7 +338,7 @@ rsync://cache.boiledscript.com
   (service rsync-service-type
     (rsync-configuration
       (modules
-       (list (rsync-module
+       (list #;(rsync-module
                (name "substitutes")
                (file-name "/var/cache/guix/publish"))
              (rsync-module
