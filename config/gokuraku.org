@@ -8,7 +8,7 @@
 * Guix System
 #+begin_src scheme :tangle gokuraku.scm :noweb yes
   (load "../common.scm")
-  (use-modules <<module>>)
+  (use-modules (rosenthal) <<module>>)
 
   <<definition>>
 
@@ -373,7 +373,9 @@ rsync://cache.boiledscript.com
                                  "--verbose"
                                  "--fast-list"
                                  "--size-only"
-                                 "--s3-no-check-bucket")
+                                 "--s3-no-check-bucket"
+                                 "--s3-upload-concurrency=8"
+                                 "--s3-chunk-size=16M")
                          (mkdir-p "/var/cache/guix/narinfo")
                          (invoke #$(file-append (spec->pkg "rsync") "/bin/rsync")
                                  "/var/cache/guix/publish/" "/var/cache/guix/narinfo/"
