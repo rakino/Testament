@@ -367,15 +367,11 @@ rsync://cache.boiledscript.com
                    (with-imported-modules '((guix build utils))
                      #~(begin
                          (use-modules (guix build utils))
-                         (invoke #$(file-append (spec->pkg "rclone-bin") "/bin/rclone")
-                                 "sync" "/var/cache/guix/publish/nar/" "r2:substitutes-apac/nar/"
-                                 "--config" "/run/secrets/rclone"
-                                 "--verbose"
-                                 "--fast-list"
-                                 "--size-only"
-                                 "--s3-no-check-bucket"
-                                 "--s3-upload-concurrency=8"
-                                 "--s3-chunk-size=16M")
+                         ;; Upload storage to Cloudflare R2.
+                         (invoke "sh"
+                                 #$(local-file (testament-plain "gokuraku/sync-r2.sh"))
+                                 #$(file-append (spec->pkg "rclone-bin") "/bin/rclone"))
+                         ;; Set up narinfo mirror.
                          (mkdir-p "/var/cache/guix/narinfo")
                          (invoke #$(file-append (spec->pkg "rsync") "/bin/rsync")
                                  "/var/cache/guix/publish/" "/var/cache/guix/narinfo/"
@@ -385,6 +381,8 @@ rsync://cache.boiledscript.com
                                  "--exclude" "/nar")))))
             #:requirement '(user-processes))))
 #+end_src
+
+[[file:../files/plain/gokuraku/sync-r2.sh][gokuraku/sync-r2.sh]]
 
 ** cuirass-remote-worker
 #+begin_src scheme :noweb-ref service
