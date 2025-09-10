@@ -368,7 +368,7 @@ rsync://cache.boiledscript.com
                      #~(begin
                          (use-modules (guix build utils))
                          ;; Upload storage to Cloudflare R2.
-                         (invoke "sh"
+                         (invoke "/bin/sh"
                                  #$(local-file (testament-plain "gokuraku/sync-r2.sh"))
                                  #$(file-append (spec->pkg "rclone-bin") "/bin/rclone"))
                          ;; Set up narinfo mirror.

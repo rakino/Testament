@@ -3,6 +3,7 @@
 #
 # SPDX-License-Identifier: CC0-1.0
 
+PATH=/run/current-system/profile/bin
 RCLONE=$1
 RCLONE_ARGS="\
     --config /run/secrets/rclone \
@@ -16,8 +17,10 @@ find /var/cache/guix/publish/nar -type f -printf '%P\n' | sort > new.txt
 
 if [ -e old.txt ]; then
     cp --force old.txt old.txt.bak
-    diff --unified old.txt new.txt | tail +4 | grep '^-' | sed 's/^-//g' > to-delete.txt
-    diff --unified old.txt new.txt | tail +4 | grep '^+' | sed 's/^+//g' > to-copy.txt
+    diff --unified old.txt new.txt | tail +4 > diff.txt
+    grep '^-' diff.txt | sed 's/^-//g' > to-delete.txt
+    grep '^+' diff.txt | sed 's/^+//g' > to-copy.txt
+    rm --force diff.txt
 fi
 if [ -s to-delete.txt ]; then
     $RCLONE delete $RCLONE_ARGS --files-from to-delete.txt r2:substitutes-apac/nar
