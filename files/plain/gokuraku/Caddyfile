@@ -132,13 +132,11 @@ ci.guix.moe {
 	}
 }
 
-cache-de.guix.moe {
+cache-cdn.guix.moe, cache-de.guix.moe {
 	import robots_txt
 	import logging substitutes
 
 	import iocaine {
-		root * /var/cache/guix/publish
-
 		@weather_endpoints {
 			path /api/queue || /api/latestbuilds
 		}
@@ -146,6 +144,13 @@ cache-de.guix.moe {
 			close
 		}
 
+		handle /nar/* {
+			reverse_proxy https://nars.guix.moe {
+				header_up Host {upstream_hostport}
+			}
+		}
+
+		root * /var/cache/guix/narinfo
 		file_server
 	}
 }
