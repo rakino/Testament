@@ -160,6 +160,8 @@ WARNED."
   (local-file (testament-blobs "dorphine.yaml")))
 (define gokuraku.yaml
   (local-file (testament-blobs "gokuraku.yaml")))
+(define rakuen.yaml
+  (local-file (testament-blobs "rakuen.yaml")))
 
 
 (define (sing-box-config)

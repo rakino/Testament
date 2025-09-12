@@ -1,0 +1,283 @@
+# SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
+# SPDX-License-Identifier: GPL-3.0-or-later
+# SPDX-License-Identifier: CC-BY-SA-4.0
+
+#+TITLE: specula
+#+PROPERTY: header-args :noweb-prefix no
+
+* Guix System
+#+begin_src scheme :tangle specula.scm :noweb yes
+  (load "../common.scm")
+  (use-modules (rosenthal) <<module>>)
+
+  <<definition>>
+
+  (define %os
+    (operating-system
+      (host-name "specula")
+      (timezone "Asia/Hong_Kong")
+      (bootloader <<bootloader>>)
+      (file-systems (append <<file-systems>> %base-file-systems))
+      (users (cons* <<user>> %base-user-accounts))
+      (packages (append (specs->pkgs+out <<package>>) %base-packages))
+      (services (cons* <<service>> %base-services))))
+
+  ((compose <<transformation>>)
+   %os)
+#+end_src
+
+* Base
+#+begin_src scheme :noweb-ref module
+  (sops secrets)
+  (gnu services linux)
+  (gnu services ssh)
+  (gnu services sysctl)
+  (sops services sops)
+#+end_src
+
+** Bootloader & Kernel
+#+name: bootloader
+#+begin_src scheme
+  (bootloader-configuration
+    (bootloader grub-efi-removable-bootloader)
+    (targets '("/efi")))
+#+end_src
+
+#+begin_src scheme :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (kernel (spec->pkg "linux-libre@6.12"))
+      (kernel-arguments
+       (cons* "kernel.sysrq=0"
+              "zswap.enabled=1"
+              "zswap.max_pool_percent=90"
+              (operating-system-user-kernel-arguments os)))
+      (initrd-modules
+       (cons* "sd_mod"
+              "virtio_scsi"
+              (operating-system-initrd-modules os)))))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'extend-kernel-module-loader
+      kernel-module-loader-service-type
+    '("sch_fq_pie" "tcp_bbr"))
+
+  (simple-service 'extend-systctl
+      sysctl-service-type
+    '(("net.core.default_qdisc" . "fq_pie")
+      ("net.ipv4.tcp_congestion_control" . "bbr")))
+#+end_src
+
+** File Systems
+#+begin_src scheme :noweb-ref file-systems
+  (list (file-system
+          (device (uuid "096e9467-e07c-4aa4-8d2f-c17654580365"))
+          (mount-point "/")
+          (type "xfs"))
+        (file-system
+          (device (uuid "8722-4C22" 'fat))
+          (mount-point "/efi")
+          (type "vfat")))
+#+end_src
+
+#+begin_src scheme :noweb yes :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (swap-devices
+       (list (swap-space
+               (target
+                (uuid "a93d5bb9-7af1-401e-b018-e9b48ea31e31")))))))
+#+end_src
+
+** Users
+Personal account.
+#+begin_src scheme :noweb-ref user
+  (user-account
+    (name "hako")
+    (group "users")
+    (supplementary-groups '("wheel"))
+    (shell (file-append (spec->pkg "fish") "/bin/fish")))
+#+end_src
+
+Administration accounts.
+#+begin_src scheme :noweb-ref user
+  (user-account
+    (inherit %root-account)
+    (password #f))
+
+  (user-account
+    (name "deploy")
+    (group "users")
+    (comment "User for 'guix deploy'")
+    (create-home-directory? #f))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'extend-openssh
+      openssh-service-type
+    `(("deploy" ,%ssh-key-deploy)
+      ("hako" ,%ssh-key-hako)))
+#+end_src
+
+#+begin_src scheme :noweb-ref transformation
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (sudoers-file
+       (plain-file "sudoers"
+         (string-append
+          (plain-file-content (operating-system-sudoers-file os))
+          "deploy ALL = NOPASSWD: ALL\n"
+          "hako ALL = NOPASSWD: ALL\n")))))
+#+end_src
+
+** Packages
+Frequently used packages.
+#+begin_src scheme :noweb-ref package
+  "rsync"
+#+end_src
+
+** Guix Daemon
+#+begin_src scheme :noweb-ref service
+  (simple-service 'extend-guix
+      guix-service-type
+    (guix-extension
+      (authorized-keys
+       (list %guix-authorized-key-dorphine))))
+#+end_src
+
+** SOPS Secrets
+#+begin_src scheme :noweb-ref package
+  "gnupg"
+  "sops"
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service sops-secrets-service-type
+    (sops-service-configuration
+      (sops (spec->pkg "sops"))
+      (config (local-file (testament-plain "sops.yaml")))
+      (gnupg-home "/var/lib/sops")
+      (secrets
+       (list (sops-secret
+               (key '("cloudflare"))
+               (file specula.yaml)
+               (user "caddy"))))))
+#+end_src
+
+[[file:../files/plain/sops.yaml][sops.yaml]]
+
+* Networking & SSH
+#+begin_src scheme :noweb-ref module
+  (gnu services avahi)
+  (gnu services networking)
+  (gnu services ssh)
+  (rosenthal services networking)
+#+end_src
+
+** dhcpcd
+#+begin_src scheme :noweb-ref service
+  (service dhcpcd-service-type)
+
+  (simple-service 'ipv6
+      shepherd-root-service-type
+    (let ((ip (file-append (spec->pkg "iproute2") "/sbin/ip")))
+      (list (shepherd-service
+              (provision '(networking-ipv6))
+              (requirement '(networking))
+              (start
+               #~(make-system-constructor
+                  #$ip " addr add 2a01:4f8:1c1a:396c::42/64 dev eth0 && "
+                  #$ip " -6 route add fe80::1 dev eth0"))
+              (stop
+               #~(make-system-destructor
+                  #$ip " -6 route del fe80::1 dev eth0 && "
+                  #$ip " addr del 2a01:4f8:1c1a:396c::42/64 dev eth0"))))))
+#+end_src
+
+** ntp
+#+begin_src scheme :noweb-ref service
+  (service ntp-service-type)
+#+end_src
+
+** nftables
+#+begin_src scheme :noweb-ref service
+  (service nftables-service-type
+    (nftables-configuration
+      (ruleset (local-file (testament-plain "specula/nftables.conf")))))
+#+end_src
+
+[[file:../files/plain/specula/nftables.conf][specula/nftables.conf]]
+
+** tailscale
+#+begin_src scheme :noweb-ref service
+  (service tailscale-service-type)
+#+end_src
+
+** openssh
+#+begin_src scheme :noweb-ref package
+  "mosh"
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (service openssh-service-type
+    (openssh-configuration
+      (openssh (spec->pkg "openssh-sans-x"))
+      (password-authentication? #f)))
+#+end_src
+
+* Web Servers
+#+begin_src scheme :noweb-ref module
+  (rosenthal services web)
+#+end_src
+
+** caddy
+#+begin_src scheme :noweb yes :noweb-ref service
+  (service caddy-service-type
+    (caddy-configuration
+      (caddy (spec->pkg "caddy-dolly"))
+      (caddyfile <<caddy-config>>)))
+#+end_src
+
+#+name: caddy-config
+#+begin_src scheme
+  (computed-substitution-with-inputs "specula.caddyfile"
+    (local-file (testament-plain "specula/Caddyfile"))
+    (list (testament-plain)))
+#+end_src
+
+[[file:../files/plain/specula/Caddyfile][specula/Caddyfile]]
+
+** mirroring
+#+begin_src scheme :noweb-ref service
+  (simple-service 'guix-moe-mirror
+      shepherd-root-service-type
+    (list (shepherd-timer '(guix-moe-mirror)
+            #~(calendar-event #:hours '(8) #:minutes '(0))
+            #~(#$(program-file "guix-moe-mirror"
+                   (with-imported-modules '((guix build utils))
+                     #~(begin
+                         (use-modules (guix build utils))
+                         (mkdir-p "/var/cache/guix-moe/narinfo")
+                         (invoke #$(file-append (spec->pkg "rsync") "/bin/rsync")
+                                 "-azvh" "--delete"
+                                 "rsync://cache.guix.moe/narinfo/"
+                                 "/var/cache/guix-moe/narinfo/")))))
+            #:requirement '(user-processes))))
+#+end_src
+
+
+* Monitoring
+#+begin_src scheme :noweb-ref module
+  (gnu services monitoring)
+#+end_src
+
+** prometheus-node-exporter
+#+begin_src scheme :noweb-ref service
+  (service prometheus-node-exporter-service-type
+    (prometheus-node-exporter-configuration
+      (web-listen-address ":36277")))
+#+end_src
