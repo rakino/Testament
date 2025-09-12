@@ -137,11 +137,12 @@ cache-cdn.guix.moe, cache-de.guix.moe {
 	import logging substitutes
 
 	import iocaine {
-		@weather_endpoints {
-			path /api/queue || /api/latestbuilds
+		@guix_publish {
+			path /*.narinfo || /nix-cache-info || /signing-key.pub
 		}
-		respond @weather_endpoints 404 {
-			close
+		handle @guix_publish {
+			root * /var/cache/guix/narinfo
+			file_server
 		}
 
 		handle /nar/* {
@@ -150,8 +151,9 @@ cache-cdn.guix.moe, cache-de.guix.moe {
 			}
 		}
 
-		root * /var/cache/guix/narinfo
-		file_server
+		respond "Visit guix [dot] moe for more information." 404 {
+			close
+		}
 	}
 }
 
