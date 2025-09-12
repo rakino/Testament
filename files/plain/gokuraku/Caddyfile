@@ -7,7 +7,17 @@
 	acme_dns cloudflare {file./run/secrets/cloudflare}
 	ech hello.boiledscript.com
 	log {
-		format json
+		format filter {
+			request>remote_ip ip_mask {
+				ipv4 20
+				ipv6 44
+			}
+			request>client_ip ip_mask {
+				ipv4 20
+				ipv6 44
+			}
+			wrap json
+		}
 	}
 	servers {
 		trusted_proxies static private_ranges
