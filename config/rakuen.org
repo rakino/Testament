@@ -178,24 +178,11 @@ Frequently used packages.
   (rosenthal services networking)
 #+end_src
 
-** dhcpcd
+** network-manager
 #+begin_src scheme :noweb-ref service
-  (service dhcpcd-service-type)
-
-  (simple-service 'ipv6
-      shepherd-root-service-type
-    (let ((ip (file-append (spec->pkg "iproute2") "/sbin/ip")))
-      (list (shepherd-service
-              (provision '(networking-ipv6))
-              (requirement '(networking))
-              (start
-               #~(make-system-constructor
-                  #$ip " addr add 2a01:4f9:c012:db1::42/64 dev eth0 && "
-                  #$ip " -6 route add fe80::1 dev eth0"))
-              (stop
-               #~(make-system-destructor
-                  #$ip " -6 route del fe80::1 dev eth0 && "
-                  #$ip " addr del 2a01:4f9:c012:db1::42/64 dev eth0"))))))
+  (service network-manager-service-type
+    (network-manager-configuration
+      (shepherd-requirement '())))
 #+end_src
 
 ** ntp
@@ -230,15 +217,6 @@ Frequently used packages.
 #+end_src
 
 * Session and Seat Management
-#+begin_src scheme :noweb-ref module
-  (gnu services dbus)
-#+end_src
-
-** dbus
-#+begin_src scheme :noweb-ref service
-  (service dbus-root-service-type)
-#+end_src
-
 ** elogind
 #+begin_src scheme :noweb-ref service
   (service elogind-service-type)
