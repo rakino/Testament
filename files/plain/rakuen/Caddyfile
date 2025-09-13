@@ -122,6 +122,29 @@ vault.boiledscript.com {
 	}
 }
 
+cache-fi.guix.moe {
+	import robots_txt
+	import logging substitutes
+
+	@guix_publish {
+		path /*.narinfo || /nix-cache-info || /signing-key.pub
+	}
+	handle @guix_publish {
+		root * /var/cache/guix-moe/narinfo
+		file_server
+	}
+
+	handle /nar/* {
+		reverse_proxy https://nars.guix.moe {
+			header_up Host {upstream_hostport}
+		}
+	}
+
+	respond "Visit guix [dot] moe for more information." 404 {
+		close
+	}
+}
+
 :80, :443, mail.boiledscript.com {
 	import logging catchall
 
