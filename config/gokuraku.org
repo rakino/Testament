@@ -10,20 +10,38 @@
   (load "../common.scm")
   (use-modules (rosenthal) <<module>>)
 
-  <<definition>>
-
   (define %os
     (operating-system
       (host-name "gokuraku")
       (timezone "Asia/Hong_Kong")
-      (bootloader <<bootloader>>)
+      (bootloader
+        (bootloader-configuration
+          (bootloader grub-efi-removable-bootloader)
+          (targets '("/efi"))))
+      (kernel (spec->pkg "linux-libre@6.12"))
+      (kernel-arguments
+       (cons* "kernel.sysrq=0"
+              "zswap.enabled=1"
+              "zswap.max_pool_percent=90"
+              %default-kernel-arguments))
       (file-systems (append <<file-systems>> %base-file-systems))
+      (swap-devices
+       (list (swap-space
+               (target (uuid "0316f295-36d1-4948-8c95-c1a8d8a8ab8b")))))
       (users (cons* <<user>> %base-user-accounts))
-      (packages (append (specs->pkgs+out <<package>>) %base-packages))
-      (services (cons* <<service>> %base-services))
+      (packages
+       (append (specs->pkgs+out "gnupg" "rsync" <<package>>)
+               %base-packages))
+      (services
+       (cons* <<service>>
+              (modify-services %base-services
+                (guix-service-type
+                 config => (guix-configuration
+                             (inherit config)
+                             (extra-options '("--cores=4" "--max-jobs=2")))))))
       (name-service-switch %default-nss)))
 
-  ((compose <<transformation>>)
+  ((compose (rosenthal-transformation-zfs #:boot? #t))
    %os)
 #+end_src
 
@@ -33,36 +51,16 @@
   (gnu services linux)
   (gnu services ssh)
   (gnu services sysctl)
-  (rosenthal services file-systems)
   (sops services sops)
 #+end_src
 
-** Bootloader & Kernel
-#+name: bootloader
-#+begin_src scheme
-  (bootloader-configuration
-    (bootloader grub-bootloader)
-    (targets '("/dev/sdb")))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (kernel (spec->pkg "linux-libre@6.12"))
-      (kernel-arguments
-       (cons* "kernel.sysrq=0"
-              "zswap.enabled=1"
-              "zswap.max_pool_percent=90"
-              (operating-system-user-kernel-arguments os)))))
-#+end_src
-
+** Kernel
 #+begin_src scheme :noweb-ref service
-  (simple-service 'add-extra-modules
+  (simple-service 'extend-kernel-module-loader
       kernel-module-loader-service-type
-    '("tcp_bbr"))
+    '("sch_fq_pie" "tcp_bbr"))
 
-  (simple-service 'add-sysctl-rules
+  (simple-service 'extend-systctl
       sysctl-service-type
     '(("net.core.default_qdisc" . "fq_pie")
       ("net.ipv4.tcp_congestion_control" . "bbr")))
@@ -71,22 +69,23 @@
 ** File Systems
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
-          (device (file-system-label "Lycoris"))
+          (device "zfs:Lycoris/Root")
           (mount-point "/")
-          (type "xfs")))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (swap-devices
-       (list (swap-space
-               (target (uuid "fe13d21b-385e-4dc3-9f94-24276d89c890")))))))
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  (service zfs-service-type)
+          (type "zfs"))
+        (file-system
+          (device (uuid "C633-92CC" 'fat))
+          (mount-point "/efi")
+          (type "vfat"))
+        (file-system
+          (device "zfs:Lycoris/Config")
+          (mount-point "/etc")
+          (type "zfs")
+          (needed-for-boot? #t))
+        (file-system
+          (device "zfs:Lycoris/Store")
+          (mount-point "/gnu")
+          (type "zfs")
+          (needed-for-boot? #t)))
 #+end_src
 
 ** Users
@@ -104,63 +103,28 @@ Administration accounts.
   (user-account
     (inherit %root-account)
     (password #f))
-
-  (user-account
-    (name "deploy")
-    (group "users")
-    (comment "User for 'guix deploy'")
-    (create-home-directory? #f))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (simple-service 'add-user-ssh-keys
+  (simple-service 'extend-openssh
       openssh-service-type
-    `(("deploy" ,%ssh-key-deploy)
+    `(("root" ,%ssh-key-deploy)
       ("hako" ,%ssh-key-hako)))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (sudoers-file
-       (plain-file "sudoers"
-         (string-append
-          (plain-file-content (operating-system-sudoers-file os))
-          "deploy ALL = NOPASSWD: ALL\n"
-          "hako ALL = NOPASSWD: ALL\n")))))
-#+end_src
-
-** Packages
-Frequently used packages.
-#+begin_src scheme :noweb-ref package
-  "rsync"
 #+end_src
 
 ** Guix Daemon
 #+begin_src scheme :noweb-ref service
-  (simple-service 'guix-extension-dorphine
+  (simple-service 'extend-guix
       guix-service-type
     (guix-extension
-      (authorized-keys %hako-guix-authorized-keys-head)))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (services
-       (modify-services (operating-system-user-services os)
-         (guix-service-type
-          config => (guix-configuration
-                      (inherit config)
-                      (extra-options '("--cores=4" "--max-jobs=2"))))))))
+      (authorized-keys %hako-guix-authorized-keys-head)
+      (substitute-urls '("https://cache-cdn.guix.moe"))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
   (service guix-publish-service-type
     (guix-publish-configuration
-      (guix (spec->pkg "guix-hako"))
+      (guix (spec->pkg "guix-dolly"))
       (port 49637)
       (compression '(("zstd" 19)))
       (cache "/var/cache/guix/publish")
@@ -172,7 +136,6 @@ Frequently used packages.
 
 ** SOPS Secrets
 #+begin_src scheme :noweb-ref package
-  "gnupg"
   "sops"
 #+end_src
 
@@ -246,6 +209,7 @@ Frequently used packages.
   (service openssh-service-type
     (openssh-configuration
       (openssh (spec->pkg "openssh-sans-x"))
+      (permit-root-login 'prohibit-password)
       (password-authentication? #f)))
 #+end_src
 
@@ -463,9 +427,9 @@ rsync://cache.boiledscript.com
     (properties '((forge-type . forgejo))))
 #+end_src
 
-* Web Servers
+* Web Servers & Services
 #+begin_src scheme :noweb-ref module
-  (rosenthal services child-error)
+  (rosenthal services web)
 #+end_src
 
 ** caddy
@@ -484,13 +448,6 @@ rsync://cache.boiledscript.com
 #+end_src
 
 [[file:../files/plain/gokuraku/Caddyfile][gokuraku/Caddyfile]]
-
-* Web Services
-#+begin_src scheme :noweb-ref module
-  (rosenthal services child-error)
-  (rosenthal services mail)
-  (rosenthal services web)
-#+end_src
 
 ** iocaine
 #+begin_src scheme :noweb-ref service

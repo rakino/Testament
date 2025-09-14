@@ -34,8 +34,6 @@ Guix channels in use:
 
 ** [[file:config/rakuen.org][rakuen]] (aarch64-linux)
 
-** [[file:config/specula.org][specula]] (aarch64-linux)
-
 * LiveCDs
 I provide two LiveCDs for the [[https://guix.gnu.org/manual/devel/en/html_node/Manual-Installation.html][manual installation]] of Guix System.  Pre-built
 images are available for x86_64-linux: https://files.boiledscript.com/livecd/

@@ -10,20 +10,36 @@
   (load "../common.scm")
   (use-modules (rosenthal) <<module>>)
 
-  <<definition>>
-
   (define %os
     (operating-system
       (host-name "rakuen")
       (timezone "Asia/Hong_Kong")
-      (bootloader <<bootloader>>)
+      (bootloader
+        (bootloader-configuration
+          (bootloader grub-efi-removable-bootloader)
+          (targets '("/efi"))))
+      (kernel (spec->pkg "linux-libre@6.12"))
+      (kernel-arguments
+       (cons* "kernel.sysrq=0"
+              "zswap.enabled=1"
+              "zswap.max_pool_percent=90"
+              %default-kernel-arguments))
+      (initrd-modules
+       (cons* "sd_mod"
+              "virtio_scsi"
+              %base-initrd-modules))
       (file-systems (append <<file-systems>> %base-file-systems))
+      (swap-devices
+       (list (swap-space
+               (target
+                (uuid "3b0cbf5f-e8eb-41a7-93f4-5f870bf09640")))))
       (users (cons* <<user>> %base-user-accounts))
-      (packages (append (specs->pkgs+out <<package>>) %base-packages))
+      (packages
+       (append (specs->pkgs+out "gnupg" "rsync" <<package>>)
+               %base-packages))
       (services (cons* <<service>> %base-services))))
 
-  ((compose <<transformation>>)
-   %os)
+  %os
 #+end_src
 
 * Base
@@ -35,30 +51,7 @@
   (sops services sops)
 #+end_src
 
-** Bootloader & Kernel
-#+name: bootloader
-#+begin_src scheme
-  (bootloader-configuration
-    (bootloader grub-efi-removable-bootloader)
-    (targets '("/efi")))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (kernel (spec->pkg "linux-libre@6.12"))
-      (kernel-arguments
-       (cons* "kernel.sysrq=0"
-              "zswap.enabled=1"
-              "zswap.max_pool_percent=90"
-              (operating-system-user-kernel-arguments os)))
-      (initrd-modules
-       (cons* "sd_mod"
-              "virtio_scsi"
-              (operating-system-initrd-modules os)))))
-#+end_src
-
+** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader
       kernel-module-loader-service-type
@@ -82,16 +75,6 @@
           (type "vfat")))
 #+end_src
 
-#+begin_src scheme :noweb yes :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (swap-devices
-       (list (swap-space
-               (target
-                (uuid "3b0cbf5f-e8eb-41a7-93f4-5f870bf09640")))))))
-#+end_src
-
 ** Users
 Personal account.
 #+begin_src scheme :noweb-ref user
@@ -107,37 +90,13 @@ Administration accounts.
   (user-account
     (inherit %root-account)
     (password #f))
-
-  (user-account
-    (name "deploy")
-    (group "users")
-    (comment "User for 'guix deploy'")
-    (create-home-directory? #f))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-openssh
       openssh-service-type
-    `(("deploy" ,%ssh-key-deploy)
+    `(("root" ,%ssh-key-deploy)
       ("hako" ,%ssh-key-hako)))
-#+end_src
-
-#+begin_src scheme :noweb-ref transformation
-  (lambda (os)
-    (operating-system
-      (inherit os)
-      (sudoers-file
-       (plain-file "sudoers"
-         (string-append
-          (plain-file-content (operating-system-sudoers-file os))
-          "deploy ALL = NOPASSWD: ALL\n"
-          "hako ALL = NOPASSWD: ALL\n")))))
-#+end_src
-
-** Packages
-Frequently used packages.
-#+begin_src scheme :noweb-ref package
-  "rsync"
 #+end_src
 
 ** Guix Daemon
@@ -145,13 +104,12 @@ Frequently used packages.
   (simple-service 'extend-guix
       guix-service-type
     (guix-extension
-      (authorized-keys
-       (list %guix-authorized-key-dorphine))))
+      (authorized-keys (list %guix-authorized-key-dorphine))
+      (substitute-urls '("https://cache-cdn.guix.moe"))))
 #+end_src
 
 ** SOPS Secrets
 #+begin_src scheme :noweb-ref package
-  "gnupg"
   "sops"
 #+end_src
 
@@ -213,6 +171,7 @@ Frequently used packages.
   (service openssh-service-type
     (openssh-configuration
       (openssh (spec->pkg "openssh-sans-x"))
+      (permit-root-login 'prohibit-password)
       (password-authentication? #f)))
 #+end_src
 
@@ -256,9 +215,11 @@ Frequently used packages.
   (service redis-service-type)
 #+end_src
 
-* Web Servers
+* Web Servers & Services
 #+begin_src scheme :noweb-ref module
   (rosenthal services child-error)
+  (rosenthal services mail)
+  (rosenthal services web)
 #+end_src
 
 ** caddy
@@ -294,13 +255,6 @@ Frequently used packages.
                                  "rsync://cache.guix.moe/narinfo/"
                                  "/var/cache/guix-moe/narinfo/")))))
             #:requirement '(user-processes))))
-#+end_src
-
-* Web Services
-#+begin_src scheme :noweb-ref module
-  (rosenthal services child-error)
-  (rosenthal services mail)
-  (rosenthal services web)
 #+end_src
 
 ** iocaine

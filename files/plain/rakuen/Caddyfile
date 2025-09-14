@@ -145,9 +145,7 @@ cache-fi.guix.moe {
 	}
 }
 
-:80, :443, mail.boiledscript.com {
-	import logging catchall
-
+mail.boiledscript.com {
 	import iocaine {
 		respond /* "Access denied" 403 {
 			close

@@ -81,7 +81,7 @@ files.boiledscript.com {
 	}
 }
 
-# Cuirass & Substitutes & Mirrors
+# Cuirass
 ci.ultrarare.space {
 	import logging cuirass
 
@@ -118,27 +118,58 @@ ci.guix.moe {
 	}
 }
 
+# Mirrors
 cache-cdn.guix.moe {
 	import robots_txt
 	import logging substitutes
 
-	import iocaine {
-		@guix_publish {
-			path /*.narinfo || /nix-cache-info || /signing-key.pub
-		}
-		handle @guix_publish {
-			root * /var/cache/guix/narinfo
-			file_server
-		}
+	@guix_publish {
+		path /*.narinfo || /nix-cache-info || /signing-key.pub
+	}
+	handle @guix_publish {
+		root * /var/cache/guix/narinfo
+		file_server
+	}
 
-		handle /nar/* {
-			reverse_proxy https://nars.guix.moe {
-				header_up Host {upstream_hostport}
-			}
-		}
+	handle /nar/* {
+		redir https://nars.guix.moe{uri}
+	}
 
-		respond "Visit guix [dot] moe for more information." 404 {
-			close
+	respond "Visit guix [dot] moe for more information." 404 {
+		close
+	}
+}
+
+cache-de.guix.moe {
+	import robots_txt
+	import logging substitutes
+
+	@guix_publish {
+		path /*.narinfo || /nix-cache-info || /signing-key.pub
+	}
+	handle @guix_publish {
+		root * /var/cache/guix/narinfo
+		file_server
+	}
+
+	handle /nar/* {
+		reverse_proxy https://nars.guix.moe {
+			header_up Host {upstream_hostport}
 		}
 	}
+
+	respond "Visit guix [dot] moe for more information." 404 {
+		close
+	}
+}
+
+# Redirections
+guix.moe, www.guix.moe {
+	redir https://ultrarare.space/en/posts/guix-build-farm/
+}
+ci.boiledscript.com {
+	redir https://ci.guix.moe{uri} permanent
+}
+cache-cdn.boiledscript.com, cache-de.boiledscript.com, cache-sg.boiledscript.com, cache-us-lax.boiledscript.com {
+	redir https://cache-cdn.guix.moe{uri} permanent
 }
