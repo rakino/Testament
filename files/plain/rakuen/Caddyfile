@@ -33,6 +33,7 @@
 	log {
 		output file /var/log/caddy/{args[0]}.log
 		format filter {
+			wrap json
 			request>remote_ip ip_mask {
 				ipv4 20
 				ipv6 44
@@ -41,7 +42,11 @@
 				ipv4 20
 				ipv6 44
 			}
-			wrap json
+			fields {
+				request>uri query {
+					delete access_token
+				}
+			}
 		}
 	}
 }
