@@ -95,10 +95,6 @@ ultrarare.space {
 	file_server
 }
 
-www.ultrarare.space {
-	redir https://ultrarare.space{uri} permanent
-}
-
 # Miniflux
 reader.boiledscript.com {
 	import block_bots

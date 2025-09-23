@@ -3,7 +3,8 @@
 # SPDX-License-Identifier: CC0-1.0
 
 {
-	email admin@boiledscript.com
+	dns cloudflare {file./run/secrets/cloudflare}
+	acme_dns cloudflare {file./run/secrets/cloudflare}
 	ech hello.boiledscript.com
 	metrics
 	log {
@@ -28,12 +29,6 @@
 }
 
 
-(cloudflare) {
-	tls {
-		dns cloudflare {file./run/secrets/cloudflare}
-	}
-}
-
 (logging) {
 	log {
 		output file /var/log/caddy/{args[0]}.log
@@ -92,7 +87,6 @@
 
 
 files.boiledscript.com {
-	import cloudflare
 	import block_bots
 	import logging files.boiledscript.com
 
@@ -102,7 +96,6 @@ files.boiledscript.com {
 
 # Cuirass
 ci.guix.moe {
-	import cloudflare
 	import block_bots
 	import logging ci.guix.moe
 
@@ -125,7 +118,6 @@ ci.guix.moe {
 
 # Forgejo
 git.ultrarare.space {
-	import cloudflare
 	import logging git.ultrarare.space
 	import tailscale {
 		reverse_proxy localhost:48071
@@ -134,7 +126,6 @@ git.ultrarare.space {
 
 # Mirrors
 cache-cdn.guix.moe {
-	import cloudflare
 	import block_bots
 	import logging cache-cdn.guix.moe
 
@@ -156,7 +147,6 @@ cache-cdn.guix.moe {
 }
 
 cache-de.guix.moe {
-	import cloudflare
 	import block_bots
 	import logging cache-de.guix.moe
 
@@ -182,7 +172,6 @@ cache-de.guix.moe {
 
 # Grafana
 dash.ultrarare.space {
-	import cloudflare
 	import tailscale {
 		reverse_proxy localhost:13064
 	}
@@ -190,7 +179,6 @@ dash.ultrarare.space {
 
 # Loki
 logs.boiledscript.com {
-	import cloudflare
 	import block_bots
 	import /run/secrets/caddy/loki
 	reverse_proxy localhost:50968
@@ -198,23 +186,7 @@ logs.boiledscript.com {
 
 # Mimir
 metrics.boiledscript.com {
-	import cloudflare
 	import block_bots
 	import /run/secrets/caddy/mimir
 	reverse_proxy localhost:49951
-}
-
-
-# Redirections
-guix.moe, www.guix.moe {
-	import cloudflare
-	redir https://ultrarare.space/en/posts/guix-build-farm/
-}
-ci.boiledscript.com {
-	import cloudflare
-	redir https://ci.guix.moe{uri} permanent
-}
-cache-cdn.boiledscript.com, cache-de.boiledscript.com, cache-sg.boiledscript.com, cache-us-lax.boiledscript.com {
-	import cloudflare
-	redir https://cache-cdn.guix.moe{uri} permanent
 }
