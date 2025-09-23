@@ -321,18 +321,16 @@ rsync://cache.boiledscript.com
     (name "emacs-master")
     (build '(channels emacs-master))
     (channels
-     (list (channel
-             (inherit %default-guix-channel)
-             (url "https://codeberg.org/guix/guix.git"))
-           (channel
-             (name 'emacs-master)
-             (url "https://github.com/gs-101/emacs-master.git")
-             (branch "main")
-             (introduction
-              (make-channel-introduction
-               "568579841d0ca41a9d222a2cfcad9a7367f9073b"
-               (openpgp-fingerprint
-                "3049 BF6C 0829 94E4 38ED  4A15 3033 E0E9 F7E2 5FE4"))))))
+     (cons* (channel
+              (name 'emacs-master)
+              (url "https://github.com/gs-101/emacs-master.git")
+              (branch "main")
+              (introduction
+               (make-channel-introduction
+                "568579841d0ca41a9d222a2cfcad9a7367f9073b"
+                (openpgp-fingerprint
+                 "3049 BF6C 0829 94E4 38ED  4A15 3033 E0E9 F7E2 5FE4"))))
+            %default-channels))
     (priority 5)
     (systems '("x86_64-linux")))
 #+end_src
@@ -341,10 +339,7 @@ rsync://cache.boiledscript.com
   (specification
     (name "guix")
     (build '(channels guix))
-    (channels
-     (list (channel
-             (inherit %default-guix-channel)
-             (url "https://codeberg.org/guix/guix.git"))))
+    (channels %default-channels)
     ;; 1 week
     (period (* 7 24 3600))
     (priority 7)
@@ -356,17 +351,15 @@ rsync://cache.boiledscript.com
     (name "guixcn")
     (build '(channels guixcn))
     (channels
-     (list (channel
-             (inherit %default-guix-channel)
-             (url "https://codeberg.org/guix/guix.git"))
-           (channel
-             (name 'guixcn)
-             (url "https://codeberg.org/guixcn/guix-channel.git")
-             (introduction
-              (make-channel-introduction
-               "993d200265630e9c408028a022f32f34acacdf29"
-               (openpgp-fingerprint
-                "7EBE A494 60CE 5E2C 0875  7FDB 3B5A A993 E1A2 DFF0"))))))
+     (cons* (channel
+              (name 'guixcn)
+              (url "https://codeberg.org/guixcn/guix-channel.git")
+              (introduction
+               (make-channel-introduction
+                "993d200265630e9c408028a022f32f34acacdf29"
+                (openpgp-fingerprint
+                 "7EBE A494 60CE 5E2C 0875  7FDB 3B5A A993 E1A2 DFF0"))))
+            %default-channels))
     (priority 5)
     (systems '("x86_64-linux"))
     (properties '((forge-type . forgejo))))
@@ -377,17 +370,15 @@ rsync://cache.boiledscript.com
     (name "nonguix")
     (build '(channels nonguix))
     (channels
-     (list (channel
-             (inherit %default-guix-channel)
-             (url "https://codeberg.org/guix/guix.git"))
-           (channel
-             (name 'nonguix)
-             (url "https://gitlab.com/nonguix/nonguix")
-             (introduction
-              (make-channel-introduction
-               "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
-               (openpgp-fingerprint
-                "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5"))))))
+     (cons* (channel
+              (name 'nonguix)
+              (url "https://gitlab.com/nonguix/nonguix")
+              (introduction
+               (make-channel-introduction
+                "897c1a470da759236cc11798f4e0a5f7d4d59fbc"
+                (openpgp-fingerprint
+                 "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5"))))
+            %default-channels))
     (priority 3)
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
@@ -397,17 +388,15 @@ rsync://cache.boiledscript.com
     (name "rde")
     (build '(channels rde))
     (channels
-     (list (channel
-             (inherit %default-guix-channel)
-             (url "https://codeberg.org/guix/guix.git"))
-           (channel
-             (name 'rde)
-             (url "https://git.sr.ht/~abcdw/rde")
-             (introduction
-              (make-channel-introduction
-               "257cebd587b66e4d865b3537a9a88cccd7107c95"
-               (openpgp-fingerprint
-                "2841 9AC6 5038 7440 C7E9  2FFA 2208 D209 58C1 DEB0"))))))
+     (cons* (channel
+              (name 'rde)
+              (url "https://git.sr.ht/~abcdw/rde")
+              (introduction
+               (make-channel-introduction
+                "257cebd587b66e4d865b3537a9a88cccd7107c95"
+                (openpgp-fingerprint
+                 "2841 9AC6 5038 7440 C7E9  2FFA 2208 D209 58C1 DEB0"))))
+            %default-channels))
     (priority 5)
     (systems '("x86_64-linux")))
 #+end_src
@@ -417,18 +406,16 @@ rsync://cache.boiledscript.com
     (name "rosenthal")
     (build '(channels rosenthal))
     (channels
-     (list (channel
-             (inherit %default-guix-channel)
-             (url "https://codeberg.org/guix/guix.git"))
-           (channel
-             (name 'rosenthal)
-             (url "https://codeberg.org/hako/rosenthal.git")
-             (branch "trunk")
-             (introduction
-              (make-channel-introduction
-               "7677db76330121a901604dfbad19077893865f35"
-               (openpgp-fingerprint
-                "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))))
+     (cons* (channel
+              (name 'rosenthal)
+              (url "https://codeberg.org/hako/rosenthal.git")
+              (branch "trunk")
+              (introduction
+               (make-channel-introduction
+                "7677db76330121a901604dfbad19077893865f35"
+                (openpgp-fingerprint
+                 "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
+            %default-channels))
     (priority 5)
     (systems '("x86_64-linux" "aarch64-linux"))
     (properties '((forge-type . forgejo))))
