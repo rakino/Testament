@@ -456,7 +456,51 @@ rsync://cache.boiledscript.com
 #+begin_src scheme :noweb-ref service
   (service forgejo-service-type
     (forgejo-configuration
-      (config-file (local-file (testament-blobs "forgejo.ini")))))
+      (config
+       `((#f
+          ("APP_NAME" . "URSpace VCS")
+          ("RUN_USER" . "forgejo")
+          ("WORK_PATH" . "/var/lib/forgejo")
+          ("RUN_MODE" . "prod"))
+         ,@(call-with-input-string (sops-str gokuraku.yaml '("forgejo")) read)
+         ("ui"
+          ("AMBIGUOUS_UNICODE_DETECTION" . "false"))
+         ("repository"
+          ("ROOT" . "/var/lib/forgejo/data/forgejo-repositories")
+          ("PREFERRED_LICENSES" . "GPL-3.0-or-later")
+          ("ENABLE_PUSH_CREATE_USER" . "true")
+          ("ENABLE_PUSH_CREATE_ORG" . "true")
+          ("DEFAULT_REPO_UNITS" . "repo.code,repo.releases,repo.issues,repo.pulls")
+          ("DEFAULT_BRANCH" . "trunk")
+          ("DISABLE_DOWNLOAD_SOURCE_ARCHIVES" . "true"))
+         ("lfs"
+          ("PATH" . "/var/lib/forgejo/data/lfs"))
+         ("service"
+          ("REGISTER_EMAIL_CONFIRM" . "true")
+          ("ENABLE_NOTIFY_MAIL" . "true")
+          ("DISABLE_REGISTRATION" . "true")
+          ("ALLOW_ONLY_EXTERNAL_REGISTRATION" . "false")
+          ("ENABLE_CAPTCHA" . "false")
+          ("REQUIRE_SIGNIN_VIEW" . "false")
+          ("DEFAULT_KEEP_EMAIL_PRIVATE" . "true")
+          ("DEFAULT_ALLOW_CREATE_ORGANIZATION" . "true")
+          ("DEFAULT_ENABLE_TIMETRACKING" . "true")
+          ("NO_REPLY_ADDRESS" . "noreply.localhost"))
+         ("openid"
+          ("ENABLE_OPENID_SIGNIN" . "false")
+          ("ENABLE_OPENID_SIGNUP" . "false"))
+         ("cron.update_checker"
+          ("ENABLED" . "false"))
+         ("session"
+          ("PROVIDER" . "file"))
+         ("log"
+          ("MODE" . "console")
+          ("LEVEL" . "info")
+          ("ROOT_PATH" . "/var/log/forgejo"))
+         ("repository.pull-request"
+          ("DEFAULT_MERGE_STYLE" . "rebase"))
+         ("repository.signing"
+          ("DEFAULT_TRUST_MODEL" . "committer"))))))
 #+end_src
 
 * Monitoring
@@ -469,19 +513,19 @@ rsync://cache.boiledscript.com
   (service grafana-service-type
     (grafana-configuration
       (config
-       `((paths
-          ((data . /var/lib/grafana)
-           (logs . /var/log/grafana)
-           (plugins . /var/lib/grafana/plugins)))
-         (server
-          ((http_addr . 127.0.0.1)
-           (http_port . 13064)))
-         (database
-          ((type . postgres)
-           (host . 127.0.0.1:5432)
-           (user . grafana)
-           (password . $__file{/run/secrets/grafana})
-           (ssl_mode . disable)))))))
+       `(("paths"
+          ("data" . "/var/lib/grafana")
+          ("logs" . "/var/log/grafana")
+          ("plugins" . "/var/lib/grafana/plugins"))
+         ("server"
+          ("http_addr" . "127.0.0.1")
+          ("http_port" . "13064"))
+         ("database"
+          ("type" . "postgres")
+          ("host" . "127.0.0.1:5432")
+          ("user" . "grafana")
+          ("password" . "$__file{/run/secrets/grafana}")
+          ("ssl_mode" . "disable"))))))
 #+end_src
 
 ** mimir
