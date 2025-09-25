@@ -165,10 +165,10 @@ WARNED."
   (get-sops-secret key #:file file #:number? #t))
 
 (define chapra.yaml
-  (local-file (testament-blobs "chapra.yaml")))
+  (local-file (testament-plain "chapra.yaml")))
 (define dorphine.yaml
-  (local-file (testament-blobs "dorphine.yaml")))
+  (local-file (testament-plain "dorphine.yaml")))
 (define gokuraku.yaml
-  (local-file (testament-blobs "gokuraku.yaml")))
+  (local-file (testament-plain "gokuraku.yaml")))
 (define rakuen.yaml
-  (local-file (testament-blobs "rakuen.yaml")))
+  (local-file (testament-plain "rakuen.yaml")))

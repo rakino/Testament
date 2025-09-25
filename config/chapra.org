@@ -231,7 +231,7 @@ Administration accounts.
   (service caddy-service-type
     (caddy-configuration
       (caddy (spec->pkg "caddy-dolly"))
-      (caddyfile (local-file (testament-plain "chapra/Caddyfile")))))
+      (caddyfile (local-file (testament-plain "chapra.caddyfile")))))
 #+end_src
 
 ** cloudflared

@@ -226,7 +226,7 @@ Administration accounts.
 #+name: caddy-config
 #+begin_src scheme
   (computed-substitution-with-inputs "rakuen.caddyfile"
-    (local-file (testament-plain "rakuen/Caddyfile"))
+    (local-file (testament-plain "rakuen.caddyfile"))
     (cons (testament-plain)
           (specs->pkgs "ai-robots-txt")))
 #+end_src

@@ -437,7 +437,7 @@ rsync://cache.boiledscript.com
 #+name: caddy-config
 #+begin_src scheme
   (computed-substitution-with-inputs "gokuraku.caddyfile"
-    (local-file (testament-plain "gokuraku/Caddyfile"))
+    (local-file (testament-plain "gokuraku.caddyfile"))
     (cons (testament-plain)
           (specs->pkgs "ai-robots-txt")))
 #+end_src
