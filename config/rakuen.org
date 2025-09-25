@@ -326,25 +326,25 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
     (misskey-configuration
       (image "ghcr.io/rakino/misskey:latest")
       (config
-       `((url . "https://social.boiledscript.com")
-         (port . 54493)
-         (db
-          . ((host . localhost)
-             (port . 5432)
-             (db . misskey)
-             (user . misskey)
-             (pass . ,(sops-str rakuen.yaml '("misskey")))))
-         (dbReplications . #f)
-         (redis
-          . ((host . localhost)
-             (port . 6379)))
-         (fulltextSearch
-          . ((provider . sqlLike)))
-         (id . "aid")
-         (clusterLimit . 4)
-         (outgoingAddressFamily . dual)
-         (proxyRemoteFiles . #t)
-         (signToActivityPubGet . #t)))))
+       `(("url" . "https://social.boiledscript.com")
+         ("port" . 54493)
+         ("db"
+          ("host" . "localhost")
+          ("port" . 5432)
+          ("db" . "misskey")
+          ("user" . "misskey")
+          ("pass" . ,(sops-str rakuen.yaml '("misskey"))))
+         ("dbReplications" . #f)
+         ("redis"
+          ("host" . "localhost")
+          ("port" . 6379))
+         ("fulltextSearch"
+          ("provider" . "sqlLike"))
+         ("id" . "aid")
+         ("clusterLimit" . 4)
+         ("outgoingAddressFamily" . "dual")
+         ("proxyRemoteFiles" . #t)
+         ("signToActivityPubGet" . #t)))))
 #+end_src
 
 ** vaultwarden
