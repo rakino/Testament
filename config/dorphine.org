@@ -408,7 +408,7 @@ Generate passwordless ECC key:
   (udev-rules-service 'u2f (spec->pkg "libfido2") #:groups '("plugdev"))
 #+end_src
 
-* Containers & Virtualization
+* Virtualization
 #+begin_src scheme :noweb-ref module
   (gnu services virtualization)
 #+end_src
@@ -454,7 +454,7 @@ Open TCP port 5558 and connect to server IPv4 address.
     (cuirass-remote-worker-configuration
       (publish-port 5558)
       (workers 8)
-      (systems '("x86_64-linux" "i686-linux"))
+      (systems '("x86_64-linux" "i686-linux" "aarch64-linux"))
       (server "100.97.195.93:5555")       ;gokuraku (Tailscale)
       (substitute-urls
        `("https://ci.guix.moe"
