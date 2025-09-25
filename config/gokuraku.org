@@ -602,5 +602,11 @@ rsync://cache.boiledscript.com
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
     (alloy-configuration
-      (config (local-file (testament-blobs "gokuraku.alloy")))))
+      (config
+       (plain-file "gokuraku.alloy"
+         (string-join
+          (list (sops-str dorphine.yaml '("alloy"))
+                (file-content (testament-plain "alloy/node-exporter.alloy"))
+                (file-content (testament-plain "alloy/caddy.alloy")))
+          "\n")))))
 #+end_src
