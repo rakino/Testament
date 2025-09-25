@@ -4,7 +4,6 @@
 # SPDX-License-Identifier: CC0-1.0
 
 PATH=/run/current-system/profile/bin
-RCLONE=$1
 RCLONE_ARGS="\
     --config /run/secrets/rclone \
     --verbose --size-only --no-traverse \
@@ -25,10 +24,10 @@ else
         rm --force diff.txt
     fi
     if [ -s to-delete.txt ]; then
-        $RCLONE delete $RCLONE_ARGS --files-from to-delete.txt r2:substitutes-apac/nar
+        rclone delete $RCLONE_ARGS --files-from to-delete.txt r2:substitutes-apac/nar
     fi
     if [ -s to-copy.txt ]; then
-        $RCLONE copy   $RCLONE_ARGS --files-from to-copy.txt /var/cache/guix/publish/nar r2:substitutes-apac/nar
+        rclone copy   $RCLONE_ARGS --files-from to-copy.txt /var/cache/guix/publish/nar r2:substitutes-apac/nar
     fi
 
     rm --force to-delete.txt to-copy.txt

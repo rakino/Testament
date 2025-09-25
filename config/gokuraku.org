@@ -33,6 +33,7 @@
        (append (specs->pkgs+out
                 "gnupg"
                 "mosh"
+                "rclone-bin"
                 "ripgrep"
                 "rsync"
                 "sops"
@@ -289,8 +290,7 @@ rsync://cache.boiledscript.com
                          (use-modules (guix build utils))
                          ;; Upload storage to Cloudflare R2.
                          (invoke "/bin/sh"
-                                 #$(local-file (testament-plain "gokuraku/sync-r2.sh"))
-                                 #$(file-append (spec->pkg "rclone-bin") "/bin/rclone"))
+                                 #$(local-file (testament-plain "gokuraku/sync-r2.sh")))
                          ;; Set up narinfo mirror.
                          (mkdir-p "/var/cache/guix/narinfo")
                          (invoke #$(file-append (spec->pkg "rsync") "/bin/rsync")
