@@ -98,7 +98,6 @@ ultrarare.space {
 # Miniflux
 reader.boiledscript.com {
 	import block_bots
-	import logging reader.boiledscript.com
 
 	reverse_proxy localhost:51787
 }
@@ -106,7 +105,6 @@ reader.boiledscript.com {
 # Misskey
 social.boiledscript.com {
 	import block_bots
-	import logging social.boiledscript.com
 
 	reverse_proxy localhost:54493
 }
@@ -114,7 +112,6 @@ social.boiledscript.com {
 # Vaultwarden
 vault.boiledscript.com {
 	import block_bots
-	import logging vault.boiledscript.com
 
 	reverse_proxy localhost:23263
 }

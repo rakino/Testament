@@ -118,7 +118,6 @@ ci.guix.moe {
 
 # Forgejo
 git.ultrarare.space {
-	import logging git.ultrarare.space
 	import tailscale {
 		reverse_proxy localhost:48071
 	}
