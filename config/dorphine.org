@@ -81,6 +81,7 @@
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
+                             (build-accounts 16)
                              (substitute-urls '())
                              (discover? #t)
                              (extra-options '("--max-jobs=8" "--cores=4"))))
