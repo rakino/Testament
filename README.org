@@ -23,8 +23,8 @@ Guix channels in use:
 
 * Systems
 ** [[file:config/dorphine.org][dorphine]] (x86_64-linux, UEFI, ZFS, NVIDIA)
-[[file:files/plain/assets/dorphine-1.png]]
-[[file:files/plain/assets/dorphine-2.png]]
+#+html: <img src="https://s3.boiledscript.com/misskey/29eb35e9-11fb-46b6-8b64-594f521b4309.webp">
+#+html: <img src="https://s3.boiledscript.com/misskey/0d658beb-e5b2-418b-a7b6-e2882c906b61.webp">
 
 ** [[file:config/chapra.org][chapra]] (x86_64-linux, UEFI, ZFS)
 
@@ -74,7 +74,7 @@ Username: =live=, password: =rosenthal=.
 To facilitate remote installation, this LiveCD starts a SSH daemon.  Remember to
 change the password when logged in if the machine is exposed to the Internet ;)
 
-[[file:files/plain/assets/live-console-1.jpg]]
+#+html: <img src="https://s3.boiledscript.com/misskey/a666efc8-71e7-4b82-8385-131bab46d234.webp">
 
 ** [[file:config/live-desktop.org][desktop]]
 Username: =live=, no password.
@@ -90,9 +90,9 @@ Default keybindings:
 + =Super + T= :: Open terminal emulator, [[https://codeberg.org/dnkl/foot][foot]] is used.
 + =Super + D= :: Open application launcher, [[https://github.com/davatorium/rofi][rofi]] is used.
 
-[[file:files/plain/assets/live-desktop-1.png]]
-[[file:files/plain/assets/live-desktop-2.png]]
-[[file:files/plain/assets/live-desktop-3.png]]
+#+html: <img src="https://s3.boiledscript.com/misskey/ffe3522a-991f-452e-addb-fa47b6acc6bc.webp">
+#+html: <img src="https://s3.boiledscript.com/misskey/10c08444-f3f6-4c45-a1e2-3fcdd3a3810e.webp">
+#+html: <img src="https://s3.boiledscript.com/misskey/46995f8b-41fb-4b53-af2f-8353d5c6bd2d.webp">
 
 * Resources
 + [[https://files.spritely.institute/papers/scheme-primer.html][A Scheme Primer]] :: Nice short guide to get you started with Scheme.
