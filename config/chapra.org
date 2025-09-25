@@ -34,6 +34,7 @@
        (append (specs->pkgs+out
                 "gnupg"
                 "mosh"
+                "ripgrep"
                 "rsync"
                 "sops"
                 <<package>>)

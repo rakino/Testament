@@ -48,6 +48,7 @@
                 "mpv-nvidia"
                 "niri"
                 "obs-nvidia"
+                "ripgrep"
                 "rsync"
                 "sops"
                 "steam-nvidia"
