@@ -33,7 +33,6 @@
       (packages
        (append (specs->pkgs+out
                 "mosh"
-                "ripgrep"
                 "rsync"
                 <<package>>)
                %base-packages))

@@ -32,6 +32,7 @@
       (users (cons* <<user>> %base-user-accounts))
       (packages
        (append (specs->pkgs+out
+                "curl"
                 "gnupg"
                 "mosh"
                 "ripgrep"
