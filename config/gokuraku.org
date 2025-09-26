@@ -346,7 +346,7 @@ rsync://cache.boiledscript.com
     ;; 1 week
     (period (* 7 86400))
     (priority 7)
-    (systems '("x86_64-linux")))
+    (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
 
 #+begin_src scheme :noweb-ref cuirass-spec
