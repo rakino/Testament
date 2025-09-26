@@ -248,6 +248,7 @@ Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
   (service cuirass-service-type
     (cuirass-configuration
+      (cuirass (spec->pkg "cuirass-dolly"))
       ;; 6 hours
       (interval (* 6 3600))
       (parameters
@@ -343,7 +344,7 @@ rsync://cache.boiledscript.com
     (build '(channels guix))
     (channels %default-channels)
     ;; 1 week
-    (period (* 7 24 3600))
+    (period (* 7 86400))
     (priority 7)
     (systems '("x86_64-linux")))
 #+end_src
@@ -421,6 +422,39 @@ rsync://cache.boiledscript.com
     (priority 5)
     (systems '("x86_64-linux" "aarch64-linux"))
     (properties '((forge-type . forgejo))))
+#+end_src
+
+*** tarballs
+#+begin_src scheme :noweb-ref cuirass-spec
+  (specification
+    (name "tarball-guix")
+    (build 'tarball)
+    (channels %default-channels)
+    ;; 3 months
+    (period (* 3 2592000))
+    (priority 9)
+    (systems '("x86_64-linux" "aarch64-linux")))
+#+end_src
+
+#+begin_src scheme :noweb-ref cuirass-spec
+  (specification
+    (name "tarball-guix-dolly")
+    (build '(custom (rosenthal ci tarball)))
+    (channels
+     (cons* (channel
+              (name 'rosenthal)
+              (url "https://codeberg.org/hako/rosenthal.git")
+              (branch "trunk")
+              (introduction
+               (make-channel-introduction
+                "7677db76330121a901604dfbad19077893865f35"
+                (openpgp-fingerprint
+                 "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
+            %default-channels))
+    ;; 3 months
+    (period (* 3 2592000))
+    (priority 9)
+    (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
 
 * Web Servers & Services
