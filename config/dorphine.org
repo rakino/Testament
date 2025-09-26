@@ -23,8 +23,8 @@
          (keyboard-layout keyboard-layout)
          (theme
           (grub-theme
-           (inherit (grub-theme))
-           (image (local-file (testament-blobs "grub.png")))))))
+            (inherit (grub-theme))
+            (resolution #f)))))
       (kernel-arguments
        (cons* "kernel.sysrq=1"
               "zswap.enabled=1"

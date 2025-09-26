@@ -17,7 +17,11 @@
       (bootloader
         (bootloader-configuration
           (bootloader grub-efi-removable-bootloader)
-          (targets '("/efi"))))
+          (targets '("/efi"))
+          (theme
+           (grub-theme
+             (inherit (grub-theme))
+             (resolution #f)))))
       (kernel (spec->pkg "linux-libre@6.12"))
       (kernel-arguments
        (cons* "kernel.sysrq=0"
