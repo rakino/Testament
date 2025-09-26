@@ -24,7 +24,7 @@
          (theme
           (grub-theme
             (inherit (grub-theme))
-            (resolution #f)))))
+            (image (local-file (testament-blobs "grub.png")))))))
       (kernel-arguments
        (cons* "kernel.sysrq=1"
               "zswap.enabled=1"
