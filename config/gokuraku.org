@@ -236,18 +236,6 @@ Administration accounts.
       (postgresql (spec->pkg "postgresql@15"))))
 #+end_src
 
-* Virtualization
-#+begin_src scheme :noweb-ref module
-  (gnu services virtualization)
-#+end_src
-
-** binfmt_misc
-#+begin_src scheme :noweb-ref service
-  (service qemu-binfmt-service-type
-    (qemu-binfmt-configuration
-      (platforms (lookup-qemu-platforms "aarch64"))))
-#+end_src
-
 * Continuous Integration
 #+begin_src scheme :noweb-ref module
   (gnu services cuirass)
@@ -320,7 +308,7 @@ rsync://cache.boiledscript.com
     (cuirass-remote-worker-configuration
       (publish-port 5558)
       (workers 2)
-      (systems '("x86_64-linux" "i686-linux" "aarch64-linux"))
+      (systems '("x86_64-linux" "i686-linux"))
       (server "127.0.0.1:5555")
       (substitute-urls
        `("https://ci.guix.moe"
