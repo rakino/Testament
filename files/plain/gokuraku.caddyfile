@@ -120,14 +120,18 @@ ci.guix.moe {
 	handle @guix_publish {
 		reverse_proxy localhost:49637
 	}
-	handle /admin/* {
-		handle /admin/forgejo/event {
-			import /run/secrets/caddy/cuirass/forgejo
-		}
-		handle {
-			import /run/secrets/caddy/cuirass/admin
-		}
+
+	@forgejo_hooks {
+		path /admin/forgejo/event || /jobset/*/hook/evaluate
 	}
+	handle @forgejo_hooks {
+		import /run/secrets/caddy/cuirass/forgejo
+	}
+
+	handle /admin/* {
+		import /run/secrets/caddy/cuirass/admin
+	}
+
 	reverse_proxy localhost:17732
 }
 
