@@ -29,7 +29,7 @@ build: build-dorphine build-chapra build-ignamma build-gokuraku build-rakuen
 build-%: config/%.scm
 	$(GUIX) system build $< $(OPTS)
 
-.PHONY: deploy deploy-self deploy-lan deploy-remote
+.PHONY: deploy
 deploy: deploy-dorphine deploy-chapra deploy-ignamma deploy-gokuraku deploy-rakuen
 deploy-%: config/%.scm
 	$(GUIX) deploy files/deploy/$(notdir $<) $(OPTS)
