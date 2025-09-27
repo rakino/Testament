@@ -37,6 +37,7 @@
        (append (specs->pkgs+out
                 "curl"
                 "dino"
+                "fd"
                 "foot"
                 "git"
                 "gnupg"

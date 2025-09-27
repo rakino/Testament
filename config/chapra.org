@@ -37,6 +37,7 @@
       (packages
        (append (specs->pkgs+out
                 "curl"
+                "fd"
                 "gnupg"
                 "mosh"
                 "ripgrep"
