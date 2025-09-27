@@ -184,6 +184,7 @@ Administration accounts.
 #+begin_src scheme :noweb-ref module
   (gnu services avahi)
   (gnu services networking)
+  (gnu services security)
   (gnu services ssh)
   (rosenthal services networking)
 #+end_src
@@ -224,6 +225,16 @@ Administration accounts.
       (openssh (spec->pkg "openssh-sans-x"))
       (permit-root-login 'prohibit-password)
       (password-authentication? #f)))
+#+end_src
+
+** fail2ban
+#+begin_src scheme :noweb-ref service
+  (service fail2ban-service-type
+    (fail2ban-configuration
+      (extra-jails
+       (list (fail2ban-jail-configuration
+               (name "sshd")
+               (enabled? #t))))))
 #+end_src
 
 * Session and Seat Management

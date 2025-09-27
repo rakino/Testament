@@ -355,6 +355,7 @@ Generate passwordless ECC key:
 * Networking & SSH
 #+begin_src scheme :noweb-ref module
   (gnu services networking)
+  (gnu services security)
   (gnu services ssh)
   (rosenthal services networking)
   (rosenthal services dns)
@@ -379,6 +380,16 @@ Generate passwordless ECC key:
       (openssh (spec->pkg "openssh-sans-x"))
       (permit-root-login 'prohibit-password)
       (password-authentication? #f)))
+#+end_src
+
+** fail2ban
+#+begin_src scheme :noweb-ref service
+  (service fail2ban-service-type
+    (fail2ban-configuration
+      (extra-jails
+       (list (fail2ban-jail-configuration
+               (name "sshd")
+               (enabled? #t))))))
 #+end_src
 
 * OpenPGP & Security Token
