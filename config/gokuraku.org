@@ -379,8 +379,8 @@ rsync://cache.boiledscript.com
     (name "guix")
     (build '(channels guix))
     (channels %default-channels)
-    ;; 1 week
-    (period (* 7 86400))
+    ;; 1 day
+    (period (* 24 3600))
     (priority 7)
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
