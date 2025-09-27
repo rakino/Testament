@@ -35,8 +35,7 @@
       (file-systems (append <<file-systems>> %base-file-systems))
       (swap-devices
        (list (swap-space
-               (target
-                (uuid "3b0cbf5f-e8eb-41a7-93f4-5f870bf09640")))))
+               (target (file-system-label "swap")))))
       (users (cons* <<user>> %base-user-accounts))
       (packages
        (append (specs->pkgs+out
@@ -77,11 +76,11 @@
 ** File Systems
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
-          (device (uuid "333171f3-1ffc-40c2-bcc2-cbe8f4f2276e"))
+          (device (file-system-label "root"))
           (mount-point "/")
           (type "xfs"))
         (file-system
-          (device (uuid "0EE5-5F67" 'fat))
+          (device (file-system-label "boot"))
           (mount-point "/efi")
           (type "vfat")))
 #+end_src
@@ -323,34 +322,6 @@ Administration accounts.
          ("DATABASE_URL" . ,(sops-str rakuen.yaml '("miniflux")))
          ("LISTEN_ADDR" . "127.0.0.1:51787")
          ("RUN_MIGRATIONS" . 1)))))
-#+end_src
-
-** misskey
-https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
-#+begin_src scheme :noweb-ref service
-  (service misskey-service-type
-    (misskey-configuration
-      (image "ghcr.io/rakino/misskey:latest")
-      (config
-       `(("url" . "https://social.boiledscript.com")
-         ("port" . 54493)
-         ("db"
-          ("host" . "localhost")
-          ("port" . 5432)
-          ("db" . "misskey")
-          ("user" . "misskey")
-          ("pass" . ,(sops-str rakuen.yaml '("misskey"))))
-         ("dbReplications" . #f)
-         ("redis"
-          ("host" . "localhost")
-          ("port" . 6379))
-         ("fulltextSearch"
-          ("provider" . "sqlLike"))
-         ("id" . "aid")
-         ("clusterLimit" . 4)
-         ("outgoingAddressFamily" . "dual")
-         ("proxyRemoteFiles" . #t)
-         ("signToActivityPubGet" . #t)))))
 #+end_src
 
 ** vaultwarden

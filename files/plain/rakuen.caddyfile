@@ -102,13 +102,6 @@ reader.boiledscript.com {
 	reverse_proxy localhost:51787
 }
 
-# Misskey
-social.boiledscript.com {
-	import block_bots
-
-	reverse_proxy localhost:54493
-}
-
 # Vaultwarden
 vault.boiledscript.com {
 	import block_bots
