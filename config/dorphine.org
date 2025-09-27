@@ -252,9 +252,7 @@ Administration accounts.
       guix-service-type
     (guix-extension
       (authorized-keys %hako-guix-authorized-keys-lan)
-      (substitute-urls
-       '("https://cache-cdn.guix.moe"
-         "https://mirror.sjtu.edu.cn/guix"))))
+      (substitute-urls '("https://cache-cdn.guix.moe"))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
