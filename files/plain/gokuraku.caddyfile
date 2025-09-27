@@ -104,6 +104,7 @@ git.ultrarare.space {
 # Misskey
 social.boiledscript.com {
 	import block_bots
+	import logging social.boiledscript.com
 
 	reverse_proxy localhost:54493
 }
