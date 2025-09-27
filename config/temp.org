@@ -10,18 +10,26 @@
   (load "../common.scm")
   (use-modules (rosenthal) <<module>>)
 
-  (define (%os max-jobs threads-per-job)
+  (define* (%os max-jobs threads-per-job #:optional bios-boot-disk)
     (operating-system
       (host-name "temp")
       (timezone "Etc/GMT-8")
       (bootloader
-       (bootloader-configuration
-         (bootloader grub-efi-removable-bootloader)
-         (targets '("/efi"))
-         (theme
-          (grub-theme
-            (inherit (grub-theme))
-            (resolution #f)))))
+       (if bios-boot-disk
+           (bootloader-configuration
+             (bootloader grub-bootloader)
+             (targets (list bios-boot-disk))
+             (theme
+              (grub-theme
+                (inherit (grub-theme))
+                (resolution #f))))
+           (bootloader-configuration
+             (bootloader grub-efi-removable-bootloader)
+             (targets '("/efi"))
+             (theme
+              (grub-theme
+                (inherit (grub-theme))
+                (resolution #f))))))
       (kernel (spec->pkg "linux-libre@6.12"))
       (kernel-arguments
        (cons* "kernel.sysrq=0"
@@ -78,14 +86,16 @@
 
 ** File Systems
 #+begin_src scheme :noweb-ref file-systems
-  (list (file-system
-          (device (file-system-label "root"))
-          (mount-point "/")
-          (type "xfs"))
-        (file-system
-          (device (file-system-label "boot"))
-          (mount-point "/efi")
-          (type "vfat")))
+  `(,@(if bios-boot-disk
+          '()
+          (list (file-system
+                  (device (file-system-label "boot"))
+                  (mount-point "/efi")
+                  (type "vfat"))))
+    ,(file-system
+       (device (file-system-label "root"))
+       (mount-point "/")
+       (type "xfs")))
 #+end_src
 
 ** Users
