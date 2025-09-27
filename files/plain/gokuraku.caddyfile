@@ -94,6 +94,21 @@ files.boiledscript.com {
 	file_server browse
 }
 
+# Forgejo
+git.ultrarare.space {
+	import tailscale {
+		reverse_proxy localhost:48071
+	}
+}
+
+# Misskey
+social.boiledscript.com {
+	import block_bots
+
+	reverse_proxy localhost:54493
+}
+
+
 # Cuirass
 ci.guix.moe {
 	import block_bots
@@ -114,13 +129,6 @@ ci.guix.moe {
 		}
 	}
 	reverse_proxy localhost:17732
-}
-
-# Forgejo
-git.ultrarare.space {
-	import tailscale {
-		reverse_proxy localhost:48071
-	}
 }
 
 # Mirrors
