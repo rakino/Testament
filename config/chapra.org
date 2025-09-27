@@ -16,7 +16,7 @@
       (timezone "Etc/GMT-8")
       (bootloader
         (bootloader-configuration
-          (bootloader grub-efi-removable-bootloader)
+          (bootloader uefi-uki-removable-bootloader)
           (targets '("/efi"))
           (theme
            (grub-theme

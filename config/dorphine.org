@@ -18,13 +18,9 @@
        (keyboard-layout "us" "dvorak" #:options '("ctrl:nocaps")))
       (bootloader
        (bootloader-configuration
-         (bootloader grub-efi-removable-bootloader)
+         (bootloader uefi-uki-removable-bootloader)
          (targets '("/efi"))
-         (keyboard-layout keyboard-layout)
-         (theme
-          (grub-theme
-            (inherit (grub-theme))
-            (image (local-file (testament-blobs "grub.png")))))))
+         (keyboard-layout keyboard-layout)))
       (kernel-arguments
        (cons* "kernel.sysrq=1"
               "zswap.enabled=1"
