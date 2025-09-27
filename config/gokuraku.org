@@ -234,6 +234,14 @@ Administration accounts.
 * Containers & Virtualization
 #+begin_src scheme :noweb-ref module
   (gnu services docker)
+  (gnu services virtualization)
+#+end_src
+
+** binfmt_misc
+#+begin_src scheme :noweb-ref service
+  (service qemu-binfmt-service-type
+    (qemu-binfmt-configuration
+      (platforms (lookup-qemu-platforms "aarch64"))))
 #+end_src
 
 ** containerd
