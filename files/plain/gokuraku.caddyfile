@@ -135,28 +135,6 @@ ci.guix.moe {
 	reverse_proxy localhost:17732
 }
 
-# Mirrors
-cache-cdn.guix.moe {
-	import block_bots
-	import logging cache-cdn.guix.moe
-
-	@guix_publish {
-		path /*.narinfo || /nix-cache-info || /signing-key.pub
-	}
-	handle @guix_publish {
-		root * /var/cache/guix/narinfo
-		file_server
-	}
-
-	handle /nar/* {
-		redir https://nars.guix.moe{uri}
-	}
-
-	respond "Visit guix [dot] moe for more information." 404 {
-		close
-	}
-}
-
 cache-de.guix.moe {
 	import block_bots
 	import logging cache-de.guix.moe

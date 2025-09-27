@@ -109,6 +109,36 @@ vault.boiledscript.com {
 	reverse_proxy localhost:23263
 }
 
+# Certificates for mail server
+mail.boiledscript.com {
+	import block_bots
+	respond /* "Access denied" 403 {
+		close
+	}
+}
+
+# Guix Moe
+cache-cdn.guix.moe {
+	import block_bots
+	import logging cache-cdn.guix.moe
+
+	@guix_publish {
+		path /*.narinfo || /nix-cache-info || /signing-key.pub
+	}
+	handle @guix_publish {
+		root * /var/cache/guix/narinfo
+		file_server
+	}
+
+	handle /nar/* {
+		redir https://nars.guix.moe{uri}
+	}
+
+	respond "Visit guix [dot] moe for more information." 404 {
+		close
+	}
+}
+
 cache-fi.guix.moe {
 	import block_bots
 	import logging cache-fi.guix.moe
@@ -128,13 +158,6 @@ cache-fi.guix.moe {
 	}
 
 	respond "Visit guix [dot] moe for more information." 404 {
-		close
-	}
-}
-
-mail.boiledscript.com {
-	import block_bots
-	respond /* "Access denied" 403 {
 		close
 	}
 }
