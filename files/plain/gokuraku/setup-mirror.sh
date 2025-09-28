@@ -35,7 +35,7 @@ NAR_TO_DELETE=/var/cache/r2/nar-to-delete.txt
 NAR_TO_COPY=/var/cache/r2/nar-to-copy.txt
 
 list_narinfo() {
-    msg "listing changes to narinfo files"
+    msg "listing narinfo changes"
 
     pushd /var/cache/guix/publish
     fd '\.narinfo$' --type f | sort > $NARINFO_NEW
@@ -48,7 +48,7 @@ list_narinfo() {
 }
 
 list_nar() {
-    msg "listing changes to nar archives"
+    msg "listing nar archive changes"
 
     pushd /var/cache/guix/publish/nar
     fd --type f --exclude '*.tmp' | sort > $NAR_NEW
@@ -61,12 +61,12 @@ list_nar() {
 }
 
 delete_narinfo() {
-    msg "removing unavailable narinfo files"
+    msg "removing expired narinfo files"
 
     pushd /var/cache/guix-moe
     old_IFS=$IFS
     IFS=""
-    while read -r file ; do
+    while read -r file; do
         rm --force "$file"
     done < $NARINFO_TO_DELETE
     IFS=${old_IFS}
@@ -79,7 +79,7 @@ copy_narinfo() {
     pushd /var/cache/guix/publish
     old_IFS=$IFS
     IFS=""
-    while read -r file ; do
+    while read -r file; do
         cp --archive --force "$file" /var/cache/guix-moe
     done < $NARINFO_TO_COPY
     IFS=${old_IFS}
@@ -87,7 +87,7 @@ copy_narinfo() {
 }
 
 delete_nar() {
-    msg "removing unavailable nar archives from Cloudfare R2"
+    msg "removing expired nar archives from Cloudfare R2"
 
     if [[ -s $NAR_TO_DELETE ]]; then
         rclone delete $RCLONE_ARGS --files-from $NAR_TO_DELETE r2:substitutes-apac/nar
