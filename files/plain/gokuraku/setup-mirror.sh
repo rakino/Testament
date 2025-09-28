@@ -89,18 +89,22 @@ copy_narinfo() {
 delete_nar() {
     msg "removing unavailable nar archives from Cloudfare R2"
 
-    [[ -s $NAR_TO_DELETE ]] &&
+    if [[ -s $NAR_TO_DELETE ]]; then
         rclone delete $RCLONE_ARGS --files-from $NAR_TO_DELETE r2:substitutes-apac/nar
+    fi
 }
 
 upload_nar() {
     msg "uploading new nar archives to Cloudflare R2"
 
-    [[ -s $NAR_TO_COPY ]] &&
+    if [[ -s $NAR_TO_COPY ]]; then
         rclone copy $RCLONE_ARGS --files-from $NAR_TO_COPY /var/cache/guix/publish/nar r2:substitutes-apac/nar
+    fi
 }
 
 clean_up() {
+    msg "cleaning up temporary files"
+
     rm $NARINFO_TO_DELETE $NARINFO_TO_COPY $NAR_TO_DELETE $NAR_TO_COPY
     mv $NARINFO_NEW $NARINFO_OLD
     mv $NAR_NEW $NAR_OLD
