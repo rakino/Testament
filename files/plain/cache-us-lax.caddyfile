@@ -52,10 +52,7 @@
 cache-us-lax.guix.moe {
 	import logging cache-us-lax.guix.moe
 
-	@guix_publish {
-		path /*.narinfo || /nix-cache-info || /signing-key.pub
-	}
-	handle @guix_publish {
+	handle /*.narinfo {
 		root * /var/cache/guix-moe/narinfo
 		file_server
 	}

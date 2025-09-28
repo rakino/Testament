@@ -124,10 +124,7 @@ cache-cdn.guix.moe {
 	import block_bots
 	import logging cache-cdn.guix.moe
 
-	@guix_publish {
-		path /*.narinfo || /nix-cache-info || /signing-key.pub
-	}
-	handle @guix_publish {
+	handle /*.narinfo {
 		root * /var/cache/guix/narinfo
 		file_server
 	}
@@ -145,10 +142,7 @@ cache-fi.guix.moe {
 	import block_bots
 	import logging cache-fi.guix.moe
 
-	@guix_publish {
-		path /*.narinfo || /nix-cache-info || /signing-key.pub
-	}
-	handle @guix_publish {
+	handle /*.narinfo {
 		root * /var/cache/guix-moe/narinfo
 		file_server
 	}

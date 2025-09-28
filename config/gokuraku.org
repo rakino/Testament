@@ -326,7 +326,7 @@ rsync://cache.boiledscript.com
                (file-name "/var/cache/guix/publish"))
              (rsync-module
                (name "narinfo")
-               (file-name "/var/cache/guix/narinfo"))))))
+               (file-name "/var/cache/guix-moe"))))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
@@ -334,21 +334,7 @@ rsync://cache.boiledscript.com
       shepherd-root-service-type
     (list (shepherd-timer '(setup-mirror)
             #~(calendar-event #:hours '(0 6 12 18) #:minutes '(0))
-            #~(#$(program-file "setup-mirror"
-                   (with-imported-modules '((guix build utils))
-                     #~(begin
-                         (use-modules (guix build utils))
-                         ;; Upload storage to Cloudflare R2.
-                         (invoke "/bin/sh"
-                                 #$(local-file (testament-plain "gokuraku/sync-r2.sh")))
-                         ;; Set up narinfo mirror.
-                         (mkdir-p "/var/cache/guix/narinfo")
-                         (invoke #$(file-append (spec->pkg "rsync") "/bin/rsync")
-                                 "/var/cache/guix/publish/" "/var/cache/guix/narinfo/"
-                                 "-avh"
-                                 "--delete"
-                                 "--exclude" "/hashes"
-                                 "--exclude" "/nar")))))
+            #~("/bin/sh" #$(local-file (testament-plain "gokuraku/setup-mirror.sh")))
             #:requirement '(user-processes))))
 #+end_src
 
