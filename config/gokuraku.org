@@ -41,7 +41,13 @@
                 "sops"
                 <<package>>)
                %base-packages))
-      (services (cons* <<service>> %base-services))))
+      (services
+       (cons* <<service>>
+              (modify-services %base-services
+                (guix-service-type
+                 config => (guix-configuration
+                             (inherit config)
+                             (extra-options '("--cores=4")))))))))
 
   ((compose (rosenthal-transformation-zfs #:boot? #t))
    %os)
@@ -623,7 +629,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
          ("fulltextSearch"
           ("provider" . "sqlLike"))
          ("id" . "aidx")
-         ("clusterLimit" . 8)
+         ("clusterLimit" . 4)
          ("outgoingAddressFamily" . "dual")
          ("proxyRemoteFiles" . #t)
          ("signToActivityPubGet" . #t)))))
