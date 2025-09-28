@@ -41,14 +41,7 @@
                 "sops"
                 <<package>>)
                %base-packages))
-      (services
-       (cons* <<service>>
-              (modify-services %base-services
-                (guix-service-type
-                 config => (guix-configuration
-                             (inherit config)
-                             (extra-options '("--cores=4" "--max-jobs=2")))))))
-      (name-service-switch %default-nss)))
+      (services (cons* <<service>> %base-services))))
 
   ((compose (rosenthal-transformation-zfs #:boot? #t))
    %os)
@@ -144,6 +137,28 @@ Administration accounts.
       (negative-ttl (* 2 60))))
 #+end_src
 
+rsync://cache.boiledscript.com
+#+begin_src scheme :noweb-ref service
+  (service rsync-service-type
+    (rsync-configuration
+      (modules
+       (list #;(rsync-module
+               (name "substitutes")
+               (file-name "/var/cache/guix/publish"))
+             (rsync-module
+               (name "narinfo")
+               (file-name "/var/cache/guix-moe"))))))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'setup-mirror
+      shepherd-root-service-type
+    (list (shepherd-timer '(setup-mirror)
+            #~(calendar-event #:hours '(0 6 12 18) #:minutes '(0))
+            #~("/bin/sh" #$(local-file (testament-plain "gokuraku/setup-mirror.sh")))
+            #:requirement '(user-processes))))
+#+end_src
+
 ** SOPS Secrets
 #+begin_src scheme :noweb-ref service
   (service sops-secrets-service-type
@@ -157,28 +172,38 @@ Administration accounts.
                (file gokuraku.yaml)
                (user "caddy"))
              (sops-secret
+               (key '("rclone"))
+               (file gokuraku.yaml))
+
+             (sops-secret
                (key '("caddy" "cuirass" "admin"))
                (file gokuraku.yaml)
-               (user "caddy"))
+               (group "caddy"))
              (sops-secret
                (key '("caddy" "cuirass" "forgejo"))
                (file gokuraku.yaml)
-               (user "caddy"))
+               (group "caddy"))
              (sops-secret
                (key '("caddy" "loki"))
                (file gokuraku.yaml)
-               (user "caddy"))
+               (group "caddy"))
              (sops-secret
                (key '("caddy" "mimir"))
                (file gokuraku.yaml)
-               (user "caddy"))
+               (group "caddy"))
+
              (sops-secret
-               (key '("grafana"))
+               (key '("postgres" "forgejo"))
                (file gokuraku.yaml)
-               (user "grafana"))
+               (group "postgres"))
              (sops-secret
-               (key '("rclone"))
-               (file gokuraku.yaml))))))
+               (key '("postgres" "grafana"))
+               (file gokuraku.yaml)
+               (group "postgres"))
+             (sops-secret
+               (key '("postgres" "misskey"))
+               (file gokuraku.yaml)
+               (group "postgres"))))))
 #+end_src
 
 * Networking & SSH
@@ -278,7 +303,30 @@ Administration accounts.
 #+begin_src scheme :noweb-ref service
   (service postgresql-service-type
     (postgresql-configuration
-      (postgresql (spec->pkg "postgresql@15"))))
+      (postgresql (spec->pkg "postgresql@16"))
+      (config-file
+       (postgresql-config-file
+         (log-destination "stderr")
+         (extra-config
+          '(("max_connections" 500)
+            ("shared_buffers" "16GB")
+            ("effective_cache_size" "48GB")
+            ("maintenance_work_mem" "2GB")
+            ("checkpoint_completion_target" 0.9)
+            ("wal_buffers" "16MB")
+            ("default_statistics_target" 100)
+            ("random_page_cost" 4)
+            ("effective_io_concurrency" 2)
+            ("work_mem" "80659kB")
+            ("huge_pages" "try")
+            ("min_wal_size" "1GB")
+            ("max_wal_size" "4GB")
+            ("max_worker_processes" 8)
+            ("max_parallel_workers_per_gather" 4)
+            ("max_parallel_workers" 8)
+            ("max_parallel_maintenance_workers" 4)
+            ("logging_collector" #t)
+            ("log_directory" "/var/log/postgresql")))))))
 #+end_src
 
 ** redis
@@ -316,35 +364,12 @@ Remember to open TCP port 5555 and 5556.
       (specifications #~(list <<cuirass-spec>>))))
 #+end_src
 
-** mirroring
-rsync://cache.boiledscript.com
-#+begin_src scheme :noweb-ref service
-  (service rsync-service-type
-    (rsync-configuration
-      (modules
-       (list #;(rsync-module
-               (name "substitutes")
-               (file-name "/var/cache/guix/publish"))
-             (rsync-module
-               (name "narinfo")
-               (file-name "/var/cache/guix-moe"))))))
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  (simple-service 'setup-mirror
-      shepherd-root-service-type
-    (list (shepherd-timer '(setup-mirror)
-            #~(calendar-event #:hours '(0 6 12 18) #:minutes '(0))
-            #~("/bin/sh" #$(local-file (testament-plain "gokuraku/setup-mirror.sh")))
-            #:requirement '(user-processes))))
-#+end_src
-
 ** cuirass-remote-worker
 #+begin_src scheme :noweb-ref service
   (service cuirass-remote-worker-service-type
     (cuirass-remote-worker-configuration
       (publish-port 5558)
-      (workers 2)
+      (workers 1)
       (systems '("x86_64-linux" "i686-linux"))
       (server "127.0.0.1:5555")
       (substitute-urls
@@ -527,6 +552,7 @@ rsync://cache.boiledscript.com
 #+begin_src scheme :noweb-ref service
   (service forgejo-service-type
     (forgejo-configuration
+      (postgresql-password-file "/run/secrets/postgres/forgejo")
       (config
        `((#f
           ("APP_NAME" . "URSpace VCS")
@@ -565,7 +591,7 @@ rsync://cache.boiledscript.com
          ("session"
           ("PROVIDER" . "file"))
          ("log"
-          ("MODE" . "console")
+          ("MODE" . "file")
           ("LEVEL" . "info")
           ("ROOT_PATH" . "/var/log/forgejo"))
          ("repository.pull-request"
@@ -579,24 +605,25 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+begin_src scheme :noweb-ref service
   (service misskey-service-type
     (misskey-configuration
+      (postgresql-password-file "/run/secrets/postgres/misskey")
       (image "ghcr.io/rakino/misskey:latest")
       (config
-       `(("url" . "https://social.boiledscript.com")
+       `(("url" . "https://boiledscript.com")
          ("port" . 54493)
          ("db"
           ("host" . "localhost")
           ("port" . 5432)
           ("db" . "misskey")
           ("user" . "misskey")
-          ("pass" . ,(sops-str gokuraku.yaml '("misskey"))))
+          ("pass" . ,(sops-str gokuraku.yaml '("postgres" "misskey"))))
          ("dbReplications" . #f)
          ("redis"
           ("host" . "localhost")
           ("port" . 6379))
          ("fulltextSearch"
           ("provider" . "sqlLike"))
-         ("id" . "aid")
-         ("clusterLimit" . 4)
+         ("id" . "aidx")
+         ("clusterLimit" . 8)
          ("outgoingAddressFamily" . "dual")
          ("proxyRemoteFiles" . #t)
          ("signToActivityPubGet" . #t)))))
@@ -611,6 +638,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+begin_src scheme :noweb-ref service
   (service grafana-service-type
     (grafana-configuration
+      (postgresql-password-file "/run/secrets/postgres/grafana")
       (config
        `(("paths"
           ("data" . "/var/lib/grafana")
@@ -623,7 +651,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
           ("type" . "postgres")
           ("host" . "127.0.0.1:5432")
           ("user" . "grafana")
-          ("password" . "$__file{/run/secrets/grafana}")
+          ("password" . ,(sops-str gokuraku.yaml '("postgres" "grafana")))
           ("ssl_mode" . "disable"))))))
 #+end_src
 

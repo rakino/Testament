@@ -131,7 +131,11 @@ Administration accounts.
        (list (sops-secret
                (key '("cloudflare"))
                (file rakuen.yaml)
-               (user "caddy"))))))
+               (user "caddy"))
+             (sops-secret
+               (key '("postgres" "vaultwarden"))
+               (file rakuen.yaml)
+               (group "postgres"))))))
 #+end_src
 
 * Networking & SSH
@@ -228,7 +232,7 @@ Administration accounts.
 
 * Web Servers & Services
 #+begin_src scheme :noweb-ref module
-  (rosenthal services child-error)
+  (gnu services web)
   (rosenthal services mail)
   (rosenthal services web)
 #+end_src
@@ -328,20 +332,21 @@ Administration accounts.
 #+begin_src scheme :noweb-ref service
   (service miniflux-service-type
     (miniflux-configuration
-      (options
-       `(("BASE_URL" . "https://reader.boiledscript.com/")
-         ("CLEANUP_ARCHIVE_READ_DAYS" . -1)
-         ("CLEANUP_ARCHIVE_UNREAD_DAYS" . -1)
-         ("DATABASE_URL" . ,(sops-str rakuen.yaml '("miniflux")))
-         ("LISTEN_ADDR" . "127.0.0.1:51787")
-         ("RUN_MIGRATIONS" . 1)))))
+      (listen-address "127.0.0.1:51787")
+      (base-url "https://reader.boiledscript.com/")
+      (extra-settings
+       '("CLEANUP_ARCHIVE_READ_DAYS=-1"
+         "CLEANUP_ARCHIVE_UNREAD_DAYS=-1"))))
 #+end_src
 
 ** vaultwarden
 #+begin_src scheme :noweb-ref service
   (service vaultwarden-service-type
     (vaultwarden-configuration
-      (database-url (sops-str rakuen.yaml '("vaultwarden")))
+      (postgresql-password-file "/run/secrets/postgres/vaultwarden")
+      (database-url
+       (format #f "postgresql://vaultwarden:~a@localhost/vaultwarden"
+               (sops-str rakuen.yaml '("postgres" "vaultwarden"))))
       (port 23263)
       (extra-options '(("ROCKET_ADDRESS" . "127.0.0.1")))))
 #+end_src

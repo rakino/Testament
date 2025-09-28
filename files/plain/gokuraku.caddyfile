@@ -102,7 +102,7 @@ git.ultrarare.space {
 }
 
 # Misskey
-social.boiledscript.com {
+boiledscript.com {
 	import block_bots
 	import logging social.boiledscript.com
 
