@@ -95,13 +95,6 @@
 #+end_src
 
 ** Users
-#+begin_src scheme :noweb-ref user
-  (user-account
-    (inherit %root-account)
-    (password "")
-    (shell (file-append (spec->pkg "fish") "/bin/fish")))
-#+end_src
-
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-openssh
       openssh-service-type
