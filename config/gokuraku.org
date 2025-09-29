@@ -727,6 +727,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
          (string-join
           (list (sops-str dorphine.yaml '("alloy"))
                 (file-content (testament-plain "alloy/node-exporter.alloy"))
+                (file-content (testament-plain "alloy/docker.alloy"))
                 (file-content (testament-plain "alloy/caddy.alloy")))
           "\n")))))
 #+end_src
