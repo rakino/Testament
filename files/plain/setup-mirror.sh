@@ -63,7 +63,7 @@ list_nar() {
 delete_narinfo() {
     msg "removing expired narinfo files"
 
-    pushd /var/cache/guix-moe
+    pushd /var/cache/guix-moe/narinfo
     old_IFS=$IFS
     IFS=""
     while read -r file; do
@@ -80,7 +80,7 @@ copy_narinfo() {
     old_IFS=$IFS
     IFS=""
     while read -r file; do
-        cp --archive --force "$file" /var/cache/guix-moe
+        cp --archive --force "$file" /var/cache/guix-moe/narinfo
     done < $NARINFO_TO_COPY
     IFS=${old_IFS}
     popd
@@ -113,7 +113,7 @@ clean_up() {
 main() {
     [[ -e $NARINFO_NEW || -e $NAR_NEW ]] && die "previous syncing process unfinished"
 
-    mkdir --parents /var/cache/r2 /var/cache/guix-moe
+    mkdir --parents /var/cache/r2 /var/cache/guix-moe/narinfo
     touch $NARINFO_OLD $NAR_OLD
 
     list_narinfo

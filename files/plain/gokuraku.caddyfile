@@ -141,7 +141,7 @@ cache-de.guix.moe {
 	import logging cache-de.guix.moe
 
 	handle /*.narinfo {
-		root * /var/cache/guix-moe
+		root * /var/cache/guix-moe/narinfo
 		file_server
 	}
 
