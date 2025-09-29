@@ -125,7 +125,7 @@ cache-cdn.guix.moe {
 	import logging cache-cdn.guix.moe
 
 	handle /*.narinfo {
-		root * /var/cache/guix/narinfo
+		root * /var/cache/guix-moe/narinfo
 		file_server
 	}
 
