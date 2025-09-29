@@ -33,9 +33,8 @@ Guix channels in use:
 ** [[file:config/worker.org][worker]]
 Temporary build workers for Guix Moe CI.
 
-** [[file:config/cache-hk.org][cache-hk.guix.moe]] (x86_64-linux, BIOS, XFS)
-** [[file:config/cache-sg.org][cache-sg.guix.moe]] (x86_64-linux, BIOS, XFS)
-** [[file:config/cache-us-lax.org][cache-us-lax.guix.moe]] (x86_64-linux, BIOS, XFS)
+** [[file:config/mirror.org][mirror]]
+Mirrors for Guix Moe CI substitutes.
 
 * LiveCDs
 I provide two LiveCDs for the [[https://guix.gnu.org/manual/devel/en/html_node/Manual-Installation.html][manual installation]] of Guix System.  Pre-built

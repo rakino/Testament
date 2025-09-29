@@ -27,8 +27,10 @@ pull:
 
 .PHONY: build
 build:  build-dorphine \
+	\
 	build-chapra \
 	build-ignamma \
+	\
 	build-gokuraku \
 	build-rakuen
 build-%: config/%.scm
@@ -36,10 +38,14 @@ build-%: config/%.scm
 
 .PHONY: deploy
 deploy: deploy-dorphine \
+	\
 	deploy-chapra \
 	deploy-ignamma \
+	\
 	deploy-gokuraku \
 	deploy-rakuen \
+	\
+	deploy-mirror \
 	deploy-worker
 deploy-%: config/%.scm
 	$(GUIX) deploy files/deploy/$(notdir $<) $(OPTS)
