@@ -27,17 +27,12 @@ Guix channels in use:
 #+html: <img src="https://s3.boiledscript.com/misskey/0d658beb-e5b2-418b-a7b6-e2882c906b61.webp">
 
 ** [[file:config/chapra.org][chapra]] (x86_64-linux, UEFI, ZFS)
-
 ** [[file:config/gokuraku.org][gokuraku]] (x86_64-linux, UEFI, ZFS)
-
 ** [[file:config/ignamma.org][ignamma]] (x86_64-linux, UEFI, XFS)
-
 ** [[file:config/rakuen.org][rakuen]] (aarch64-linux, UEFI, XFS)
-
+** [[file:config/temp.org][temp]] (temporary build worker for Guix Moe CI)
 ** [[file:config/cache-hk.org][cache-hk.guix.moe]] (x86_64-linux, BIOS, XFS)
-
 ** [[file:config/cache-sg.org][cache-sg.guix.moe]] (x86_64-linux, BIOS, XFS)
-
 ** [[file:config/cache-us-lax.org][cache-us-lax.guix.moe]] (x86_64-linux, BIOS, XFS)
 
 * LiveCDs

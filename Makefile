@@ -26,12 +26,21 @@ pull:
 	guix pull --channels=channels.lock $(OPTS)
 
 .PHONY: build
-build: build-dorphine build-chapra build-ignamma build-gokuraku build-rakuen
+build:  build-dorphine \
+	build-chapra \
+	build-ignamma \
+	build-gokuraku \
+	build-rakuen
 build-%: config/%.scm
 	$(GUIX) system build $< $(OPTS)
 
 .PHONY: deploy
-deploy: deploy-dorphine deploy-chapra deploy-ignamma deploy-gokuraku deploy-rakuen
+deploy: deploy-dorphine \
+	deploy-chapra \
+	deploy-ignamma \
+	deploy-gokuraku \
+	deploy-rakuen \
+	deploy-temp
 deploy-%: config/%.scm
 	$(GUIX) deploy files/deploy/$(notdir $<) $(OPTS)
 

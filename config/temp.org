@@ -10,26 +10,21 @@
   (load "../common.scm")
   (use-modules (rosenthal) <<module>>)
 
-  (define* (%os max-jobs threads-per-job #:optional bios-boot-disk)
+  (define (%os jobs threads-per-job bios-boot)
     (operating-system
       (host-name "temp")
       (timezone "Etc/GMT-8")
       (bootloader
-       (if bios-boot-disk
-           (bootloader-configuration
-             (bootloader grub-bootloader)
-             (targets (list bios-boot-disk))
-             (theme
-              (grub-theme
-                (inherit (grub-theme))
-                (resolution #f))))
-           (bootloader-configuration
-             (bootloader grub-efi-removable-bootloader)
-             (targets '("/efi"))
-             (theme
-              (grub-theme
-                (inherit (grub-theme))
-                (resolution #f))))))
+       (bootloader-configuration
+         (bootloader
+           (if bios-boot
+               grub-bootloader
+               grub-efi-removable-bootloader))
+         (targets (list (or bios-boot "/efi")))
+         (theme
+          (grub-theme
+            (inherit (grub-theme))
+            (resolution #f)))))
       (kernel (spec->pkg "linux-libre@6.12"))
       (kernel-arguments
        (cons* "kernel.sysrq=0"
@@ -57,9 +52,9 @@
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
-                             (build-accounts (* 2 max-jobs))
+                             (build-accounts (* 2 jobs))
                              (extra-options
-                              (list "--max-jobs" (number->string max-jobs)
+                              (list "--max-jobs" (number->string jobs)
                                     "--cores" (number->string threads-per-job))))))))))
 
   %os
@@ -86,23 +81,24 @@
 
 ** File Systems
 #+begin_src scheme :noweb-ref file-systems
-  `(,@(if bios-boot-disk
-          '()
-          (list (file-system
-                  (device (file-system-label "boot"))
-                  (mount-point "/efi")
-                  (type "vfat"))))
-    ,(file-system
-       (device (file-system-label "root"))
-       (mount-point "/")
-       (type "xfs")))
+  (list (file-system
+          (device (file-system-label "root"))
+          (mount-point "/")
+          (type "xfs")))
+
+  (if bios-boot
+      '()
+      (list (file-system
+              (device (file-system-label "boot"))
+              (mount-point "/efi")
+              (type "vfat"))))
 #+end_src
 
 ** Users
 #+begin_src scheme :noweb-ref user
   (user-account
     (inherit %root-account)
-    (password #f)
+    (password "")
     (shell (file-append (spec->pkg "fish") "/bin/fish")))
 #+end_src
 
@@ -140,11 +136,6 @@
   (service dhcpcd-service-type)
 #+end_src
 
-** ntp
-#+begin_src scheme :noweb-ref service
-  (service ntp-service-type)
-#+end_src
-
 ** tailscale
 #+begin_src scheme :noweb-ref service
   (service tailscale-service-type)
@@ -170,7 +161,7 @@ Open TCP port 5558 and connect to server IPv4 address.
   (service cuirass-remote-worker-service-type
     (cuirass-remote-worker-configuration
       (publish-port 5558)
-      (workers max-jobs)
+      (workers jobs)
       (server "100.97.195.93:5555")       ;gokuraku (Tailscale)
       (substitute-urls
        `("https://ci.guix.moe"

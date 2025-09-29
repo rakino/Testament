@@ -42,6 +42,13 @@
   (curve Ed25519)
   (q #6FEEB15C4363F9975EB15C908EC911A4362E486DA642431FA2438C0B1C3D55F5#)))"))
 
+(define %guix-authorized-key-hetzner-temporary-worker
+  (plain-file "hetzner-temporary-worker.pub" "
+(public-key
+ (ecc
+  (curve Ed25519)
+  (q #7927EA1162184C1FAA62D20C111121A4604F00956E69F0FEB89EEE1721647897#)))"))
+
 (define %hako-guix-authorized-keys-lan
   (list %guix-authorized-key-dorphine
         %guix-authorized-key-gokuraku
@@ -54,7 +61,9 @@
         %guix-authorized-key-gokuraku
 
         %guix-authorized-key-bocis
-        %guix-authorized-key-ignamma))
+        %guix-authorized-key-ignamma
+
+        %guix-authorized-key-hetzner-temporary-worker))
 
 
 (define %ssh-key-deploy

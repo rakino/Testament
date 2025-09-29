@@ -8,26 +8,35 @@
 
 (define %os (load "../../config/temp.scm"))
 
-(map (match-lambda
-       ((ip-address system ssh-host-key max-jobs threads-per-job)
-        (machine
-          (operating-system (%os max-jobs threads-per-job))
-          (environment managed-host-environment-type)
-          (configuration
-           (machine-ssh-configuration
-             (host-name ip-address)
-             (system system)
-             (host-key ssh-host-key)))))
-       ((ip-address system ssh-host-key max-jobs threads-per-job bios-boot-disk)
-        (machine
-          (operating-system (%os max-jobs threads-per-job bios-boot-disk))
-          (environment managed-host-environment-type)
-          (configuration
-           (machine-ssh-configuration
-             (host-name ip-address)
-             (system system)
-             (host-key ssh-host-key))))))
-     '(#;("0.0.0.0"
-          "x86_64-linux"
-          "ssh-ed25519 ..."
-          4 2)))
+(define* (build-worker #:key address system ssh-host-key jobs threads-per-job (bios-boot #f))
+  (machine
+    (operating-system (%os jobs threads-per-job bios-boot))
+    (environment managed-host-environment-type)
+    (configuration
+     (machine-ssh-configuration
+       (host-name address)
+       (system system)
+       (host-key ssh-host-key)))))
+
+(define (hetzner-worker system address)
+  (build-worker
+   #:address address
+   #:system system
+   #:ssh-host-key "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIED2WXdbkA7slzknPrzc3QL+fmrU2eaPRENdVxKElVXb root@(none)"
+   #:jobs 8
+   #:threads-per-job 2
+   #:bios-boot (and (string=? "x86_64-linux" system) "/dev/sda")))
+
+(list #;(build-worker
+         #:address "0.0.0.0"
+         #:system "aarch64-linux"
+         #:ssh-host-key "ssh-ed25519 ..."
+         #:jobs 4
+         #:threads-per-job 2)
+      #;(build-worker
+         #:address "0.0.0.0"
+         #:system "x86_64-linux"
+         #:ssh-host-key "ssh-ed25519 ..."
+         #:jobs 4
+         #:threads-per-job 2
+         #:bios-boot "/dev/sda"))
