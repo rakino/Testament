@@ -41,13 +41,7 @@
                 "sops"
                 <<package>>)
                %base-packages))
-      (services
-       (cons* <<service>>
-              (modify-services %base-services
-                (guix-service-type
-                 config => (guix-configuration
-                             (inherit config)
-                             (extra-options '("--cores=4")))))))))
+      (services (cons* <<service>> %base-services))))
 
   ((compose (rosenthal-transformation-zfs #:boot? #t))
    %os)
@@ -368,19 +362,6 @@ Remember to open TCP port 5555 and 5556.
          (publish? #f)))
       (port 17732)
       (specifications #~(list <<cuirass-spec>>))))
-#+end_src
-
-** cuirass-remote-worker
-#+begin_src scheme :noweb-ref service
-  (service cuirass-remote-worker-service-type
-    (cuirass-remote-worker-configuration
-      (publish-port 5558)
-      (workers 1)
-      (systems '("x86_64-linux" "i686-linux"))
-      (server "127.0.0.1:5555")
-      (substitute-urls
-       `("https://ci.guix.moe"
-         ,@%default-substitute-urls))))
 #+end_src
 
 ** cuirass specifications
