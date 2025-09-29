@@ -40,7 +40,7 @@ deploy: deploy-dorphine \
 	deploy-ignamma \
 	deploy-gokuraku \
 	deploy-rakuen \
-	deploy-temp
+	deploy-worker
 deploy-%: config/%.scm
 	$(GUIX) deploy files/deploy/$(notdir $<) $(OPTS)
 

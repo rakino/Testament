@@ -6,7 +6,7 @@
              (gnu machine)
              (gnu machine ssh))
 
-(define %os (load "../../config/temp.scm"))
+(define %os (load "../../config/worker.scm"))
 
 (define* (build-worker #:key address system ssh-host-key jobs threads-per-job (bios-boot #f))
   (machine

@@ -2,11 +2,11 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 # SPDX-License-Identifier: CC-BY-SA-4.0
 
-#+TITLE: temp
+#+TITLE: worker
 #+PROPERTY: header-args :noweb-prefix no
 
 * Guix System
-#+begin_src scheme :tangle temp.scm :noweb yes
+#+begin_src scheme :tangle worker.scm :noweb yes
   (load "../common.scm")
   (use-modules (rosenthal) <<module>>)
 
