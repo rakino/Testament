@@ -80,7 +80,23 @@ copy_narinfo() {
     old_IFS=$IFS
     IFS=""
     while read -r file; do
-        cp --archive --force "$file" /var/cache/guix-moe/narinfo
+        if [[ -e $file ]]; then
+            echo "
+                (use-modules (ice-9 match)
+                             (web uri)
+                             (guix records))
+
+                (call-with-output-file \"/var/cache/guix-moe/narinfo/$file\"
+                  (lambda (port)
+                    (for-each
+                     (match-lambda
+                       ((field . value)
+                        (if (string=? field \"URL\")
+                            (format port \"~a: ~a~%\" field (uri-decode value))
+                            (format port \"~a: ~a~%\" field value))))
+                     (call-with-input-file \"$file\" recutils->alist))))
+            " | guix repl -t machine
+        fi
     done < $NARINFO_TO_COPY
     IFS=${old_IFS}
     popd
