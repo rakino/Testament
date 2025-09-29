@@ -161,7 +161,7 @@ rsync://cache.boiledscript.com
       shepherd-root-service-type
     (list (shepherd-timer '(setup-mirror)
             #~(calendar-event #:hours '(0 6 12 18) #:minutes '(0))
-            #~("/bin/sh" #$(local-file (testament-plain "gokuraku/setup-mirror.sh")))
+            #~("/bin/sh" #$(local-file (testament-plain "setup-mirror.sh")))
             #:requirement '(user-processes))))
 #+end_src
 
@@ -242,7 +242,7 @@ rsync://cache.boiledscript.com
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
-      (ruleset (local-file (testament-plain "gokuraku/nftables.conf")))))
+      (ruleset (local-file (testament-plain "gokuraku.nftables")))))
 #+end_src
 
 ** tailscale

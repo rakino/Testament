@@ -364,7 +364,7 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
-      (ruleset (local-file (testament-plain "dorphine/nftables.conf")))))
+      (ruleset (local-file (testament-plain "dorphine.nftables")))))
 #+end_src
 
 ** tailscale
@@ -529,7 +529,7 @@ Open TCP port 5558 and connect to server IPv4 address.
       (style
        (computed-substitution-with-inputs "style.css"
          (local-file (testament-plain "waybar.css"))
-         (list (local-file "../files/plain/dorphine" #:recursive? #t))))))
+         (list (testament-plain))))))
 #+end_src
 
 *** swaybg
@@ -543,7 +543,7 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+begin_src scheme :noweb-ref home-service
   (service home-mako-service-type
     (home-mako-configuration
-      (config (local-file (testament-plain "dorphine/mako.conf")))))
+      (config (local-file (testament-plain "mako.conf")))))
 #+end_src
 
 *** gammastep
@@ -712,7 +712,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
       home-xdg-configuration-files-service-type
     `(("emacs/init.el"
        ,(computed-substitution-with-inputs "init.el"
-          (local-file (testament-plain "emacs/init.el"))
+          (local-file (testament-plain "emacs-init.el"))
           (cons (testament-plain)
                 (specs->pkgs "ccls"
                              "fish"

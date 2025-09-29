@@ -8,7 +8,7 @@
     (make-empty-file custom-file)
   (load custom-file))
 
-(load-file "$$emacs/fonts.el$$")
+(load-file "$$emacs-fonts.el$$")
 
 ;; Tweak garbage collection strategy.
 ;;guix:emacs-gcmh

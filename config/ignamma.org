@@ -179,7 +179,7 @@ Administration accounts.
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
-      (ruleset (local-file (testament-plain "ignamma/nftables.conf")))))
+      (ruleset (local-file (testament-plain "ignamma.nftables")))))
 #+end_src
 
 ** tailscale
