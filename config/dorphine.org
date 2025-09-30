@@ -183,6 +183,15 @@
           (type "zfs")))
 #+end_src
 
+#+begin_src scheme :noweb-ref service
+  (simple-service 'zfs-scrub
+      shepherd-root-service-type
+    (list (shepherd-timer '(zfs-scrub)
+            #~(calendar-event #:days-of-week '(sunday) #:hours '(0) #:minutes '(0))
+            #~(#$(file-append (spec->pkg "zfs") "/sbin/zpool") "scrub" "-w" "Mentha")
+            #:requirement '(user-processes))))
+#+end_src
+
 ** Users
 Generate password hash:
 #+begin_src shell
