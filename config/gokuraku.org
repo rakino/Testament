@@ -336,6 +336,8 @@ rsync://cache.boiledscript.com
 
 * Continuous Integration
 #+begin_src scheme :noweb-ref module
+  (guix packages)
+  (guix git-download)
   (gnu services cuirass)
   (gnu services rsync)
 #+end_src
@@ -366,6 +368,7 @@ Remember to open TCP port 5555 and 5556.
 
 ** cuirass specifications
 *** channels
+**** emacs-master
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "emacs-master")
@@ -385,6 +388,7 @@ Remember to open TCP port 5555 and 5556.
     (systems '("x86_64-linux")))
 #+end_src
 
+**** guix
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "guix")
@@ -396,6 +400,22 @@ Remember to open TCP port 5555 and 5556.
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
 
+**** guix-pinned
+Commit for the Guix package at (gnu packages package-management).
+
+#+begin_src scheme :noweb-ref cuirass-spec
+  (specification
+    (name "guix-pinned")
+    (build '(channels guix))
+    (channels
+     (list (channel
+             (inherit %default-guix-channel)
+             (commit #$(git-reference-commit (origin-uri (package-source (spec->pkg "guix"))))))))
+    (priority 9)
+    (systems '("x86_64-linux" "aarch64-linux")))
+#+end_src
+
+**** guixcn
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "guixcn")
@@ -415,6 +435,7 @@ Remember to open TCP port 5555 and 5556.
     (properties '((forge-type . forgejo))))
 #+end_src
 
+**** nonguix
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "nonguix")
@@ -433,6 +454,7 @@ Remember to open TCP port 5555 and 5556.
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
 
+**** rde
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "rde")
@@ -451,6 +473,7 @@ Remember to open TCP port 5555 and 5556.
     (systems '("x86_64-linux")))
 #+end_src
 
+**** rosenthal
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "rosenthal")
@@ -472,6 +495,7 @@ Remember to open TCP port 5555 and 5556.
 #+end_src
 
 *** tarballs
+**** tarball-guix
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "tarball-guix")
@@ -483,6 +507,7 @@ Remember to open TCP port 5555 and 5556.
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
 
+**** tarball-guix-dolly
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "tarball-guix-dolly")
