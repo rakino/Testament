@@ -41,7 +41,13 @@
                 "sops"
                 <<package>>)
                %base-packages))
-      (services (cons* <<service>> %base-services))))
+      (services
+       (cons* <<service>>
+              (modify-services %base-services
+                (guix-service-type
+                 config => (guix-configuration
+                             (inherit config)
+                             (extra-options '("--max-jobs=2")))))))))
 
   ((compose (rosenthal-transformation-zfs #:boot? #t))
    %os)

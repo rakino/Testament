@@ -81,7 +81,7 @@
                              (inherit config)
                              (substitute-urls '())
                              (discover? #t)
-                             (extra-options '("--max-jobs=4" "--cores=8"))))
+                             (extra-options '("--cores=8"))))
                 (network-manager-service-type
                  config => (network-manager-configuration
                              (inherit config)
