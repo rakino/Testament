@@ -509,41 +509,6 @@ Commit for the Guix package at (gnu packages package-management).
     (properties '((forge-type . forgejo))))
 #+end_src
 
-*** tarballs
-**** tarball-guix
-#+begin_src scheme :noweb-ref cuirass-spec
-  (specification
-    (name "tarball-guix")
-    (build 'tarball)
-    (channels %default-channels)
-    ;; 3 months
-    (period (* 3 2592000))
-    (priority 9)
-    (systems '("x86_64-linux" "aarch64-linux")))
-#+end_src
-
-**** tarball-guix-dolly
-#+begin_src scheme :noweb-ref cuirass-spec
-  (specification
-    (name "tarball-guix-dolly")
-    (build '(custom (rosenthal ci tarball)))
-    (channels
-     (cons* (channel
-              (name 'rosenthal)
-              (url "https://codeberg.org/hako/rosenthal.git")
-              (branch "trunk")
-              (introduction
-               (make-channel-introduction
-                "7677db76330121a901604dfbad19077893865f35"
-                (openpgp-fingerprint
-                 "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
-            %default-channels))
-    ;; 3 months
-    (period (* 3 2592000))
-    (priority 9)
-    (systems '("x86_64-linux" "aarch64-linux")))
-#+end_src
-
 * Web Servers & Services
 #+begin_src scheme :noweb-ref module
   (rosenthal services web)
