@@ -79,9 +79,8 @@
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
-                             (substitute-urls '())
                              (discover? #t)
-                             (extra-options '("--cores=8"))))
+                             (extra-options '("--cores=16"))))
                 (network-manager-service-type
                  config => (network-manager-configuration
                              (inherit config)
@@ -469,7 +468,7 @@ Open TCP port 5558 and connect to server IPv4 address.
   (service cuirass-remote-worker-service-type
     (cuirass-remote-worker-configuration
       (publish-port 5558)
-      (workers 4)
+      (workers 2)
       (systems '("x86_64-linux" "i686-linux"))
       (server "100.97.195.93:5555")       ;gokuraku (Tailscale)
       (substitute-urls
