@@ -381,6 +381,19 @@ Remember to open TCP port 5555 and 5556.
       (specifications #~(list <<cuirass-spec>>))))
 #+end_src
 
+** cuirass-remote-worker
+#+begin_src scheme :noweb-ref service
+  (service cuirass-remote-worker-service-type
+    (cuirass-remote-worker-configuration
+      (publish-port 5558)
+      (workers 1)
+      (systems '("x86_64-linux" "i686-linux"))
+      (server "127.0.0.1:5555")
+      (substitute-urls
+       `("https://ci.guix.moe"
+         ,@%default-substitute-urls))))
+#+end_src
+
 ** cuirass specifications
 *** channels
 **** emacs-master
