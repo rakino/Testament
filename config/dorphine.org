@@ -209,7 +209,7 @@ Personal account.
   (user-account
     (name "hako")
     (group "users")
-    (supplementary-groups '("adbusers" "audio" "plugdev" "video" "wheel"))
+    (supplementary-groups '("adbusers" "audio" "docker" "plugdev" "video" "wheel"))
     (shell (file-append (spec->pkg "fish") "/bin/fish")))
 #+end_src
 
@@ -423,8 +423,9 @@ Generate passwordless ECC key:
   (udev-rules-service 'u2f (spec->pkg "libfido2") #:groups '("plugdev"))
 #+end_src
 
-* Virtualization
+* Containers & Virtualization
 #+begin_src scheme :noweb-ref module
+  (gnu services docker)
   (gnu services virtualization)
 #+end_src
 
@@ -433,6 +434,16 @@ Generate passwordless ECC key:
   (service qemu-binfmt-service-type
     (qemu-binfmt-configuration
       (platforms (lookup-qemu-platforms "aarch64" "powerpc64le" "riscv64"))))
+#+end_src
+
+** containerd
+#+begin_src scheme :noweb-ref service
+  (service containerd-service-type)
+#+end_src
+
+** docker
+#+begin_src scheme :noweb-ref service
+  (service docker-service-type)
 #+end_src
 
 * Web Servers & Services
