@@ -4,8 +4,8 @@
 
 ARGS  :=
 OPTS  := --keep-going --verbosity=1 $(ARGS)
-# GUIX  := ./pre-inst-env guix
 GUIX  := guix time-machine --channels=channels.lock --
+# GUIX  := ./pre-inst-env guix
 EMACS := $(GUIX) shell emacs-minimal -- emacs
 
 %.scm: %.org
