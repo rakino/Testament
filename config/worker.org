@@ -10,9 +10,9 @@
   (load "../common.scm")
   (use-modules (rosenthal) <<module>>)
 
-  (define (%os system 32bit-support? workers threads-per-worker bios-boot)
+  (define (%os host-name system 32bit-support? workers threads-per-worker bios-boot)
     (operating-system
-      (host-name "temp")
+      (host-name host-name)
       (timezone "Etc/GMT-8")
       (bootloader
        (bootloader-configuration
