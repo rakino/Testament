@@ -526,6 +526,7 @@ Open TCP port 5558 and connect to server IPv4 address.
                (specs->pkgs "foot"
                             "light"
                             "rofi"
+                            "setxkbmap"
                             "swaylock-effects"
                             "wireplumber"
                             "xwayland-satellite"))))))
