@@ -53,6 +53,9 @@
                  config => (guix-configuration
                              (inherit config)
                              (build-accounts (* 2 workers))
+                             (substitute-urls
+                              '("https://ci.guix.gnu.org"
+                                "https://bordeaux.guix.gnu.org"))
                              (extra-options
                               (list "--cores" (number->string threads-per-worker))))))))))
 
@@ -165,5 +168,6 @@ Open TCP port 5558 and connect to server IPv4 address.
            ,@(if 32bit-support? '("armhf-linux") '())))))
       (substitute-urls
        `("https://ci.guix.moe"
-         ,@%default-substitute-urls))))
+         "https://ci.guix.gnu.org"
+         "https://bordeaux.guix.gnu.org"))))
 #+end_src
