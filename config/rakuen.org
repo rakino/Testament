@@ -131,7 +131,13 @@ Administration accounts.
        (list (sops-secret
                (key '("cloudflare"))
                (file rakuen.yaml)
-               (user "caddy"))))))
+               (user "caddy"))
+             (sops-secret
+               (key '("docker-mailserver" "ecprivkey.pem"))
+               (file rakuen.yaml))
+             (sops-secret
+               (key '("docker-mailserver" "ecpubkey.pem"))
+               (file rakuen.yaml))))))
 #+end_src
 
 * Networking & SSH
@@ -319,7 +325,13 @@ Administration accounts.
          "--volume"
          ,(file-append
            (local-file (testament-plain "rspamd-dkim-signing.conf"))
-           ":/etc/rspamd/override.d/dkim_signing.conf:ro")))))
+           ":/etc/rspamd/override.d/dkim_signing.conf:ro")
+
+         "--volume"
+         ,(file-append
+           (local-file (testament-plain "mail-crypt.conf"))
+           ":/etc/dovecot/conf.d/10-custom.conf:ro")
+         "--volume" "/run/secrets/docker-mailserver:/certs:ro"))))
 #+end_src
 
 ** miniflux

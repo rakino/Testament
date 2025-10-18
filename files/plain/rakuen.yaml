@@ -1,7 +1,10 @@
 cloudflare: ENC[AES256_GCM,data:5MJ+jDaHoUvtBYI2zttF9nDd+LXI5AR71o/EpAhZMLUbOgYIfYz6EQ==,iv:BC57sXnWCqEMy3icxgFEJObMwct3lf5bKoCKw4t30lQ=,tag:G9uA+7UBOXO9d91XiIi5LA==,type:str]
+docker-mailserver:
+    ecprivkey.pem: ENC[AES256_GCM,data:fXU5C/7ryS3Eu7fl3TWfqVdN4wsA9IWcfm6hSTQU76zfkyUMqG7cLf2jyh5K+Mu72OHwS4+SrFFUBulpw1jjPQIl6xmPZUA6+qV/ArwZk31vGnpT5PcaSc9c8z9wbKx9fabE8AXg8zjGR65tmt0LaIiXDsnIABON/asolFsgBm50qvKeHgutc7jvVD+sv3Y4YisteaTAel/oDBLip22+T54qDCyWSimJa/NApX1OouJbpZuu6LQCZMiIYuSt5iKAm2d/gLrZ8ImeQsk0Cs509OLIpC5wh0uhtL+bQC0XK0o8VB1JAXNc3z7z8AsFfy2D,iv:c2cS6GNuAGH2ndZziAtRqoGWLkXgDthgaFUwZ3u7Ja4=,tag:yQ9ZEaCSU9NfzCtCgFMd7Q==,type:str]
+    ecpubkey.pem: ENC[AES256_GCM,data:t/hEqzXLUnv/OPIlC+cH7w/1agoAveSU67ue644KZFaaKVgYgO2zmbQXdkvuzxYLxN+aQZtxZsSMyep/hxowRCIOGcpHHL24UUYWCxH9gYjb3q3LknaZL0L6Zojh3NCVah8LSBueH5qZadOau8fcrl9/BOrxUOWa7EQ6YjGhCG/5QWau2gYGdbaohWFKUVK0sogeZYnzD/TQu32YWzZJQI0/oQlLTv6qfJdj/WmiSY/n,iv:qDMmtYthRWWKBenseHsgROUWrcAbCVXDlYf1b6Igx98=,tag:E8T92FiZn91I8adzXhyHeA==,type:str]
 sops:
-    lastmodified: "2025-10-18T13:22:06Z"
-    mac: ENC[AES256_GCM,data:q7kPcC8+KHpSKs5uXIkFxl1/CykgXDGajkb0xLDoRwFC5y94xbMiU0Itx36YbERcUpkXeiQi5k1SOnaWvpHTCkkJ0Rev0K59wo0xhw8U2rkfshzvdLx0Er13O+iuTqPzbzYxBPb4ggKlVNdEbKyIfSmOxGTFqDvy7oDwYMKv1gg=,iv:7enPc8BT/zIGDD8EpP8VGNx11bK/fYhc5Y0Vfx0TxVc=,tag:vAtpQHBK8TvpWd+O9yubqg==,type:str]
+    lastmodified: "2025-10-18T14:33:54Z"
+    mac: ENC[AES256_GCM,data:fWpvWDZB02tPaipxZ3rg98etWKdkBzzB3kXOkIBPxvRlfew7FeFmsOEcpHP6rwhQN3DVjHQMoB3y1zCdOOB/sHd189XjLQQFB6VsWtZlq+2964pvUjKg9g+ISfGqw3m9Y2EanJLWq5On9K040xWn4SkrVkJqIwV5TwRdaKeZ0PY=,iv:lv6JxPnHalcD0LLqZCeVBAYr6l0cCJj3wJ2uviHl/MI=,tag:qp3jZrQ2qv2EbbNvwRMkpA==,type:str]
     pgp:
         - created_at: "2025-09-12T12:13:53Z"
           enc: |-
