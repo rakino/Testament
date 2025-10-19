@@ -161,11 +161,7 @@ Administration accounts.
        (list (sops-secret
                (key '("cloudflare"))
                (file chapra.yaml)
-               (user "caddy"))
-             (sops-secret
-               (key '("cloudflared"))
-               (file chapra.yaml)
-               (user "cloudflared"))))))
+               (user "caddy"))))))
 #+end_src
 
 * Networking & SSH
@@ -263,15 +259,6 @@ Administration accounts.
     (caddy-configuration
       (caddy (spec->pkg "caddy-dolly"))
       (caddyfile (local-file (testament-plain "chapra.caddyfile")))))
-#+end_src
-
-** cloudflared
-#+begin_src scheme :noweb-ref service
-  (service cloudflare-tunnel-service-type
-    (cloudflare-tunnel-configuration
-      (log-level "error")
-      (token-file "/run/secrets/cloudflared")
-      (extra-options '("--protocol" "http2"))))
 #+end_src
 
 ** jellyfin
