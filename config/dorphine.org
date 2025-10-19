@@ -765,6 +765,19 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
                 '("emacsclient" "--eval" "(kill-emacs)"))))))
 #+end_src
 
+** email
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'l2md
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(l2md))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append (spec->pkg "l2md") "/bin/l2md") "--verbose")))
+            (stop
+             #~(make-kill-destructor)))))
+#+end_src
+
 ** guix-label-teams
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'guix-label-teams
