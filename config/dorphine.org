@@ -48,7 +48,7 @@
                  "mosh"
                  "mpv-nvidia"
                  "niri"
-                 #;"obs-nvidia"
+                 "obs-nvidia"
                  "openjdk:jdk"
                  "prismlauncher-dolly"
                  "ripgrep"
