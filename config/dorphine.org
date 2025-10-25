@@ -721,8 +721,8 @@ Open TCP port 5558 and connect to server IPv4 address.
 
 ** steam
 #+begin_src scheme :noweb-ref home-environment-variable
-  ("GUIX_SANDBOX_HOME" . "/mnt/Mentha/Sandbox")
-  ("GUIX_SANDBOX_EXTRA_SHARES" . "$HOME/Downloads:$HOME/Screenshots")
+  ("GUIX_SANDBOX_HOME" . "$XDG_DATA_HOME/steam")
+  ("GUIX_SANDBOX_EXTRA_SHARES" . "$HOME/Downloads:$HOME/Pictures/Screenshots")
 #+end_src
 
 #+begin_src scheme :noweb yes :noweb-ref service
