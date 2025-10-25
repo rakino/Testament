@@ -754,7 +754,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 #+begin_src scheme :noweb yes :noweb-ref package
   "emacs-pgtk"
 
-  #;"emacs-beancount"
+  "emacs-beancount"
   "emacs-caddyfile-mode"
   "emacs-edit-indirect"
   "emacs-fish-mode"
