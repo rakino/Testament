@@ -43,3 +43,10 @@ music.urspace.moe {
 shows.urspace.moe {
 	reverse_proxy localhost:22443
 }
+
+
+:80, :443 {
+	respond /* "Access denied" 403 {
+		close
+	}
+}

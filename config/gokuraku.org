@@ -618,16 +618,6 @@ Remember to open TCP port 5555 and 5556.
           (specs->pkgs "ai-robots-txt")))
 #+end_src
 
-** iocaine
-#+begin_src scheme :noweb-ref service
-  (service iocaine-service-type
-    (iocaine-configuration
-      (config
-       (computed-substitution-with-inputs "iocaine.toml"
-         (local-file (testament-plain "iocaine.toml"))
-         (list (local-file "../../Workspace/iocaine" #:recursive? #t))))))
-#+end_src
-
 ** forgejo
 #+begin_src scheme :noweb-ref service
   (service forgejo-service-type
