@@ -93,7 +93,7 @@ files.boiledscript.com {
 }
 
 # Forgejo
-git.ultrarare.space {
+git.urspace.moe {
 	import tailscale {
 		reverse_proxy localhost:48071
 	}
@@ -172,7 +172,7 @@ cache-de.guix.moe {
 
 
 # Grafana
-dash.ultrarare.space {
+dash.urspace.moe {
 	import tailscale {
 		reverse_proxy localhost:13064
 	}
