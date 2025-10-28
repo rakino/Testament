@@ -47,6 +47,7 @@
                  "kdenlive"
                  "mosh"
                  "mpv-nvidia"
+                 "ncurses"
                  "niri"
                  "obs-nvidia"
                  "openjdk:jdk"
@@ -56,6 +57,7 @@
                  "sops"
                  "steam-nvidia"
                  "telegram-desktop"
+                 "unzip"
                  "wl-clipboard"
 
                  "xdg-desktop-portal"
@@ -69,14 +71,6 @@
                  "livemarks-icecat"
                  "ohmyech-icecat"
                  "ublock-origin-icecat"
-
-                 "exo"
-                 "file-roller"
-                 "thunar"
-                 "thunar-archive-plugin"
-                 "thunar-media-tags-plugin"
-                 "thunar-volman"
-                 "unzip"
 
                  <<package>>)
                 %base-packages)))
