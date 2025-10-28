@@ -21,8 +21,8 @@
   (curve Ed25519)
   (q #A279175682D0DAE3E11268E67E1F3FA47C38D7E509F7725567CF891E248E719F#)))"))
 
-(define %guix-authorized-key-gokuraku
-  (plain-file "gokuraku.pub" "
+(define %guix-authorized-key-nuporta
+  (plain-file "nuporta.pub" "
 (public-key
  (ecc
   (curve Ed25519)
@@ -58,14 +58,14 @@
 
 (define %hako-guix-authorized-keys-lan
   (list %guix-authorized-key-dorphine
-        %guix-authorized-key-gokuraku
+        %guix-authorized-key-nuporta
 
         %guix-authorized-key-bocis
         %guix-authorized-key-ignamma))
 
 (define %hako-guix-authorized-keys-head
   (list %guix-authorized-key-dorphine
-        %guix-authorized-key-gokuraku
+        %guix-authorized-key-nuporta
 
         %guix-authorized-key-bocis
         %guix-authorized-key-ignamma
@@ -184,7 +184,5 @@ WARNED."
   (local-file (testament-plain "chapra.yaml")))
 (define dorphine.yaml
   (local-file (testament-plain "dorphine.yaml")))
-(define gokuraku.yaml
-  (local-file (testament-plain "gokuraku.yaml")))
-(define rakuen.yaml
-  (local-file (testament-plain "rakuen.yaml")))
+(define nuporta.yaml
+  (local-file (testament-plain "nuporta.yaml")))
