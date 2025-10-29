@@ -21,12 +21,19 @@
   (curve Ed25519)
   (q #A279175682D0DAE3E11268E67E1F3FA47C38D7E509F7725567CF891E248E719F#)))"))
 
+(define %guix-authorized-key-gokuraku
+  (plain-file "gokuraku.pub" "
+(public-key
+ (ecc
+  (curve Ed25519)
+  (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))"))
+
 (define %guix-authorized-key-nuporta
   (plain-file "nuporta.pub" "
 (public-key
  (ecc
   (curve Ed25519)
-  (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))"))
+  (q #552F670D5005D7EB6ACF05284A1066E52156B51D75DE3EBD3030CD046675D543#)))"))
 
 (define %guix-authorized-key-bocis
   (plain-file "bocis.pub" "
@@ -58,6 +65,7 @@
 
 (define %hako-guix-authorized-keys-lan
   (list %guix-authorized-key-dorphine
+        %guix-authorized-key-gokuraku
         %guix-authorized-key-nuporta
 
         %guix-authorized-key-bocis
@@ -65,6 +73,7 @@
 
 (define %hako-guix-authorized-keys-head
   (list %guix-authorized-key-dorphine
+        %guix-authorized-key-gokuraku
         %guix-authorized-key-nuporta
 
         %guix-authorized-key-bocis
