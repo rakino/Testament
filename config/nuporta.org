@@ -345,14 +345,6 @@ rsync://cache.guix.moe
 * Containers & Virtualization
 #+begin_src scheme :noweb-ref module
   (gnu services docker)
-  (gnu services virtualization)
-#+end_src
-
-** binfmt_misc
-#+begin_src scheme :noweb-ref service
-  (service qemu-binfmt-service-type
-    (qemu-binfmt-configuration
-      (platforms (lookup-qemu-platforms "aarch64"))))
 #+end_src
 
 ** containerd
@@ -442,7 +434,7 @@ Remember to open TCP port 5555 and 5556.
     (cuirass-remote-worker-configuration
       (publish-port 5558)
       (workers 4)
-      (systems '("x86_64-linux" "i686-linux" "aarch64-linux"))
+      (systems '("x86_64-linux" "i686-linux"))
       (server "100.97.195.93:5555")       ;nuporta (Tailscale)
       (substitute-urls
        '("https://cache-cdn.guix.moe"
