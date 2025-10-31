@@ -217,7 +217,7 @@ Administration accounts.
       (negative-ttl (* 2 60))))
 #+end_src
 
-rsync://cache.boiledscript.com
+rsync://cache.guix.moe
 #+begin_src scheme :noweb-ref service
   (service rsync-service-type
     (rsync-configuration
@@ -781,7 +781,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
   (service miniflux-service-type
     (miniflux-configuration
       (listen-address "127.0.0.1:51787")
-      (base-url "https://reader.boiledscript.com/")
+      (base-url "https://reader.urspace.moe/")
       (extra-settings
        '("CLEANUP_ARCHIVE_READ_DAYS=-1"
          "CLEANUP_ARCHIVE_UNREAD_DAYS=-1"))))
