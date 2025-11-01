@@ -464,8 +464,7 @@ Remember to open TCP port 5555 and 5556.
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/hako/guix.git")
-             (branch "pinned"))))
+             (url "https://git.urspace.moe/mirror/guix.git"))))
     (priority 9)
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
