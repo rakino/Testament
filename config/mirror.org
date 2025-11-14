@@ -153,14 +153,7 @@ Administration accounts.
   (service caddy-service-type
     (caddy-configuration
       (caddy (spec->pkg "caddy-dolly"))
-      (caddyfile
-       (with-imported-modules '((guix build utils))
-         (computed-file "mirror.caddyfile"
-           #~(begin
-               (use-modules (guix build utils))
-               (copy-file #$(local-file (testament-plain "mirror.caddyfile")) #$output)
-               (substitute* #$output
-                 (("MIRROR_NAME") #$mirror-name))))))))
+      (caddyfile (local-file (testament-plain (string-append mirror-name ".caddyfile"))))))
 #+end_src
 
 ** mirroring
