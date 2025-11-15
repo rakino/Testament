@@ -60,7 +60,7 @@
                  config => (guix-configuration
                              (inherit config)
                              (authorized-keys %guix-keys)
-                             (substitute-urls '("https://cache-cdn.guix.moe"))
+                             (substitute-urls '("https://cache-fi.guix.moe"))
                              (extra-options '("--cores=4")))))))))
 
   ((compose (rosenthal-transformation-zfs #:boot? #t))
