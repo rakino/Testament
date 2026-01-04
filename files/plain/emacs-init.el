@@ -175,6 +175,11 @@
   :hook
   (after-init . global-treesit-auto-mode))
 
+;;guix:emacs-valign
+(use-package valign
+  :hook
+  (org-mode . valign-mode))
+
 ;;guix:emacs-vertico
 (use-package vertico
   :hook
