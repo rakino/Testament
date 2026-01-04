@@ -78,6 +78,7 @@
                 "mpv-nvidia"
                 "obs-nvidia"
 
+                "mangohud"
                 "prismlauncher-dolly"
                 "steam-nvidia"
 
