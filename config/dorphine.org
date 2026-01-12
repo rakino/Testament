@@ -569,6 +569,7 @@ Open TCP port 5558 and connect to server IPv4 address.
          (local-file (testament-plain "niri.kdl"))
          (specs->pkgs "foot"
                       "light"
+                      "playerctl"
                       "rofi"
                       "swaylock-effects"
                       "wireplumber"
