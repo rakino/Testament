@@ -42,10 +42,10 @@ Substitute mirrors for Guix Moe CI.
 I provide Guix System installation LiveCDs in this repository, pre-built images
 below.  The HiDPI variant uses a larger console font.
 
-| Variant | System       | Image       | Signature       | SHA256 Checksum |
-|---------+--------------+-------------+-----------------+-----------------|
-| Default | x86_64-linux | default.iso | default.iso.asc | =placeholder=   |
-| HiDPI   | x86_64-linux | hidpi.iso   | hidpi.iso.asc   | =placeholder=   |
+| Variant | System       | Image       | Signature       | SHA256 Checksum                                                    |
+|---------+--------------+-------------+-----------------+--------------------------------------------------------------------|
+| Default | x86_64-linux | [[https://files.guix.moe/2026-01-14/x86_64-linux/rosenthal-default-20260114-x86_64-linux.iso][default.iso]] | [[https://files.guix.moe/2026-01-14/x86_64-linux/rosenthal-default-20260114-x86_64-linux.iso.asc][default.iso.asc]] | =ffb5dca3cd046ab32f4ffda244d7107eef9d91f0c0383259d305ec2b2fc739e8= |
+| HiDPI   | x86_64-linux | [[https://files.guix.moe/2026-01-14/x86_64-linux/rosenthal-hidpi-20260114-x86_64-linux.iso][hidpi.iso]]   | [[https://files.guix.moe/2026-01-14/x86_64-linux/rosenthal-hidpi-20260114-x86_64-linux.iso.asc][hidpi.iso.asc]]   | =a21d180e1ff8e3b03fb807edb2cfce2d211c645c42014633df601d829eb9e813= |
 
 Once downloaded, follow Guix System's [[https://guix.gnu.org/manual/devel/en/html_node/System-Installation.html][installation instructions]].
 
