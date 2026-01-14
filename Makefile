@@ -61,7 +61,7 @@ run-%: config/%.scm
 	@$(GUIX) deploy files/deploy/$(notdir $<) $(OPTS) -x -- $(CMD)
 
 .PHONY: live
-live: default hidpi
+live: live-default live-hidpi
 live-%: files/plain/live/%.scm
 	@mkdir --parents dist && \
 	cp "$(shell guix system image --image-type=iso9660 -L modules/installer $< $(OPTS))" \
