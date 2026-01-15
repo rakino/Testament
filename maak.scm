@@ -101,9 +101,9 @@ Exit code: ~a~%"
 ;;;
 
 (define (authenticate)
-  ($ `("guix" "git" "authenticate"
-       "c5d46fdfdfbc84fe413f1d930049d1f703f9a0ff"
-       "F4C2 D1DF 3FDE EA63 D1D3  0776 ACC6 6D09 CA52 8292")))
+  ($guix `("git" "authenticate"
+           "c5d46fdfdfbc84fe413f1d930049d1f703f9a0ff"
+           "F4C2 D1DF 3FDE EA63 D1D3  0776 ACC6 6D09 CA52 8292")))
 
 (define (update-channels)
   (with-atomic-file-output "channels.lock"
@@ -113,7 +113,7 @@ Exit code: ~a~%"
                   #:channels "channels.scm")))))
 
 (define (pull)
-  ($ `("guix" "pull" "--channels=channels.lock")))
+  ($guix `("pull" "--channels=channels.lock")))
 
 (define (build-dorphine) (build-% "dorphine" #:local? #t))
 (define (build-chapra)   (build-% "chapra"   #:local? #t))
