@@ -2,9 +2,14 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2026 Hilton Chain <hako@ultrarare.space>
 
+;;; Configuration for maak, use direnv for environment setup.
+;;; Example usage: `maak update-channels'.
+
 (define-module (maak)
   #:use-module (srfi srfi-19)
-  #:use-module (maak maak))
+  #:use-module (srfi srfi-26)
+  #:use-module (ice-9 textual-ports)
+  #:use-module (guix utils))
 
 
 ;;;
@@ -24,7 +29,16 @@
 ;;; Procedures.
 ;;;
 
-(define* ($ cmd)
+;; XXX: The built-in one doesn't work when using `guix time-machine'.
+(define (with-output-to-string thunk)
+  (let* ((port (mkstemp "/tmp/rosenthal-XXXXXX"))
+         (file (port-filename port))
+         (value (and (with-output-to-file file thunk)
+                     (call-with-input-file file get-line)))
+         (_ (close port)))
+    value))
+
+(define ($ cmd)
   (let ((exit-code (status:exit-val (apply system* cmd))))
     (or (zero? exit-code)
         (error (format #f "
@@ -92,11 +106,11 @@ Exit code: ~a~%"
        "F4C2 D1DF 3FDE EA63 D1D3  0776 ACC6 6D09 CA52 8292")))
 
 (define (update-channels)
-  (and (with-output-to-file "channels.tmp"
+  (with-atomic-file-output "channels.lock"
+    (cut with-output-to-port <>
          (lambda ()
            ($guix `("describe" "--format=channels")
-                  #:channels "channels.scm")))
-       (rename-file "channels.tmp" "channels.lock")))
+                  #:channels "channels.scm")))))
 
 (define (pull)
   ($ `("guix" "pull" "--channels=channels.lock")))
