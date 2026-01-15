@@ -13,7 +13,7 @@ This repository contains my dotfiles and Guix System literate configurations.
 + [[file:modules][modules]] :: Guile libraries (e.g. Guix System installer) forked from other
   projects.
 
-See [[file:Makefile][Makefile]] for usage.
+See [[file:maak.scm][maak.scm]] for usage.
 
 Guix channels in use:
 + [[https://codeberg.org/guix/guix.git][guix]] (additional patches are used locally for root on ZFS support)
