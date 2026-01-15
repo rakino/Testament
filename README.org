@@ -48,9 +48,9 @@ Variants:
 
 | Variant       | System       | Image             | Signature             | SHA256 Checksum                                                    |
 |---------------+--------------+-------------------+-----------------------+--------------------------------------------------------------------|
-| Default       | x86_64-linux | [[https://files.guix.moe/2026-01-14/x86_64-linux/rosenthal-default-20260114-x86_64-linux.iso][default.iso]]       | [[https://files.guix.moe/2026-01-14/x86_64-linux/rosenthal-default-20260114-x86_64-linux.iso.asc][default.iso.asc]]       | =ffb5dca3cd046ab32f4ffda244d7107eef9d91f0c0383259d305ec2b2fc739e8= |
-| Minimal       | x86_64-linux | minimal.iso       | minimal.iso.asc       | ==                                                                 |
-| Minimal-HiDPI | x86_64-linux | minimal-hidpi.iso | minimal-hidpi.iso.asc | ==                                                                 |
+| Default       | x86_64-linux | [[https://files.guix.moe/2026-01-18/rosenthal-default-20260118.x86_64-linux.iso][default.iso]]       | [[https://files.guix.moe/2026-01-18/rosenthal-default-20260118.x86_64-linux.iso.asc][default.iso.asc]]       | =2df48709d35d938da2c1b96833a2f94c99c2eb7a674b99593c46d45753ae4317= |
+| Minimal       | x86_64-linux | [[https://files.guix.moe/2026-01-18/rosenthal-minimal-20260118.x86_64-linux.iso][minimal.iso]]       | [[https://files.guix.moe/2026-01-18/rosenthal-minimal-20260118.x86_64-linux.iso.asc][minimal.iso.asc]]       | =90ad22d767d5f5a3d7eec5d2d0b8d293053586b6320ab3b2c079235ecd3d109a= |
+| Minimal-HiDPI | x86_64-linux | [[https://files.guix.moe/2026-01-18/rosenthal-minimal-hidpi-20260118.x86_64-linux.iso][minimal-hidpi.iso]] | [[https://files.guix.moe/2026-01-18/rosenthal-minimal-hidpi-20260118.x86_64-linux.iso][minimal-hidpi.iso.asc]] | =27e29c33b277f201004b34b6b82202fda021a01af4e79de62490eaf60f4ff749= |
 
 Once downloaded, follow Guix System's [[https://guix.gnu.org/manual/devel/en/html_node/System-Installation.html][installation instructions]].
 
@@ -68,8 +68,8 @@ locale, keyboard layout and networking, stopping at the step setting a password.
 
 In the LiveCDs, [[https://fishshell.com/][fish]] is chosen as the login shell and several example
 configurations are available under =/etc/configuration= ([[file:files/plain/live/examples][in this repository as
-well]]).  These examples are based on the ones shipped in Guix, configured with
-Nonguix channel.
+well]]).  These examples are based on the ones shipped in Guix, with Nonguix
+channel configured.
 
 Here follows ttys in the LiveCDs:
 - tty1 (=Ctrl+Alt+F1=) :: Guix System installer.

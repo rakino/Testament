@@ -1,4 +1,3 @@
-;;; -*- mode: scheme -*-
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2026 Hilton Chain <hako@ultrarare.space>
 
@@ -19,7 +18,8 @@
 
 (define %build-options
   (cons* "--keep-going" "--verbosity=2"
-         (or (getenv "ARGS")
+         (or (and=> (getenv "ARGS")
+                    (cut string-split <> #\space))
              '())))
 
 (define %deploy-command
