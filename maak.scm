@@ -9,7 +9,8 @@
   #:use-module (srfi srfi-19)
   #:use-module (srfi srfi-26)
   #:use-module (ice-9 textual-ports)
-  #:use-module (guix utils))
+  #:use-module (guix utils)
+  #:use-module (guix build utils))
 
 
 ;;;
@@ -33,10 +34,9 @@
 (define (with-output-to-string thunk)
   (let* ((port (mkstemp "/tmp/rosenthal-XXXXXX"))
          (file (port-filename port))
-         (value (and (with-output-to-file file thunk)
-                     (call-with-input-file file get-line)))
          (_ (close port)))
-    value))
+    (and (with-output-to-file file thunk)
+         (call-with-input-file file get-line))))
 
 (define ($ cmd)
   (let ((exit-code (status:exit-val (apply system* cmd))))
@@ -60,9 +60,9 @@ Exit code: ~a~%"
 (define (%.org->%.scm file)
   ($emacs `("-quick" "-batch"
             "--load" "ob-tangle"
-	    "--eval" "(setopt org-babel-load-languages '((shell . t)))"
-	    "--eval" "(setopt org-confirm-babel-evaluate nil)"
-	    "--eval" ,(format #f "(org-babel-tangle-file ~s)"
+            "--eval" "(setopt org-babel-load-languages '((shell . t)))"
+            "--eval" "(setopt org-confirm-babel-evaluate nil)"
+            "--eval" ,(format #f "(org-babel-tangle-file ~s)"
                               (string-append file ".org"))))
   (string-append file ".scm"))
 
@@ -83,17 +83,20 @@ Exit code: ~a~%"
            #:local? local?)))
 
 (define (live-% variant)
-  (copy-file
-   (with-output-to-string
-     (lambda ()
-       ($guix `("system" "image" "--image-type=iso9660" "-L" "modules/installer"
-                ,(format #f "files/plain/live/~a.scm" variant)
-                ,@%build-options))))
-   (in-vicinity
-    "dist"
-    (format #f "rosenthal-~a-~a.x86_64-linux.iso"
-            variant
-            (date->string (current-date) "~Y~m~d")))))
+  (let ((src
+         (with-output-to-string
+           (lambda ()
+             ($guix `("system" "image" "--image-type=iso9660"
+                      "-L" "modules/installer"
+                      ,(format #f "files/plain/live/~a.scm" variant)
+                      ,@%build-options)))))
+        (dst
+         (in-vicinity "dist"
+                      (format #f "rosenthal-~a-~a.x86_64-linux.iso"
+                              variant
+                              (date->string (current-date) "~Y~m~d")))))
+    (and (copy-file src dst)
+         (make-file-writable dst))))
 
 
 ;;;
