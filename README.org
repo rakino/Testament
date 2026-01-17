@@ -65,13 +65,11 @@ system, so you'll need to set it up in the new system if you want.
 
 For manual installation, I suggest using the installer first to configure
 locale, keyboard layout and networking, stopping at the step setting a password.
+
 In the LiveCDs, [[https://fishshell.com/][fish]] is chosen as the login shell and several example
 configurations are available under =/etc/configuration= ([[file:files/plain/live/examples][in this repository as
-well]]).
-
-Most of the examples are based on the ones shipped in Guix, configured with
-Nonguix channel.  Examples created by me (those with =rosenthal= prefix) also
-includes my [[https://codeberg.org/hako/rosenthal.git][Rosenthal channel]].  Note that the Rosenthal channel is unstable.
+well]]).  These examples are based on the ones shipped in Guix, configured with
+Nonguix channel.
 
 Here follows ttys in the LiveCDs:
 - tty1 (=Ctrl+Alt+F1=) :: Guix System installer.
