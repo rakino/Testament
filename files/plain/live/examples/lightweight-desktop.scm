@@ -64,6 +64,6 @@
 
 ((compose (nonguix-transformation-linux)
           ;; Uncomment the following line for NVIDIA proprietary driver support.
-          ;; (nonguix-transformation-nvidia)
+          ;; (nonguix-transformation-nvidia #:configure-xorg? #t)
           (nonguix-transformation-guix))
  %my-os)
