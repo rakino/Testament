@@ -46,6 +46,8 @@ Variants:
 - Minimal: installer-only
 - HiDPI: larger console font
 
+Build date: 2026-01-18
+
 | Variant       | System       | Image             | Signature             | SHA256 Checksum                                                    |
 |---------------+--------------+-------------------+-----------------------+--------------------------------------------------------------------|
 | Default       | x86_64-linux | [[https://files.guix.moe/2026-01-18/rosenthal-default-20260118.x86_64-linux.iso][default.iso]]       | [[https://files.guix.moe/2026-01-18/rosenthal-default-20260118.x86_64-linux.iso.asc][default.iso.asc]]       | =2df48709d35d938da2c1b96833a2f94c99c2eb7a674b99593c46d45753ae4317= |
