@@ -45,12 +45,16 @@
                %base-packages))
       (services
        (cons* <<service>>
+
+              (simple-service 'extend-guix guix-service-type
+                (guix-extension
+                  (authorized-keys %testament-guix-keys)
+                  (substitute-urls '("https://cache-cdn.guix.moe"))))
+
               (modify-services %base-services
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
-                             (authorized-keys %guix-keys)
-                             (substitute-urls '("https://cache-cdn.guix.moe"))
                              (discover? #t))))))
       (name-service-switch %mdns-host-lookup-nss)))
 

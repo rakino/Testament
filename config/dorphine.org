@@ -93,15 +93,15 @@
                   (host "0.0.0.0")
                   (advertise? #t)))
 
+              (simple-service 'extend-guix guix-service-type
+                (guix-extension
+                  (authorized-keys %testament-guix-keys)
+                  (substitute-urls '("https://cache-cdn.guix.moe"))))
+
               (modify-services %rosenthal-desktop-services
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
-                             (authorized-keys %guix-keys)
-                             (substitute-urls
-                              '("https://cache-cdn.guix.moe"
-                                "https://ci.guix.gnu.org"
-                                "https://bordeaux.guix.gnu.org"))
                              (discover? #t)
                              (extra-options '("--cores=16"))
                              (tmpdir "/var/tmp")))
@@ -544,7 +544,8 @@ Open TCP port 5558 and connect to server IPv4 address.
       (substitute-urls
        '("https://ci.guix.moe"
          "https://ci.guix.gnu.org"
-         "https://bordeaux.guix.gnu.org"))))
+         "https://bordeaux.guix.gnu.org"
+         "https://substitutes.nonguix.org"))))
 #+end_src
 
 * Monitoring

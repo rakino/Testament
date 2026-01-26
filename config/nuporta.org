@@ -53,12 +53,17 @@
                   ;; 2 minutes
                   (negative-ttl (* 2 60))))
 
+              (simple-service 'extend-guix guix-service-type
+                (guix-extension
+                  (authorized-keys %testament-guix-keys)
+                  (substitute-urls
+                   '("https://cache-fi.guix.moe"
+                     "https://substitutes.nonguix.org"))))
+
               (modify-services %base-services
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
-                             (authorized-keys %guix-keys)
-                             (substitute-urls '("https://cache-fi.guix.moe"))
                              (extra-options '("--cores=4")))))))
       (privileged-programs
        (cons* (privileged-program
@@ -419,7 +424,8 @@ Remember to open TCP port 5555 and 5556.
       (substitute-urls
        '("https://ci.guix.moe"
          "https://ci.guix.gnu.org"
-         "https://bordeaux.guix.gnu.org"))))
+         "https://bordeaux.guix.gnu.org"
+         "https://substitutes.nonguix.org"))))
 #+end_src
 
 ** cuirass specifications

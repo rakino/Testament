@@ -41,12 +41,13 @@
       (packages (append (specs->pkgs+out "mosh" "rsync") %base-packages))
       (services
        (cons* <<service>>
-              (modify-services %base-services
-                (guix-service-type
-                 config => (guix-configuration
-                             (inherit config)
-                             (authorized-keys %guix-keys)
-                             (substitute-urls '("https://cache-cdn.guix.moe")))))))
+
+              (simple-service 'extend-guix guix-service-type
+                (guix-extension
+                  (authorized-keys %testament-guix-keys)
+                  (substitute-urls '("https://cache-cdn.guix.moe"))))
+
+              %base-services))
       (sudoers-file
        (plain-file "sudoers"
          (string-append
