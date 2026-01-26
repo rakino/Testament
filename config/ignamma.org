@@ -30,7 +30,7 @@
       (file-systems (append <<file-systems>> %base-file-systems))
       (swap-devices
        (list (swap-space
-               (target "/swapfile"))))
+               (target (file-system-label "swap")))))
       (users (cons* <<user>> %base-user-accounts))
       (packages
        (append (specs->pkgs+out
@@ -85,15 +85,14 @@
 ** File Systems
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
-          (device (file-system-label "Lancea"))
-          (mount-point "/")
-          (type "xfs"))
-
-        (file-system
-          (device (uuid "3903-6E21" 'fat))
+          (device (file-system-label "boot"))
           (mount-point "/efi")
           (type "vfat")
-          (create-mount-point? #t)))
+          (create-mount-point? #t))
+        (file-system
+          (device (file-system-label "root"))
+          (mount-point "/")
+          (type "xfs")))
 #+end_src
 
 ** Users
