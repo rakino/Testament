@@ -1,7 +1,5 @@
-# SPDX-FileCopyrightText: 2024, 2025 Hilton Chain <hako@ultrarare.space>
 # SPDX-License-Identifier: GPL-3.0-or-later
-# SPDX-License-Identifier: CC-BY-SA-4.0
-
+# Copyright © 2024-2026 Hilton Chain <hako@ultrarare.space>
 #+TITLE: nuporta
 #+PROPERTY: header-args :noweb-prefix no
 

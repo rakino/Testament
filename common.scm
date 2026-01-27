@@ -1,6 +1,5 @@
-;;; SPDX-FileCopyrightText: 2023, 2024, 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2023-2026 Hilton Chain <hako@ultrarare.space>
 
 (use-modules (srfi srfi-1)
              (srfi srfi-26)

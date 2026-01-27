@@ -1,7 +1,3 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
-;;; SPDX-License-Identifier: CC0-1.0
-
 (cons* (channel
          (name 'nonguix)
          (url "https://gitlab.com/nonguix/nonguix")
