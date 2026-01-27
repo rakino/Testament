@@ -19,6 +19,9 @@
          (bootloader uefi-uki-removable-bootloader)
          (targets '("/efi"))
          (keyboard-layout keyboard-layout)))
+      (kernel linux-lts/dolly)
+      (initrd microcode-initrd)
+      (firmware (cons* linux-firmware %base-firmware))
       (kernel-arguments
        (cons* "kernel.sysrq=1"
               "memtest=3"
@@ -115,8 +118,7 @@
       (name-service-switch %mdns-host-lookup-nss)))
 
   ((compose (nonguix-transformation-nvidia)
-            (rosenthal-transformation-zfs #:boot? #t)
-            (nonguix-transformation-linux #:linux linux-lts/dolly))
+            (rosenthal-transformation-zfs #:boot? #t))
    %os)
 #+end_src
 
