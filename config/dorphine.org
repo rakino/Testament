@@ -788,6 +788,18 @@ Open TCP port 5558 and connect to server IPv4 address.
       (input-method-editors (specs->pkgs "fcitx5-rime"))))
 #+end_src
 
+** foot
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'foot
+      home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(foot))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append (spec->pkg "foot") "/bin/foot") "--server")))
+            (stop #~(make-kill-destructor)))))
+#+end_src
+
 ** gammastep
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'gammastep
