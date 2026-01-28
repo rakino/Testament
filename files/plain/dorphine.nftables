@@ -20,9 +20,12 @@ table inet filter {
         ip protocol icmp accept
         ip6 nexthdr icmpv6 accept
 
+        # allow avahi
+        udp dport mdns accept
+
+        # allow caddy
         tcp dport https accept
         udp dport https accept
-        udp dport mdns accept
 
         # allow cuirass
         tcp dport 5558 accept
