@@ -9,6 +9,7 @@ path = [
         "channels.scm",
         "dist/**",
         "files/**",
+        "manifest.scm",
         "pre-inst-env",
        ]
 SPDX-FileCopyrightText = ""
