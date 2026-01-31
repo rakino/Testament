@@ -23,6 +23,7 @@
       (kernel linux-lts/dolly)
       (kernel-arguments
        (cons* "kernel.sysrq=0"
+              "memtest=3"
               "zswap.enabled=1"
               "zswap.max_pool_percent=90"
               %default-kernel-arguments))

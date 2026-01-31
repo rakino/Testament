@@ -21,9 +21,10 @@
          (keyboard-layout keyboard-layout)))
       (kernel-arguments
        (cons* "kernel.sysrq=1"
+              "memtest=3"
+              "modprobe.blacklist=amdgpu,pcspkr,hid_nintendo"
               "zswap.enabled=1"
               "zswap.max_pool_percent=90"
-              "modprobe.blacklist=amdgpu,pcspkr,hid_nintendo"
               %default-kernel-arguments))
       (file-systems (append <<file-systems>> %base-file-systems))
       (swap-devices
