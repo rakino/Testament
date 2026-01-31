@@ -530,6 +530,24 @@ Remember to open TCP port 5555 and 5556.
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
 
+*** rain-and-roses
+#+begin_src scheme :noweb-ref cuirass-spec
+  (specification
+    (name "rain-and-roses")
+    (build '(channels rain-and-roses))
+    (channels
+     (list (channel
+             (inherit %default-guix-channel)
+             (url "https://git.urspace.moe/mirror/guix.git"))
+           (channel
+             (name 'rain-and-roses)
+             (url "https://codeberg.org/untrusem/rain-and-roses.git")
+             (branch "trunk"))))
+    (priority 5)
+    (systems '("x86_64-linux"))
+    (properties '((forge-type . forgejo))))
+#+end_src
+
 *** rde
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
