@@ -14,6 +14,10 @@
       (timezone "Etc/GMT-8")
       (keyboard-layout
        (keyboard-layout "us" "dvorak" #:options '("ctrl:nocaps")))
+      ;; GRUB has issue booting from the ZFS dataset with /gnu/store.
+      ;; See https://savannah.gnu.org/bugs/?47742 and issues with same error.
+      ;; NOTE: This bootloader currently doesn't support choosing system
+      ;; generation on boot and switching system generations / rolling back.
       (bootloader
        (bootloader-configuration
          (bootloader uefi-uki-removable-bootloader)
