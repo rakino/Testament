@@ -615,7 +615,8 @@ rsync://cache.guix.moe
       shepherd-root-service-type
     (list (shepherd-timer '(setup-mirror)
             #~(calendar-event #:minutes '(0))
-            #~("/bin/sh" #$(local-file (testament-plain "setup-mirror.sh")))
+            #~("/run/current-system/profile/bin/guix" "repl" "--"
+               #$(local-file (testament-plain "setup-mirror.scm")))
             #:requirement '(user-processes))))
 #+end_src
 
