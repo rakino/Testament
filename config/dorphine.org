@@ -53,8 +53,8 @@
                 "unzip"
 
                 ;; Desktop applications.
-                "foot"
                 "telegram-desktop"
+                "wezterm"
 
                 ;; Multimedia.
                 "digikam"
@@ -541,7 +541,7 @@ Open TCP port 5558 and connect to server IPv4 address.
       (config
        (computed-substitution-with-inputs "niri.kdl"
          (local-file (testament-plain "niri.kdl"))
-         (specs->pkgs "xwayland-satellite")))))
+         (specs->pkgs "wezterm" "xwayland-satellite")))))
 #+end_src
 
 https://yalter.github.io/niri/Nvidia.html
