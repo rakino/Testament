@@ -568,7 +568,6 @@ https://yalter.github.io/niri/Nvidia.html
 
 *** fontconfig
 #+begin_src scheme :noweb-ref package
-  "font-awesome"
   "font-adobe-source-serif"
   "font-apple-new-york"
   "font-apple-sf-pro"
@@ -576,6 +575,7 @@ https://yalter.github.io/niri/Nvidia.html
   "font-chiron-sung-hk"
   "font-google-noto"
   "font-google-noto-emoji"
+  "font-nerd-symbols"
   "font-sarasa-gothic"
   "font-victor-mono"
 #+end_src
