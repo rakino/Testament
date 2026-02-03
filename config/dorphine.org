@@ -48,7 +48,6 @@
                 "gnupg"
                 "mosh"
                 "ncurses"
-                "openjdk:jdk"
                 "ripgrep"
                 "rsync"
                 "sops"
@@ -827,6 +826,15 @@ Open TCP port 5558 and connect to server IPv4 address.
   (service home-mako-service-type
     (home-mako-configuration
       (config (local-file (testament-plain "mako.conf")))))
+#+end_src
+
+** openjdk
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'symlink-openjdk home-files-service-type
+    (map (lambda (jdk)
+           (list (in-vicinity ".sdkman/candidates/java" (package-version jdk))
+                 jdk))
+         (specs->pkgs "openjdk@25")))
 #+end_src
 
 ** steam
