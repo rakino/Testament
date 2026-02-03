@@ -54,30 +54,9 @@
                 "sops"
                 "unzip"
 
-                ;; Graphical session.
+                ;; Desktop applications.
                 "foot"
-                "niri"
-                "wl-clipboard"
-                "xdg-desktop-portal-gnome"
-                "xdg-desktop-portal-gtk"
-                "xdg-utils"
-
-                ;; File manager.
-                "exo"
-                "file-roller"
-                "thunar"
-                "thunar-archive-plugin"
-                "thunar-media-tags-plugin"
-                "thunar-volman"
-                "tumbler"
-
-                ;; Web browser.
-                "librewolf"
-                "adaptive-tab-bar-colour-icecat"
-                "bitwarden-icecat"
-                "livemarks-icecat"
-                "ohmyech-icecat"
-                "ublock-origin-icecat"
+                "telegram-desktop"
 
                 ;; Multimedia.
                 "digikam"
@@ -94,6 +73,30 @@
                 "mangohud"
                 "prismlauncher-dolly"
                 "steam-nvidia"
+
+                ;; Web browser.
+                "librewolf"
+                "adaptive-tab-bar-colour-icecat"
+                "bitwarden-icecat"
+                "livemarks-icecat"
+                "ohmyech-icecat"
+                "ublock-origin-icecat"
+
+                ;; File manager.
+                "exo"
+                "file-roller"
+                "thunar"
+                "thunar-archive-plugin"
+                "thunar-media-tags-plugin"
+                "thunar-volman"
+                "tumbler"
+
+                ;; Graphical session.
+                "niri"
+                "wl-clipboard"
+                "xdg-desktop-portal-gnome"
+                "xdg-desktop-portal-gtk"
+                "xdg-utils"
 
                 <<package>>)
                %base-packages))
