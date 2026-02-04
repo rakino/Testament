@@ -53,7 +53,7 @@ input {
 }
 
 output "eDP-1" {
-    mode "2560x1440@239.999"
+    mode "2560x1440@240.002"
 }
 
 output "DP-1" {
