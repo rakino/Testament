@@ -113,7 +113,7 @@
                   (authorized-keys %testament-guix-keys)
                   (substitute-urls '("https://cache-cdn.guix.moe"))))
 
-              (modify-services %rosenthal-desktop-services
+              (modify-services %rosenthal-desktop-services-gdm
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
@@ -128,7 +128,8 @@
                                     %network-manager-random-mac-address)))))))
       (name-service-switch %mdns-host-lookup-nss)))
 
-  ((compose (nonguix-transformation-nvidia #:open-source-kernel-module? #t)
+  ((compose (nonguix-transformation-nvidia #:open-source-kernel-module? #t
+                                           #:configure-xorg? #t)
             (rosenthal-transformation-zfs #:boot? #t))
    %os)
 #+end_src
@@ -575,6 +576,13 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+begin_src scheme :noweb-ref module
   (gnu services xorg)
   (gnu home services fontutils)
+#+end_src
+
+** gdm
+#+begin_src scheme :noweb-ref service
+  (set-xorg-configuration
+   (xorg-configuration
+     (keyboard-layout keyboard-layout)))
 #+end_src
 
 ** niri
