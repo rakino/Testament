@@ -776,14 +776,6 @@ Open TCP port 5558 and connect to server IPv4 address.
                     (invoke "emacsclient" "--eval" "(smtpmail-send-queued-mail)"))))))))
 #+end_src
 
-** fcitx5
-#+begin_src scheme :noweb-ref home-service
-  (service home-fcitx5-service-type
-    (home-fcitx5-configuration
-      (themes (specs->pkgs "fcitx5-material-color-theme"))
-      (input-method-editors (specs->pkgs "fcitx5-rime"))))
-#+end_src
-
 ** foot
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'foot
