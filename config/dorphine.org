@@ -173,12 +173,10 @@
 
 ** Kernel
 #+begin_src scheme :noweb-ref service
-  (simple-service 'extend-kernel-module-loader
-      kernel-module-loader-service-type
+  (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("sch_fq_pie" "tcp_bbr"))
 
-  (simple-service 'extend-sysctl
-      sysctl-service-type
+  (simple-service 'extend-sysctl sysctl-service-type
     '(("net.core.default_qdisc" . "fq_pie")
       ("net.ipv4.tcp_congestion_control" . "bbr")
       ;; https://github.com/quic-go/quic-go/wiki/UDP-Buffer-Sizes
@@ -187,8 +185,7 @@
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'modprobed-db
-      home-shepherd-service-type
+  (simple-service 'modprobed-db home-shepherd-service-type
     (list (shepherd-timer '(update-modprobed-db)
             #~(calendar-event #:minutes '(0))
             #~(#$(file-append (spec->pkg "modprobed-db") "/bin/modprobed-db") "storesilent"))))
@@ -255,8 +252,7 @@
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (simple-service 'zfs-scrub
-      shepherd-root-service-type
+  (simple-service 'zfs-scrub shepherd-root-service-type
     (list (shepherd-timer '(zfs-scrub)
             #~(calendar-event #:days-of-week '(sunday) #:hours '(0) #:minutes '(0))
             #~(#$(file-append (spec->pkg "zfs") "/sbin/zpool") "scrub" "-w" "Mentha")
@@ -264,8 +260,7 @@
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (simple-service 'zfs-snapshot-hourly
-      shepherd-root-service-type
+  (simple-service 'zfs-snapshot-hourly shepherd-root-service-type
     (list (shepherd-timer '(zfs-snapshot-hourly)
             #~(calendar-event #:minutes '(0))
             #~(#$(program-file "zfs-snapshot-hourly"
@@ -279,8 +274,7 @@
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (simple-service 'zfs-snapshot-daily
-      shepherd-root-service-type
+  (simple-service 'zfs-snapshot-daily shepherd-root-service-type
     (list (shepherd-timer '(zfs-snapshot-daily)
             #~(calendar-event #:hours '(0) #:minutes '(0))
             #~(#$(program-file "zfs-snapshot-daily"
@@ -328,8 +322,7 @@ Administration accounts.
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (simple-service 'extend-openssh
-      openssh-service-type
+  (simple-service 'extend-openssh openssh-service-type
     `(("root" ,%ssh-key-deploy)))
 #+end_src
 
@@ -341,8 +334,7 @@ Administration accounts.
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'fish-emacs-eat
-      home-fish-service-type
+  (simple-service 'fish-emacs-eat home-fish-service-type
     (home-fish-extension
       (config
        (list (plain-file "emacs-eat.fish" "\
@@ -422,8 +414,7 @@ Generate passwordless ECC key:
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (simple-service 'auto-power-off
-      shepherd-root-service-type
+  (simple-service 'auto-power-off shepherd-root-service-type
     (list (shepherd-timer '(auto-power-off)
             #~(calendar-event #:minutes '(0 10 20 30 40 50))
             #~(#$(program-file "auto-power-off"
@@ -624,8 +615,7 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'extend-fontconfig
-      home-fontconfig-service-type
+  (simple-service 'extend-fontconfig home-fontconfig-service-type
     (let ((sans  "SF Pro Text")
           (serif "New York Medium")
           (mono  "Victor Mono")
@@ -711,8 +701,7 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'emacs-configuration
-      home-xdg-configuration-files-service-type
+  (simple-service 'emacs-configuration home-xdg-configuration-files-service-type
     `(("emacs/init.el"
        ,(computed-substitution-with-inputs "init.el"
           (local-file (testament-plain "emacs-init.el"))
@@ -725,22 +714,18 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'emacs
-      home-shepherd-service-type
+  (simple-service 'emacs home-shepherd-service-type
     (list (shepherd-service
             (provision '(emacs-daemon))
-            (start
-             #~(make-forkexec-constructor
-                '("emacs" "--fg-daemon")))
+            (start #~(make-forkexec-constructor '("emacs" "--fg-daemon")))
             (stop
-             #~(make-forkexec-constructor
-                '("emacsclient" "--eval" "(kill-emacs)"))))))
+             #~(make-system-destructor
+                (string-join '("emacsclient" "--eval" "(kill-emacs)")))))))
 #+end_src
 
 ** email
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'update-mailbox
-      home-shepherd-service-type
+  (simple-service 'update-mailbox home-shepherd-service-type
     (list
      (shepherd-timer '(update-mailbox)
        #~(calendar-event #:minutes '(0 15 30 45))
@@ -811,8 +796,7 @@ Open TCP port 5558 and connect to server IPv4 address.
 
 ** gammastep
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'gammastep
-      home-shepherd-service-type
+  (simple-service 'gammastep home-shepherd-service-type
     (list (shepherd-service
             (provision '(gammastep))
             (requirement '(home-sops-secrets))
@@ -826,8 +810,7 @@ Open TCP port 5558 and connect to server IPv4 address.
 
 ** jellyfin-mpv-shim
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'jellyfin-mpv-shim
-      home-shepherd-service-type
+  (simple-service 'jellyfin-mpv-shim home-shepherd-service-type
     (list (shepherd-service
             (provision '(jellyfin-mpv-shim))
             (start
