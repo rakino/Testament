@@ -1,19 +1,20 @@
 prefer-no-csd
 screenshot-path "~/Pictures/Screenshots/%Y%m%d-%H%M%S.png"
 
+xwayland-satellite {
+    path "$$bin/xwayland-satellite$$"
+}
+
 // Guix Home (home-shepherd-service-type)
-spawn-sh-at-startup "shepherd"
+spawn-at-startup "shepherd"
 
-// Noctalia
-window-rule {
-    geometry-corner-radius 20
-    clip-to-geometry true
+overview {
+    backdrop-color "#E8E3E9"
 }
 
-debug {
-  honor-xdg-activation-with-invalid-serial
+hotkey-overlay {
+    skip-at-startup
 }
-
 
 window-rule {
     match app-id="librewolf" title="^Picture-in-Picture$"
@@ -30,12 +31,14 @@ window-rule {
     open-floating true
 }
 
-overview {
-    backdrop-color "#E8E3E9"
+// Noctalia
+window-rule {
+    geometry-corner-radius 20
+    clip-to-geometry true
 }
 
-xwayland-satellite {
-    path "$$bin/xwayland-satellite$$"
+debug {
+  honor-xdg-activation-with-invalid-serial
 }
 
 layout {
