@@ -727,9 +727,7 @@ Open TCP port 5558 and connect to server IPv4 address.
     (list (shepherd-service
             (provision '(emacs-daemon))
             (start #~(make-forkexec-constructor '("emacs" "--fg-daemon")))
-            (stop
-             #~(make-system-destructor
-                (string-join '("emacsclient" "--eval" "(kill-emacs)")))))))
+            (stop #~(make-kill-destructor)))))
 #+end_src
 
 ** email
