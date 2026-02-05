@@ -79,10 +79,15 @@ binds {
     XF86MonBrightnessUp   allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "increase"; }
     XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
 
-    Mod+A      { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
-    Mod+L      { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
-    Mod+Space  { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-    Mod+Return { spawn "emacsclient" "--create-frame" "--no-wait"; }
+    Mod+A           { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
+    Mod+O           { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
+    Mod+D           { spawn "noctalia-shell" "ipc" "call" "plugin:clipper" "togglePanel"; }
+    Mod+S           { spawn "noctalia-shell" "ipc" "call" "settings" "toggle"; }
+    Ctrl+Alt+Delete { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
+    Mod+Shift+E     { spawn "herd" "restart" "noctalia-shell"; }
+
+    Mod+E       { spawn "emacsclient" "--create-frame" "--no-wait"; }
+    Mod+Return  { spawn "foot"; }
 
     Mod+Left                       { focus-column-left; }
     Mod+Down                       { focus-window-down; }
@@ -127,7 +132,4 @@ binds {
     Print                          { screenshot; }
     Ctrl+Print                     { screenshot-screen; }
     Alt+Print                      { screenshot-window; }
-
-    Mod+Shift+E                    { quit; }
-    Ctrl+Alt+Delete                { quit; }
 }
