@@ -151,3 +151,9 @@
   :hook
   ((eval-expression-minibuffer-setup nxml-mode prog-mode sgml-mode tex-mode)
    . puni-mode))
+
+;;guix:emacs-yasnippet
+;;guix:emacs-yasnippet-snippets
+(use-package yasnippet
+  :hook
+  (after-init . yas-global-mode))
