@@ -811,11 +811,11 @@ Open TCP port 5558 and connect to server IPv4 address.
        ,(file-append (spec->pkg "mpv-mpris") "/lib/mpris.so"))))
 #+end_src
 
-** openjdk
+** prismlauncher
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'symlink-openjdk home-files-service-type
+  (simple-service 'openjdk-for-prismlauncher home-files-service-type
     (map (lambda (jdk)
-           (list (in-vicinity ".sdkman/candidates/java" (package-version jdk))
+           (list (in-vicinity ".local/share/PrismLauncher/java" (package-version jdk))
                  jdk))
          (specs->pkgs "openjdk@25")))
 #+end_src
