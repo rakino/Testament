@@ -2,7 +2,7 @@ prefer-no-csd
 screenshot-path "~/Pictures/Screenshots/%Y%m%d-%H%M%S.png"
 
 // Guix Home (home-shepherd-service-type)
-spawn-sh-at-startup "pgrep --uid $USER shepherd > /dev/null || shepherd"
+spawn-sh-at-startup "shepherd"
 
 // Noctalia
 window-rule {
