@@ -133,7 +133,8 @@
                                     %network-manager-random-mac-address)))))))
       (name-service-switch %mdns-host-lookup-nss)))
 
-  ((compose (nonguix-transformation-nvidia #:open-source-kernel-module? #t
+  ((compose (nonguix-transformation-nvidia #:s0ix-power-management? #t
+                                           #:open-source-kernel-module? #t
                                            #:configure-xorg? #t)
             (rosenthal-transformation-zfs #:boot? #t))
    %os)
