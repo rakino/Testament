@@ -5,8 +5,7 @@
 
 * Guix System
 #+begin_src scheme :tangle chapra.scm :noweb yes
-  (load "../common.scm")
-  (use-modules (rosenthal) <<module>>)
+  (use-modules <<module>>)
 
   (define %os
     (operating-system
@@ -49,7 +48,7 @@
 
               (simple-service 'extend-guix guix-service-type
                 (guix-extension
-                  (authorized-keys %testament-guix-keys)
+                  (authorized-keys %guix-keys)
                   (substitute-urls '("https://cache-cdn.guix.moe"))))
 
               (modify-services %base-services
@@ -64,14 +63,6 @@
 #+end_src
 
 * Base
-#+begin_src scheme :noweb-ref module
-  (sops secrets)
-  (gnu services linux)
-  (gnu services ssh)
-  (gnu services sysctl)
-  (sops services sops)
-#+end_src
-
 ** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
@@ -193,19 +184,11 @@ Administration accounts.
       (secrets
        (list (sops-secret
                (key '("cloudflare"))
-               (file chapra.yaml)
+               (file %sops-chapra)
                (user "caddy"))))))
 #+end_src
 
 * Networking & SSH
-#+begin_src scheme :noweb-ref module
-  (gnu services avahi)
-  (gnu services networking)
-  (gnu services security)
-  (gnu services ssh)
-  (rosenthal services networking)
-#+end_src
-
 ** network-manager
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
@@ -264,10 +247,6 @@ Administration accounts.
 #+end_src
 
 * Containers & Virtualization
-#+begin_src scheme :noweb-ref module
-  (gnu services docker)
-#+end_src
-
 ** containerd
 #+begin_src scheme :noweb-ref service
   (service containerd-service-type)
@@ -279,11 +258,6 @@ Administration accounts.
 #+end_src
 
 * Web Servers & Services
-#+begin_src scheme :noweb-ref module
-  (rosenthal services child-error)
-  (rosenthal services web)
-#+end_src
-
 ** caddy
 #+begin_src scheme :noweb-ref service
   (service caddy-service-type
@@ -318,14 +292,10 @@ Administration accounts.
       (extra-config
        (string-append
         (file-content (testament-plain "navidrome.toml"))
-        (sops-str chapra.yaml '("navidrome"))))))
+        (sops-str %sops-chapra '("navidrome"))))))
 #+end_src
 
 * Monitoring
-#+begin_src scheme :noweb-ref module
-  (rosenthal services monitoring)
-#+end_src
-
 ** alloy
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
@@ -333,9 +303,38 @@ Administration accounts.
       (config
        (plain-file "chapra.alloy"
          (string-join
-          (list (sops-str dorphine.yaml '("alloy"))
+          (list (sops-str %sops-dorphine '("alloy"))
                 (file-content (testament-plain "alloy/node-exporter.alloy"))
                 (file-content (testament-plain "alloy/docker.alloy"))
                 (file-content (testament-plain "alloy/caddy.alloy")))
           "\n")))))
+#+end_src
+
+* Modules
+Within this repository
+#+begin_src scheme :noweb-ref module
+  (common)
+#+end_src
+
+Utilities
+#+begin_src scheme :noweb-ref module
+  (gnu)
+  (rosenthal)
+  (sops secrets)
+#+end_src
+
+Guix System - services
+#+begin_src scheme :noweb-ref module
+  (gnu services avahi)
+  (gnu services docker)
+  (gnu services linux)
+  (gnu services networking)
+  (gnu services security)
+  (gnu services ssh)
+  (gnu services sysctl)
+  (rosenthal services child-error)
+  (rosenthal services monitoring)
+  (rosenthal services networking)
+  (rosenthal services web)
+  (sops services sops)
 #+end_src

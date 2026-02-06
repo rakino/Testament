@@ -5,8 +5,7 @@
 
 * Guix System
 #+begin_src scheme :tangle mirror.scm :noweb yes
-  (load "../common.scm")
-  (use-modules (rosenthal) <<module>>)
+  (use-modules <<module>>)
 
   (define (%os mirror-name bios-boot)
     (operating-system
@@ -40,7 +39,7 @@
 
               (simple-service 'extend-guix guix-service-type
                 (guix-extension
-                  (authorized-keys %testament-guix-keys)
+                  (authorized-keys %guix-keys)
                   (substitute-urls '("https://cache-cdn.guix.moe"))))
 
               %base-services))
@@ -54,12 +53,6 @@
 #+end_src
 
 * Base
-#+begin_src scheme :noweb-ref module
-  (gnu services linux)
-  (gnu services ssh)
-  (gnu services sysctl)
-#+end_src
-
 ** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
@@ -122,12 +115,6 @@ Administration accounts.
 #+end_src
 
 * Networking & SSH
-#+begin_src scheme :noweb-ref module
-  (gnu services networking)
-  (gnu services security)
-  (gnu services ssh)
-#+end_src
-
 ** networking
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
@@ -209,8 +196,30 @@ Administration accounts.
       (config
        (plain-file (string-append mirror-name ".alloy")
          (string-join
-          (list (sops-str dorphine.yaml '("alloy"))
+          (list (sops-str %sops-dorphine '("alloy"))
                 (file-content (testament-plain "alloy/node-exporter.alloy"))
                 (file-content (testament-plain "alloy/caddy.alloy")))
           "\n")))))
+#+end_src
+
+* Modules
+Within this repository
+#+begin_src scheme :noweb-ref module
+  (common)
+#+end_src
+
+Utilities
+#+begin_src scheme :noweb-ref module
+  (gnu)
+  (guix modules)
+  (rosenthal)
+#+end_src
+
+Guix System - services
+#+begin_src scheme :noweb-ref module
+  (gnu services linux)
+  (gnu services networking)
+  (gnu services security)
+  (gnu services ssh)
+  (gnu services sysctl)
 #+end_src

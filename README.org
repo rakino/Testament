@@ -9,8 +9,7 @@ This repository contains my dotfiles and Guix System literate configurations.
 + [[file:files/deploy][files/deploy]] :: Configurations for ~guix deploy~.
 + [[file:files/dotfiles][files/dotfiles]] :: Dotfiles for =home-dotfiles-service-type=.
 + [[file:files/plain][files/plain]] :: Files to be referenced in configurations.
-+ [[file:modules][modules]] :: Guile libraries (e.g. Guix System installer) forked from other
-  projects.
++ [[file:modules][modules]] :: Guile modules.
 
 See [[file:maak.scm][maak.scm]] for usage.
 
@@ -22,8 +21,8 @@ Guix channels in use:
 
 * Systems
 ** [[file:config/dorphine.org][dorphine]] (x86_64-linux, UEFI, ZFS, NVIDIA) | [[file:files/deploy/dorphine.scm][deploy]]
-#+html: <img src="https://s3.boiledscript.com/misskey/12d0cd0c-b92f-4f2a-9ad7-86e31bee7f09.webp">
-#+html: <img src="https://s3.boiledscript.com/misskey/d6c7ee0f-2f39-4d8d-b7cd-46b7abe5e0bf.webp">
+#+html: <img src="https://s3.boiledscript.com/misskey/a052b129-6554-4239-8203-a2697112b172.webp">
+#+html: <img src="https://s3.boiledscript.com/misskey/a7776bb9-4543-4adc-9d81-3e7d58e28492.webp">
 
 ** [[file:config/chapra.org][chapra]] (x86_64-linux, UEFI, ZFS) | [[file:files/deploy/chapra.scm][deploy]]
 

@@ -5,8 +5,7 @@
 
 * Guix System
 #+begin_src scheme :tangle nuporta.scm :noweb yes
-  (load "../common.scm")
-  (use-modules (rosenthal) <<module>>)
+  (use-modules <<module>>)
 
   (define %os
     (operating-system
@@ -59,7 +58,7 @@
 
               (simple-service 'extend-guix guix-service-type
                 (guix-extension
-                  (authorized-keys %testament-guix-keys)
+                  (authorized-keys %guix-keys)
                   (substitute-urls
                    '("https://cache-fi.guix.moe"
                      "https://substitutes.nonguix.org"))))
@@ -80,15 +79,6 @@
 #+end_src
 
 * Base
-#+begin_src scheme :noweb-ref module
-  (sops secrets)
-  (gnu services linux)
-  (gnu services rsync)
-  (gnu services ssh)
-  (gnu services sysctl)
-  (sops services sops)
-#+end_src
-
 ** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
@@ -231,45 +221,37 @@ Administration accounts.
       (secrets
        (list (sops-secret
                (key '("cloudflare"))
-               (file nuporta.yaml)
+               (file %sops-nuporta)
                (user "caddy"))
              (sops-secret
                (key '("docker-mailserver" "ecprivkey.pem"))
-               (file nuporta.yaml))
+               (file %sops-nuporta))
              (sops-secret
                (key '("docker-mailserver" "ecpubkey.pem"))
-               (file nuporta.yaml))
+               (file %sops-nuporta))
              (sops-secret
                (key '("rclone"))
-               (file nuporta.yaml))
+               (file %sops-nuporta))
 
              (sops-secret
                (key '("caddy" "cuirass" "admin"))
-               (file nuporta.yaml)
+               (file %sops-nuporta)
                (group "caddy"))
              (sops-secret
                (key '("caddy" "cuirass" "forgejo"))
-               (file nuporta.yaml)
+               (file %sops-nuporta)
                (group "caddy"))
              (sops-secret
                (key '("caddy" "loki"))
-               (file nuporta.yaml)
+               (file %sops-nuporta)
                (group "caddy"))
              (sops-secret
                (key '("caddy" "mimir"))
-               (file nuporta.yaml)
+               (file %sops-nuporta)
                (group "caddy"))))))
 #+end_src
 
 * Networking & SSH
-#+begin_src scheme :noweb-ref module
-  (gnu services avahi)
-  (gnu services networking)
-  (gnu services security)
-  (gnu services ssh)
-  (rosenthal services networking)
-#+end_src
-
 ** network-manager
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
@@ -325,10 +307,6 @@ Administration accounts.
 #+end_src
 
 * Containers & Virtualization
-#+begin_src scheme :noweb-ref module
-  (gnu services docker)
-#+end_src
-
 ** containerd
 #+begin_src scheme :noweb-ref service
   (service containerd-service-type)
@@ -340,10 +318,6 @@ Administration accounts.
 #+end_src
 
 * Databases
-#+begin_src scheme :noweb-ref module
-  (gnu services databases)
-#+end_src
-
 ** postgresql
 #+begin_src scheme :noweb-ref service
   (service postgresql-service-type
@@ -383,10 +357,6 @@ Administration accounts.
 #+end_src
 
 * Continuous Integration
-#+begin_src scheme :noweb-ref module
-  (gnu services cuirass)
-#+end_src
-
 ** cuirass
 Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
@@ -628,13 +598,6 @@ rsync://cache.guix.moe
 #+end_src
 
 * Web Servers & Services
-#+begin_src scheme :noweb-ref module
-  (gnu services web)
-  (rosenthal services mail)
-  (rosenthal services messaging)
-  (rosenthal services web)
-#+end_src
-
 ** caddy
 #+begin_src scheme :noweb yes :noweb-ref service
   (service caddy-service-type
@@ -715,7 +678,7 @@ rsync://cache.guix.moe
           ("RUN_USER" . "forgejo")
           ("WORK_PATH" . "/var/lib/forgejo")
           ("RUN_MODE" . "prod"))
-         ,@(call-with-input-string (sops-str nuporta.yaml '("forgejo")) read)
+         ,@(call-with-input-string (sops-str %sops-nuporta '("forgejo")) read)
          ("database"
           ("DB_TYPE" . "postgres")
           ("HOST" . "127.0.0.1:5432")
@@ -772,7 +735,7 @@ rsync://cache.guix.moe
     (heisenbridge-configuration
       (config
        (plain-file "heisenbridge.yaml"
-         (sops-str nuporta.yaml '("heisenbridge"))))
+         (sops-str %sops-nuporta '("heisenbridge"))))
       (homeserver "http://localhost:26372")))
 #+end_src
 
@@ -782,7 +745,7 @@ rsync://cache.guix.moe
     (mautrix-telegram-configuration
       (config
        (plain-file "mautrix-telegram.yaml"
-         (sops-str nuporta.yaml '("mautrix-telegram"))))
+         (sops-str %sops-nuporta '("mautrix-telegram"))))
       (group-id 964)
       (user-id 968)))
 #+end_src
@@ -851,10 +814,6 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+end_src
 
 * Monitoring
-#+begin_src scheme :noweb-ref module
-  (rosenthal services monitoring)
-#+end_src
-
 ** grafana
 #+begin_src scheme :noweb-ref service
   (service grafana-service-type
@@ -889,7 +848,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
           ("http_listen_port" . 49951)
           ("grpc_listen_port" . 32773)
           ("log_level" . "error"))
-         ,@(call-with-input-string (sops-str nuporta.yaml '("mimir")) read)
+         ,@(call-with-input-string (sops-str %sops-nuporta '("mimir")) read)
          ("ingester"
           ("ring"
            ("replication_factor" . 1)))
@@ -917,7 +876,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
           ("grpc_listen_port" . 11365))
          ("common"
           ("path_prefix" . "/var/lib/loki")
-          ,@(call-with-input-string (sops-str nuporta.yaml '("loki")) read)
+          ,@(call-with-input-string (sops-str %sops-nuporta '("loki")) read)
           ("ring"
            ("kvstore"
             ("store" . "inmemory")))
@@ -946,9 +905,43 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (config
        (plain-file "nuporta.alloy"
          (string-join
-          (list (sops-str dorphine.yaml '("alloy"))
+          (list (sops-str %sops-dorphine '("alloy"))
                 (file-content (testament-plain "alloy/node-exporter.alloy"))
                 (file-content (testament-plain "alloy/docker.alloy"))
                 (file-content (testament-plain "alloy/caddy.alloy")))
           "\n")))))
+#+end_src
+
+* Modules
+Within this repository
+#+begin_src scheme :noweb-ref module
+  (common)
+#+end_src
+
+Utilities
+#+begin_src scheme :noweb-ref module
+  (gnu)
+  (rosenthal)
+  (sops secrets)
+#+end_src
+
+Guix System - services
+#+begin_src scheme :noweb-ref module
+  (gnu services avahi)
+  (gnu services cuirass)
+  (gnu services databases)
+  (gnu services docker)
+  (gnu services linux)
+  (gnu services networking)
+  (gnu services rsync)
+  (gnu services security)
+  (gnu services ssh)
+  (gnu services sysctl)
+  (gnu services web)
+  (rosenthal services mail)
+  (rosenthal services messaging)
+  (rosenthal services monitoring)
+  (rosenthal services networking)
+  (rosenthal services web)
+  (sops services sops)
 #+end_src

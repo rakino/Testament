@@ -5,8 +5,7 @@
 
 * Guix System
 #+begin_src scheme :tangle dorphine.scm :noweb yes
-  (load "../common.scm")
-  (use-modules (rosenthal) <<module>>)
+  (use-modules <<module>>)
 
   (define %os
     (operating-system
@@ -110,7 +109,7 @@
 
               (simple-service 'extend-guix guix-service-type
                 (guix-extension
-                  (authorized-keys %testament-guix-keys)
+                  (authorized-keys %guix-keys)
                   (substitute-urls '("https://cache-cdn.guix.moe"))))
 
               (modify-services %rosenthal-desktop-services-gdm
@@ -135,10 +134,6 @@
 #+end_src
 
 * Guix Home
-#+begin_src scheme :noweb-ref module
-  (rosenthal services keyboard)
-#+end_src
-
 #+begin_src scheme :noweb yes :noweb-ref service
   (service guix-home-service-type
     `(("hako" ,(home-environment
@@ -157,23 +152,11 @@
 #+begin_src scheme :noweb yes :noweb-ref home-service
   (simple-service 'extend-environment-variables
       home-environment-variables-service-type
-    `(,@%testament-xdg-base-directory-env-vars
+    `(,@%xdg-base-directory-env-vars
       <<home-environment-variable>>))
 #+end_src
 
 * Base
-#+begin_src scheme :noweb-ref module
-  (sops secrets)
-  (gnu home services dotfiles)
-  (gnu home services shells)
-  (sops home services sops)
-  (gnu services linux)
-  (gnu services ssh)
-  (gnu services sysctl)
-  (rosenthal services shellutils)
-  (sops services sops)
-#+end_src
-
 ** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
@@ -388,7 +371,7 @@ Generate passwordless ECC key:
       (secrets
        (list (sops-secret
                (key '("cloudflare"))
-               (file dorphine.yaml)
+               (file %sops-dorphine)
                (user "caddy"))))))
 #+end_src
 
@@ -401,17 +384,10 @@ Generate passwordless ECC key:
       (secrets
        (list (sops-secret
                (key '("mail"))
-               (file dorphine.yaml))
-             (sops-secret
-               (key '("gammastep"))
-               (file dorphine.yaml))))))
+               (file %sops-dorphine))))))
 #+end_src
 
 * Power Management
-#+begin_src scheme :noweb-ref module
-  (gnu services pm)
-#+end_src
-
 #+begin_src scheme :noweb-ref service
   (service tlp-service-type)
 #+end_src
@@ -433,14 +409,6 @@ Generate passwordless ECC key:
 #+end_src
 
 * Networking & SSH
-#+begin_src scheme :noweb-ref module
-  (gnu services networking)
-  (gnu services security)
-  (gnu services ssh)
-  (rosenthal services networking)
-  (rosenthal services dns)
-#+end_src
-
 ** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
@@ -473,11 +441,6 @@ Generate passwordless ECC key:
 #+end_src
 
 * OpenPGP & Security Token
-#+begin_src scheme :noweb-ref module
-  (gnu services security-token)
-  (gnu home services gnupg)
-#+end_src
-
 ** pcscd
 #+begin_src scheme :noweb-ref service
   (service pcscd-service-type)
@@ -497,10 +460,6 @@ Generate passwordless ECC key:
 #+end_src
 
 * Containers & Virtualization
-#+begin_src scheme :noweb-ref module
-  (gnu services docker)
-#+end_src
-
 ** containerd
 #+begin_src scheme :noweb-ref service
   (service containerd-service-type)
@@ -512,11 +471,6 @@ Generate passwordless ECC key:
 #+end_src
 
 * Web Servers & Services
-#+begin_src scheme :noweb-ref module
-  (rosenthal services bittorrent)
-  (rosenthal services web)
-#+end_src
-
 ** caddy
 #+begin_src scheme :noweb-ref service
   (service caddy-service-type
@@ -534,10 +488,6 @@ Generate passwordless ECC key:
 #+end_src
 
 * Continuous Integration
-#+begin_src scheme :noweb-ref module
-  (gnu services cuirass)
-#+end_src
-
 ** cuirass-remote-worker
 Open TCP port 5558 and connect to server IPv4 address.
 #+begin_src scheme :noweb-ref service
@@ -555,10 +505,6 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+end_src
 
 * Monitoring
-#+begin_src scheme :noweb-ref module
-  (rosenthal services monitoring)
-#+end_src
-
 ** alloy
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
@@ -566,18 +512,13 @@ Open TCP port 5558 and connect to server IPv4 address.
       (config
        (plain-file "dorphine.alloy"
          (string-join
-          (list (sops-str dorphine.yaml '("alloy"))
+          (list (sops-str %sops-dorphine '("alloy"))
                 (file-content (testament-plain "alloy/node-exporter.alloy"))
                 (file-content (testament-plain "alloy/caddy.alloy")))
           "\n")))))
 #+end_src
 
 * Graphical Session
-#+begin_src scheme :noweb-ref module
-  (gnu services xorg)
-  (gnu home services fontutils)
-#+end_src
-
 ** gdm
 #+begin_src scheme :noweb-ref service
   (set-xorg-configuration
@@ -671,11 +612,6 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+end_src
 
 * Miscellaneous
-#+begin_src scheme :noweb-ref module
-  (gnu services syncthing)
-  (rosenthal services bittorrent)
-#+end_src
-
 ** adb
 #+begin_src scheme :noweb-ref service
   (udev-rules-service 'android (spec->pkg "android-udev-rules") #:groups '("adbusers"))
@@ -841,4 +777,55 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   (service syncthing-service-type
     (syncthing-configuration
       (user "hako")))
+#+end_src
+
+* Modules
+Within this repository
+#+begin_src scheme :noweb-ref module
+  (common)
+#+end_src
+
+Guile builtins
+#+begin_src scheme :noweb-ref module
+  (ice-9 match)
+#+end_src
+
+Utilities
+#+begin_src scheme :noweb-ref module
+  (gnu)
+  (guix packages)
+  (nonguix)
+  (rosenthal)
+  (sops secrets)
+#+end_src
+
+Guix System - services
+#+begin_src scheme :noweb-ref module
+  (gnu services cuirass)
+  (gnu services docker)
+  (gnu services linux)
+  (gnu services networking)
+  (gnu services pm)
+  (gnu services security)
+  (gnu services security-token)
+  (gnu services ssh)
+  (gnu services sysctl)
+  (gnu services xorg)
+  (gnu services syncthing)
+  (rosenthal services bittorrent)
+  (rosenthal services keyboard)
+  (rosenthal services monitoring)
+  (rosenthal services networking)
+  (rosenthal services shellutils)
+  (rosenthal services web)
+  (sops services sops)
+#+end_src
+
+Guix Home - services
+#+begin_src scheme :noweb-ref module
+  (gnu home services dotfiles)
+  (gnu home services fontutils)
+  (gnu home services gnupg)
+  (gnu home services shells)
+  (sops home services sops)
 #+end_src
