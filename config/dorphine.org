@@ -544,6 +544,14 @@ Open TCP port 5558 and connect to server IPv4 address.
          (specs->pkgs "xwayland-satellite")))))
 #+end_src
 
+https://yalter.github.io/niri/Nvidia.html
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'niri-nvidia-profile etc-service-type
+    `(("nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json"
+       ,(local-file (testament-plain "50-limit-free-buffer-pool-in-wayland-compositors.json")))))
+#+end_src
+
 *** noctalia-shell
 #+begin_src scheme :noweb-ref home-service
   (service home-noctalia-shell-service-type)
