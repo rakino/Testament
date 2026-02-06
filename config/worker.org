@@ -3,7 +3,7 @@
 #+TITLE: worker
 #+PROPERTY: header-args :noweb-prefix no
 
-* Guix System
+** Guix System
 #+begin_src scheme :tangle worker.scm :noweb yes
   (use-modules <<module>>)
 
@@ -69,8 +69,8 @@
   %os
 #+end_src
 
-* Base
-** Kernel
+** Base
+*** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("sch_fq_pie" "tcp_bbr"))
@@ -80,7 +80,7 @@
       ("net.ipv4.tcp_congestion_control" . "bbr")))
 #+end_src
 
-** File Systems
+*** File Systems
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
           (device (file-system-label "root"))
@@ -95,7 +95,7 @@
               (type "vfat"))))
 #+end_src
 
-** Users
+*** Users
 #+begin_src scheme :noweb-ref user
   (user-account
     (name "hako")
@@ -120,23 +120,23 @@
       ("podiki" ,%ssh-key-podiki)))
 #+end_src
 
-* Networking & SSH
-** avahi
+** Networking & SSH
+*** avahi
 #+begin_src scheme :noweb-ref service
   (service avahi-service-type)
 #+end_src
 
-** dhcpcd
+*** dhcpcd
 #+begin_src scheme :noweb-ref service
   (service dhcpcd-service-type)
 #+end_src
 
-** tailscale
+*** tailscale
 #+begin_src scheme :noweb-ref service
   (service tailscale-service-type)
 #+end_src
 
-** openssh
+*** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
@@ -145,8 +145,8 @@
       (password-authentication? #f)))
 #+end_src
 
-* Continuous Integration
-** cuirass-remote-worker
+** Continuous Integration
+*** cuirass-remote-worker
 Open TCP port 5558 and connect to server IPv4 address.
 #+begin_src scheme :noweb-ref service
   (service cuirass-remote-worker-service-type
@@ -169,7 +169,7 @@ Open TCP port 5558 and connect to server IPv4 address.
          "https://substitutes.nonguix.org"))))
 #+end_src
 
-* Module
+** Module
 Within this repository
 #+begin_src scheme :noweb-ref module
   (common)

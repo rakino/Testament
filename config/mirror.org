@@ -3,7 +3,7 @@
 #+TITLE: mirror
 #+PROPERTY: header-args :noweb-prefix no
 
-* Guix System
+** Guix System
 #+begin_src scheme :tangle mirror.scm :noweb yes
   (use-modules <<module>>)
 
@@ -58,8 +58,8 @@
   %os
 #+end_src
 
-* Base
-** Kernel
+** Base
+*** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("sch_fq_pie" "tcp_bbr"))
@@ -72,7 +72,7 @@
       ("net.core.wmem_max" . "7500000")))
 #+end_src
 
-** File Systems
+*** File Systems
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
           (device (file-system-label "root"))
@@ -87,7 +87,7 @@
               (type "vfat"))))
 #+end_src
 
-** Users
+*** Users
 #+begin_src scheme :noweb-ref user
   (user-account
     (name "hako")
@@ -120,20 +120,20 @@ Administration accounts.
       ("podiki" ,%ssh-key-podiki)))
 #+end_src
 
-* Networking & SSH
-** networking
+** Networking & SSH
+*** networking
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
     (network-manager-configuration
       (shepherd-requirement '())))
 #+end_src
 
-** ntp
+*** ntp
 #+begin_src scheme :noweb-ref service
   (service ntp-service-type)
 #+end_src
 
-** openssh
+*** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
@@ -142,7 +142,7 @@ Administration accounts.
       (password-authentication? #f)))
 #+end_src
 
-** fail2ban
+*** fail2ban
 #+begin_src scheme :noweb-ref service
   (service fail2ban-service-type
     (fail2ban-configuration
@@ -152,12 +152,12 @@ Administration accounts.
                (enabled? #t))))))
 #+end_src
 
-* Web Servers & Services
+** Web Servers & Services
 #+begin_src scheme :noweb-ref module
   (rosenthal services web)
 #+end_src
 
-** caddy
+*** caddy
 #+begin_src scheme :noweb yes :noweb-ref service
   (service caddy-service-type
     (caddy-configuration
@@ -165,7 +165,7 @@ Administration accounts.
       (caddyfile (local-file (testament-plain (string-append mirror-name ".caddyfile"))))))
 #+end_src
 
-** mirroring
+*** mirroring
 #+begin_src scheme :noweb-ref service
   (simple-service 'guix-moe-mirror shepherd-root-service-type
     (list (shepherd-timer '(guix-moe-mirror)
@@ -190,12 +190,12 @@ Administration accounts.
             #:requirement '(user-processes))))
 #+end_src
 
-* Monitoring
+** Monitoring
 #+begin_src scheme :noweb-ref module
   (rosenthal services monitoring)
 #+end_src
 
-** alloy
+*** alloy
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
     (alloy-configuration
@@ -208,7 +208,7 @@ Administration accounts.
           "\n")))))
 #+end_src
 
-* Modules
+** Modules
 Within this repository
 #+begin_src scheme :noweb-ref module
   (common)

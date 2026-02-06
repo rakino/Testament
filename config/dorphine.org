@@ -3,7 +3,7 @@
 #+TITLE: dorphine
 #+PROPERTY: header-args :noweb-prefix no
 
-* Guix System
+** Guix System
 #+begin_src scheme :tangle dorphine.scm :noweb yes
   (use-modules <<module>>)
 
@@ -139,7 +139,7 @@
    %os)
 #+end_src
 
-* Guix Home
+** Guix Home
 #+begin_src scheme :noweb yes :noweb-ref service
   (service guix-home-service-type
     `(("hako" ,(home-environment
@@ -162,8 +162,8 @@
       <<home-environment-variable>>))
 #+end_src
 
-* Base
-** Kernel
+** Base
+*** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("sch_fq_pie" "tcp_bbr"))
@@ -183,7 +183,7 @@
             #~(#$(file-append (spec->pkg "modprobed-db") "/bin/modprobed-db") "storesilent"))))
 #+end_src
 
-** File Systems
+*** File Systems
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
           (device (uuid "2574-B3EC" 'fat))
@@ -279,7 +279,7 @@
             #:requirement '(user-processes))))
 #+end_src
 
-** Users
+*** Users
 Generate password hash:
 #+begin_src shell
   guix shell openssl
@@ -318,7 +318,7 @@ Administration accounts.
     `(("root" ,%ssh-key-deploy)))
 #+end_src
 
-** Shell Utilities
+*** Shell Utilities
 #+begin_src scheme :noweb-ref home-service
   (service home-fish-plugin-atuin-service-type)
   (service home-fish-plugin-direnv-service-type)
@@ -335,7 +335,7 @@ Administration accounts.
   end")))))
 #+end_src
 
-** SOPS Secrets
+*** SOPS Secrets
 Create GPG home directory specifically for use with SOPS.
 #+begin_src shell
   MY_GPGHOME="<GPG homedir>"
@@ -393,7 +393,7 @@ Generate passwordless ECC key:
                (file %sops-dorphine))))))
 #+end_src
 
-* Power Management
+** Power Management
 #+begin_src scheme :noweb-ref service
   (service tlp-service-type)
 #+end_src
@@ -414,20 +414,20 @@ Generate passwordless ECC key:
                          (system* "loginctl" "poweroff"))))))))
 #+end_src
 
-* Networking & SSH
-** nftables
+** Networking & SSH
+*** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
       (ruleset (local-file (testament-plain "dorphine.nftables")))))
 #+end_src
 
-** tailscale
+*** tailscale
 #+begin_src scheme :noweb-ref service
   (service tailscale-service-type)
 #+end_src
 
-** openssh
+*** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
@@ -436,7 +436,7 @@ Generate passwordless ECC key:
       (password-authentication? #f)))
 #+end_src
 
-** fail2ban
+*** fail2ban
 #+begin_src scheme :noweb-ref service
   (service fail2ban-service-type
     (fail2ban-configuration
@@ -446,13 +446,13 @@ Generate passwordless ECC key:
                (enabled? #t))))))
 #+end_src
 
-* OpenPGP & Security Token
-** pcscd
+** OpenPGP & Security Token
+*** pcscd
 #+begin_src scheme :noweb-ref service
   (service pcscd-service-type)
 #+end_src
 
-** gpg-agent
+*** gpg-agent
 #+begin_src scheme :noweb-ref home-service
   (service home-gpg-agent-service-type
     (home-gpg-agent-configuration
@@ -460,24 +460,24 @@ Generate passwordless ECC key:
       (ssh-support? #t)))
 #+end_src
 
-** libfido2
+*** libfido2
 #+begin_src scheme :noweb-ref service
   (udev-rules-service 'u2f (spec->pkg "libfido2") #:groups '("plugdev"))
 #+end_src
 
-* Containers & Virtualization
-** containerd
+** Containers & Virtualization
+*** containerd
 #+begin_src scheme :noweb-ref service
   (service containerd-service-type)
 #+end_src
 
-** docker
+*** docker
 #+begin_src scheme :noweb-ref service
   (service docker-service-type)
 #+end_src
 
-* Web Servers & Services
-** caddy
+** Web Servers & Services
+*** caddy
 #+begin_src scheme :noweb-ref service
   (service caddy-service-type
     (caddy-configuration
@@ -485,7 +485,7 @@ Generate passwordless ECC key:
       (caddyfile (local-file (testament-plain "dorphine.caddyfile")))))
 #+end_src
 
-** qbittorrent
+*** qbittorrent
 #+begin_src scheme :noweb-ref service
   (service qbittorrent-service-type
     (qbittorrent-configuration
@@ -493,8 +493,8 @@ Generate passwordless ECC key:
       (webui-port 35951)))
 #+end_src
 
-* Continuous Integration
-** cuirass-remote-worker
+** Continuous Integration
+*** cuirass-remote-worker
 Open TCP port 5558 and connect to server IPv4 address.
 #+begin_src scheme :noweb-ref service
   (service cuirass-remote-worker-service-type
@@ -510,8 +510,8 @@ Open TCP port 5558 and connect to server IPv4 address.
          "https://substitutes.nonguix.org"))))
 #+end_src
 
-* Monitoring
-** alloy
+** Monitoring
+*** alloy
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
     (alloy-configuration
@@ -524,15 +524,15 @@ Open TCP port 5558 and connect to server IPv4 address.
           "\n")))))
 #+end_src
 
-* Graphical Session
-** gdm
+** Graphical Session
+*** gdm
 #+begin_src scheme :noweb-ref service
   (set-xorg-configuration
    (xorg-configuration
      (keyboard-layout keyboard-layout)))
 #+end_src
 
-** niri
+*** niri
 #+begin_src scheme :noweb-ref home-service
   (service home-niri-service-type
     (home-niri-configuration
@@ -542,12 +542,12 @@ Open TCP port 5558 and connect to server IPv4 address.
          (specs->pkgs "xwayland-satellite")))))
 #+end_src
 
-** noctalia-shell
+*** noctalia-shell
 #+begin_src scheme :noweb-ref home-service
   (service home-noctalia-shell-service-type)
 #+end_src
 
-** qogir-icon-theme
+*** qogir-icon-theme
 #+begin_src scheme :noweb-ref home-service
   (service home-theme-service-type
     (home-theme-configuration
@@ -556,7 +556,7 @@ Open TCP port 5558 and connect to server IPv4 address.
       (cursor-theme "Qogir")))
 #+end_src
 
-** fontconfig
+*** fontconfig
 #+begin_src scheme :noweb-ref package
   "font-awesome"
   "font-adobe-source-serif"
@@ -617,13 +617,13 @@ Open TCP port 5558 and connect to server IPv4 address.
           (family "monospace"))))))
 #+end_src
 
-* Miscellaneous
-** adb
+** Miscellaneous
+*** adb
 #+begin_src scheme :noweb-ref service
   (udev-rules-service 'android (spec->pkg "android-udev-rules") #:groups '("adbusers"))
 #+end_src
 
-** emacs
+*** emacs
 #+begin_src scheme :noweb-ref home-environment-variable
   ("EDITOR" . "emacsclient")
   ("VISUAL" . "$EDITOR")
@@ -672,7 +672,7 @@ Open TCP port 5558 and connect to server IPv4 address.
             (stop #~(make-kill-destructor)))))
 #+end_src
 
-** email
+*** email
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'update-mailbox home-shepherd-service-type
     (list
@@ -723,7 +723,7 @@ Open TCP port 5558 and connect to server IPv4 address.
                     (invoke "emacsclient" "--eval" "(smtpmail-send-queued-mail)"))))))))
 #+end_src
 
-** fcitx5
+*** fcitx5
 #+begin_src scheme :noweb-ref home-service
   (service home-fcitx5-service-type
     (home-fcitx5-configuration
@@ -733,7 +733,7 @@ Open TCP port 5558 and connect to server IPv4 address.
       (qt-im-module? #t)))
 #+end_src
 
-** jellyfin-mpv-shim
+*** jellyfin-mpv-shim
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'jellyfin-mpv-shim home-shepherd-service-type
     (list (shepherd-service
@@ -744,14 +744,14 @@ Open TCP port 5558 and connect to server IPv4 address.
             (stop #~(make-kill-destructor)))))
 #+end_src
 
-** mpv-mpris
+*** mpv-mpris
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'mpv-mpris home-xdg-configuration-files-service-type
     `(("mpv/scripts/mpris.so"
        ,(file-append (spec->pkg "mpv-mpris") "/lib/mpris.so"))))
 #+end_src
 
-** prismlauncher
+*** prismlauncher
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'openjdk-for-prismlauncher home-files-service-type
     (map (lambda (jdk)
@@ -760,7 +760,7 @@ Open TCP port 5558 and connect to server IPv4 address.
          (specs->pkgs "openjdk@25")))
 #+end_src
 
-** steam
+*** steam
 #+begin_src scheme :noweb-ref home-environment-variable
   ("GUIX_SANDBOX_HOME" . "$XDG_DATA_HOME/steam")
 #+end_src
@@ -778,14 +778,14 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   MODE=\"0660\", GROUP=\"users\"")
 #+end_src
 
-** syncthing
+*** syncthing
 #+begin_src scheme :noweb-ref service
   (service syncthing-service-type
     (syncthing-configuration
       (user "hako")))
 #+end_src
 
-* Modules
+** Modules
 Within this repository
 #+begin_src scheme :noweb-ref module
   (common)

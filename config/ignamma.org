@@ -3,7 +3,7 @@
 #+TITLE: ignamma
 #+PROPERTY: header-args :noweb-prefix no
 
-* Guix System
+** Guix System
 #+begin_src scheme :tangle ignamma.scm :noweb yes
   (use-modules <<module>>)
 
@@ -65,8 +65,8 @@
   %os
 #+end_src
 
-* Base
-** Kernel
+** Base
+*** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("sch_fq_pie" "tcp_bbr"))
@@ -76,7 +76,7 @@
       ("net.ipv4.tcp_congestion_control" . "bbr")))
 #+end_src
 
-** File Systems
+*** File Systems
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
           (device (file-system-label "boot"))
@@ -89,7 +89,7 @@
           (type "xfs")))
 #+end_src
 
-** Users
+*** Users
 Personal account.
 #+begin_src scheme :noweb-ref user
   (user-account
@@ -113,7 +113,7 @@ Administration accounts.
       ("hako" ,%ssh-key-hako)))
 #+end_src
 
-* Power Management
+** Power Management
 #+begin_src scheme :noweb-ref service
   (simple-service 'auto-power-off shepherd-root-service-type
     (list (shepherd-timer '(auto-power-off)
@@ -130,8 +130,8 @@ Administration accounts.
                          (system* "halt"))))))))
 #+end_src
 
-* Networking & SSH
-** network-manager
+** Networking & SSH
+*** network-manager
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
     (network-manager-configuration
@@ -141,29 +141,29 @@ Administration accounts.
              %network-manager-random-mac-address))))
 #+end_src
 
-** ntp
+*** ntp
 #+begin_src scheme :noweb-ref service
   (service ntp-service-type)
 #+end_src
 
-** avahi
+*** avahi
 #+begin_src scheme :noweb-ref service
   (service avahi-service-type)
 #+end_src
 
-** nftables
+*** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
       (ruleset (local-file (testament-plain "ignamma.nftables")))))
 #+end_src
 
-** tailscale
+*** tailscale
 #+begin_src scheme :noweb-ref service
   (service tailscale-service-type)
 #+end_src
 
-** openssh
+*** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
@@ -172,7 +172,7 @@ Administration accounts.
       (password-authentication? #f)))
 #+end_src
 
-** fail2ban
+*** fail2ban
 #+begin_src scheme :noweb-ref service
   (service fail2ban-service-type
     (fail2ban-configuration
@@ -182,16 +182,16 @@ Administration accounts.
                (enabled? #t))))))
 #+end_src
 
-* Virtualization
-** binfmt_misc
+** Virtualization
+*** binfmt_misc
 #+begin_src scheme :noweb-ref service
   (service qemu-binfmt-service-type
     (qemu-binfmt-configuration
       (platforms (lookup-qemu-platforms "aarch64"))))
 #+end_src
 
-* Continuous Integration
-** cuirass-remote-worker
+** Continuous Integration
+*** cuirass-remote-worker
 Open TCP port 5558 and connect to server IPv4 address.
 #+begin_src scheme :noweb-ref service
   (service cuirass-remote-worker-service-type
@@ -207,8 +207,8 @@ Open TCP port 5558 and connect to server IPv4 address.
          "https://substitutes.nonguix.org"))))
 #+end_src
 
-* Monitoring
-** alloy
+** Monitoring
+*** alloy
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
     (alloy-configuration
@@ -220,7 +220,7 @@ Open TCP port 5558 and connect to server IPv4 address.
           "\n")))))
 #+end_src
 
-* Modules
+** Modules
 Within this repository
 #+begin_src scheme :noweb-ref module
   (common)

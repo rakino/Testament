@@ -3,7 +3,7 @@
 #+TITLE: nuporta
 #+PROPERTY: header-args :noweb-prefix no
 
-* Guix System
+** Guix System
 #+begin_src scheme :tangle nuporta.scm :noweb yes
   (use-modules <<module>>)
 
@@ -84,8 +84,8 @@
    %os)
 #+end_src
 
-* Base
-** Kernel
+** Base
+*** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("sch_fq_pie" "tcp_bbr"))
@@ -98,7 +98,7 @@
       ("net.core.wmem_max" . "7500000")))
 #+end_src
 
-** File Systems
+*** File Systems
 
 | ZFS Dataset                   | Mount Point                 | Options                    | com.sun:auto-snapshot |
 |-------------------------------+-----------------------------+----------------------------+-----------------------|
@@ -185,7 +185,7 @@
             #:requirement '(user-processes))))
 #+end_src
 
-** Users
+*** Users
 Personal account.
 #+begin_src scheme :noweb-ref user
   (user-account
@@ -217,7 +217,7 @@ Administration accounts.
       ("podiki" ,%ssh-key-podiki)))
 #+end_src
 
-** SOPS Secrets
+*** SOPS Secrets
 #+begin_src scheme :noweb-ref service
   (service sops-secrets-service-type
     (sops-service-configuration
@@ -257,37 +257,37 @@ Administration accounts.
                (group "caddy"))))))
 #+end_src
 
-* Networking & SSH
-** network-manager
+** Networking & SSH
+*** network-manager
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
     (network-manager-configuration
       (shepherd-requirement '())))
 #+end_src
 
-** ntp
+*** ntp
 #+begin_src scheme :noweb-ref service
   (service ntp-service-type)
 #+end_src
 
-** avahi
+*** avahi
 #+begin_src scheme :noweb-ref service
   (service avahi-service-type)
 #+end_src
 
-** nftables
+*** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
       (ruleset (local-file (testament-plain "nuporta.nftables")))))
 #+end_src
 
-** tailscale
+*** tailscale
 #+begin_src scheme :noweb-ref service
   (service tailscale-service-type)
 #+end_src
 
-** openssh
+*** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
@@ -296,7 +296,7 @@ Administration accounts.
       (password-authentication? #f)))
 #+end_src
 
-** fail2ban
+*** fail2ban
 #+begin_src scheme :noweb-ref service
   (service fail2ban-service-type
     (fail2ban-configuration
@@ -306,25 +306,25 @@ Administration accounts.
                (enabled? #t))))))
 #+end_src
 
-* Session and Seat Management
-** elogind
+** Session and Seat Management
+*** elogind
 #+begin_src scheme :noweb-ref service
   (service elogind-service-type)
 #+end_src
 
-* Containers & Virtualization
-** containerd
+** Containers & Virtualization
+*** containerd
 #+begin_src scheme :noweb-ref service
   (service containerd-service-type)
 #+end_src
 
-** docker
+*** docker
 #+begin_src scheme :noweb-ref service
   (service docker-service-type)
 #+end_src
 
-* Databases
-** postgresql
+** Databases
+*** postgresql
 #+begin_src scheme :noweb-ref service
   (service postgresql-service-type
     (postgresql-configuration
@@ -357,13 +357,13 @@ Administration accounts.
             ("log_directory" "/var/log/postgresql")))))))
 #+end_src
 
-** redis
+*** redis
 #+begin_src scheme :noweb-ref service
   (service redis-service-type)
 #+end_src
 
-* Continuous Integration
-** cuirass
+** Continuous Integration
+*** cuirass
 Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
   (service cuirass-service-type
@@ -387,7 +387,7 @@ Remember to open TCP port 5555 and 5556.
       (specifications #~(list <<cuirass-spec>>))))
 #+end_src
 
-** cuirass-remote-worker
+*** cuirass-remote-worker
 #+begin_src scheme :noweb-ref service
   (service cuirass-remote-worker-service-type
     (cuirass-remote-worker-configuration
@@ -402,8 +402,8 @@ Remember to open TCP port 5555 and 5556.
          "https://substitutes.nonguix.org"))))
 #+end_src
 
-** cuirass specifications
-*** cast
+*** cuirass specifications
+**** cast
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "cast")
@@ -426,7 +426,7 @@ Remember to open TCP port 5555 and 5556.
     (properties '((forge-type . forgejo))))
 #+end_src
 
-*** emacs-master
+**** emacs-master
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "emacs-master")
@@ -448,7 +448,7 @@ Remember to open TCP port 5555 and 5556.
     (systems '("x86_64-linux")))
 #+end_src
 
-*** guix
+**** guix
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "guix")
@@ -475,7 +475,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (systems '("aarch64-linux")))
 #+end_src
 
-*** guixcn
+**** guixcn
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "guixcn")
@@ -497,7 +497,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (properties '((forge-type . forgejo))))
 #+end_src
 
-*** nonguix
+**** nonguix
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "nonguix")
@@ -518,7 +518,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (systems '("x86_64-linux" "aarch64-linux")))
 #+end_src
 
-*** rain-and-roses
+**** rain-and-roses
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "rain-and-roses")
@@ -536,7 +536,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (properties '((forge-type . forgejo))))
 #+end_src
 
-*** rde
+**** rde
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "rde")
@@ -557,7 +557,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (systems '("x86_64-linux")))
 #+end_src
 
-*** rosenthal
+**** rosenthal
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
     (name "rosenthal")
@@ -580,7 +580,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (properties '((forge-type . forgejo))))
 #+end_src
 
-** Mirroring
+*** Mirroring
 rsync://cache.guix.moe
 #+begin_src scheme :noweb-ref service
   (service rsync-service-type
@@ -603,8 +603,8 @@ rsync://cache.guix.moe
             #:requirement '(user-processes))))
 #+end_src
 
-* Web Servers & Services
-** caddy
+** Web Servers & Services
+*** caddy
 #+begin_src scheme :noweb yes :noweb-ref service
   (service caddy-service-type
     (caddy-configuration
@@ -622,7 +622,7 @@ rsync://cache.guix.moe
           (specs->pkgs "ai-robots-txt")))
 #+end_src
 
-** docker-mailserver
+*** docker-mailserver
 #+begin_src scheme :noweb-ref service
   (service docker-mailserver-service-type
     (docker-mailserver-configuration
@@ -673,7 +673,7 @@ rsync://cache.guix.moe
          "--volume" "/run/secrets/docker-mailserver:/certs:ro"))))
 #+end_src
 
-** forgejo
+*** forgejo
 #+begin_src scheme :noweb-ref service
   (service forgejo-service-type
     (forgejo-configuration
@@ -735,7 +735,7 @@ rsync://cache.guix.moe
       (user-id 974)))
 #+end_src
 
-** heisenbridge
+*** heisenbridge
 #+begin_src scheme :noweb-ref service
   (service heisenbridge-service-type
     (heisenbridge-configuration
@@ -745,7 +745,7 @@ rsync://cache.guix.moe
       (homeserver "http://localhost:26372")))
 #+end_src
 
-** mautrix-telegram
+*** mautrix-telegram
 #+begin_src scheme :noweb-ref service
   (service mautrix-telegram-service-type
     (mautrix-telegram-configuration
@@ -756,7 +756,7 @@ rsync://cache.guix.moe
       (user-id 968)))
 #+end_src
 
-** misskey
+*** misskey
 https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+begin_src scheme :noweb-ref service
   (service misskey-service-type
@@ -786,7 +786,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (user-id 975)))
 #+end_src
 
-** miniflux
+*** miniflux
 #+begin_src scheme :noweb-ref service
   (service miniflux-service-type
     (miniflux-configuration
@@ -797,7 +797,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
          "CLEANUP_ARCHIVE_UNREAD_DAYS=-1"))))
 #+end_src
 
-** tuwunel
+*** tuwunel
 #+begin_src scheme :noweb-ref service
   (service conduit-service-type
     (conduit-configuration
@@ -808,7 +808,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (user-id 973)))
 #+end_src
 
-** vaultwarden
+*** vaultwarden
 #+begin_src scheme :noweb-ref service
   (service vaultwarden-service-type
     (vaultwarden-configuration
@@ -819,8 +819,8 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (user-id 977)))
 #+end_src
 
-* Monitoring
-** grafana
+** Monitoring
+*** grafana
 #+begin_src scheme :noweb-ref service
   (service grafana-service-type
     (grafana-configuration
@@ -843,7 +843,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (user-id 978)))
 #+end_src
 
-** mimir
+*** mimir
 #+begin_src scheme :noweb-ref service
   (service mimir-service-type
     (mimir-configuration
@@ -870,7 +870,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (user-id 979)))
 #+end_src
 
-** loki
+*** loki
 #+begin_src scheme :noweb-ref service
   (service loki-service-type
     (loki-configuration
@@ -904,7 +904,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (user-id 980)))
 #+end_src
 
-** alloy
+*** alloy
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
     (alloy-configuration
@@ -918,7 +918,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
           "\n")))))
 #+end_src
 
-* Modules
+** Modules
 Within this repository
 #+begin_src scheme :noweb-ref module
   (common)

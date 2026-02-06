@@ -3,7 +3,7 @@
 #+TITLE: chapra
 #+PROPERTY: header-args :noweb-prefix no
 
-* Guix System
+** Guix System
 #+begin_src scheme :tangle chapra.scm :noweb yes
   (use-modules <<module>>)
 
@@ -68,8 +68,8 @@
    %os)
 #+end_src
 
-* Base
-** Kernel
+** Base
+*** Kernel
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("sch_fq_pie" "tcp_bbr"))
@@ -82,7 +82,7 @@
       ("net.core.wmem_max" . "7500000")))
 #+end_src
 
-** File Systems
+*** File Systems
 
 | ZFS Dataset            | Mount Point          | Options                               | com.sun:auto-snapshot |
 |------------------------+----------------------+---------------------------------------+-----------------------|
@@ -156,7 +156,7 @@
             #:requirement '(user-processes))))
 #+end_src
 
-** Users
+*** Users
 Personal account.
 #+begin_src scheme :noweb-ref user
   (user-account
@@ -180,7 +180,7 @@ Administration accounts.
       ("hako" ,%ssh-key-hako)))
 #+end_src
 
-** SOPS Secrets
+*** SOPS Secrets
 #+begin_src scheme :noweb-ref service
   (service sops-secrets-service-type
     (sops-service-configuration
@@ -194,8 +194,8 @@ Administration accounts.
                (user "caddy"))))))
 #+end_src
 
-* Networking & SSH
-** network-manager
+** Networking & SSH
+*** network-manager
 #+begin_src scheme :noweb-ref service
   (service network-manager-service-type
     (network-manager-configuration
@@ -205,29 +205,29 @@ Administration accounts.
              %network-manager-random-mac-address))))
 #+end_src
 
-** ntp
+*** ntp
 #+begin_src scheme :noweb-ref service
   (service ntp-service-type)
 #+end_src
 
-** avahi
+*** avahi
 #+begin_src scheme :noweb-ref service
   (service avahi-service-type)
 #+end_src
 
-** nftables
+*** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
       (ruleset (local-file (testament-plain "chapra.nftables")))))
 #+end_src
 
-** tailscale
+*** tailscale
 #+begin_src scheme :noweb-ref service
   (service tailscale-service-type)
 #+end_src
 
-** openssh
+*** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
     (openssh-configuration
@@ -236,7 +236,7 @@ Administration accounts.
       (password-authentication? #f)))
 #+end_src
 
-** fail2ban
+*** fail2ban
 #+begin_src scheme :noweb-ref service
   (service fail2ban-service-type
     (fail2ban-configuration
@@ -246,25 +246,25 @@ Administration accounts.
                (enabled? #t))))))
 #+end_src
 
-* Session and Seat Management
-** elogind
+** Session and Seat Management
+*** elogind
 #+begin_src scheme :noweb-ref service
   (service elogind-service-type)
 #+end_src
 
-* Containers & Virtualization
-** containerd
+** Containers & Virtualization
+*** containerd
 #+begin_src scheme :noweb-ref service
   (service containerd-service-type)
 #+end_src
 
-** docker
+*** docker
 #+begin_src scheme :noweb-ref service
   (service docker-service-type)
 #+end_src
 
-* Web Servers & Services
-** caddy
+** Web Servers & Services
+*** caddy
 #+begin_src scheme :noweb-ref service
   (service caddy-service-type
     (caddy-configuration
@@ -272,7 +272,7 @@ Administration accounts.
       (caddyfile (local-file (testament-plain "chapra.caddyfile")))))
 #+end_src
 
-** jellyfin
+*** jellyfin
 #+begin_src scheme :noweb-ref service
   (service jellyfin-service-type
     (jellyfin-configuration
@@ -284,14 +284,14 @@ Administration accounts.
             (file-append (spec->pkg "font-google-noto-sans-cjk") path ":/usr" path))))))
 #+end_src
 
-** komga
+*** komga
 #+begin_src scheme :noweb-ref service
   (service komga-service-type
     (komga-configuration
       (port 44293)))
 #+end_src
 
-** navidrome
+*** navidrome
 #+begin_src scheme :noweb-ref service
   (service navidrome-service-type
     (navidrome-configuration
@@ -301,8 +301,8 @@ Administration accounts.
         (sops-str %sops-chapra '("navidrome"))))))
 #+end_src
 
-* Monitoring
-** alloy
+** Monitoring
+*** alloy
 #+begin_src scheme :noweb-ref service
   (service alloy-service-type
     (alloy-configuration
@@ -316,7 +316,7 @@ Administration accounts.
           "\n")))))
 #+end_src
 
-* Modules
+** Modules
 Within this repository
 #+begin_src scheme :noweb-ref module
   (common)
