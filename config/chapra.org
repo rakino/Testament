@@ -51,6 +51,12 @@
                   (authorized-keys %guix-keys)
                   (substitute-urls '("https://cache-cdn.guix.moe"))))
 
+              (simple-service 'guix-gc shepherd-root-service-type
+                (list (shepherd-timer '(guix-gc)
+                        #~(calendar-event #:days-of-week '(sunday) #:hours '(12) #:minutes '(0))
+                        #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
+                        #:requirement '(user-processes guix-daemon))))
+
               (modify-services %base-services
                 (guix-service-type
                  config => (guix-configuration

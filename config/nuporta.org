@@ -63,6 +63,12 @@
                    '("https://cache-fi.guix.moe"
                      "https://substitutes.nonguix.org"))))
 
+              (simple-service 'guix-gc shepherd-root-service-type
+                (list (shepherd-timer '(guix-gc)
+                        #~(calendar-event #:days-of-week '(sunday) #:hours '(12) #:minutes '(0))
+                        #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
+                        #:requirement '(user-processes guix-daemon))))
+
               (modify-services %base-services
                 (guix-service-type
                  config => (guix-configuration
@@ -591,7 +597,7 @@ rsync://cache.guix.moe
 #+begin_src scheme :noweb-ref service
   (simple-service 'setup-mirror shepherd-root-service-type
     (list (shepherd-timer '(setup-mirror)
-            #~(calendar-event #:minutes '(0))
+            #~(calendar-event #:minutes '(30))
             #~("/run/current-system/profile/bin/guix" "repl" "--"
                #$(local-file (testament-plain "setup-mirror.scm")))
             #:requirement '(user-processes))))
