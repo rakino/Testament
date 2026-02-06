@@ -118,7 +118,7 @@
                         #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
                         #:requirement '(user-processes guix-daemon))))
 
-              (modify-services %rosenthal-desktop-services-gdm
+              (modify-services %rosenthal-desktop-services/gdm
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
@@ -372,7 +372,6 @@ Generate passwordless ECC key:
   (service sops-secrets-service-type
     (sops-service-configuration
       (sops (spec->pkg "sops"))
-      (config (local-file (testament-plain "sops.yaml")))
       (gnupg-home "/var/lib/sops")
       (secrets
        (list (sops-secret
@@ -385,7 +384,6 @@ Generate passwordless ECC key:
   (service home-sops-secrets-service-type
     (home-sops-service-configuration
       (sops (spec->pkg "sops"))
-      (config (local-file (testament-plain "sops.yaml")))
       (gnupg-home (in-vicinity %xdg-data-home "sops"))
       (secrets
        (list (sops-secret
