@@ -156,9 +156,7 @@ Exit code: ~a~%"
   (deploy-dorphine)
   (deploy-chapra)
   (deploy-ignamma)
-  (deploy-nuporta)
-  (deploy-mirror)
-  (deploy-worker))
+  (deploy-nuporta))
 
 (define (live-minimal)       (live-% "minimal"))
 (define (live-minimal-hidpi) (live-% "minimal-hidpi"))
