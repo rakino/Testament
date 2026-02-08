@@ -14,6 +14,7 @@
   #:use-module (guix modules)
   #:use-module (guix packages)
   #:use-module (guix store)
+  #:use-module (sops secrets)
   ;; Guix build systems
   #:use-module (guix build-system copy)
   ;; Guix packages
@@ -80,7 +81,7 @@ WARNED."
   (define %key
     (if (string? key)
         key
-        ((@@ (sops secrets) list-key->string-key) key)))
+        (sops-list-key->sops-string-key key)))
 
   (let* ((port (open-input-pipe
                 (format #f "sops --decrypt --extract ~s ~s" %key %file)))
