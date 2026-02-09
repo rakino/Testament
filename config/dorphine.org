@@ -118,7 +118,7 @@
                         #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
                         #:requirement '(user-processes guix-daemon))))
 
-              (modify-services %rosenthal-desktop-services/gdm
+              (modify-services %rosenthal-desktop-services/tuigreet
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
@@ -133,9 +133,7 @@
                                     %network-manager-random-mac-address)))))))
       (name-service-switch %mdns-host-lookup-nss)))
 
-  ((compose (nonguix-transformation-nvidia #:s0ix-power-management? #t
-                                           #:open-source-kernel-module? #t
-                                           #:configure-xorg? #t)
+  ((compose (nonguix-transformation-nvidia)
             (rosenthal-transformation-zfs #:boot? #t))
    %os)
 #+end_src
@@ -527,13 +525,6 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+end_src
 
 ** Graphical Session
-*** gdm
-#+begin_src scheme :noweb-ref service
-  (set-xorg-configuration
-   (xorg-configuration
-     (keyboard-layout keyboard-layout)))
-#+end_src
-
 *** niri
 #+begin_src scheme :noweb-ref home-service
   (service home-niri-service-type
