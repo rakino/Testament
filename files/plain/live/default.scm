@@ -126,7 +126,7 @@ end\n")))))
   (users
    (cons* (user-account
             (name "live")
-            (password "")
+            (password (crypt "live" "$6$abc"))
             (group "users")
             (supplementary-groups '("audio" "video" "wheel"))
             (shell (file-append (specification->package "fish") "/bin/fish")))
@@ -225,6 +225,8 @@ end\n")))))
                (list (greetd-terminal-configuration
                        (terminal-vt "7")
                        (terminal-switch #f)
+                       (initial-session-user "live")
+                       (initial-session-command "dbus-run-session niri --session")
                        (default-session-command (greetd-tuigreet-session)))))))
 
           ;; From `%rosenthal-desktop-services'.
