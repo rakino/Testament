@@ -5,12 +5,20 @@
              (gnu system install)
              (gnu services dbus)
              (gnu services networking)
+             (gnu services pm)
              (rosenthal services shellutils)
              (gnu home services fontutils)
              (gnu home services shells)
              (gnu packages libusb)
              (gnu packages linux)
              (gnu packages nfs))
+
+(define %installation-os
+  (make-installation-os
+   #:efi-only?
+   (string=? (or (getenv "SYSTEM")
+                 (%current-system))
+             "aarch64-linux")))
 
 (define %minimal-os
   (load "minimal.scm"))
@@ -57,20 +65,9 @@
                        #~(make-forkexec-constructor
                           '("librewolf" "https://guix.gnu.org/manual/devel/"))))))
 
-            ;; Make skeletons writable.
-            (simple-service 'writable-skeletons
-                home-fish-service-type
-              (home-fish-extension
-                (config
-                 (list (plain-file "writable-skeletons.fish" "\
-if status --is-login
-    # Make skeletons writable.
-    chown -R +w ~
-end\n")))))
-
+            (service home-noctalia-shell-service-type)
+            (service home-polkit-gnome-service-type)
             (service home-swaybg-service-type)
-            (service home-waybar-service-type)
-            (service home-mako-service-type)
 
             ;; Default cursor theme.
             (service home-theme-service-type
@@ -182,13 +179,12 @@ end\n")))))
               "xdg-desktop-portal-gnome"
               "xdg-desktop-portal-gtk"
               "xdg-utils"
-              "foot"               ;terminal emulator
               "imv"                ;image viewer
               "light"              ;backlight control
               "mesa"               ;search paths for graphics driver
               "pavucontrol"        ;sound control
               "playerctl"          ;media control
-              "rofi"               ;application launcher
+              "wezterm"            ;terminal emulator
               "wireplumber"        ;PipeWire session manager
               "xwayland-satellite" ;rootless XWayland support
 
@@ -222,6 +218,7 @@ end\n")))))
               "emacs-helpful"
               "emacs-hl-todo"
               "emacs-macrostep"
+              "emacs-macrostep-geiser"
               "emacs-magit"
               "emacs-mwim"
               "emacs-no-littering"
@@ -232,14 +229,14 @@ end\n")))))
 
               ;; Fonts, see also `home-fontconfig-service-type'.
               "font-adobe-source-serif"
-              "font-awesome"
               "font-google-noto"
               "font-google-noto-emoji"
+              "font-nerd-symbols"
               "font-sarasa-gothic"
               "font-victor-mono"
               ))
            (list %rosenthal-set-keymap)
-           (operating-system-packages installation-os)))
+           (operating-system-packages %installation-os)))
 
   (services
    (cons* (service guix-home-service-type
@@ -258,11 +255,12 @@ end\n")))))
                        (initial-session-command "dbus-run-session niri --session")
                        (default-session-command (greetd-tuigreet-session)))))))
 
-          ;; From `%rosenthal-desktop-services'.
+          ;; From `%rosenthal-desktop-services/base'.
           (service bluetooth-service-type
             (bluetooth-configuration
               (auto-enable? #t)))
           (service gvfs-service-type)
+          (service power-profiles-daemon-service-type)
           (simple-service 'backlight udev-service-type (specs->pkgs "light"))
 
           ;; From `%desktop-services'.
@@ -283,5 +281,5 @@ end\n")))))
   (sudoers-file
    (plain-file "sudoers"
      (string-append
-      (plain-file-content (operating-system-sudoers-file installation-os))
+      (plain-file-content (operating-system-sudoers-file %installation-os))
       "live ALL = NOPASSWD: ALL\n"))))
