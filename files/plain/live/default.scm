@@ -28,6 +28,35 @@
             (service home-fish-plugin-direnv-service-type)
             (service home-fish-plugin-zoxide-service-type)
 
+            ;; XXX: Wait for proper WezTerm window size.
+            ;; Load fish so that other terminals will start faster.
+            (simple-service 'installation home-shepherd-service-type
+              (list (shepherd-service
+                      (provision '(installation))
+                      (one-shot? #t)
+                      (start
+                       #~(make-forkexec-constructor
+                          '("wezterm" "start" "--"
+                            "fish" "--login" "-c"
+                            "sleep 1 && sudo guix-system-installer"))))))
+
+            (simple-service 'installation-docs-local home-shepherd-service-type
+              (list (shepherd-service
+                      (provision '(installation-docs-local))
+                      (one-shot? #t)
+                      (start
+                       #~(make-forkexec-constructor
+                          '("emacs" "--load" "info"
+                            "--eval" "(info \"(guix) System Installation\")"))))))
+
+            (simple-service 'installation-docs-online home-shepherd-service-type
+              (list (shepherd-service
+                      (provision '(installation-docs-online))
+                      (one-shot? #t)
+                      (start
+                       #~(make-forkexec-constructor
+                          '("librewolf" "https://guix.gnu.org/manual/devel/"))))))
+
             ;; Make skeletons writable.
             (simple-service 'writable-skeletons
                 home-fish-service-type
