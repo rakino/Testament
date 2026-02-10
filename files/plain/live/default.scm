@@ -55,6 +55,8 @@ end\n")))))
             ;; Input method.
             (service home-fcitx5-service-type
               (home-fcitx5-configuration
+                (gtk-im-module? #t)
+                (qt-im-module? #t)
                 (themes
                  (map specification->package
                       '("fcitx5-material-color-theme")))
