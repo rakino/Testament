@@ -47,7 +47,8 @@
   (operating-system
     (inherit %installation-os)
     (host-name "live-system")
-    (label "Rosenthal Live System")
+    (label (format #f "Guix System installation (~a build)"
+                   (date->string (current-date) "~Y-~m-~d")))
     (kernel linux)
     (firmware
      (cons* linux-firmware
