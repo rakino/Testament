@@ -73,7 +73,7 @@
                 "rsync"
                 "unzip"
                 ))
-             (list %rosenthal-set-keymap)
+             (load "scripts.scm")
              (operating-system-packages %installation-os)))
 
     (services

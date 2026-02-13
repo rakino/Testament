@@ -246,7 +246,7 @@
               "font-sarasa-gothic"
               "font-victor-mono"
               ))
-           (list %rosenthal-set-keymap)
+           (load "scripts.scm")
            (operating-system-packages %installation-os)))
 
   (services
