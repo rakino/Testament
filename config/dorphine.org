@@ -42,6 +42,7 @@
        (append (specifications->packages
                 '(;; CLI Utilities.
                   "curl"
+                  "dconf"
                   "fd"
                   "git"
                   "gnupg"
