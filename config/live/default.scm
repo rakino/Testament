@@ -261,15 +261,13 @@
    (cons* (service guix-home-service-type
             `(("live" ,%home)))
 
-          ;; tty1: installer, tty2: documentation, tty3~6: shell
-          ;; tty7: tuigreet -> niri
           (service greetd-service-type
             (greetd-configuration
               (greeter-supplementary-groups '("video" "input"))
               (terminals
                (list (greetd-terminal-configuration
-                       (terminal-vt "7")
-                       (terminal-switch #f)
+                       (terminal-vt "1")
+                       (terminal-switch #t)
                        (initial-session-user "live")
                        (initial-session-command "dbus-run-session niri --session")
                        (default-session-command (greetd-tuigreet-session)))))))
@@ -295,7 +293,8 @@
           (service ntp-service-type)
           (service x11-socket-directory-service-type)
 
-          (operating-system-user-services %minimal-os)))
+          (modify-services (operating-system-user-services %minimal-os)
+            (delete kmscon-service-type))))
 
   (sudoers-file
    (plain-file "sudoers"
