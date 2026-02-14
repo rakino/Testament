@@ -907,7 +907,7 @@ mbsync:
 #+end_src
 
 l2md:
-#+begin_src conf ../files/tangled/dorphine/dotfiles/.config/l2md/config
+#+begin_src conf :tangle ../files/tangled/dorphine/dotfiles/.config/l2md/config
   [general]
           base = ~/.local/share/l2md/
           oneshot = 1
@@ -934,7 +934,7 @@ l2md:
 #+end_src
 
 notmuch:
-#+begin_src conf ../files/tangled/dorphine/dotfiles/.config/notmuch/default/config
+#+begin_src conf :tangle ../files/tangled/dorphine/dotfiles/.config/notmuch/default/config
   [database]
   path=/home/hako/.local/share/mail
 
