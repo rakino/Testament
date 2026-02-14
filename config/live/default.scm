@@ -50,9 +50,9 @@
 
             ;; XXX: Wait for proper WezTerm window size.
             ;; Load fish so that other terminals will start faster.
-            (simple-service 'installation home-shepherd-service-type
+            (simple-service 'installer home-shepherd-service-type
               (list (shepherd-service
-                      (provision '(installation))
+                      (provision '(installer))
                       (one-shot? #t)
                       (start
                        #~(make-forkexec-constructor
@@ -60,18 +60,20 @@
                             "fish" "--login" "-c"
                             "sleep 1 && sudo guix-system-installer"))))))
 
-            (simple-service 'installation-docs-local home-shepherd-service-type
+            (simple-service 'docs-local home-shepherd-service-type
               (list (shepherd-service
-                      (provision '(installation-docs-local))
+                      (provision '(docs-local))
+                      (auto-start? #f)
                       (one-shot? #t)
                       (start
                        #~(make-forkexec-constructor
                           '("emacs" "--load" "info"
                             "--eval" "(info \"(guix) System Installation\")"))))))
 
-            (simple-service 'installation-docs-online home-shepherd-service-type
+            (simple-service 'docs-online home-shepherd-service-type
               (list (shepherd-service
-                      (provision '(installation-docs-online))
+                      (provision '(docs-online))
+                      (auto-start? #f)
                       (one-shot? #t)
                       (start
                        #~(make-forkexec-constructor
