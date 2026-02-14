@@ -783,7 +783,7 @@ use =en_US.utf8= (the default) if you have encountered issues.
 
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'extend-fontconfig home-fontconfig-service-type
-    (let ((sans  "SF Pro Text")
+    (let ((sans  "SF Pro Display")
           (serif "New York Medium")
           (mono  "Victor Mono")
           (emoji "Noto Color Emoji"))
