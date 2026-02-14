@@ -200,11 +200,9 @@
               "xdg-utils"
               "imv"                ;image viewer
               "light"              ;backlight control
-              "mesa"               ;search paths for graphics driver
               "pavucontrol"        ;sound control
               "playerctl"          ;media control
               "wezterm"            ;terminal emulator
-              "wireplumber"        ;PipeWire session manager
               "xwayland-satellite" ;rootless XWayland support
 
               ;; File manager.

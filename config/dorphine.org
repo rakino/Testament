@@ -42,7 +42,6 @@
        (append (specifications->packages
                 '(;; CLI Utilities.
                   "curl"
-                  "dconf"
                   "fd"
                   "git"
                   "gnupg"
@@ -540,6 +539,7 @@ Open TCP port 5558 and connect to server IPv4 address.
 *** niri
 #+begin_src scheme :noweb-ref package
   "niri"
+  "dconf"
   "wl-clipboard"
   "xdg-desktop-portal-gnome"
   "xdg-desktop-portal-gtk"
@@ -743,8 +743,7 @@ Autostart Shepherd in environments that support XDG Autostart (e.g. GNOME).
 #+end_src
 
 *** noctalia-shell
-Run ~herd restart noctalia-shell~ on initial setup / after home environment
-reconfiguration.
+Run ~herd restart noctalia-shell~ after home environment reconfiguration.
 
 #+begin_src scheme :noweb-ref home-service
   (service home-noctalia-shell-service-type)
@@ -1193,7 +1192,7 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   local wezterm = require 'wezterm'
   local config = wezterm.config_builder()
 
-  -- This improves input latency in my environment.
+  -- This improves input latency when using NVIDIA proprietary driver.
   config.enable_wayland = false
 
   config.window_background_opacity = 0.97
