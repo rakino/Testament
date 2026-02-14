@@ -16,7 +16,6 @@
              (gnu services pm)
              (rosenthal services base)
              (rosenthal services desktop)
-             (rosenthal services shellutils)
              (gnu home)
              (gnu home services fontutils)
              (gnu home services shells)
@@ -48,9 +47,6 @@
   (home-environment
     (services
      (cons* (service home-fish-service-type)
-            (service home-fish-plugin-atuin-service-type)
-            (service home-fish-plugin-direnv-service-type)
-            (service home-fish-plugin-zoxide-service-type)
 
             ;; XXX: Wait for proper WezTerm window size.
             ;; Load fish so that other terminals will start faster.
