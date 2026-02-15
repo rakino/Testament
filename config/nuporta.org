@@ -69,11 +69,7 @@
                         #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
                         #:requirement '(user-processes guix-daemon))))
 
-              (modify-services %base-services
-                (guix-service-type
-                 config => (guix-configuration
-                             (inherit config)
-                             (extra-options '("--cores=4")))))))
+              %base-services))
       (privileged-programs
        (cons* (privileged-program
                 (program (file-append manage-cuirass "/bin/manage-cuirass"))

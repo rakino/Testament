@@ -97,7 +97,6 @@
                  config => (guix-configuration
                              (inherit config)
                              (discover? #t)
-                             (extra-options '("--cores=16"))
                              (tmpdir "/var/tmp")))
                 (network-manager-service-type
                  config => (network-manager-configuration

@@ -58,8 +58,7 @@
                 (guix-service-type
                  config => (guix-configuration
                              (inherit config)
-                             (discover? #t)
-                             (extra-options '("--cores=4")))))))
+                             (discover? #t))))))
       (name-service-switch %mdns-host-lookup-nss)))
 
   %os
