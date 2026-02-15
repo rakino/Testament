@@ -354,10 +354,6 @@ Generate passwordless ECC key:
 
 ** Power Management
 #+begin_src scheme :noweb-ref service
-  (service tlp-service-type)
-#+end_src
-
-#+begin_src scheme :noweb-ref service
   (simple-service 'auto-power-off shepherd-root-service-type
     (list (shepherd-timer '(auto-power-off)
             #~(calendar-event #:minutes '(0 10 20 30 40 50))
@@ -2023,7 +2019,6 @@ Guix System - services
   (gnu services docker)
   (gnu services linux)
   (gnu services networking)
-  (gnu services pm)
   (gnu services security)
   (gnu services security-token)
   (gnu services ssh)
