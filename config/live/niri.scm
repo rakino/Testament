@@ -28,14 +28,12 @@
      (append (specifications->packages
               '(;; Desktop, see also `%rosenthal-skeletons'.
                 "niri"
+                "dconf"
                 "wl-clipboard"
                 "xdg-desktop-portal-gnome"
                 "xdg-desktop-portal-gtk"
                 "xdg-utils"
                 "imv"                ;image viewer
-                "light"              ;backlight control
-                "pavucontrol"        ;sound control
-                "playerctl"          ;media control
                 "wezterm"            ;terminal emulator
                 "xwayland-satellite" ;rootless XWayland support
 
@@ -46,8 +44,7 @@
                 "thunar-archive-plugin"
                 "thunar-media-tags-plugin"
                 "thunar-volman"
-                "tumbler"
-                ))
+                "tumbler"))
              (home-environment-packages %graphical-home)))
     (services
      (cons* (service home-noctalia-shell-service-type)

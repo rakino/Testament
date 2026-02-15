@@ -13,6 +13,7 @@
              (gnu services networking)
              (gnu services pm)
              (rosenthal services desktop)
+             (gnu packages hardware)
              (gnu packages libusb)
              (gnu packages linux)
              (gnu packages nfs)
@@ -36,7 +37,7 @@
             (supplementary-groups '("audio" "video" "wheel"))
             (shell (file-append fish "/bin/fish")))
           (operating-system-users %minimal-os)))
-  (skeletons %rosenthal-skeletons)
+  (skeletons %rosenthal-skeletons-installer)
   (services
    (cons* ;; From `%rosenthal-desktop-services/base'.
           (service bluetooth-service-type
@@ -44,7 +45,7 @@
               (auto-enable? #t)))
           (service gvfs-service-type)
           (service power-profiles-daemon-service-type)
-          (simple-service 'backlight udev-service-type (list light))
+          (simple-service 'backlight udev-service-type (list ddcutil light))
 
           ;; From `%desktop-services'.
           (simple-service 'mtp udev-service-type (list libmtp))

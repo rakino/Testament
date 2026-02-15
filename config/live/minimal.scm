@@ -65,15 +65,13 @@
      (append (specifications->packages
               '(;; CLI utilities.
                 "curl"
-                "fd"
+                "file"
                 "git"
                 "gnupg"
                 "mosh"
                 "ncurses"
-                "ripgrep"
                 "rsync"
-                "unzip"
-                ))
+                "unzip"))
              (load "scripts.scm")
              (operating-system-packages %installation-os)))
 

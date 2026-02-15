@@ -319,7 +319,7 @@ Generate random password hash:
        (list (plain-file "emacs-eat.fish" "\
   if test -n \"$EAT_SHELL_INTEGRATION_DIR\"
       source $EAT_SHELL_INTEGRATION_DIR/fish
-  end")))))
+  end\n")))))
 #+end_src
 
 *** SOPS Secrets

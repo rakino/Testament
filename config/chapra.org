@@ -430,7 +430,6 @@ https://codeberg.org/guix/guix/issues/838#issue-1886438
   Port = 43502
   MusicFolder = '/mnt/Ocimeae/Library/Music'
   EnableSharing = true
-  Scanner.Extractor = 'ffmpeg'
 #+end_src
 
 *** qbittorrent
