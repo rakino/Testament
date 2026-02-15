@@ -11,6 +11,7 @@
              (gnu system install)
              (gnu system locale)
              (gnu system privilege)
+             (rosenthal services file-systems)
              (gnu packages)
              (gnu packages base)
              (gnu packages guile)
@@ -77,8 +78,12 @@
              (operating-system-packages %installation-os)))
 
     (services
-     ;; Modified from `installation-os', with our own examples.
-     (cons* (service gc-root-service-type
+     (cons* (service zfs-service-type
+              (zfs-configuration
+                (auto-mount? #f)))
+
+            ;; Modified from `installation-os', with our own examples.
+            (service gc-root-service-type
               (cons* (load "examples/bare-bones.scm")
                      (libc-utf8-locales-for-target)
                      texinfo
