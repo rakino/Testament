@@ -1349,6 +1349,10 @@ Theming
 #+end_src
 
 **** emacs-helpful
+#+begin_src scheme :noweb-ref package
+  "emacs-helpful"
+#+end_src
+
 #+begin_src elisp :noweb-ref emacs-interface
   (use-package helpful
     :bind
@@ -1563,7 +1567,7 @@ Theming
     (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
 #+end_src
 
-**** emacs-eglot
+**** emacs eglot
 #+begin_src scheme :noweb-ref package
   "python"
   "rust"
