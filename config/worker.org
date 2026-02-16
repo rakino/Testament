@@ -35,7 +35,8 @@
       (users (cons* <<user>> %base-user-accounts))
       (packages
        (append (specifications->packages
-                '("mosh"
+                '("fish"
+                  "mosh"
                   "rsync"
                   <<package>>))
                %base-packages))
@@ -98,8 +99,7 @@
   (user-account
     (name "hako")
     (group "users")
-    (supplementary-groups '("wheel"))
-    (shell (file-append fish "/bin/fish")))
+    (supplementary-groups '("wheel")))
   (user-account
     (name "jonathan")
     (group "users")

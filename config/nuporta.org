@@ -34,6 +34,7 @@
        (append (specifications->packages
                 '("curl"
                   "fd"
+                  "fish"
                   "gnupg"
                   "mosh"
                   "rclone"
@@ -182,27 +183,17 @@
 #+end_src
 
 *** Users
-Personal account.
 #+begin_src scheme :noweb-ref user
   (user-account
     (name "hako")
     (group "users")
-    (supplementary-groups '("wheel"))
-    (shell (file-append fish "/bin/fish")))
+    (supplementary-groups '("wheel")))
   (user-account
     (name "jonathan")
     (group "users"))
   (user-account
     (name "podiki")
     (group "users"))
-#+end_src
-
-Administration accounts.
-#+begin_src scheme :noweb-ref user
-  (user-account
-    (inherit %root-account)
-    (password #f)
-    (shell (file-append fish "/bin/fish")))
 #+end_src
 
 #+begin_src scheme :noweb-ref service

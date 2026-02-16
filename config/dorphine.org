@@ -43,6 +43,7 @@
                 '(;; CLI Utilities.
                   "curl"
                   "fd"
+                  "fish"
                   "git"
                   "gnupg"
                   "mosh"
@@ -273,7 +274,6 @@ Generate random password hash:
   pwgen -sync 16 1 | openssl passwd -6 -stdin
 #+end_src
 
-Personal account.
 #+begin_src scheme :noweb yes :noweb-ref user
   (user-account
     (name "hako")
@@ -284,14 +284,6 @@ Personal account.
 
 #+begin_src scheme :noweb-ref home-service
   (service home-fish-service-type)
-#+end_src
-
-Administration accounts.
-#+begin_src scheme :noweb-ref user
-  (user-account
-    (inherit %root-account)
-    (password #f)
-    (shell (file-append fish "/bin/fish")))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
