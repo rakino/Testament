@@ -32,18 +32,7 @@
                (target
                 (uuid "b955a6b1-9dd9-4e91-b9d9-b4e15473396c")))))
       (users (cons* <<user>> %base-user-accounts))
-      (packages
-       (append (specifications->packages
-                '("curl"
-                  "fd"
-                  "fish"
-                  "gnupg"
-                  "mosh"
-                  "ripgrep"
-                  "rsync"
-                  "sops"
-                  <<package>>))
-               %base-packages))
+      (packages (append %testament-cli-packages %base-packages))
       (services
        (cons* <<service>>
 

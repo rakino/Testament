@@ -40,20 +40,7 @@
       (users (cons* <<user>> %base-user-accounts))
       (packages
        (append (specifications->packages
-                '(;; CLI Utilities.
-                  "curl"
-                  "fd"
-                  "fish"
-                  "git"
-                  "gnupg"
-                  "mosh"
-                  "ncurses"
-                  "ripgrep"
-                  "rsync"
-                  "sops"
-                  "unzip"
-
-                  ;; Desktop applications.
+                '(;; Desktop applications.
                   "digikam"
                   "gimp"
                   "imv"
@@ -65,6 +52,7 @@
                   "zathura-pdf-poppler"
 
                   <<package>>))
+               %testament-cli-packages
                %base-packages))
       (services
        (cons* <<service>>

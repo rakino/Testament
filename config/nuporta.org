@@ -30,19 +30,7 @@
        (list (swap-space
                (target (file-system-label "swap")))))
       (users (cons* <<user>> %base-user-accounts))
-      (packages
-       (append (specifications->packages
-                '("curl"
-                  "fd"
-                  "fish"
-                  "gnupg"
-                  "mosh"
-                  "rclone"
-                  "ripgrep"
-                  "rsync"
-                  "sops"
-                  <<package>>))
-               %base-packages))
+      (packages (append %testament-cli-packages %base-packages))
       (services
        (cons* <<service>>
 
