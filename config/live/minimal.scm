@@ -55,13 +55,17 @@
      (cons* linux-firmware
             (operating-system-firmware %installation-os)))
     (kernel-arguments %default-kernel-arguments)
+    (users
+     (cons* (user-account
+              (inherit %root-account)
+              (shell (file-append fish "/bin/fish")))
+            %base-user-accounts))
 
     (packages
      (append (specifications->packages
               '(;; CLI utilities.
                 "curl"
                 "fd"
-                "fish"
                 "git"
                 "gnupg"
                 "mosh"

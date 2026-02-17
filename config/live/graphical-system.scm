@@ -43,7 +43,6 @@
             (password (crypt "live" "$6$abc"))
             (group "users")
             (supplementary-groups '("audio" "video" "wheel"))
-            ;; See also `home-fish-service-type'.
             (shell (file-append fish "/bin/fish")))
           (operating-system-users %minimal-os)))
 
@@ -54,7 +53,6 @@
             '(;; CLI utilities.
               "curl"
               "fd"
-              "fish"
               "git"
               "gnupg"
               "mosh"

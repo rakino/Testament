@@ -26,7 +26,6 @@
   #:use-module (gnu packages ncurses)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust-apps)
-  #:use-module (gnu packages shells)
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages sync)
   #:use-module (gnu packages version-control)
@@ -240,7 +239,6 @@ wifi.cloned-mac-address=stable\n")))
   (list curl
         fd
         file
-        fish
         git
         gnupg
         mosh
