@@ -8,6 +8,7 @@
              (gnu home services fontutils)
              (gnu home services shells)
              (gnu home services shepherd)
+             (gnu packages)
              (gnu packages fcitx5)
              (gnu packages gnome-xyz))
 
@@ -17,6 +18,45 @@
 ;;;
 
 (home-environment
+  (packages (specifications->packages
+             '(;; Web browser.
+               "librewolf"
+               "ublock-origin-icecat"
+
+               ;; Text editors, see also `%rosenthal-skeletons'.
+               "emacs-pgtk"
+               "neovim"
+
+               "emacs-corfu"
+               "emacs-daemons"
+               "emacs-doom-modeline"
+               "emacs-envrc"
+               "emacs-flycheck"
+               "emacs-flycheck-guile"
+               "emacs-forge"
+               "emacs-gcmh"
+               "emacs-geiser"
+               "emacs-geiser-guile"
+               "emacs-helpful"
+               "emacs-hl-todo"
+               "emacs-macrostep"
+               "emacs-macrostep-geiser"
+               "emacs-magit"
+               "emacs-mwim"
+               "emacs-no-littering"
+               "emacs-orderless"
+               "emacs-puni"
+               "emacs-rainbow-delimiters"
+               "emacs-vertico"
+
+               ;; Fonts, see also `home-fontconfig-service-type'.
+               "font-adobe-source-serif"
+               "font-google-noto"
+               "font-google-noto-emoji"
+               "font-nerd-symbols"
+               "font-sarasa-gothic"
+               "font-victor-mono"
+               )))
   (services
    (cons* (service home-fish-service-type)
 
