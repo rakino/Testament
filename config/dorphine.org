@@ -23,8 +23,10 @@
          (targets '("/efi"))
          (keyboard-layout keyboard-layout)))
       (kernel linux-lts/dolly)
-      (initrd microcode-initrd)
       (firmware (cons* linux-firmware %base-firmware))
+      ;; Required for the current implementation of the "copy out-of-tree modules
+      ;; to Linux initrd" patch.
+      (kernel-loadable-modules (list `(,zfs "module")))
       (kernel-arguments
        (cons* "kernel.sysrq=1"
               "memtest=3"
@@ -32,6 +34,7 @@
               "zswap.enabled=1"
               "zswap.max_pool_percent=90"
               %default-kernel-arguments))
+      (initrd microcode-initrd)
       (file-systems (append <<file-systems>> %base-file-systems))
       (swap-devices
        (list (swap-space
@@ -96,8 +99,7 @@
       (name-service-switch %mdns-host-lookup-nss)))
 
   ((compose (nonguix-transformation-nvidia #:open-source-kernel-module? #t
-                                           #:s0ix-power-management? #t)
-            (rosenthal-transformation-zfs #:boot? #t))
+                                           #:s0ix-power-management? #t))
    %os)
 #+end_src
 
@@ -195,6 +197,10 @@
 | Mentha/Data/Captures    | /var/lib/Captures    |                |                       |
 | Mentha/Data/Sandbox     | /var/lib/Sandbox     |                |                       |
 |-------------------------+----------------------+----------------+-----------------------|
+
+#+begin_src scheme :noweb-ref service
+  (service zfs-service-type)
+#+end_src
 
 #+begin_src scheme :noweb-ref file-systems
   (map (match-lambda
@@ -2017,6 +2023,7 @@ Guix System - services
   (gnu services sysctl)
   (gnu services xorg)
   (gnu services syncthing)
+  (rosenthal services file-systems)
   (rosenthal services keyboard)
   (rosenthal services monitoring)
   (rosenthal services networking)

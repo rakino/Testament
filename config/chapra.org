@@ -20,6 +20,9 @@
          (bootloader uefi-uki-removable-bootloader)
          (targets '("/efi"))))
       (kernel linux-lts/dolly)
+      ;; Required for the current implementation of the "copy out-of-tree modules
+      ;; to Linux initrd" patch.
+      (kernel-loadable-modules (list `(,zfs "module")))
       (kernel-arguments
        (cons* "kernel.sysrq=0"
               "memtest=3"
@@ -54,8 +57,7 @@
                              (discover? #t))))))
       (name-service-switch %mdns-host-lookup-nss)))
 
-  ((compose (rosenthal-transformation-zfs #:boot? #t))
-   %os)
+  %os
 #+end_src
 
 ** Base
@@ -88,6 +90,10 @@
 | Ocimeae/Data/SOPS      | /var/lib/sops        |                                       | true                  |
 | Ocimeae/Data/Tailscale | /var/lib/tailscale   |                                       | true                  |
 |------------------------+----------------------+---------------------------------------+-----------------------|
+
+#+begin_src scheme :noweb-ref service
+  (service zfs-service-type)
+#+end_src
 
 #+begin_src scheme :noweb-ref file-systems
   (list (file-system
@@ -468,6 +474,7 @@ Guix System - services
   (gnu services sysctl)
   (rosenthal services bittorrent)
   (rosenthal services child-error)
+  (rosenthal services file-systems)
   (rosenthal services monitoring)
   (rosenthal services networking)
   (rosenthal services web)
