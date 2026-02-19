@@ -22,7 +22,7 @@
          (bootloader uefi-uki-removable-bootloader)
          (targets '("/efi"))
          (keyboard-layout keyboard-layout)))
-      (kernel linux-lts/dolly)
+      (kernel linux/dolly)
       (firmware (cons* linux-firmware %base-firmware))
       ;; Required for the current implementation of the "copy out-of-tree modules
       ;; to Linux initrd" patch.
