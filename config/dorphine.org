@@ -1145,7 +1145,7 @@ Copied from =%default-nanorc=.
   "steam-nvidia"
 #+end_src
 
-#+begin_src scheme :noweb-ref home-environment-variable
+#+begin_src scheme :noweb-ref home-service
   (simple-service 'nonguix-sandbox-home home-environment-variables-service-type
     `(("GUIX_SANDBOX_HOME" . "/var/lib/Sandbox")))
 #+end_src
