@@ -287,7 +287,22 @@ Generate random password hash:
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
-  (service home-fish-service-type)
+  (service home-fish-service-type
+    (home-fish-configuration
+      (config
+       ;; Merge search paths on Guix System.
+       (list (mixed-text-file "merge-search-paths.fish" "\
+  status is-login
+  and begin
+      set --prepend fish_function_path " fish-foreign-env "/share/fish/functions
+      fenv eval \"$(guix package --search-paths \\
+          --profile=$HOME/.config/guix/current \\
+          --profile=$HOME/.guix-profile \\
+          --profile=$HOME/.guix-home/profile \\
+          --profile=/run/current-system/profile)\"
+      set --prepend PATH /run/privileged/bin
+      set --erase fish_function_path[1]
+  end\n")))))
 #+end_src
 
 *** Shell Utilities
