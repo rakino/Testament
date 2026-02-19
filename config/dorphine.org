@@ -384,6 +384,26 @@ Generate passwordless ECC key:
 #+end_src
 
 ** Networking & SSH
+*** network-online
+https://codeberg.org/guix/guix/issues/838#issue-1886438
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'home-network-online home-shepherd-service-type
+    (list (shepherd-service
+            (provision '(network-online))
+            (documentation "Wait for the network to come up.")
+            (one-shot? #t)
+            (start
+             #~(lambda _
+                 (let ((timeout #$(file-append coreutils-minimal "/bin/timeout"))
+                       (sh #$(file-append bash-minimal "/bin/sh")))
+                   (zero?
+                    (system* timeout "60" sh "-c" "\
+  until /run/privileged/bin/ping -qc1 -W1 example.org
+  do
+      sleep 1
+  done"))))))))
+#+end_src
+
 *** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
@@ -1068,6 +1088,7 @@ Copied from =%default-dotguile=.
   (simple-service 'jellyfin-mpv-shim home-shepherd-service-type
     (list (shepherd-service
             (provision '(jellyfin-mpv-shim))
+            (requirement '(network-online))
             (start
              #~(make-forkexec-constructor
                 '(#$(file-append jellyfin-mpv-shim "/bin/jellyfin-mpv-shim"))))
@@ -2064,6 +2085,7 @@ Guix Home - services
 Guix packages
 #+begin_src scheme :noweb-ref module
   (gnu packages android)
+  (gnu packages bash)
   (gnu packages cpp)
   (gnu packages fcitx5)
   (gnu packages file-systems)
