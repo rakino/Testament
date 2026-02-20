@@ -693,7 +693,7 @@ rsync://cache.guix.moe
     (invoke "/bin/sh" "-c" (string-join args)))
 
   (define (sync-narinfo mirror-cache publish-cache)
-    (invoke "rsync" "-a" "--delete"
+    (invoke "rsync" "-rltpHS" "--delete-excluded"
             "--include" "*.narinfo"
             "--exclude" "*"
             (string-append publish-cache "/")

@@ -181,7 +181,7 @@
                            (begin
                              (mkdir-p "/var/cache/guix-moe/narinfo")
                              (invoke #$(file-append rsync "/bin/rsync")
-                                     "-az" "--delete"
+                                     "-rltpHS" "--delete-excluded"
                                      "rsync://cache.guix.moe/narinfo/"
                                      "/var/cache/guix-moe/narinfo/")))))))
             #:requirement '(user-processes))))
