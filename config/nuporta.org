@@ -661,7 +661,10 @@ rsync://cache.guix.moe
                (file-name "/var/cache/guix/publish"))
              (rsync-module
                (name "narinfo")
-               (file-name "/var/cache/guix-moe/narinfo"))))))
+               (file-name "/var/cache/guix-moe/narinfo"))
+             (rsync-module
+               (name "narinfo-cdn")
+               (file-name "/var/cache/guix-moe/narinfo-cdn"))))))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
@@ -1057,7 +1060,7 @@ rsync://cache.guix.moe
   	import logging cache-cdn.guix.moe
 
   	handle /*.narinfo {
-  		root * /var/cache/guix-moe/narinfo
+  		root * /var/cache/guix-moe/narinfo-cdn
   		file_server
   	}
 
