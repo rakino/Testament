@@ -52,7 +52,7 @@
                 (guix-extension
                   (authorized-keys %guix-keys)
                   (substitute-urls
-                   '("https://cache-fi.guix.moe"
+                   '("https://cache-cdn.guix.moe"
                      "https://substitutes.nonguix.org"))))
 
               (simple-service 'guix-gc shepherd-root-service-type
