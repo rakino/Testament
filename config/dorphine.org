@@ -29,8 +29,11 @@
       (kernel-loadable-modules (list `(,zfs "module")))
       (kernel-arguments
        (cons* "kernel.sysrq=1"
+              "mem_sleep_default=s2idle"
               "memtest=3"
-              "modprobe.blacklist=amdgpu,pcspkr,hid_nintendo"
+              "modprobe.blacklist=hid_nintendo,nouveau,pcspkr"
+              "nvidia.NVreg_EnableS0ixPowerManagement=1"
+              "nvidia_drm.modeset=1"
               "zswap.enabled=1"
               "zswap.max_pool_percent=90"
               %default-kernel-arguments))
@@ -42,65 +45,69 @@
                 (uuid "7de33202-1010-4297-ba9c-8e7fa419f891")))))
       (users (cons* <<user>> %base-user-accounts))
       (packages
-       (append (specifications->packages
-                '(;; Desktop applications.
-                  "digikam"
-                  "gimp"
-                  "imv"
-                  "kdenlive"
-                  "libreoffice"
-                  "obs-nvidia"
-                  "telegram-desktop"
-                  "zathura"
-                  "zathura-pdf-poppler"
+       (replace-mesa
+        (append (specifications->packages
+                 '(;; Desktop applications.
+                   "digikam"
+                   "gimp"
+                   "imv"
+                   "kdenlive"
+                   "libreoffice"
+                   "obs-nvidia"
+                   "telegram-desktop"
+                   "zathura"
+                   "zathura-pdf-poppler"
 
-                  <<package>>))
-               %testament-cli-packages
-               %base-packages))
+                   <<package>>))
+                %testament-cli-packages
+                %base-packages)))
       (services
-       (cons* <<service>>
+       (replace-mesa
+        (cons* <<service>>
 
-              (service guix-publish-service-type
-                (guix-publish-configuration
-                  (port 49637)
-                  (host "0.0.0.0")
-                  (advertise? #t)))
+               (service nvidia-service-type
+                 (nvidia-configuration
+                   (module nvidia-module-open)))
 
-              (simple-service 'extend-guix guix-service-type
-                (guix-extension
-                  (authorized-keys %guix-keys)
-                  (substitute-urls '("https://cache-cdn.guix.moe"))))
+               (service guix-publish-service-type
+                 (guix-publish-configuration
+                   (port 49637)
+                   (host "0.0.0.0")
+                   (advertise? #t)))
 
-              (simple-service 'guix-gc shepherd-root-service-type
-                (list (shepherd-timer '(guix-gc)
-                        #~(calendar-event #:days-of-week '(sunday) #:hours '(12) #:minutes '(0))
-                        #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
-                        #:requirement '(user-processes guix-daemon))))
+               (simple-service 'extend-guix guix-service-type
+                 (guix-extension
+                   (authorized-keys %guix-keys)
+                   (substitute-urls '("https://cache-cdn.guix.moe"))))
 
-              (modify-services %rosenthal-desktop-services/tuigreet
-                (elogind-service-type
-                 config => (elogind-configuration
-                             (inherit config)
-                             (handle-suspend-key 'ignore)
-                             (handle-hibernate-key 'ignore)
-                             (handle-lid-switch 'ignore)
-                             (handle-lid-switch-external-power 'ignore)))
-                (guix-service-type
-                 config => (guix-configuration
-                             (inherit config)
-                             (discover? #t)
-                             (tmpdir "/var/tmp")))
-                (network-manager-service-type
-                 config => (network-manager-configuration
-                             (inherit config)
-                             (extra-configuration-files
-                              (list %network-manager-ipv6-privacy
-                                    %network-manager-random-mac-address)))))))
+               (simple-service 'guix-gc shepherd-root-service-type
+                 (list (shepherd-timer '(guix-gc)
+                         #~(calendar-event #:days-of-week '(sunday) #:hours '(12) #:minutes '(0))
+                         #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
+                         #:requirement '(user-processes guix-daemon))))
+
+               (modify-services %rosenthal-desktop-services/tuigreet
+                 (elogind-service-type
+                  config => (elogind-configuration
+                              (inherit config)
+                              (handle-suspend-key 'ignore)
+                              (handle-hibernate-key 'ignore)
+                              (handle-lid-switch 'ignore)
+                              (handle-lid-switch-external-power 'ignore)))
+                 (guix-service-type
+                  config => (guix-configuration
+                              (inherit config)
+                              (discover? #t)
+                              (tmpdir "/var/tmp")))
+                 (network-manager-service-type
+                  config => (network-manager-configuration
+                              (inherit config)
+                              (extra-configuration-files
+                               (list %network-manager-ipv6-privacy
+                                     %network-manager-random-mac-address))))))))
       (name-service-switch %mdns-host-lookup-nss)))
 
-  ((compose (nonguix-transformation-nvidia #:open-source-kernel-module? #t
-                                           #:s0ix-power-management? #t))
-   %os)
+  %os
 #+end_src
 
 ** Guix Home
@@ -2041,9 +2048,10 @@ Guix System - services
   (gnu services security)
   (gnu services security-token)
   (gnu services ssh)
+  (gnu services syncthing)
   (gnu services sysctl)
   (gnu services xorg)
-  (gnu services syncthing)
+  (nongnu services nvidia)
   (rosenthal services file-systems)
   (rosenthal services keyboard)
   (rosenthal services monitoring)
@@ -2085,5 +2093,6 @@ Guix packages
   (gnu packages video)
   (gnu packages xorg)
   (gnu packages zig-xyz)
+  (nongnu packages nvidia)
   (rosenthal packages password-utils)
 #+end_src
