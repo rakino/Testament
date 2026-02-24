@@ -1128,7 +1128,7 @@ Copied from =%default-nanorc=.
 #+end_src
 
 *** prismlauncher
-#+begin_src scheme :noweb-ref
+#+begin_src scheme :noweb-ref package
   "prismlauncher-dolly"
 #+end_src
 
