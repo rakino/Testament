@@ -719,25 +719,17 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+begin_src scheme :noweb-ref service
   (simple-service 'niri-nvidia-profile etc-service-type
     `(("nvidia/nvidia-application-profiles-rc.d/50-limit-free-buffer-pool-in-wayland-compositors.json"
-       ,(computed-file "50-limit-free-buffer-pool-in-wayland-compositors.json"
-          (with-extensions (list guile-json-4)
-            #~(begin
-                (use-modules (json))
-                (call-with-output-file #$output
-                  (lambda (port)
-                    (scm->json
-                     '(("profiles"
-                        . #((("settings"
-                              . #((("value" . 0)
-                                   ("key" . "GLVidHeapReuseRatio"))))
-                             ("name" . "Limit Free Buffer Pool On Wayland Compositors"))))
-                       ("rules"
-                        . #((("profile" . "Limit Free Buffer Pool On Wayland Compositors")
-                             ("pattern"
-                              ("matches" . "niri")
-                              ("feature" . "procname"))))))
-                     port
-                     #:pretty #t)))))))))
+       ,(json-file "50-limit-free-buffer-pool-in-wayland-compositors.json"
+          #~'(("rules"
+               . #((("pattern"
+                     ("feature" . "procname")
+                     ("matches" . "niri"))
+                    ("profile" . "Limit Free Buffer Pool On Wayland Compositors"))))
+              ("profiles"
+               . #((("name" . "Limit Free Buffer Pool On Wayland Compositors")
+                    ("settings"
+                     . #((("key" . "GLVidHeapReuseRatio")
+                          ("value" . 0))))))))))))
 #+end_src
 *** shepherd
 Autostart Shepherd in environments that support XDG Autostart (e.g. GNOME).
