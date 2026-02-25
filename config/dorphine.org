@@ -281,7 +281,7 @@ Generate random password hash:
   (user-account
     (name "hako")
     (group "users")
-    (supplementary-groups '("adbusers" "audio" "docker" "kvm" "plugdev" "video" "wheel"))
+    (supplementary-groups '("adbusers" "audio" "cgroup" "kvm" "plugdev" "video" "wheel"))
     (shell (file-append fish "/bin/fish")))
 #+end_src
 
@@ -501,14 +501,12 @@ Generate passwordless ECC key:
 #+end_src
 
 ** Containers & Virtualization
-*** containerd
+*** podman
 #+begin_src scheme :noweb-ref service
-  (service containerd-service-type)
-#+end_src
-
-*** docker
-#+begin_src scheme :noweb-ref service
-  (service docker-service-type)
+  (service rootless-podman-service-type
+    (rootless-podman-configuration
+      (subgids (list (subid-range (name "hako"))))
+      (subuids (list (subid-range (name "hako"))))))
 #+end_src
 
 ** Continuous Integration
@@ -2028,10 +2026,15 @@ Utilities
   (sops secrets)
 #+end_src
 
+Guix System
+#+begin_src scheme :noweb-ref module
+  (gnu system accounts)
+#+end_src
+
 Guix System - services
 #+begin_src scheme :noweb-ref module
+  (gnu services containers)
   (gnu services cuirass)
-  (gnu services docker)
   (gnu services linux)
   (gnu services networking)
   (gnu services security)
