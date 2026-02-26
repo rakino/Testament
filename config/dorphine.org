@@ -4,7 +4,7 @@
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
 ** Guix System
-#+begin_src scheme :tangle ../files/tangled/dorphine.scm :noweb yes
+#+begin_src scheme :tangle ../files/tangled/dorphine/dorphine.scm :noweb yes
   (use-modules <<module>>)
 
   (operating-system
@@ -117,12 +117,12 @@
                          %rosenthal-desktop-home-services))))))
 #+end_src
 
-=dorphine/dotfiles= directory is created when tangling this file.
+=dotfiles= directory is created when tangling this file.
 
 #+begin_src scheme :noweb yes :noweb-ref home-service
   (service home-dotfiles-service-type
     (home-dotfiles-configuration
-      (directories '("dorphine/dotfiles"))))
+      (directories '("dotfiles"))))
 #+end_src
 
 #+begin_src scheme :noweb yes :noweb-ref home-service
