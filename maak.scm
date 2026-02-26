@@ -159,7 +159,7 @@
 (define (pull)
   ($guix `("pull" "--channels=channels.lock" ,%substitute-urls)))
 
-(define (build-dorphine) (build-% "dorphine" #:local? #t))
+(define (build-dorphine) (build-% "dorphine" #:local? #t #:deps '("emacs")))
 (define (build-chapra)   (build-% "chapra"   #:local? #t))
 (define (build-ignamma)  (build-% "ignamma"))
 (define (build-nuporta)  (build-% "nuporta"  #:local? #t))
@@ -169,7 +169,7 @@
   (build-ignamma)
   (build-nuporta))
 
-(define (deploy-dorphine) (deploy-% "dorphine" #:local? #t))
+(define (deploy-dorphine) (deploy-% "dorphine" #:local? #t #:deps '("emacs")))
 (define (deploy-chapra)   (deploy-% "chapra"   #:local? #t))
 (define (deploy-ignamma)  (deploy-% "ignamma"))
 (define (deploy-nuporta)  (deploy-% "nuporta"  #:local? #t))
