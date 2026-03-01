@@ -1019,6 +1019,13 @@ rsync://cache.guix.moe
   		reverse_proxy 127.0.0.1:26372
   	}
 
+  	@heisenbridge_media {
+  		path /_heisenbridge/media/*
+  	}
+  	handle @heisenbridge_media {
+  		reverse_proxy 127.0.0.1:27873
+  	}
+
   	handle {
   		root * /var/lib/webpublic/cinny
   		try_files {path} / index.html
@@ -1323,10 +1330,26 @@ rsync://cache.guix.moe
 #+begin_src scheme :noweb-ref service
   (service heisenbridge-service-type
     (heisenbridge-configuration
+      (homeserver "http://localhost:26372")
       (config
-       (plain-file "heisenbridge.yaml"
-         (sops-str %sops-nuporta '("heisenbridge"))))
-      (homeserver "http://localhost:26372")))
+       (yaml-file "heisenbridge.yaml"
+         #~'(("id" . "heisenbridge")
+             ("url" . "http://127.0.0.1:27873")
+             #$@(call-with-input-string (sops-str %sops-nuporta '("heisenbridge")) read)
+             ("rate_limited" . #f)
+             ("sender_localpart" . "heisenbridge")
+             ("namespaces"
+              ("users"
+               . #((("regex" . "@irc_.*")
+                    ("exclusive" . #t))
+                   (("regex" . "@heisenbridge:.*")
+                    ("exclusive" . #t))))
+              ("aliases" . #())
+              ("rooms" . #()))
+             ("heisenbridge"
+              ("media_url" . "https://matrix.guix.moe")))))
+      (group-id 963)
+      (user-id 967)))
 #+end_src
 
 *** mautrix-telegram
