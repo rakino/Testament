@@ -473,7 +473,7 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb-ref home-service
   (service home-gpg-agent-service-type
     (home-gpg-agent-configuration
-      (pinentry-program (file-append pinentry-qt "/bin/pinentry-qt"))
+      (pinentry-program (file-append bb-auth "/libexec/pinentry-bb"))
       (ssh-support? #t)))
 #+end_src
 
@@ -631,7 +631,7 @@ Open TCP port 5558 and connect to server IPv4 address.
       XF86AudioLowerVolume  allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
       XF86AudioMute         allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "muteOutput"; }
       XF86AudioMicMute      allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "muteInput"; }
-      XF86AudioPlay         allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "play"; }
+      XF86AudioPlay         allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "playPause"; }
       XF86AudioStop         allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "pause"; }
       XF86AudioPrev         allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "previous"; }
       XF86AudioNext         allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "media" "next"; }
@@ -642,6 +642,7 @@ Open TCP port 5558 and connect to server IPv4 address.
       Mod+O           { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
       Mod+D           { spawn "noctalia-shell" "ipc" "call" "plugin:clipper" "togglePanel"; }
       Mod+S           { spawn "noctalia-shell" "ipc" "call" "settings" "toggle"; }
+      Mod+L           { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
       Ctrl+Alt+Delete { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
       Mod+Shift+E     { spawn "herd" "restart" "noctalia-shell"; }
 
@@ -723,13 +724,15 @@ Autostart Shepherd in environments that support XDG Autostart (e.g. GNOME).
 *** noctalia-shell
 Run ~herd restart noctalia-shell~ after home environment reconfiguration.
 
+Also install the Noctalia shell plugin: <https://github.com/anthonyhab/noctalia-plugins/blob/main/bb-auth/README.md>.
+
 #+begin_src scheme :noweb-ref home-service
   (service home-noctalia-shell-service-type)
 #+end_src
 
-*** polkit-gnome
+*** bb-auth
 #+begin_src scheme :noweb-ref home-service
-  (service home-polkit-gnome-service-type)
+  (service home-bb-auth-service-type)
 #+end_src
 
 *** qogir-icon-theme
@@ -1275,5 +1278,6 @@ Guix packages
   (gnu packages video)
   (gnu packages xorg)
   (nongnu packages nvidia)
+  (rosenthal packages authentication)
   (rosenthal packages password-utils)
 #+end_src
