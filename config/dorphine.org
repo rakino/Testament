@@ -86,6 +86,10 @@
                        #:requirement '(user-processes guix-daemon))))
 
              (modify-services %rosenthal-desktop-services/tuigreet
+               (upower-service-type
+                config => (upower-configuration
+                            (inherit config)
+                            (critical-power-action 'power-off)))
                (elogind-service-type
                 config => (elogind-configuration
                             (inherit config)
@@ -368,23 +372,6 @@ Generate passwordless ECC key:
        (list (sops-secret
                (key '("mail"))
                (file %sops-dorphine))))))
-#+end_src
-
-** Power Management
-#+begin_src scheme :noweb-ref service
-  (simple-service 'auto-power-off shepherd-root-service-type
-    (list (shepherd-timer '(auto-power-off)
-            #~(calendar-event #:minutes '(0 10 20 30 40 50))
-            #~(#$(program-file "auto-power-off"
-                   #~(begin
-                       (use-modules (ice-9 textual-ports))
-
-                       (define %battery-capacity
-                         (call-with-input-file "/sys/class/power_supply/BAT1/capacity"
-                           (compose string->number get-line)))
-
-                       (when (<= %battery-capacity 10)
-                         (system* "loginctl" "poweroff"))))))))
 #+end_src
 
 ** Networking & SSH
