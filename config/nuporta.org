@@ -10,13 +10,9 @@
   (operating-system
     (host-name "nuporta")
     (timezone "Etc/GMT-8")
-    ;; GRUB has issue booting from the ZFS dataset with /gnu/store.
-    ;; See https://savannah.gnu.org/bugs/?47742 and issues with same error.
-    ;; NOTE: This bootloader currently doesn't support choosing system
-    ;; generation on boot and switching system generations / rolling back.
     (bootloader
      (bootloader-configuration
-       (bootloader uefi-uki-removable-bootloader)
+       (bootloader limine-efi-removable-bootloader)
        (targets '("/efi"))))
     (kernel linux/dolly)
     ;; Required for the current implementation of the "copy out-of-tree modules
