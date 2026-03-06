@@ -68,12 +68,15 @@ shell while using Emacs.
 
 #+begin_src scheme :noweb-ref package
   "emacs-pgtk"
+
   "emacs-gcmh"
   "emacs-no-littering"
+
   "emacs-beancount"
   "emacs-caddyfile-mode"
   "emacs-edit-indirect"
   "emacs-fish-mode"
+  "emacs-guix"
   "emacs-json-mode"
   "emacs-kdl-mode"
   "emacs-markdown-mode"
