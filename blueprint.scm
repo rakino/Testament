@@ -177,6 +177,19 @@
    (category 'dispatch))
   ($guix `("pull" "--channels=channels.lock" ,%substitute-urls)))
 
+(define-command (ares-command arguments)
+  ((invoke "ares")
+   (category 'dispatch))
+  ($ `("guile" "-c"
+       ,(call-with-output-string
+          (cut write
+               '(begin
+                  (use-modules (ares server)
+                               ;; Load reader extensions.
+                               (guix gexp))
+                  (run-nrepl-server))
+               <>)))))
+
 (define-command (build-os-command arguments)
   ((invoke "build-os")
    (category 'deploy))
@@ -254,6 +267,7 @@
   (list authenticate-command
         update-channels-command
         pull-command
+        ares-command
 
         build-os-command
         deploy-os-command
