@@ -222,7 +222,8 @@
                 ,config
                 "--image-type=iso9660"
                 "--load-path=modules/installer"
-                ,@%build-options))))
+                ,@%build-options)
+              #:channels "config/live/channels.lock")))
    (images-from-arguments arguments)))
 
 
