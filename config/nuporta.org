@@ -909,6 +909,36 @@ rsync://cache.guix.moe
       (rename-file %narinfo-list-new %narinfo-list)))
 #+end_src
 
+<https://nars.guix.moe>, using Cloudflare Workers.
+#+begin_src javascript
+  export default {
+      async fetch(request, env, ctx) {
+          const cache = caches.default;
+          const url = new URL(request.url);
+          const key = decodeURIComponent(url.pathname.slice(1));
+          const cacheResponse = await cache.match(url);
+
+          if (cacheResponse) {
+              return new Response(cacheResponse.body);
+          } else {
+              if (key.startsWith("nar/")) {
+                  const substitute = await env.NARS.get(key);
+                  if (substitute) {
+                      const response = new Response(substitute.body, {status: 200});
+                      response.headers.append("Cache-Control", "s-maxage=31536000");
+                      ctx.waitUntil(cache.put(url, response.clone()));
+                      return response;
+                  } else {
+                      return new Response("Not found.", {status: 404});
+                  }
+              } else {
+                  return new Response("Visit guix [dot] moe for more information.", {status: 404});
+              }
+          }
+      }
+  };
+#+end_src
+
 ** Web Servers & Services
 *** caddy
 #+begin_src scheme :noweb yes :noweb-ref service
