@@ -470,7 +470,7 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb-ref home-service
   (service home-gpg-agent-service-type
     (home-gpg-agent-configuration
-      (pinentry-program (file-append bb-auth "/libexec/pinentry-bb"))
+      (pinentry-program (file-append pinentry-qt "/bin/pinentry-qt"))
       (ssh-support? #t)))
 #+end_src
 
@@ -721,15 +721,13 @@ Autostart Shepherd in environments that support XDG Autostart (e.g. GNOME).
 *** noctalia-shell
 Run ~herd restart noctalia-shell~ after home environment reconfiguration.
 
-Also install the Noctalia shell plugin: <https://github.com/anthonyhab/noctalia-plugins/blob/main/bb-auth/README.md>.
-
 #+begin_src scheme :noweb-ref home-service
   (service home-noctalia-shell-service-type)
 #+end_src
 
-*** bb-auth
+*** polkit-gnome
 #+begin_src scheme :noweb-ref home-service
-  (service home-bb-auth-service-type)
+  (service home-polkit-gnome-service-type)
 #+end_src
 
 *** qogir-icon-theme
@@ -1271,6 +1269,5 @@ Guix packages
   (gnu packages video)
   (gnu packages xorg)
   (nongnu packages nvidia)
-  (rosenthal packages authentication)
   (rosenthal packages password-utils)
 #+end_src
