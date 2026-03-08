@@ -60,9 +60,7 @@
      (replace-mesa
       (cons* <<service>>
 
-             (service nvidia-service-type
-               (nvidia-configuration
-                 (module nvidia-module-open)))
+             (service nvidia-service-type)
 
              (service guix-publish-service-type
                (guix-publish-configuration
@@ -615,14 +613,6 @@ Open TCP port 5558 and connect to server IPv4 address.
       warp-mouse-to-focus
   }
 
-  output "eDP-1" {
-      mode "2560x1440@240.002"
-  }
-
-  output "DP-1" {
-      focus-at-startup
-  }
-
   binds {
       XF86AudioRaiseVolume  allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "increase"; }
       XF86AudioLowerVolume  allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "volume" "decrease"; }
@@ -1056,7 +1046,6 @@ Copied from =%default-dotguile=.
   (simple-service 'jellyfin-mpv-shim home-shepherd-service-type
     (list (shepherd-service
             (provision '(jellyfin-mpv-shim))
-            (requirement '(network-online))
             (start
              #~(make-forkexec-constructor
                 '(#$(file-append jellyfin-mpv-shim "/bin/jellyfin-mpv-shim"))))
