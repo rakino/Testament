@@ -25,7 +25,17 @@
      (cons* "kernel.sysrq=1"
             "mem_sleep_default=s2idle"
             "memtest=3"
-            "modprobe.blacklist=hid_nintendo,nouveau,pcspkr"
+            "modprobe.blacklist=hid_nintendo,pcspkr"
+            ;; XXX
+            ;; libmutter-Message: 20:32:02.883: Device '/dev/dri/card1' prefers shadow buffer
+            ;; libmutter-Message: 20:32:02.892: Added device '/dev/dri/card1' (nvidia-drm) using atomic mode setting.
+            ;; libmutter-Message: 20:32:02.938: Device '/dev/dri/card0' prefers shadow buffer
+            ;; libmutter-Message: 20:32:02.939: Added device '/dev/dri/card0' (amdgpu) using atomic mode setting.
+            ;; libmutter-Message: 20:32:02.941: Failed to initialize accelerated iGPU/dGPU framebuffer sharing: Not hardware accelerated
+            ;; libmutter-Message: 20:32:02.941: Created gbm renderer for '/dev/dri/card1'
+            ;; libmutter-Message: 20:32:02.942: Created gbm renderer for '/dev/dri/card0'
+            ;; libmutter-Message: 20:32:02.942: GPU /dev/dri/card0 selected as primary
+            "modprobe.blacklist=amdgpu,nouveau"
             "nvidia.NVreg_EnableS0ixPowerManagement=1"
             "nvidia_drm.modeset=1"
             "zswap.enabled=1"
@@ -79,7 +89,7 @@
                        #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
                        #:requirement '(user-processes guix-daemon))))
 
-             (modify-services %rosenthal-desktop-services/tuigreet
+             (modify-services %rosenthal-desktop-services/gdm
                (upower-service-type
                 config => (upower-configuration
                             (inherit config)
@@ -91,6 +101,10 @@
                             (handle-hibernate-key 'ignore)
                             (handle-lid-switch 'ignore)
                             (handle-lid-switch-external-power 'ignore)))
+               (gdm-service-type
+                config => (gdm-configuration
+                            (inherit config)
+                            (auto-suspend? #f)))
                (guix-service-type
                 config => (guix-configuration
                             (inherit config)
@@ -517,6 +531,15 @@ Open TCP port 5558 and connect to server IPv4 address.
 #+end_src
 
 ** Graphical Session
+*** gdm
+#+begin_src scheme :noweb-ref service
+  (set-xorg-configuration
+   (xorg-configuration
+     (modules (cons nvda %default-xorg-modules))
+     (keyboard-layout keyboard-layout))
+   gdm-service-type)
+#+end_src
+
 *** niri
 #+begin_src scheme :noweb-ref package
   "niri"
