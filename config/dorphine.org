@@ -1169,7 +1169,10 @@ See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
   "thunar-archive-plugin"
   "thunar-media-tags-plugin"
   "thunar-volman"
+  ;; Thumbnails.
+  "ffmpegthumbnailer"
   "tumbler"
+  "webp-pixbuf-loader"
 #+end_src
 
 #+begin_src conf :tangle ../files/tangled/dorphine/dotfiles/.config/xfce4/helpers.rc
