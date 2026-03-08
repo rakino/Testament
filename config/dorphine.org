@@ -404,10 +404,6 @@ Generate passwordless ECC key:
           # allow avahi
           udp dport mdns accept
 
-          # allow caddy
-          tcp dport https accept
-          udp dport https accept
-
           # allow cuirass
           tcp dport 5558 accept
 
