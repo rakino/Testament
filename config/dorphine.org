@@ -85,7 +85,8 @@
 
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
-    '("sch_fq_pie" "tcp_bbr"))
+    '("sch_fq_pie" "tcp_bbr"
+      "ntsync"))
 
   (simple-service 'extend-sysctl sysctl-service-type
     '(("net.core.default_qdisc" . "fq_pie")
