@@ -43,11 +43,13 @@
 
                         <<package>>))
                      %testament-cli-packages
-                     %base-packages))))
+                     %base-packages)
+             #:driver nvdb)))
     (services
      (replace-mesa
       (cons* <<service>>
-             (modify-services %rosenthal-desktop-services/gdm <<modify-service>>))))
+             (modify-services %rosenthal-desktop-services/gdm <<modify-service>>))
+      #:driver nvdb))
     (name-service-switch %mdns-host-lookup-nss))
 #+end_src
 
@@ -111,14 +113,22 @@
 
 NVIDIA proprietary driver
 #+begin_src scheme :noweb-ref kernel-argument
-  "mem_sleep_default=s2idle"
   "modprobe.blacklist=nouveau"
-  "nvidia.NVreg_EnableS0ixPowerManagement=1"
   "nvidia_drm.modeset=1"
+
+  "nvidia.NVreg_UseKernelSuspendNotifiers=1"
+
+  "mem_sleep_default=s2idle"
+  "nvidia.NVreg_EnableS0ixPowerManagement=1"
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (service nvidia-service-type)
+  (service nvidia-service-type
+    (nvidia-configuration
+      (driver nvdb)
+      (firmware nvidia-firmware-beta)
+      (module nvidia-module-open-beta)
+      (modprobe nvidia-modprobe-beta)))
 #+end_src
 
 *** File Systems
@@ -498,18 +508,6 @@ Generate passwordless ECC key:
   (udev-rules-service 'u2f libfido2 #:groups '("plugdev"))
 #+end_src
 
-** Session and Seat Management
-*** elogind
-#+begin_src scheme :noweb-ref modify-service
-  (elogind-service-type
-   config => (elogind-configuration
-               (inherit config)
-               (handle-suspend-key 'ignore)
-               (handle-hibernate-key 'ignore)
-               (handle-lid-switch 'ignore)
-               (handle-lid-switch-external-power 'ignore)))
-#+end_src
-
 ** Containers & Virtualization
 *** podman
 #+begin_src scheme :noweb-ref service
@@ -551,17 +549,10 @@ Open TCP port 5558 and connect to server IPv4 address.
 
 ** Graphical Session
 *** gdm
-#+begin_src scheme :noweb-ref modify-service
-  (gdm-service-type
-   config => (gdm-configuration
-               (inherit config)
-               (auto-suspend? #f)))
-#+end_src
-
 #+begin_src scheme :noweb-ref service
   (set-xorg-configuration
    (xorg-configuration
-     (modules (cons nvda %default-xorg-modules))
+     (modules (list nvdb))
      (keyboard-layout keyboard-layout))
    gdm-service-type)
 #+end_src
