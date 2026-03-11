@@ -126,6 +126,8 @@ NVIDIA proprietary driver
           (device (uuid "2574-B3EC" 'fat))
           (mount-point "/efi")
           (type "vfat")
+          (flags '(no-exec no-suid no-dev))
+          (options "fmask=0177,dmask=0077")
           (create-mount-point? #t))
         (file-system
           (device "tmpfs")
@@ -137,7 +139,7 @@ NVIDIA proprietary driver
           (device "tmpfs")
           (mount-point "/var/lock")
           (type "tmpfs")
-          (flags '(no-suid no-dev strict-atime))
+          (flags '(no-suid no-dev))
           (options "mode=1777,nr_inodes=800k,size=20%")
           (create-mount-point? #t)
           (check? #f)))
