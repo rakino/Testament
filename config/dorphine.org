@@ -64,12 +64,11 @@
                          %rosenthal-desktop-home-services))))))
 #+end_src
 
-=dotfiles= directory is created when tangling this file.
-
 #+begin_src scheme :noweb yes :noweb-ref home-service
   (service home-dotfiles-service-type
     (home-dotfiles-configuration
-      (directories '("dotfiles"))))
+      (directories
+       (list (in-vicinity testament-path "files/tangled/dorphine/dotfiles")))))
 #+end_src
 
 #+begin_src scheme :noweb yes :noweb-ref home-service

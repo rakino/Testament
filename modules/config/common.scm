@@ -32,7 +32,8 @@
   #:use-module (gnu packages version-control)
   #:use-module (nongnu packages linux)
   #:use-module (rosenthal packages password-utils)
-  #:export (testament-plain
+  #:export (testament-path
+            testament-plain
 
             sops-str
             sops-num
