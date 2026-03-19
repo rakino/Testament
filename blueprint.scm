@@ -50,8 +50,8 @@
            (error (format #f "Command ~s exited with non-zero exit status: ~s"
                           (string-join cmd) exit-val)))))))
 
-(define* ($guix args #:key local? (channels "channels.lock") #:allow-other-keys)
-  (if local?
+(define* ($guix args #:key fork? (channels "channels.lock") #:allow-other-keys)
+  (if fork?
       ($ `("./pre-inst-env" "guix" ,@args))
       ($ `("guix" "time-machine" "-C" ,channels ,%substitute-urls "--" ,@args))))
 
@@ -130,14 +130,14 @@
    (outputs '("files/tangled/emacs"))))
 
 (define %systems
-  `(("dorphine" #:local? #t #:dependencies ,(list %shared-config-alloy
-                                                  %shared-config-emacs))
-    ("chapra"   #:local? #t #:dependencies ,(list %shared-config-alloy))
-    ("ignamma"              #:dependencies ,(list %shared-config-alloy))
-    ("nuporta"  #:local? #t #:dependencies ,(list %shared-config-alloy
-                                                  %shared-config-caddy))
-    ("mirror"               #:dependencies ,(list %shared-config-alloy
-                                                  %shared-config-caddy))
+  `(("dorphine" #:fork? #t #:dependencies ,(list %shared-config-alloy
+                                                 %shared-config-emacs))
+    ("chapra"   #:fork? #t #:dependencies ,(list %shared-config-alloy))
+    ("ignamma"             #:dependencies ,(list %shared-config-alloy))
+    ("nuporta"  #:fork? #t #:dependencies ,(list %shared-config-alloy
+                                                 %shared-config-caddy))
+    ("mirror"              #:dependencies ,(list %shared-config-alloy
+                                                 %shared-config-caddy))
     ("worker")))
 
 (define %images
@@ -190,16 +190,34 @@
 (define-command (ares-command arguments)
   ((invoke "ares")
    (category 'dispatch))
-  ($guix `("shell" "guile" "guile-ares-rs" "--"
-           "guile" "-c"
-           ,(call-with-output-string
-              (cut write
-                   '(begin
-                      (use-modules (ares server)
-                                   ;; Load reader extensions.
-                                   (guix gexp))
-                      (run-nrepl-server))
-                   <>)))))
+  ;; Update Citre tags.
+  (let ((citre-tags-file "/home/hako/.cache/tags/!home!hako!Testament!.tags"))
+    (when (file-exists? citre-tags-file)
+      ($emacs `("--quick" "--batch"
+                "--load" "citre-ctags"
+                "--eval"
+                ,(format #f "(citre-update-tags-file ~s)" citre-tags-file)))))
+  (let ((pre-inst-env? (file-exists? "channels/guix")))
+    ;; Compile Guix.
+    (when pre-inst-env?
+      (with-directory-excursion "channels/guix"
+        ($ '("./bootstrap"))
+        ($ '("./configure"))
+        ($ '("make" "-j8"))))
+    ;; Start nREPL server.
+    ($guix `("shell" "guile" "guile-ares-rs" "--"
+             ,@(if pre-inst-env?
+                   '("./pre-inst-env")
+                   '())
+             "guile" "-c"
+             ,(call-with-output-string
+                (cut write
+                     '(begin
+                        (use-modules (ares server)
+                                     ;; Load reader extensions.
+                                     (guix gexp))
+                        (run-nrepl-server))
+                     <>))))))
 
 (define-command (build-os-command arguments)
   ((invoke "build-os")

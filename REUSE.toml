@@ -4,6 +4,7 @@ version = 1
 path = [
         ".envrc",
         ".gitignore",
+        ".gitmodules",
         ".guix-authorizations",
         "channels.lock",
         "channels.scm",

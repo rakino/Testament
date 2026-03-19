@@ -11,6 +11,7 @@
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (guix store)
+  #:use-module (guix utils)
   #:use-module (rosenthal utils file)
   #:use-module (sops secrets)
   ;; Guix origin methods
@@ -244,7 +245,10 @@ WARNED."
         gnupg
         mosh
         ncurses
-        rclone
+        (package/inherit rclone
+          (arguments
+           (substitute-keyword-arguments (package-arguments rclone)
+             ((#:tests? _ #t) #f))))
         ripgrep
         rsync
         sops

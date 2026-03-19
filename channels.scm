@@ -10,6 +10,10 @@
           (openpgp-fingerprint
            "5132 3571 CEED 988F 52FC 467C 6F98 DBF3 EA7F 4B37"))))
       (channel
+        (inherit %default-guix-channel)
+        (name 'guix)
+        (url "https://mirrors.hust.edu.cn/git/guix.git"))
+      (channel
         (name 'nonguix)
         (url "https://gitlab.com/nonguix/nonguix")
         (introduction
@@ -34,7 +38,4 @@
          (make-channel-introduction
           "0bbaf1fdd25266c7df790f65640aaa01e6d2dbc9"
           (openpgp-fingerprint
-           "8D10 60B9 6BB8 292E 829B  7249 AED4 1CC1 93B7 01E2"))))
-      (channel
-        (inherit %default-guix-channel)
-        (url "https://mirrors.hust.edu.cn/git/guix.git")))
+           "8D10 60B9 6BB8 292E 829B  7249 AED4 1CC1 93B7 01E2")))))
