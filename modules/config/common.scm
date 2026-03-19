@@ -36,6 +36,7 @@
 
             sops-str
             sops-num
+            sops-sexp
 
             %sops-chapra
             %sops-dorphine
@@ -110,6 +111,12 @@ WARNED."
 
 (define (sops-num file key)
   (get-sops-secret key #:file file #:number? #t))
+
+(define (sops-sexp file key)
+  (let ((out (call-with-input-string (sops-str file key) read)))
+    (if (eof-object? out)
+        '()
+        out)))
 
 (define %sops-chapra
   (local-file "../../../Workspace/SOPS/chapra.yaml"))

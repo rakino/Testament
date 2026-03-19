@@ -411,7 +411,7 @@
            ("Port" . 43502)
            ("MusicFolder" . "/mnt/Ocimeae/Library/Music")
            ("EnableSharing" . #t)
-           #$@(call-with-input-string (sops-str %sops-chapra '("navidrome")) read)))))
+           #$@(sops-sexp %sops-chapra '("navidrome"))))))
 #+end_src
 
 *** qbittorrent
