@@ -268,9 +268,9 @@ Deploy all Guix Systems in this repository or only those matching SYSTEMS."))
 (define-command (build-iso-command arguments)
   ((invoke "build-iso")
    (category 'deployment)
-   (synopsis "Build LiveCD")
+   (synopsis "Build Live ISO")
    (help "[VARIANTS] ...
-Build all Guix System LiveCDs in this repository or only those matching \
+Build all Guix System Live ISOs in this repository or only those matching \
 VARIANTS, saving the results under dist/."))
   (every
    (cut eq? #t <>)
