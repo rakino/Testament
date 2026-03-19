@@ -119,11 +119,11 @@ WARNED."
         out)))
 
 (define %sops-chapra
-  (local-file "../../../Workspace/SOPS/chapra.yaml"))
+  (local-file (in-vicinity testament-path "files/plain/sops/chapra.yaml")))
 (define %sops-dorphine
-  (local-file "../../../Workspace/SOPS/dorphine.yaml"))
+  (local-file (in-vicinity testament-path "files/plain/sops/dorphine.yaml")))
 (define %sops-nuporta
-  (local-file "../../../Workspace/SOPS/nuporta.yaml"))
+  (local-file (in-vicinity testament-path "files/plain/sops/nuporta.yaml")))
 
 
 ;;;
