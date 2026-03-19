@@ -683,8 +683,7 @@ Disable amdgpu for now.
       XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia-shell" "ipc" "call" "brightness" "decrease"; }
 
       Mod+A           { spawn "noctalia-shell" "ipc" "call" "controlCenter" "toggle"; }
-      Mod+O           { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
-      Mod+D           { spawn "noctalia-shell" "ipc" "call" "plugin:clipper" "togglePanel"; }
+      Mod+D           { spawn "noctalia-shell" "ipc" "call" "launcher" "toggle"; }
       Mod+S           { spawn "noctalia-shell" "ipc" "call" "settings" "toggle"; }
       Mod+L           { spawn "noctalia-shell" "ipc" "call" "lockScreen" "lock"; }
       Ctrl+Alt+Delete { spawn "noctalia-shell" "ipc" "call" "sessionMenu" "toggle"; }
