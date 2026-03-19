@@ -250,6 +250,9 @@
           tcp dport https accept
           udp dport https accept
 
+          # allow komga
+          tcp dport 44293 accept
+
           # allow mosh
           tcp dport ssh accept
           udp dport 60000-61000 accept
