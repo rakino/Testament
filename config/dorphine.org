@@ -40,9 +40,8 @@
                         "telegram-desktop"
                         "zathura"
                         "zathura-pdf-poppler"
-
-                        <<package>>))
-                     (list (steam-for nvdb))
+                        <<package-spec>>))
+                     (list <<package>>)
                      %testament-cli-packages
                      %base-packages)
              #:driver nvdb)))
@@ -558,7 +557,7 @@ Disable amdgpu for now.
 #+end_src
 
 *** niri
-#+begin_src scheme :noweb-ref package
+#+begin_src scheme :noweb-ref package-spec
   "niri"
   "dconf"
   "wl-clipboard"
@@ -792,7 +791,7 @@ Run ~herd restart noctalia-shell~ after home environment reconfiguration.
 #+end_src
 
 *** fontconfig
-#+begin_src scheme :noweb-ref package
+#+begin_src scheme :noweb-ref package-spec
   "font-apple-new-york"
   "font-apple-sf-pro"
   "font-chiron-hei-hk"
@@ -867,8 +866,8 @@ See [[file:shared/emacs.org][shared/emacs.org]].
   <<home-service/emacs>>
 #+end_src
 
-#+begin_src scheme :noweb yes :noweb-ref package
-  <<package/emacs>>
+#+begin_src scheme :noweb yes :noweb-ref package-spec
+  <<package-spec/emacs>>
 #+end_src
 
 #+begin_src scheme :noweb yes :noweb-ref module
@@ -1115,7 +1114,7 @@ Copied from =%default-dotguile=.
 #+end_src
 
 *** librewolf
-#+begin_src scheme :noweb-ref package
+#+begin_src scheme :noweb-ref package-spec
   "librewolf"
   "adaptive-tab-bar-colour-icecat"
   "bitwarden-icecat"
@@ -1125,7 +1124,7 @@ Copied from =%default-dotguile=.
 #+end_src
 
 *** mpv
-#+begin_src scheme :noweb-ref package
+#+begin_src scheme :noweb-ref package-spec
   "mpv-nvidia"
 #+end_src
 
@@ -1167,7 +1166,7 @@ Copied from =%default-nanorc=.
 #+end_src
 
 *** prismlauncher
-#+begin_src scheme :noweb-ref package
+#+begin_src scheme :noweb-ref package-spec
   "prismlauncher-dolly"
 #+end_src
 
@@ -1181,6 +1180,10 @@ Copied from =%default-nanorc=.
 
 *** steam
 #+begin_src scheme :noweb-ref package
+  (steam-for nvdb)
+#+end_src
+
+#+begin_src scheme :noweb-ref package-spec
   "mangohud"
 #+end_src
 
@@ -1216,7 +1219,7 @@ Disable
 #+end_src
 
 *** thunar
-#+begin_src scheme :noweb-ref package
+#+begin_src scheme :noweb-ref package-spec
   "exo"
   "file-roller"
   "thunar"
