@@ -518,23 +518,6 @@ Generate passwordless ECC key:
       (subuids (list (subid-range (name "hako"))))))
 #+end_src
 
-** Continuous Integration
-*** cuirass-remote-worker
-Open TCP port 5558 and connect to server IPv4 address.
-#+begin_src scheme :noweb-ref service
-  (service cuirass-remote-worker-service-type
-    (cuirass-remote-worker-configuration
-      (publish-port 5558)
-      (workers 2)
-      (systems '("x86_64-linux" "i686-linux"))
-      (server "100.97.195.93:5555")       ;nuporta (Tailscale)
-      (substitute-urls
-       '("https://ci.guix.moe"
-         "https://ci.guix.gnu.org"
-         "https://bordeaux.guix.gnu.org"
-         "https://substitutes.nonguix.org"))))
-#+end_src
-
 ** Monitoring
 *** alloy
 #+begin_src scheme :noweb-ref service
