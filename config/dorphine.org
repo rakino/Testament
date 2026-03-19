@@ -42,6 +42,7 @@
                         "zathura-pdf-poppler"
 
                         <<package>>))
+                     (list (steam-for nvdb))
                      %testament-cli-packages
                      %base-packages)
              #:driver nvdb)))
@@ -1199,7 +1200,6 @@ Copied from =%default-nanorc=.
 *** steam
 #+begin_src scheme :noweb-ref package
   "mangohud"
-  "steam-nvidia"
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
@@ -1342,6 +1342,7 @@ Guix packages
   (gnu packages terminals)
   (gnu packages video)
   (gnu packages xorg)
+  (nongnu packages game-client)
   (nongnu packages nvidia)
   (rosenthal packages password-utils)
 #+end_src
