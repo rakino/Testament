@@ -35,8 +35,8 @@ This repository uses [[https://codeberg.org/lapislazuli/blue][BLUE build system]
 
 ** Systems
 *** [[file:config/dorphine.org][dorphine]] (x86_64-linux, UEFI, ZFS, NVIDIA) | [[file:files/deploy/dorphine.scm][deploy]]
-#+html: <img src="https://s3.boiledscript.com/misskey/a052b129-6554-4239-8203-a2697112b172.webp">
-#+html: <img src="https://s3.boiledscript.com/misskey/a7776bb9-4543-4adc-9d81-3e7d58e28492.webp">
+#+html: <img src="https://s3.boiledscript.com/misskey/a6987cd5-beb0-4ad3-b32a-3a0b6e2eb487.png">
+#+html: <img src="https://s3.boiledscript.com/misskey/050ff3d7-d928-43a9-bc4f-1cba9afa9dea.png">
 
 *** [[file:config/chapra.org][chapra]] (x86_64-linux, UEFI, ZFS) | [[file:files/deploy/chapra.scm][deploy]]
 
@@ -102,7 +102,6 @@ Default keybindings:
 + =Super+D= :: Open application launcher.
 + =Super+Return= :: Open terminal emulator: [[https://wezterm.org/][WezTerm]].
 
-#+html: <img src="https://s3.boiledscript.com/misskey/7371f3db-92a7-4c51-9eb1-991743fdaebb.webp">
 #+html: <img src="https://s3.boiledscript.com/misskey/9e9928ab-36ba-46bd-8ac4-35cda328606d.webp">
 #+html: <img src="https://s3.boiledscript.com/misskey/0bcd4fe2-8bf2-484b-9b3a-4d127846a46c.webp">
 
