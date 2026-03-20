@@ -4,7 +4,7 @@
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
 ** Guix System
-#+begin_src scheme :tangle ../files/tangled/ignamma/ignamma.scm :noweb yes
+#+begin_src scheme :tangle ../tangled/ignamma/ignamma.scm :noweb yes
   (use-modules <<module>>)
 
   (operating-system
@@ -161,10 +161,10 @@
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
-      (ruleset (local-file (testament-plain "ignamma/ignamma.nftables")))))
+      (ruleset (local-file (testament-file "ignamma/ignamma.nftables")))))
 #+end_src
 
-#+begin_src nftables :noweb yes :tangle ../files/tangled/ignamma/ignamma.nftables
+#+begin_src nftables :noweb yes :tangle ../tangled/ignamma/ignamma.nftables
   flush ruleset
 
   table inet filter {
@@ -273,7 +273,7 @@ Open TCP port 5558 and connect to server IPv4 address.
        (plain-file "ignamma.alloy"
          (string-join
           (list (sops-str %sops-dorphine '("alloy"))
-                (file-content (testament-plain "alloy/node-exporter.alloy")))
+                (file-content (testament-file "alloy/node-exporter.alloy")))
           "\n")))))
 #+end_src
 

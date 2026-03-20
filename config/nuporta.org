@@ -4,7 +4,7 @@
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
 ** Guix System
-#+begin_src scheme :tangle ../files/tangled/nuporta/nuporta.scm :noweb yes
+#+begin_src scheme :tangle ../tangled/nuporta/nuporta.scm :noweb yes
   (use-modules <<module>>)
 
   (operating-system
@@ -265,10 +265,10 @@
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
     (nftables-configuration
-      (ruleset (local-file (testament-plain "nuporta/nuporta.nftables")))))
+      (ruleset (local-file (testament-file "nuporta/nuporta.nftables")))))
 #+end_src
 
-#+begin_src nftables :noweb yes :tangle ../files/tangled/nuporta/nuporta.nftables
+#+begin_src nftables :noweb yes :tangle ../tangled/nuporta/nuporta.nftables
   flush ruleset
 
   table inet filter {
@@ -754,11 +754,11 @@ rsync://cache.guix.moe
     (list (shepherd-timer '(setup-mirror)
             #~(calendar-event #:minutes '(30))
             #~("/run/current-system/profile/bin/guix" "repl" "--"
-               #$(local-file (testament-plain "nuporta/setup-mirror.scm")))
+               #$(local-file (testament-file "nuporta/setup-mirror.scm")))
             #:requirement '(user-processes))))
 #+end_src
 
-#+begin_src scheme :tangle ../files/tangled/nuporta/setup-mirror.scm
+#+begin_src scheme :tangle ../tangled/nuporta/setup-mirror.scm
   (use-modules (ice-9 match)
                (ice-9 textual-ports)
                (srfi srfi-71)
@@ -1013,7 +1013,7 @@ rsync://cache.guix.moe
       (caddy caddy/dolly)
       (caddyfile
        (computed-substitution-with-inputs "nuporta.caddyfile"
-         (local-file (testament-plain "nuporta/nuporta.caddyfile"))
+         (local-file (testament-file "nuporta/nuporta.caddyfile"))
          (list ai-robots-txt)))
       (group-id 967)
       (user-id 972)))
@@ -1026,7 +1026,7 @@ rsync://cache.guix.moe
 
 See [[file:shared/caddy.org][shared/caddy.org]].
 
-#+begin_src caddyfile :noweb yes :tangle ../files/tangled/nuporta/nuporta.caddyfile
+#+begin_src caddyfile :noweb yes :tangle ../tangled/nuporta/nuporta.caddyfile
   {
   	dns cloudflare {file./run/secrets/cloudflare}
   	acme_dns cloudflare {file./run/secrets/cloudflare}
@@ -1153,17 +1153,17 @@ See [[file:shared/caddy.org][shared/caddy.org]].
            ":/etc/rspamd/local.d/redis.conf:ro")
          "--volume"
          ,(file-append
-           (local-file (testament-plain "nuporta/rspamd-dkim-signing.conf"))
+           (local-file (testament-file "nuporta/rspamd-dkim-signing.conf"))
            ":/etc/rspamd/override.d/dkim_signing.conf:ro")
 
          "--volume"
          ,(file-append
-           (local-file (testament-plain "nuporta/mail-crypt.conf"))
+           (local-file (testament-file "nuporta/mail-crypt.conf"))
            ":/etc/dovecot/conf.d/10-custom.conf:ro")
          "--volume" "/run/secrets/docker-mailserver:/certs:ro"))))
 #+end_src
 
-#+begin_src conf :tangle ../files/tangled/nuporta/rspamd-dkim-signing.conf
+#+begin_src conf :tangle ../tangled/nuporta/rspamd-dkim-signing.conf
   enabled = true;
   sign_authenticated = true;
   sign_local = true;
@@ -1189,7 +1189,7 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   }
 #+end_src
 
-#+begin_src conf :tangle ../files/tangled/nuporta/mail-crypt.conf
+#+begin_src conf :tangle ../tangled/nuporta/mail-crypt.conf
   mail_plugins = $mail_plugins mail_crypt
   plugin {
     mail_crypt_global_private_key = </certs/ecprivkey.pem
@@ -1548,9 +1548,9 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
        (plain-file "nuporta.alloy"
          (string-join
           (list (sops-str %sops-dorphine '("alloy"))
-                (file-content (testament-plain "alloy/node-exporter.alloy"))
-                (file-content (testament-plain "alloy/docker.alloy"))
-                (file-content (testament-plain "alloy/caddy.alloy")))
+                (file-content (testament-file "alloy/node-exporter.alloy"))
+                (file-content (testament-file "alloy/docker.alloy"))
+                (file-content (testament-file "alloy/caddy.alloy")))
           "\n")))))
 #+end_src
 

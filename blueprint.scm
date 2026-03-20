@@ -75,15 +75,22 @@
 (define-method (ask-build-manifest (buildable <shared-config>)
                                    (inputs <list>)
                                    (outputs <list>))
+  (define input
+    (first inputs))
+
+  (define output
+    (first outputs))
+
   (make-build-manifest
-   (string-append "TANGLE\t" (first outputs))
+   (string-append "TANGLE\t" output)
    (lambda ()
      ($emacs
       `("--quick" "--batch"
         "--load" "ob-tangle"
         "--eval" "(setopt org-babel-load-languages '((shell . t)))"
         "--eval" "(setopt org-confirm-babel-evaluate nil)"
-        "--eval" ,(format #f "(org-babel-tangle-file ~s)" (first inputs)))))))
+        "--eval" ,(format #f "(org-babel-tangle-file ~s)" input)))
+     ($ `("touch" ,output)))))
 
 (define-method (ask-build-manifest (buildable <system-config>)
                                    (inputs <list>)
@@ -94,8 +101,14 @@
      buildable-inputs
      (filter shared-config? (buildable-inputs buildable))))
 
+  (define input
+    (first inputs))
+
+  (define output
+    (first outputs))
+
   (make-build-manifest
-   (string-append "TANGLE\t" (first outputs))
+   (string-append "TANGLE\t" output)
    (lambda ()
      ($emacs
       `("--quick" "--batch"
@@ -107,7 +120,8 @@
            (lambda (file)
              (list "--eval" (format #f "(org-babel-lob-ingest ~s)" file)))
            dependencies)
-        "--eval" ,(format #f "(org-babel-tangle-file ~s)" (first inputs)))))))
+        "--eval" ,(format #f "(org-babel-tangle-file ~s)" input)))
+     ($ `("touch" ,output)))))
 
 
 ;;;
@@ -117,17 +131,17 @@
 (define %shared-config-alloy
   (shared-config
    (inputs '("config/shared/alloy.org"))
-   (outputs '("files/tangled/alloy"))))
+   (outputs '("tangled/alloy"))))
 
 (define %shared-config-caddy
   (shared-config
    (inputs '("config/shared/caddy.org"))
-   (outputs '("files/tangled/caddy"))))
+   (outputs '("tangled/caddy"))))
 
 (define %shared-config-emacs
   (shared-config
    (inputs '("config/shared/emacs.org"))
-   (outputs '("files/tangled/emacs"))))
+   (outputs '("tangled/emacs"))))
 
 (define %systems
   `(("dorphine" #:fork? #t #:dependencies ,(list %shared-config-alloy
@@ -146,7 +160,7 @@
 
 (define* (system-config-for name #:key (dependencies '()) #:allow-other-keys)
   (let ((input (string-append "config/" name ".org"))
-        (output (string-append "files/tangled/" name)))
+        (output (string-append "tangled/" name)))
     (system-config
      (inputs (cons input dependencies))
      (outputs (list output)))))
@@ -220,7 +234,7 @@ Build all Guix Systems in this repository or only those matching SYSTEMS."))
   (for-each
    (match-lambda
      ((name . args)
-      (let ((config (string-append "files/tangled/" name "/" name ".scm")))
+      (let ((config (string-append "tangled/" name "/" name ".scm")))
         (print-header "BUILD OS" name)
         (apply $guix `("system" "build" ,config ,@%build-options) args))))
    (remove
@@ -237,7 +251,7 @@ Deploy all Guix Systems in this repository or only those matching SYSTEMS."))
   (for-each
    (match-lambda
      ((name . args)
-      (let ((config (string-append "files/deploy/" name ".scm")))
+      (let ((config (string-append "deploy/" name ".scm")))
         (print-header "DEPLOY OS" name)
         (apply $guix
                `("deploy" ,config

@@ -33,7 +33,7 @@
   #:use-module (nongnu packages linux)
   #:use-module (rosenthal packages password-utils)
   #:export (testament-path
-            testament-plain
+            testament-file
 
             sops-str
             sops-num
@@ -68,10 +68,10 @@
 (define testament-path
   (getcwd))
 
-(define (testament-plain name)
-  (let ((plain (in-vicinity testament-path "files/plain"))
-        (tangled (in-vicinity testament-path "files/tangled")))
-    (or (search-path (list plain tangled) name)
+(define (testament-file name)
+  (let ((tangled (in-vicinity (string-append testament-path "/tangled") name)))
+    (if (file-exists? tangled)
+        tangled
         (error "file '~a' not found.~%" name))))
 
 
@@ -116,11 +116,11 @@ WARNED."
         out)))
 
 (define %sops-chapra
-  (local-file (testament-plain "sops/chapra.yaml")))
+  (local-file (in-vicinity testament-path "secrets/chapra.yaml")))
 (define %sops-dorphine
-  (local-file (testament-plain "sops/dorphine.yaml")))
+  (local-file (in-vicinity testament-path "secrets/dorphine.yaml")))
 (define %sops-nuporta
-  (local-file (testament-plain "sops/nuporta.yaml")))
+  (local-file (in-vicinity testament-path "secrets/nuporta.yaml")))
 
 
 ;;;

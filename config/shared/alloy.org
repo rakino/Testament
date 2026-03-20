@@ -4,7 +4,7 @@
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
 ** Caddy
-#+begin_src conf :tangle ../../files/tangled/alloy/caddy.alloy
+#+begin_src conf :tangle ../../tangled/alloy/caddy.alloy
   discovery.relabel "metrics_caddy" {
   	targets = [{
   		__address__ = "localhost:2019",
@@ -47,7 +47,7 @@
 #+end_src
 
 ** Docker
-#+begin_src conf :tangle ../../files/tangled/alloy/docker.alloy
+#+begin_src conf :tangle ../../tangled/alloy/docker.alloy
   prometheus.exporter.cadvisor "metrics_docker" {
       docker_only = true
   }
@@ -111,7 +111,7 @@
 #+end_src
 
 ** Node exporter
-#+begin_src conf :tangle ../../files/tangled/alloy/node-exporter.alloy
+#+begin_src conf :tangle ../../tangled/alloy/node-exporter.alloy
   prometheus.exporter.unix "node_exporter" {
     include_exporter_metrics = true
   }

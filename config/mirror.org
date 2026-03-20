@@ -4,7 +4,7 @@
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
 ** Guix System
-#+begin_src scheme :tangle ../files/tangled/mirror/mirror.scm :noweb yes
+#+begin_src scheme :tangle ../tangled/mirror/mirror.scm :noweb yes
   (use-modules <<module>>)
 
   (lambda (mirror-name bios-boot)
@@ -165,17 +165,16 @@
        (computed-substitution-with-inputs (string-append mirror-name ".caddyfile")
          (plain-file "mirror.caddyfile"
            (string-join
-            (list (file-content (testament-plain "mirror/mirror.caddyfile"))
-                  (format #f "import $$caddy/~a.caddyfile$$" mirror-name))
+            (list (file-content (testament-file "mirror/mirror.caddyfile"))
+                  (format #f "import $$~a.caddyfile$$" mirror-name))
             "\n"))
-         (list (testament-plain "mirror/cache-sg.caddyfile")
-               (testament-plain "mirror/cache-us-lax.caddyfile")
+         (list (local-file (testament-file "mirror") #:recursive? #t)
                ai-robots-txt)))))
 #+end_src
 
 See [[file:shared/caddy.org][shared/caddy.org]].
 
-#+begin_src caddyfile :noweb yes :tangle ../files/tangled/mirror/mirror.caddyfile
+#+begin_src caddyfile :noweb yes :tangle ../tangled/mirror/mirror.caddyfile
   {
   	metrics
   	log {
@@ -210,7 +209,7 @@ See [[file:shared/caddy.org][shared/caddy.org]].
 #+end_src
 
 *** mirroring
-#+begin_src caddyfile :tangle ../files/tangled/mirror/cache-sg.caddyfile
+#+begin_src caddyfile :tangle ../tangled/mirror/cache-sg.caddyfile
   cache-sg.guix.moe, cache-hk.guix.moe {
   	import logging cache-sg.guix.moe
   	import block_bots
@@ -232,7 +231,7 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   }
 #+end_src
 
-#+begin_src caddyfile :tangle ../files/tangled/mirror/cache-us-lax.caddyfile
+#+begin_src caddyfile :tangle ../tangled/mirror/cache-us-lax.caddyfile
   cache-us-lax.guix.moe {
   	import logging cache-us-lax.guix.moe
   	import block_bots
@@ -296,8 +295,8 @@ See [[file:shared/caddy.org][shared/caddy.org]].
        (plain-file (string-append mirror-name ".alloy")
          (string-join
           (list (sops-str %sops-dorphine '("alloy"))
-                (file-content (testament-plain "alloy/node-exporter.alloy"))
-                (file-content (testament-plain "alloy/caddy.alloy")))
+                (file-content (testament-file "alloy/node-exporter.alloy"))
+                (file-content (testament-file "alloy/caddy.alloy")))
           "\n")))))
 #+end_src
 

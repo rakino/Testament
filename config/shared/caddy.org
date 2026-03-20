@@ -3,7 +3,7 @@
 #+TITLE: Caddy snippets
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
-#+begin_src caddyfile :tangle ../../files/tangled/caddy/placeholder
+#+begin_src caddyfile :tangle ../../tangled/caddy
   placeholder
 #+end_src
 
