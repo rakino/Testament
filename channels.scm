@@ -12,9 +12,10 @@
       (channel
         (inherit %default-guix-channel)
         (name 'guix)
-        (url "https://mirrors.hust.edu.cn/git/guix.git"))
+        (branch "master"))
       (channel
         (name 'nonguix)
+        (branch "master")
         (url "https://gitlab.com/nonguix/nonguix")
         (introduction
          (make-channel-introduction
@@ -23,8 +24,8 @@
            "2A39 3FFF 68F4 EF7A 3D29  12AF 6F51 20A0 22FB B2D5"))))
       (channel
         (name 'rosenthal)
-        (url "https://codeberg.org/hako/rosenthal.git")
         (branch "trunk")
+        (url "https://codeberg.org/hako/rosenthal.git")
         (introduction
          (make-channel-introduction
           "7677db76330121a901604dfbad19077893865f35"
@@ -32,8 +33,8 @@
            "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
       (channel
         (name 'sops-guix)
-        (url "https://github.com/fishinthecalculator/sops-guix.git")
         (branch "main")
+        (url "https://github.com/fishinthecalculator/sops-guix.git")
         (introduction
          (make-channel-introduction
           "0bbaf1fdd25266c7df790f65640aaa01e6d2dbc9"

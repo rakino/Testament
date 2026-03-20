@@ -10,7 +10,7 @@
           "5132 3571 CEED 988F 52FC  467C 6F98 DBF3 EA7F 4B37"))))
       (channel
        (name 'guix)
-       (url "https://mirrors.hust.edu.cn/git/guix.git")
+       (url "https://git.guix.gnu.org/guix.git")
        (branch "master")
        (commit "b93c51c4d7a677ffc00c5bc4b4e11dbd436b6f65")
        (introduction
