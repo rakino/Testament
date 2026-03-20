@@ -195,7 +195,8 @@
    (category 'development)
    (synopsis "Start nREPL server for emacs-arei")
    (help "
-Start nREPL server for emacs-arei, also compile Guix when its git submodule is checked out."))
+Start nREPL server for emacs-arei, also compile Guix when its git submodule is \
+checked out."))
   ;; Update Citre tags.
   (let ((citre-tags-file "/home/hako/.cache/tags/!home!hako!Testament!.tags"))
     (when (file-exists? citre-tags-file)
@@ -266,7 +267,8 @@ Deploy all Guix Systems in this repository or only those matching SYSTEMS."))
    (category 'deployment)
    (synopsis "Build LiveCD")
    (help "[VARIANTS] ...
-Build all Guix System LiveCDs in this repository or only those matching VARIANTS, saving the results under dist/."))
+Build all Guix System LiveCDs in this repository or only those matching \
+VARIANTS, saving the results under dist/."))
   (for-each
    (lambda (variant)
      (let ((config (string-append "config/live/" variant ".scm"))
