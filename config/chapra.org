@@ -213,6 +213,10 @@
   (service avahi-service-type)
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  udp dport mdns accept
+#+end_src
+
 *** nftables
 #+begin_src scheme :noweb-ref service
   (service nftables-service-type
@@ -220,7 +224,7 @@
       (ruleset (local-file (testament-plain "chapra/chapra.nftables")))))
 #+end_src
 
-#+begin_src nftables :tangle ../files/tangled/chapra/chapra.nftables
+#+begin_src nftables :noweb yes :tangle ../files/tangled/chapra/chapra.nftables
   flush ruleset
 
   table inet filter {
@@ -243,25 +247,7 @@
           ip protocol icmp accept
           ip6 nexthdr icmpv6 accept
 
-          # allow avahi
-          udp dport mdns accept
-
-          # allow caddy
-          tcp dport https accept
-          udp dport https accept
-
-          # allow komga
-          tcp dport 44293 accept
-
-          # allow mosh
-          tcp dport ssh accept
-          udp dport 60000-61000 accept
-
-          # allow qbittorrent
-          meta l4proto { tcp, udp } th dport 15308 accept
-
-          # allow tailscale
-          tcp dport 41641 accept
+          <<nftables-filter-input>>
 
           # reject everything else
           reject with icmpx type port-unreachable
@@ -280,6 +266,10 @@
   (service tailscale-service-type)
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 41641 accept
+#+end_src
+
 *** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
@@ -287,6 +277,12 @@
       (openssh openssh-sans-x)
       (permit-root-login 'prohibit-password)
       (password-authentication? #f)))
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport ssh accept
+  # allow mosh
+  udp dport 60000-61000 accept
 #+end_src
 
 *** fail2ban
@@ -324,6 +320,11 @@
       (caddy caddy/dolly)
       (caddyfile (local-file (testament-plain "chapra/chapra.caddyfile")))
       (shepherd-requirement '(network-online))))
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport https accept
+  udp dport https accept
 #+end_src
 
 #+begin_src caddyfile :noweb yes :tangle ../files/tangled/chapra/chapra.caddyfile
@@ -393,6 +394,10 @@
       (port 44293)))
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 44293 accept
+#+end_src
+
 *** navidrome
 #+begin_src caddyfile :noweb-ref caddy-site
   music.urspace.moe {
@@ -424,6 +429,10 @@
     (qbittorrent-configuration
       (qbittorrent qbittorrent-enhanced-no-x)
       (webui-port 35951)))
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  meta l4proto { tcp, udp } th dport 15308 accept
 #+end_src
 
 ** Monitoring

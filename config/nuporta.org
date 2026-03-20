@@ -268,7 +268,7 @@
       (ruleset (local-file (testament-plain "nuporta/nuporta.nftables")))))
 #+end_src
 
-#+begin_src nftables :tangle ../files/tangled/nuporta/nuporta.nftables
+#+begin_src nftables :noweb yes :tangle ../files/tangled/nuporta/nuporta.nftables
   flush ruleset
 
   table inet filter {
@@ -291,31 +291,7 @@
           ip protocol icmp accept
           ip6 nexthdr icmpv6 accept
 
-          # allow caddy
-          tcp dport https accept
-          udp dport https accept
-
-          # allow cuirass
-          tcp dport {5555, 5556} accept
-
-          # allow docker-mailserver
-          tcp dport imap accept
-          tcp dport imaps accept
-          tcp dport smtp accept
-          tcp dport smtps accept
-
-          # allow mosh
-          tcp dport ssh accept
-          udp dport 60000-61000 accept
-
-          # allow rsync
-          tcp dport rsync accept
-
-          # allow tailscale
-          tcp dport 41641 accept
-
-          # allow tuwunel
-          tcp dport 8448 accept
+          <<nftables-filter-input>>
 
           # reject everything else
           reject with icmpx type port-unreachable
@@ -334,6 +310,10 @@
   (service tailscale-service-type)
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 41641 accept
+#+end_src
+
 *** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
@@ -341,6 +321,12 @@
       (openssh openssh-sans-x)
       (permit-root-login 'prohibit-password)
       (password-authentication? #f)))
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport ssh accept
+  # allow mosh
+  udp dport 60000-61000 accept
 #+end_src
 
 *** fail2ban
@@ -437,7 +423,6 @@
   }
 #+end_src
 
-Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
   (service cuirass-service-type
     (cuirass-configuration
@@ -458,6 +443,10 @@ Remember to open TCP port 5555 and 5556.
          (publish? #f)))
       (port 17732)
       (specifications #~(list <<cuirass-spec>>))))
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport {5555, 5556} accept
 #+end_src
 
 *** cuirass-remote-worker
@@ -756,6 +745,10 @@ rsync://cache.guix.moe
                (file-name "/var/cache/guix-moe/narinfo-cdn"))))))
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport rsync accept
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (simple-service 'setup-mirror shepherd-root-service-type
     (list (shepherd-timer '(setup-mirror)
@@ -1026,6 +1019,11 @@ rsync://cache.guix.moe
       (user-id 972)))
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport https accept
+  udp dport https accept
+#+end_src
+
 See [[file:shared/caddy.org][shared/caddy.org]].
 
 #+begin_src caddyfile :noweb yes :tangle ../files/tangled/nuporta/nuporta.caddyfile
@@ -1106,6 +1104,13 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   		close
   	}
   }
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport imap accept
+  tcp dport imaps accept
+  tcp dport smtp accept
+  tcp dport smtps accept
 #+end_src
 
 #+begin_src scheme :noweb-ref service
@@ -1380,6 +1385,10 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
   		file_server
   	}
   }
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 8448 accept
 #+end_src
 
 #+begin_src scheme :noweb-ref service

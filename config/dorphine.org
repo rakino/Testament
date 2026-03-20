@@ -53,6 +53,11 @@
     (name-service-switch %mdns-host-lookup-nss))
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  # allow avahi
+  udp dport mdns accept
+#+end_src
+
 ** Guix Home
 #+begin_src scheme :noweb yes :noweb-ref service
   (service guix-home-service-type
@@ -271,6 +276,10 @@ NVIDIA proprietary driver
             #:requirement '(user-processes guix-daemon))))
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 49637 accept
+#+end_src
+
 *** Users
 Generate password hash:
 #+begin_src shell
@@ -390,7 +399,7 @@ Generate passwordless ECC key:
       (ruleset (local-file (testament-plain "dorphine/dorphine.nftables")))))
 #+end_src
 
-#+begin_src nftables :tangle ../files/tangled/dorphine/dorphine.nftables
+#+begin_src nftables :noweb yes :tangle ../files/tangled/dorphine/dorphine.nftables
   flush ruleset
 
   table inet filter {
@@ -413,28 +422,7 @@ Generate passwordless ECC key:
           ip protocol icmp accept
           ip6 nexthdr icmpv6 accept
 
-          # allow avahi
-          udp dport mdns accept
-
-          # allow cuirass
-          tcp dport 5558 accept
-
-          # allow guix-publish
-          tcp dport 49637 accept
-
-          # allow minecraft
-          tcp dport 25565 accept
-
-          # allow syncthing
-          udp dport 21027 accept
-          meta l4proto { tcp, udp } th dport 22000 accept
-
-          # allow tailscale
-          tcp dport 41641 accept
-
-          # allow warframe
-          udp dport { 4950, 4955 } accept
-          tcp dport 6695-6699 accept
+          <<nftables-filter-input>>
 
           # reject everything else
           reject with icmpx type port-unreachable
@@ -451,6 +439,10 @@ Generate passwordless ECC key:
 *** tailscale
 #+begin_src scheme :noweb-ref service
   (service tailscale-service-type)
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 41641 accept
 #+end_src
 
 *** openssh
@@ -1154,6 +1146,10 @@ Copied from =%default-nanorc=.
   "prismlauncher-dolly"
 #+end_src
 
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 25565 accept
+#+end_src
+
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'openjdk-for-prismlauncher home-files-service-type
     (map (lambda (jdk)
@@ -1165,6 +1161,12 @@ Copied from =%default-nanorc=.
 *** steam
 #+begin_src scheme :noweb-ref package
   (steam-for nvdb)
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  # allow warframe
+  udp dport { 4950, 4955 } accept
+  tcp dport 6695-6699 accept
 #+end_src
 
 #+begin_src scheme :noweb-ref package-spec
@@ -1200,6 +1202,11 @@ Disable
   (service syncthing-service-type
     (syncthing-configuration
       (user "hako")))
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  udp dport 21027 accept
+  meta l4proto { tcp, udp } th dport 22000 accept
 #+end_src
 
 *** thunar
