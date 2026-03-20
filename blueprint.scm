@@ -114,6 +114,11 @@
 ;;; Buildables.
 ;;;
 
+(define %shared-config-alloy
+  (shared-config
+   (inputs '("config/shared/alloy.org"))
+   (outputs '("files/tangled/alloy"))))
+
 (define %shared-config-caddy
   (shared-config
    (inputs '("config/shared/caddy.org"))
@@ -125,11 +130,14 @@
    (outputs '("files/tangled/emacs"))))
 
 (define %systems
-  `(("dorphine" #:local? #t #:dependencies (,%shared-config-emacs))
-    ("chapra"   #:local? #t)
-    ("ignamma")
-    ("nuporta"  #:local? #t #:dependencies (,%shared-config-caddy))
-    ("mirror"               #:dependencies (,%shared-config-caddy))
+  `(("dorphine" #:local? #t #:dependencies ,(list %shared-config-alloy
+                                                  %shared-config-emacs))
+    ("chapra"   #:local? #t #:dependencies ,(list %shared-config-alloy))
+    ("ignamma"              #:dependencies ,(list %shared-config-alloy))
+    ("nuporta"  #:local? #t #:dependencies ,(list %shared-config-alloy
+                                                  %shared-config-caddy))
+    ("mirror"               #:dependencies ,(list %shared-config-alloy
+                                                  %shared-config-caddy))
     ("worker")))
 
 (define %images
@@ -264,7 +272,8 @@
                        "https://mirror.sjtu.edu.cn/guix-bordeaux"))))
            (hint "Substitute URLs"))))))
  (buildables
-  (cons* %shared-config-caddy
+  (cons* %shared-config-alloy
+         %shared-config-caddy
          %shared-config-emacs
          (map (cut apply system-config-for <>) %systems)))
  (commands
