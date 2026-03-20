@@ -305,10 +305,7 @@ Build all Guix System LiveCDs in this repository or only those matching VARIANTS
                        "https://mirror.sjtu.edu.cn/guix-bordeaux"))))
            (hint "Substitute URLs"))))))
  (buildables
-  (cons* %shared-config-alloy
-         %shared-config-caddy
-         %shared-config-emacs
-         (map (cut apply system-config-for <>) %systems)))
+  (map (cut apply system-config-for <>) %systems))
  (commands
   (list update-command
         serve-command
