@@ -8,9 +8,7 @@
   #:use-module (ice-9 textual-ports)
   #:use-module (srfi srfi-26)
   ;; Utilities
-  #:use-module ((guix diagnostics) #:select (leave))
   #:use-module (guix gexp)
-  #:use-module ((guix i18n) #:select (G_))
   #:use-module (guix packages)
   #:use-module (guix store)
   #:use-module (rosenthal utils file)
@@ -69,15 +67,11 @@
 (define testament-path
   (getcwd))
 
-(define (testament-plain . name)
+(define (testament-plain name)
   (let ((plain (in-vicinity testament-path "files/plain"))
         (tangled (in-vicinity testament-path "files/tangled")))
-    (match name
-      (()
-       (local-file plain #:recursive? #t))
-      ((file)
-       (or (search-path (list plain tangled) file)
-           (leave (G_ "file '~a' not found.~%") file))))))
+    (or (search-path (list plain tangled) name)
+        (error "file '~a' not found.~%" name))))
 
 
 ;;;
@@ -121,11 +115,11 @@ WARNED."
         out)))
 
 (define %sops-chapra
-  (local-file (in-vicinity testament-path "files/plain/sops/chapra.yaml")))
+  (local-file (testament-plain "sops/chapra.yaml")))
 (define %sops-dorphine
-  (local-file (in-vicinity testament-path "files/plain/sops/dorphine.yaml")))
+  (local-file (testament-plain "sops/dorphine.yaml")))
 (define %sops-nuporta
-  (local-file (in-vicinity testament-path "files/plain/sops/nuporta.yaml")))
+  (local-file (testament-plain "sops/nuporta.yaml")))
 
 
 ;;;

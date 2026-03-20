@@ -161,10 +161,99 @@
   (service caddy-service-type
     (caddy-configuration
       (caddy caddy/dolly)
-      (caddyfile (local-file (testament-plain (string-append "caddy/" mirror-name ".caddyfile"))))))
+      (caddyfile
+       (computed-substitution-with-inputs (string-append mirror-name ".caddyfile")
+         (plain-file "mirror.caddyfile"
+           (string-join
+            (list (file-content (testament-plain "mirror/mirror.caddyfile"))
+                  (format #f "import $$caddy/~a.caddyfile$$" mirror-name))
+            "\n"))
+         (list (testament-plain "mirror/cache-sg.caddyfile")
+               (testament-plain "mirror/cache-us-lax.caddyfile")
+               ai-robots-txt)))))
+#+end_src
+
+See [[file:shared/caddy.org][shared/caddy.org]].
+
+#+begin_src caddyfile :noweb yes :tangle ../files/tangled/mirror/mirror.caddyfile
+  {
+  	metrics
+  	log {
+  		output file /var/log/caddy/caddy.log
+  		format filter {
+  			request>remote_ip ip_mask {
+  				ipv4 20
+  				ipv6 44
+  			}
+  			request>client_ip ip_mask {
+  				ipv4 20
+  				ipv6 44
+  			}
+  			wrap json
+  		}
+  	}
+  	servers {
+  		trusted_proxies static private_ranges
+  		client_ip_headers X-Forwarded-For X-Real-IP
+  		trusted_proxies_strict
+  	}
+  }
+
+  <<caddy-snippet-logging>>
+  <<caddy-snippet-block-bots>>
+
+  :80, :443 {
+  	respond /* "Access denied" 403 {
+  		close
+  	}
+  }
 #+end_src
 
 *** mirroring
+#+begin_src caddyfile :tangle ../files/tangled/mirror/cache-sg.caddyfile
+  cache-sg.guix.moe, cache-hk.guix.moe {
+  	import logging cache-sg.guix.moe
+  	import block_bots
+
+  	handle /*.narinfo {
+  		root * /var/cache/guix-moe/narinfo
+  		file_server
+  	}
+
+  	handle /nar/* {
+  		reverse_proxy https://nars.guix.moe {
+  			header_up Host {upstream_hostport}
+  		}
+  	}
+
+  	respond "Visit guix [dot] moe for more information." 404 {
+  		close
+  	}
+  }
+#+end_src
+
+#+begin_src caddyfile :tangle ../files/tangled/mirror/cache-us-lax.caddyfile
+  cache-us-lax.guix.moe {
+  	import logging cache-us-lax.guix.moe
+  	import block_bots
+
+  	handle /*.narinfo {
+  		root * /var/cache/guix-moe/narinfo
+  		file_server
+  	}
+
+  	handle /nar/* {
+  		reverse_proxy https://nars.guix.moe {
+  			header_up Host {upstream_hostport}
+  		}
+  	}
+
+  	respond "Visit guix [dot] moe for more information." 404 {
+  		close
+  	}
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (simple-service 'guix-moe-mirror shepherd-root-service-type
     (list (shepherd-timer '(guix-moe-mirror)

@@ -114,6 +114,11 @@
 ;;; Buildables.
 ;;;
 
+(define %shared-config-caddy
+  (shared-config
+   (inputs '("config/shared/caddy.org"))
+   (outputs '("files/tangled/caddy"))))
+
 (define %shared-config-emacs
   (shared-config
    (inputs '("config/shared/emacs.org"))
@@ -123,8 +128,8 @@
   `(("dorphine" #:local? #t #:dependencies (,%shared-config-emacs))
     ("chapra"   #:local? #t)
     ("ignamma")
-    ("nuporta"  #:local? #t)
-    ("mirror")
+    ("nuporta"  #:local? #t #:dependencies (,%shared-config-caddy))
+    ("mirror"               #:dependencies (,%shared-config-caddy))
     ("worker")))
 
 (define %images
@@ -259,7 +264,8 @@
                        "https://mirror.sjtu.edu.cn/guix-bordeaux"))))
            (hint "Substitute URLs"))))))
  (buildables
-  (cons* %shared-config-emacs
+  (cons* %shared-config-caddy
+         %shared-config-emacs
          (map (cut apply system-config-for <>) %systems)))
  (commands
   (list authenticate-command

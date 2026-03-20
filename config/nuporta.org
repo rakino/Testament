@@ -411,6 +411,32 @@
 
 ** Continuous Integration
 *** cuirass
+#+begin_src caddyfile :noweb-ref caddy-site
+  ci.guix.moe {
+  	import block_bots
+
+  	@guix_publish {
+  		path /*.narinfo || /file/* || /nar/* || /nix-cache-info || /signing-key.pub
+  	}
+  	handle @guix_publish {
+  		reverse_proxy localhost:49637
+  	}
+
+  	@forgejo_hooks {
+  		path /admin/forgejo/event || /jobset/*/hook/evaluate
+  	}
+  	handle @forgejo_hooks {
+  		import /run/secrets/caddy/cuirass/forgejo
+  	}
+
+  	handle /admin/* {
+  		import /run/secrets/caddy/cuirass/admin
+  	}
+
+  	reverse_proxy localhost:17732
+  }
+#+end_src
+
 Remember to open TCP port 5555 and 5556.
 #+begin_src scheme :noweb yes :noweb-ref service
   (service cuirass-service-type
@@ -674,6 +700,46 @@ Pin commit for aarch64-linux as the build resource is limited
 #+end_src
 
 *** Mirroring
+#+begin_src caddyfile :noweb-ref caddy-site
+  cache-cdn.guix.moe {
+  	import block_bots
+  	import logging cache-cdn.guix.moe
+
+  	handle /*.narinfo {
+  		root * /var/cache/guix-moe/narinfo-cdn
+  		file_server
+  	}
+
+  	handle /nar/* {
+  		redir https://nars.guix.moe{uri}
+  	}
+
+  	respond "Visit guix [dot] moe for more information." 404 {
+  		close
+  	}
+  }
+
+  cache-fi.guix.moe, cache-de.guix.moe, cache-it.guix.moe {
+  	import block_bots
+  	import logging cache-fi.guix.moe
+
+  	handle /*.narinfo {
+  		root * /var/cache/guix-moe/narinfo
+  		file_server
+  	}
+
+  	handle /nar/* {
+  		reverse_proxy https://nars.guix.moe {
+  			header_up Host {upstream_hostport}
+  		}
+  	}
+
+  	respond "Visit guix [dot] moe for more information." 404 {
+  		close
+  	}
+  }
+#+end_src
+
 rsync://cache.guix.moe
 #+begin_src scheme :noweb-ref service
   (service rsync-service-type
@@ -948,24 +1014,21 @@ rsync://cache.guix.moe
 
 ** Web Servers & Services
 *** caddy
-#+begin_src scheme :noweb yes :noweb-ref service
+#+begin_src scheme :noweb-ref service
   (service caddy-service-type
     (caddy-configuration
       (caddy caddy/dolly)
-      (caddyfile <<caddy-config>>)
+      (caddyfile
+       (computed-substitution-with-inputs "nuporta.caddyfile"
+         (local-file (testament-plain "nuporta/nuporta.caddyfile"))
+         (list ai-robots-txt)))
       (group-id 967)
       (user-id 972)))
 #+end_src
 
-#+name: caddy-config
-#+begin_src scheme
-  (computed-substitution-with-inputs "nuporta.caddyfile"
-    (local-file (testament-plain "nuporta/nuporta.caddyfile"))
-    (list (testament-plain)
-          ai-robots-txt))
-#+end_src
+See [[file:shared/caddy.org][shared/caddy.org]].
 
-#+begin_src caddyfile :tangle ../files/tangled/nuporta/nuporta.caddyfile
+#+begin_src caddyfile :noweb yes :tangle ../files/tangled/nuporta/nuporta.caddyfile
   {
   	dns cloudflare {file./run/secrets/cloudflare}
   	acme_dns cloudflare {file./run/secrets/cloudflare}
@@ -992,68 +1055,16 @@ rsync://cache.guix.moe
   	}
   }
 
-  
-  ###
-  ### Snippets
-  ###
+  <<caddy-snippet-logging>>
+  <<caddy-snippet-block-bots>>
+  <<caddy-snippet-tailscale>>
 
-  (logging) {
-  	log {
-  		output file /var/log/caddy/{args[0]}.log
-  		format filter {
-  			wrap json
-  			request>remote_ip ip_mask {
-  				ipv4 20
-  				ipv6 44
-  			}
-  			request>client_ip ip_mask {
-  				ipv4 20
-  				ipv6 44
-  			}
-  			fields {
-  				request>uri query {
-  					delete access_token
-  				}
-  			}
-  		}
+  :80, :443 {
+  	respond /* "Access denied" 403 {
+  		close
   	}
   }
 
-  (block_bots) {
-  	import $$share/ai-robots-txt/Caddyfile$$
-  	handle @aibots {
-  		log_skip
-  		respond /* "Access denied" 403 {
-  			close
-  		}
-  	}
-
-  	@fake {
-  		header User-Agent *Chrome/*
-  		header User-Agent *Firefox*
-  		header !Sec-Fetch-Mode
-  	}
-  	handle @fake {
-  		log_skip
-  		respond /* "Access denied" 403 {
-  			close
-  		}
-  	}
-  }
-
-  (tailscale) {
-  	@tailscale client_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
-  	handle @tailscale {
-  		{block}
-  	}
-  }
-
-  
-  ###
-  ### Guix Moe
-  ###
-
-  # Homepage
   guix.moe {
   	handle /.well-known/matrix/* {
   		reverse_proxy 127.0.0.1:26372
@@ -1064,101 +1075,6 @@ rsync://cache.guix.moe
   	}
   }
 
-  # Tuwunel
-  matrix.guix.moe, matrix.guix.moe:8448 {
-  	import block_bots
-
-  	@tuwunel {
-  		path /_matrix/* || /_tuwunel/*
-  	}
-  	handle @tuwunel {
-  		reverse_proxy 127.0.0.1:26372
-  	}
-
-  	@heisenbridge_media {
-  		path /_heisenbridge/media/*
-  	}
-  	handle @heisenbridge_media {
-  		reverse_proxy 127.0.0.1:27873
-  	}
-
-  	handle {
-  		root * /var/lib/webpublic/cinny
-  		try_files {path} / index.html
-  		file_server
-  	}
-  }
-
-  # Cuirass
-  ci.guix.moe {
-  	import block_bots
-
-  	@guix_publish {
-  		path /*.narinfo || /file/* || /nar/* || /nix-cache-info || /signing-key.pub
-  	}
-  	handle @guix_publish {
-  		reverse_proxy localhost:49637
-  	}
-
-  	@forgejo_hooks {
-  		path /admin/forgejo/event || /jobset/*/hook/evaluate
-  	}
-  	handle @forgejo_hooks {
-  		import /run/secrets/caddy/cuirass/forgejo
-  	}
-
-  	handle /admin/* {
-  		import /run/secrets/caddy/cuirass/admin
-  	}
-
-  	reverse_proxy localhost:17732
-  }
-
-  # Mirrors
-  cache-cdn.guix.moe {
-  	import block_bots
-  	import logging cache-cdn.guix.moe
-
-  	handle /*.narinfo {
-  		root * /var/cache/guix-moe/narinfo-cdn
-  		file_server
-  	}
-
-  	handle /nar/* {
-  		redir https://nars.guix.moe{uri}
-  	}
-
-  	respond "Visit guix [dot] moe for more information." 404 {
-  		close
-  	}
-  }
-
-  cache-fi.guix.moe, cache-de.guix.moe, cache-it.guix.moe {
-  	import block_bots
-  	import logging cache-fi.guix.moe
-
-  	handle /*.narinfo {
-  		root * /var/cache/guix-moe/narinfo
-  		file_server
-  	}
-
-  	handle /nar/* {
-  		reverse_proxy https://nars.guix.moe {
-  			header_up Host {upstream_hostport}
-  		}
-  	}
-
-  	respond "Visit guix [dot] moe for more information." 404 {
-  		close
-  	}
-  }
-
-  
-  ###
-  ### URSpace
-  ###
-
-  # Blog
   ultrarare.space {
   	root * /var/lib/webpublic/ultrarare.space
   	handle_errors {
@@ -1168,53 +1084,11 @@ rsync://cache.guix.moe
   	file_server
   }
 
-  # Forgejo
-  git.urspace.moe {
-  	import tailscale {
-  		reverse_proxy localhost:48071
-  	}
-  }
+  <<caddy-site>>
+#+end_src
 
-  # Grafana
-  dash.urspace.moe {
-  	import tailscale {
-  		reverse_proxy localhost:13064
-  	}
-  }
-
-  # Loki
-  logs.urspace.moe {
-  	import block_bots
-  	import /run/secrets/caddy/loki
-  	reverse_proxy localhost:50968
-  }
-
-  # Mimir
-  metrics.urspace.moe {
-  	import block_bots
-  	import /run/secrets/caddy/mimir
-  	reverse_proxy localhost:49951
-  }
-
-  # Miniflux
-  reader.urspace.moe {
-  	import block_bots
-  	reverse_proxy localhost:51787
-  }
-
-  # Misskey
-  boiledscript.com {
-  	import block_bots
-  	reverse_proxy localhost:54493
-  }
-
-  # Vaultwarden
-  vault.urspace.moe {
-  	import block_bots
-  	reverse_proxy localhost:23263
-  }
-
-  # Mail
+*** docker-mailserver
+#+begin_src caddyfile :noweb-ref caddy-site
   mta-sts.boiledscript.com {
   	import block_bots
   	handle /.well-known/mta-sts.txt {
@@ -1227,14 +1101,13 @@ rsync://cache.guix.moe
   	}
   }
 
-  mail.boiledscript.com, :80, :443 {
+  mail.boiledscript.com {
   	respond /* "Access denied" 403 {
   		close
   	}
   }
 #+end_src
 
-*** docker-mailserver
 #+begin_src scheme :noweb-ref service
   (service docker-mailserver-service-type
     (docker-mailserver-configuration
@@ -1321,6 +1194,14 @@ rsync://cache.guix.moe
 #+end_src
 
 *** forgejo
+#+begin_src caddyfile :noweb-ref caddy-site
+  git.urspace.moe {
+  	import tailscale {
+  		reverse_proxy localhost:48071
+  	}
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service forgejo-service-type
     (forgejo-configuration
@@ -1420,6 +1301,13 @@ rsync://cache.guix.moe
 #+end_src
 
 *** misskey
+#+begin_src caddyfile :noweb-ref caddy-site
+  boiledscript.com {
+  	import block_bots
+  	reverse_proxy localhost:54493
+  }
+#+end_src
+
 https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+begin_src scheme :noweb-ref service
   (service misskey-service-type
@@ -1450,6 +1338,13 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+end_src
 
 *** miniflux
+#+begin_src caddyfile :noweb-ref caddy-site
+  reader.urspace.moe {
+  	import block_bots
+  	reverse_proxy localhost:51787
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service miniflux-service-type
     (miniflux-configuration
@@ -1461,6 +1356,32 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+end_src
 
 *** tuwunel
+#+begin_src caddyfile :noweb-ref caddy-site
+  matrix.guix.moe, matrix.guix.moe:8448 {
+  	import block_bots
+
+  	@tuwunel {
+  		path /_matrix/* || /_tuwunel/*
+  	}
+  	handle @tuwunel {
+  		reverse_proxy 127.0.0.1:26372
+  	}
+
+  	@heisenbridge_media {
+  		path /_heisenbridge/media/*
+  	}
+  	handle @heisenbridge_media {
+  		reverse_proxy 127.0.0.1:27873
+  	}
+
+  	handle {
+  		root * /var/lib/webpublic/cinny
+  		try_files {path} / index.html
+  		file_server
+  	}
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service conduit-service-type
     (conduit-configuration
@@ -1484,6 +1405,13 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+end_src
 
 *** vaultwarden
+#+begin_src caddyfile :noweb-ref caddy-site
+  vault.urspace.moe {
+  	import block_bots
+  	reverse_proxy localhost:23263
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service vaultwarden-service-type
     (vaultwarden-configuration
@@ -1496,6 +1424,14 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 
 ** Monitoring
 *** grafana
+#+begin_src caddyfile :noweb-ref caddy-site
+  dash.urspace.moe {
+  	import tailscale {
+  		reverse_proxy localhost:13064
+  	}
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service grafana-service-type
     (grafana-configuration
@@ -1519,6 +1455,14 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+end_src
 
 *** mimir
+#+begin_src caddyfile :noweb-ref caddy-site
+  metrics.urspace.moe {
+  	import block_bots
+  	import /run/secrets/caddy/mimir
+  	reverse_proxy localhost:49951
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service mimir-service-type
     (mimir-configuration
@@ -1546,6 +1490,14 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 #+end_src
 
 *** loki
+#+begin_src caddyfile :noweb-ref caddy-site
+  logs.urspace.moe {
+  	import block_bots
+  	import /run/secrets/caddy/loki
+  	reverse_proxy localhost:50968
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service loki-service-type
     (loki-configuration

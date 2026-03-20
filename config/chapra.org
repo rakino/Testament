@@ -326,7 +326,7 @@
       (shepherd-requirement '(network-online))))
 #+end_src
 
-#+begin_src caddyfile :tangle ../files/tangled/chapra/chapra.caddyfile
+#+begin_src caddyfile :noweb yes :tangle ../files/tangled/chapra/chapra.caddyfile
   {
   	dns cloudflare {file./run/secrets/cloudflare}
   	acme_dns cloudflare {file./run/secrets/cloudflare}
@@ -353,36 +353,22 @@
   	}
   }
 
-  
-  # qBittorrent
-  dl.urspace.moe {
-  	reverse_proxy localhost:35951
-  }
-
-  # Komga
-  manga.urspace.moe {
-  	reverse_proxy localhost:44293
-  }
-
-  # Navidrome
-  music.urspace.moe {
-  	reverse_proxy localhost:43502
-  }
-
-  # Jellyfin
-  shows.urspace.moe {
-  	reverse_proxy localhost:22443
-  }
-
-  
   :80, :443 {
   	respond /* "Access denied" 403 {
   		close
   	}
   }
+
+  <<caddy-site>>
 #+end_src
 
 *** jellyfin
+#+begin_src caddyfile :noweb-ref caddy-site
+  shows.urspace.moe {
+  	reverse_proxy localhost:22443
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service jellyfin-service-type
     (jellyfin-configuration
@@ -395,6 +381,12 @@
 #+end_src
 
 *** komga
+#+begin_src caddyfile :noweb-ref caddy-site
+  manga.urspace.moe {
+  	reverse_proxy localhost:44293
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service komga-service-type
     (komga-configuration
@@ -402,6 +394,12 @@
 #+end_src
 
 *** navidrome
+#+begin_src caddyfile :noweb-ref caddy-site
+  music.urspace.moe {
+  	reverse_proxy localhost:43502
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service navidrome-service-type
     (navidrome-configuration
@@ -415,6 +413,12 @@
 #+end_src
 
 *** qbittorrent
+#+begin_src caddyfile :noweb-ref caddy-site
+  dl.urspace.moe {
+  	reverse_proxy localhost:35951
+  }
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service qbittorrent-service-type
     (qbittorrent-configuration
