@@ -705,9 +705,7 @@ Pin commit for aarch64-linux as the build resource is limited
   	}
 
   	handle /nar/* {
-  		reverse_proxy https://nars.guix.moe {
-  			header_up Host {upstream_hostport}
-  		}
+  		reverse_proxy https://nars.guix.moe
   	}
 
   	respond "Visit guix [dot] moe for more information." 404 {

@@ -218,9 +218,7 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   	}
 
   	handle /nar/* {
-  		reverse_proxy https://nars.guix.moe {
-  			header_up Host {upstream_hostport}
-  		}
+  		reverse_proxy https://nars.guix.moe
   	}
 
   	respond "Visit guix [dot] moe for more information." 404 {
@@ -239,9 +237,7 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   	}
 
   	handle /nar/* {
-  		reverse_proxy https://nars.guix.moe {
-  			header_up Host {upstream_hostport}
-  		}
+  		reverse_proxy https://nars.guix.moe
   	}
 
   	respond "Visit guix [dot] moe for more information." 404 {
