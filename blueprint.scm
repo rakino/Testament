@@ -170,26 +170,18 @@
 ;;; Commands.
 ;;;
 
-(define-command (authenticate-command arguments)
-  ((invoke "authenticate")
-   (category 'dispatch))
-  ($guix `("git" "authenticate"
-           "c5d46fdfdfbc84fe413f1d930049d1f703f9a0ff"
-           "F4C2 D1DF 3FDE EA63 D1D3  0776 ACC6 6D09 CA52 8292")))
-
-(define-command (update-channels-command arguments)
-  ((invoke "update-channels")
-   (category 'dispatch))
+(define-command (update-command arguments)
+  ((invoke "update")
+   (category 'development)
+   (synopsis "Update channels.lock to latest channel revisions"))
   ($guix `("repl" "--" "scripts/describe.scm") #:channels "channels.scm"))
 
-(define-command (pull-command arguments)
-  ((invoke "pull")
-   (category 'dispatch))
-  ($guix `("pull" "--channels=channels.lock" ,%substitute-urls)))
-
-(define-command (ares-command arguments)
-  ((invoke "ares")
-   (category 'dispatch))
+(define-command (serve-command arguments)
+  ((invoke "serve")
+   (category 'development)
+   (synopsis "Start nREPL server for emacs-arei")
+   (help "
+Start nREPL server for emacs-arei, also compile Guix when its git submodule is checked out."))
   ;; Update Citre tags.
   (let ((citre-tags-file "/home/hako/.cache/tags/!home!hako!Testament!.tags"))
     (when (file-exists? citre-tags-file)
@@ -197,7 +189,7 @@
                 "--load" "citre-ctags"
                 "--eval"
                 ,(format #f "(citre-update-tags-file ~s)" citre-tags-file)))))
-  (let ((pre-inst-env? (file-exists? "channels/guix")))
+  (let ((pre-inst-env? (file-exists? "channels/guix/bootstrap")))
     ;; Compile Guix.
     (when pre-inst-env?
       (with-directory-excursion "channels/guix"
@@ -221,7 +213,10 @@
 
 (define-command (build-os-command arguments)
   ((invoke "build-os")
-   (category 'deploy))
+   (category 'deployment)
+   (synopsis "Build Guix System")
+   (help "[SYSTEMS] ...
+Build all Guix Systems in this repository or only those matching SYSTEMS."))
   (for-each
    (match-lambda
      ((name . args)
@@ -235,7 +230,10 @@
 
 (define-command (deploy-os-command arguments)
   ((invoke "deploy-os")
-   (category 'deploy))
+   (category 'deployment)
+   (synopsis "Deploy Guix System")
+   (help "[SYSTEMS] ...
+Deploy all Guix Systems in this repository or only those matching SYSTEMS."))
   (for-each
    (match-lambda
      ((name . args)
@@ -251,7 +249,10 @@
 
 (define-command (build-iso-command arguments)
   ((invoke "build-iso")
-   (category 'deploy))
+   (category 'deployment)
+   (synopsis "Build LiveCD")
+   (help "[VARIANTS] ...
+Build all Guix System LiveCDs in this repository or only those matching VARIANTS, saving the results under dist/."))
   (for-each
    (lambda (variant)
      (let ((config (string-append "config/live/" variant ".scm"))
@@ -295,11 +296,8 @@
          %shared-config-emacs
          (map (cut apply system-config-for <>) %systems)))
  (commands
-  (list authenticate-command
-        update-channels-command
-        pull-command
-        ares-command
-
+  (list update-command
+        serve-command
         build-os-command
         deploy-os-command
         build-iso-command)))

@@ -17,7 +17,21 @@ Guix [[https://guix.gnu.org/manual/devel/en/html_node/Channels.html][channels]] 
 + [[https://codeberg.org/hako/rosenthal.git][rosenthal]]
 + [[https://github.com/fishinthecalculator/sops-guix][sops-guix]]
 
-See [[file:.envrc][.envrc]] for environment setup and commands in [[file:blueprint.scm][blueprint.scm]] for usage.
+** Usage
+Environment setup is done via [[https://guix.gnu.org/manual/devel/en/html_node/Invoking-guix-time_002dmachine.html][~guix time-machine~]] and [[https://guix.gnu.org/manual/devel/en/html_node/Invoking-guix-shell.html][~guix shell~]].  [[file:.envrc][.envrc]] is
+available and you can use [[https://direnv.net/][direnv]] to automate the process.
+
+#+begin_example
+  $ guix time-machine -C channels.lock -- shell -m manifest.scm
+#+end_example
+
+This repository uses [[https://codeberg.org/lapislazuli/blue][BLUE build system]], the entry point is at [[file:blueprint.scm][blueprint.scm]].
+
+#+begin_example
+  $ blue configure
+  $ blue build
+  $ blue help
+#+end_example
 
 ** Systems
 *** [[file:config/dorphine.org][dorphine]] (x86_64-linux, UEFI, ZFS, NVIDIA) | [[file:files/deploy/dorphine.scm][deploy]]
