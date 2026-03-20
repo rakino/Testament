@@ -115,10 +115,13 @@ NVIDIA proprietary driver
   "modprobe.blacklist=nouveau"
   "nvidia_drm.modeset=1"
 
-  "nvidia.NVreg_UseKernelSuspendNotifiers=1"
+  ;; https://github.com/Frogging-Family/nvidia-all/blob/master/customization.cfg
+  "nvidia.NVreg_RegistryDwords=RmEnableAggressiveVblank=1"
+  "nvidia.NVreg_UsePageAttributeTable=1"
 
   "mem_sleep_default=s2idle"
   "nvidia.NVreg_EnableS0ixPowerManagement=1"
+  "nvidia.NVreg_UseKernelSuspendNotifiers=1"
 #+end_src
 
 #+begin_src scheme :noweb-ref service
