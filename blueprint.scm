@@ -36,7 +36,7 @@
 (define (build-options)
   `("--keep-going"
     "--verbosity=1"
-    "--load-path=modules/config"
+    "--load-path=modules"
     ,%substitute-urls))
 
 (define (print-header header target)
@@ -276,7 +276,7 @@ VARIANTS, saving the results under dist/."))
             ($guix `("repl" "--" "scripts/build-image.scm" ,(in-vicinity "dist" iso)
                      ,config
                      "--image-type=iso9660"
-                     "--load-path=modules/installer"
+                     "--load-path=config/live/modules"
                      ,@%build-options)
                    #:channels "config/live/channels.lock")))
         (images-from-arguments arguments))))
