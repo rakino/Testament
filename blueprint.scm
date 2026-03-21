@@ -180,7 +180,7 @@
   ((invoke "update")
    (category 'development)
    (synopsis "Update channels.lock to latest channel revisions"))
-  ($guix `("repl" "--" "scripts/describe.scm") #:channels "channels.scm"))
+  ($guix `("repl" "--" "scripts/write-channels.scm") #:channels "channels.scm"))
 
 (define-command (serve-command arguments)
   ((invoke "serve")
