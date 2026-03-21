@@ -128,11 +128,6 @@
 ;;; Buildables.
 ;;;
 
-(define %shared-config-alloy
-  (shared-config
-   (inputs '("config/shared/alloy.org"))
-   (outputs '("tangled/alloy"))))
-
 (define %shared-config-caddy
   (shared-config
    (inputs '("config/shared/caddy.org"))
@@ -144,14 +139,11 @@
    (outputs '("tangled/emacs"))))
 
 (define %systems
-  `(("dorphine" #:fork? #t #:dependencies ,(list %shared-config-alloy
-                                                 %shared-config-emacs))
-    ("chapra"   #:fork? #t #:dependencies ,(list %shared-config-alloy))
-    ("ignamma"             #:dependencies ,(list %shared-config-alloy))
-    ("nuporta"  #:fork? #t #:dependencies ,(list %shared-config-alloy
-                                                 %shared-config-caddy))
-    ("mirror"              #:dependencies ,(list %shared-config-alloy
-                                                 %shared-config-caddy))
+  `(("dorphine" #:fork? #t #:dependencies ,(list %shared-config-emacs))
+    ("chapra"   #:fork? #t #:dependencies ,(list %shared-config-caddy))
+    ("ignamma")
+    ("nuporta"  #:fork? #t #:dependencies ,(list %shared-config-caddy))
+    ("mirror"              #:dependencies ,(list %shared-config-caddy))
     ("worker")))
 
 (define %images

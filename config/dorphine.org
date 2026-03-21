@@ -492,19 +492,6 @@ Generate passwordless ECC key:
       (subuids (list (subid-range (name "hako"))))))
 #+end_src
 
-** Monitoring
-*** alloy
-#+begin_src scheme :noweb-ref service
-  (service alloy-service-type
-    (alloy-configuration
-      (config
-       (plain-file "dorphine.alloy"
-         (string-join
-          (list (sops-str %sops-dorphine '("alloy"))
-                (file-content (testament-file "alloy/node-exporter.alloy")))
-          "\n")))))
-#+end_src
-
 ** Graphical Session
 *** gdm
 #+begin_src scheme :noweb-ref service

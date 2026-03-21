@@ -176,7 +176,7 @@ See [[file:shared/caddy.org][shared/caddy.org]].
 
 #+begin_src caddyfile :noweb yes :tangle ../tangled/mirror/mirror.caddyfile
   {
-  	metrics
+  	admin off
   	log {
   		output file /var/log/caddy/caddy.log
   		format filter {
@@ -198,7 +198,6 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   	}
   }
 
-  <<caddy-snippet-logging>>
   <<caddy-snippet-block-bots>>
 
   :80, :443 {
@@ -211,7 +210,6 @@ See [[file:shared/caddy.org][shared/caddy.org]].
 *** mirroring
 #+begin_src caddyfile :tangle ../tangled/mirror/cache-sg.caddyfile
   cache-sg.guix.moe, cache-hk.guix.moe {
-  	import logging cache-sg.guix.moe
   	import block_bots
 
   	handle /*.narinfo {
@@ -233,7 +231,6 @@ See [[file:shared/caddy.org][shared/caddy.org]].
 
 #+begin_src caddyfile :tangle ../tangled/mirror/cache-us-lax.caddyfile
   cache-us-lax.guix.moe {
-  	import logging cache-us-lax.guix.moe
   	import block_bots
 
   	handle /*.narinfo {
@@ -280,24 +277,6 @@ See [[file:shared/caddy.org][shared/caddy.org]].
                                   "rsync://cache.guix.moe/narinfo/"
                                   "/var/cache/guix-moe/narinfo/"))))))))
             #:requirement '(user-processes))))
-#+end_src
-
-** Monitoring
-#+begin_src scheme :noweb-ref module
-  (rosenthal services monitoring)
-#+end_src
-
-*** alloy
-#+begin_src scheme :noweb-ref service
-  (service alloy-service-type
-    (alloy-configuration
-      (config
-       (plain-file (string-append mirror-name ".alloy")
-         (string-join
-          (list (sops-str %sops-dorphine '("alloy"))
-                (file-content (testament-file "alloy/node-exporter.alloy"))
-                (file-content (testament-file "alloy/caddy.alloy")))
-          "\n")))))
 #+end_src
 
 ** Modules
