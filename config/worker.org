@@ -10,7 +10,7 @@
   (lambda (host-name system 32bit-support? workers bios-boot)
     (operating-system
       (host-name host-name)
-      (timezone "Etc/GMT-8")
+      (timezone "Asia/Hong_Kong")
       (bootloader
        (bootloader-configuration
          (bootloader

@@ -10,7 +10,7 @@
   (define %os
     (operating-system
       (host-name "dorphine")
-      (timezone "Etc/GMT-8")
+      (timezone "Asia/Hong_Kong")
       (keyboard-layout
        (keyboard-layout "us" "dvorak" #:options '("ctrl:nocaps")))
       (bootloader
@@ -51,9 +51,8 @@
 
   (define %transformed-os
     ((nonguix-transformation-nvidia
-      #:driver nvdb
-      #:open-source-kernel-module? #t
-      #:configure-xorg? #t)
+      #:open-source-kernel-module? #f
+      #:configure-xorg? gdm-service-type)
      %os))
 
   (operating-system

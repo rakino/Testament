@@ -43,7 +43,7 @@ Examples:
 - Multiple commands can be chained by =--=, they'll be executed in order.
 
 #+begin_example
-  $ blue configure -- build -- compile -- build-os
+  $ blue build -- compile -- build-os
 #+end_example
 
 ** Systems
