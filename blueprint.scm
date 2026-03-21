@@ -292,16 +292,12 @@ VARIANTS, saving the results under dist/."))
    (variables
     (list (variable
            (name "CMD")
-           (value (delay #f))
+           (value #f)
            (hint "Deployment command for 'guix deploy'"))
           (variable
            (name "URL")
-           (value (delay
-                    (string-join
-                     '("https://cache-cdn.guix.moe"
-                       "https://mirror.sjtu.edu.cn/guix"
-                       "https://mirror.sjtu.edu.cn/guix-bordeaux"))))
-           (hint "Substitute URLs"))))))
+           (value "https://bordeaux.guix.gnu.org https://ci.guix.gnu.org")
+           (hint "Substitute server URLs"))))))
  (buildables
   (map (cut apply system-config-for <>) %systems))
  (commands
