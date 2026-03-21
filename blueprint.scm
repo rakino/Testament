@@ -2,6 +2,7 @@
 ;;; Copyright © 2026 Hilton Chain <hako@ultrarare.space>
 
 (use-modules (ice-9 match)
+             (ice-9 threads)
              (oop goops)
              (srfi srfi-1)
              (srfi srfi-19)
@@ -213,7 +214,7 @@ checked out."))
         (unless (file-exists? "Makefile")
           ($ '("./bootstrap"))
           ($ '("./configure")))
-        ($ '("make" "-j8"))))
+        ($ `("make" "-j" ,(number->string (current-processor-count))))))
     ;; Start nREPL server.
     ($guix `("shell" "guile" "guile-ares-rs" "--"
              ,@(if pre-inst-env?
