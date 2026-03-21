@@ -139,12 +139,12 @@
    (outputs '("tangled/emacs"))))
 
 (define %systems
-  `(("dorphine" #:fork? #t #:dependencies ,(list %shared-config-emacs))
-    ("chapra"   #:fork? #t #:dependencies ,(list %shared-config-caddy))
-    ("ignamma")
-    ("nuporta"  #:fork? #t #:dependencies ,(list %shared-config-caddy))
+  `(("ignamma")
     ("mirror"              #:dependencies ,(list %shared-config-caddy))
-    ("worker")))
+    ("worker")
+    ("chapra"   #:fork? #t #:dependencies ,(list %shared-config-caddy))
+    ("dorphine" #:fork? #t #:dependencies ,(list %shared-config-emacs))
+    ("nuporta"  #:fork? #t #:dependencies ,(list %shared-config-caddy))))
 
 (define %images
   '("minimal"
