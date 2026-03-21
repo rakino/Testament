@@ -444,9 +444,7 @@ Guix System - services
   (gnu services ssh)
   (gnu services sysctl)
   (rosenthal services bittorrent)
-  (rosenthal services child-error)
   (rosenthal services file-systems)
-  (rosenthal services monitoring)
   (rosenthal services networking)
   (rosenthal services web)
   (sops services sops)
@@ -454,8 +452,6 @@ Guix System - services
 
 Guix packages
 #+begin_src scheme :noweb-ref module
-  (gnu packages admin)
-  (gnu packages bash)
   (gnu packages bittorrent)
   (gnu packages file-systems)
   (gnu packages fonts)

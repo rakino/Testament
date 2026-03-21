@@ -286,7 +286,6 @@ Guix System - services
   (gnu services ssh)
   (gnu services sysctl)
   (gnu services virtualization)
-  (rosenthal services monitoring)
   (rosenthal services networking)
 #+end_src
 

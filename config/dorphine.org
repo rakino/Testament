@@ -1258,7 +1258,6 @@ Guix System
 Guix System - services
 #+begin_src scheme :noweb-ref module
   (gnu services containers)
-  (gnu services cuirass)
   (gnu services linux)
   (gnu services networking)
   (gnu services security)
@@ -1270,11 +1269,8 @@ Guix System - services
   (nongnu services nvidia)
   (rosenthal services file-systems)
   (rosenthal services keyboard)
-  (rosenthal services monitoring)
   (rosenthal services networking)
   (rosenthal services shellutils)
-  (rosenthal services web)
-  (sops services sops)
 #+end_src
 
 Guix Home - services
@@ -1289,13 +1285,11 @@ Guix Home - services
 Guix packages
 #+begin_src scheme :noweb-ref module
   (gnu packages android)
-  (gnu packages bash)
   (gnu packages fcitx5)
   (gnu packages file-systems)
   (gnu packages games)
   (gnu packages gnome-xyz)
   (gnu packages gnupg)
-  (gnu packages guile)
   (gnu packages java)
   (gnu packages linux)
   (gnu packages mail)

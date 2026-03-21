@@ -299,7 +299,6 @@ Guix System - services
 
 Guix packages
 #+begin_src scheme :noweb-ref module
-  (gnu packages rsync)
   (gnu packages shells)
   (gnu packages ssh)
   (rosenthal packages web)

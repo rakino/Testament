@@ -1430,7 +1430,6 @@ Guix System - services
   (rosenthal services file-systems)
   (rosenthal services mail)
   (rosenthal services messaging)
-  (rosenthal services monitoring)
   (rosenthal services networking)
   (rosenthal services web)
   (sops services sops)
