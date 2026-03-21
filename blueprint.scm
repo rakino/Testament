@@ -180,6 +180,8 @@
   ((invoke "compile")
    (category 'development)
    (synopsis "Compile Guix from its git submodule"))
+  ;; Update and check out submodules.
+  ($ '("git" "submodule" "update" "--init"))
   ;; Update Citre tags.
   (let ((citre-tags-file "/home/hako/.cache/tags/!home!hako!Testament!.tags"))
     (when (file-exists? citre-tags-file)
@@ -188,19 +190,18 @@
                 "--eval"
                 ,(format #f "(citre-update-tags-file ~s)" citre-tags-file)))))
   ;; Compile Guix.
-  (and (file-exists? "channels/guix/bootstrap")
-       (with-directory-excursion "channels/guix"
-         (unless (file-exists? "Makefile")
-           ($ '("./bootstrap"))
-           ($ '("./configure")))
-         ($ `("make" "-j" ,(number->string (current-processor-count)))))))
+  (with-directory-excursion "channels/guix"
+    (unless (file-exists? "Makefile")
+      ($ '("./bootstrap"))
+      ($ '("./configure")))
+    ($ `("make" "-j" ,(number->string (current-processor-count))))))
 
 (define-command (serve-command arguments)
   ((invoke "serve")
    (category 'development)
    (synopsis "Start nREPL server for emacs-arei"))
   ($guix `("shell" "guile" "guile-ares-rs" "--"
-           ,@(if (file-exists? "channels/guix/bootstrap")
+           ,@(if (file-exists? "channels/guix/scripts/guix")
                  '("./pre-inst-env")
                  '())
            "guile" "-c"
