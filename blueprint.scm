@@ -43,13 +43,10 @@
   (format (current-output-port) "\t~a\t~a\n" header target))
 
 (define ($ cmd)
-  "Run command from CMD list, raise an error for non-zero return value."
   (match cmd
     ((prog . args)
      (let ((exit-val (popen prog args)))
-       (or (zero? exit-val)
-           (error (format #f "Command ~s exited with non-zero exit status: ~s"
-                          (string-join cmd) exit-val)))))))
+       (zero? exit-val)))))
 
 (define* ($guix args #:key fork? (channels "channels.lock") #:allow-other-keys)
   (if fork?
@@ -236,16 +233,17 @@ checked out."))
    (synopsis "Build Guix System")
    (help "[SYSTEMS] ...
 Build all Guix Systems in this repository or only those matching SYSTEMS."))
-  (for-each
-   (match-lambda
-     ((name . args)
-      (let ((config (string-append "tangled/" name "/" name ".scm")))
-        (print-header "BUILD OS" name)
-        (apply $guix `("system" "build" ,config ,@%build-options) args))))
-   (remove
-    (lambda (system)
-      (member (first system) '("mirror" "worker")))
-    (systems-from-arguments arguments))))
+  (every
+   (cut eq? #t <>)
+   (map (match-lambda
+          ((name . args)
+           (let ((config (string-append "tangled/" name "/" name ".scm")))
+             (print-header "BUILD OS" name)
+             (apply $guix `("system" "build" ,config ,@%build-options) args))))
+        (remove
+         (lambda (system)
+           (member (first system) '("mirror" "worker")))
+         (systems-from-arguments arguments)))))
 
 (define-command (deploy-os-command arguments)
   ((invoke "deploy-os")
@@ -253,18 +251,19 @@ Build all Guix Systems in this repository or only those matching SYSTEMS."))
    (synopsis "Deploy Guix System")
    (help "[SYSTEMS] ...
 Deploy all Guix Systems in this repository or only those matching SYSTEMS."))
-  (for-each
-   (match-lambda
-     ((name . args)
-      (let ((config (string-append "deploy/" name ".scm")))
-        (print-header "DEPLOY OS" name)
-        (apply $guix
-               `("deploy" ,config
-                 ,@(if #%?CMD
-                       `(,@%build-options "-x" "--" "sh" "--login" "-c" ,#%?CMD)
-                       %build-options))
-               args))))
-   (systems-from-arguments arguments)))
+  (every
+   (cut eq? #t <>)
+   (map (match-lambda
+          ((name . args)
+           (let ((config (string-append "deploy/" name ".scm")))
+             (print-header "DEPLOY OS" name)
+             (apply $guix
+                    `("deploy" ,config
+                      ,@(if #%?CMD
+                            `(,@%build-options "-x" "--" "sh" "--login" "-c" ,#%?CMD)
+                            %build-options))
+                    args))))
+        (systems-from-arguments arguments))))
 
 (define-command (build-iso-command arguments)
   ((invoke "build-iso")
@@ -273,21 +272,22 @@ Deploy all Guix Systems in this repository or only those matching SYSTEMS."))
    (help "[VARIANTS] ...
 Build all Guix System LiveCDs in this repository or only those matching \
 VARIANTS, saving the results under dist/."))
-  (for-each
-   (lambda (variant)
-     (let ((config (string-append "config/live/" variant ".scm"))
-           (iso (format #f "rosenthal-~a-~a.~a.iso"
-                        variant
-                        (date->string (current-date) "~Y~m~d")
-                        (%current-system))))
-       (print-header "BUILD ISO" iso)
-       ($guix `("repl" "--" "scripts/build-image.scm" ,(in-vicinity "dist" iso)
-                ,config
-                "--image-type=iso9660"
-                "--load-path=modules/installer"
-                ,@%build-options)
-              #:channels "config/live/channels.lock")))
-   (images-from-arguments arguments)))
+  (every
+   (cut eq? #t <>)
+   (map (lambda (variant)
+          (let ((config (string-append "config/live/" variant ".scm"))
+                (iso (format #f "rosenthal-~a-~a.~a.iso"
+                             variant
+                             (date->string (current-date) "~Y~m~d")
+                             (%current-system))))
+            (print-header "BUILD ISO" iso)
+            ($guix `("repl" "--" "scripts/build-image.scm" ,(in-vicinity "dist" iso)
+                     ,config
+                     "--image-type=iso9660"
+                     "--load-path=modules/installer"
+                     ,@%build-options)
+                   #:channels "config/live/channels.lock")))
+        (images-from-arguments arguments))))
 
 
 ;;;
