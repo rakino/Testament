@@ -89,6 +89,7 @@
         "--load" "ob-tangle"
         "--eval" "(setopt org-babel-load-languages '((shell . t)))"
         "--eval" "(setopt org-confirm-babel-evaluate nil)"
+        "--eval" "(setopt org-id-track-globally nil)"
         "--eval" ,(format #f "(org-babel-tangle-file ~s)" input)))
      ($ `("touch" ,output)))))
 
@@ -116,6 +117,7 @@
         "--load" "ob-lob"
         "--eval" "(setopt org-babel-load-languages '((shell . t)))"
         "--eval" "(setopt org-confirm-babel-evaluate nil)"
+        "--eval" "(setopt org-id-track-globally nil)"
         ,@(append-map
            (lambda (file)
              (list "--eval" (format #f "(org-babel-lob-ingest ~s)" file)))
