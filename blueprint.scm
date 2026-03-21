@@ -210,8 +210,9 @@ checked out."))
     ;; Compile Guix.
     (when pre-inst-env?
       (with-directory-excursion "channels/guix"
-        ($ '("./bootstrap"))
-        ($ '("./configure"))
+        (unless (file-exists? "Makefile")
+          ($ '("./bootstrap"))
+          ($ '("./configure")))
         ($ '("make" "-j8"))))
     ;; Start nREPL server.
     ($guix `("shell" "guile" "guile-ares-rs" "--"
