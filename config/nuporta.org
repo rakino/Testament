@@ -60,12 +60,12 @@
 | Lycoris/Config                | legacy (/etc)               |                            | true                  |
 | Lycoris/Store                 | legacy (/gnu)               | atime=off                  |                       |
 | Lycoris/Cache                 | /var/cache                  |                            |                       |
-| Lycoris/Cache/GuixMoe         | /var/cache/guix-moe         |                            | true                  |
-| Lycoris/Cache/GuixMoe/Narinfo | /var/cache/guix-moe/narinfo | recordsize=8K              | true                  |
-| Lycoris/Cache/GuixPublish     | /var/cache/guix/publish     | recordsize=8K              | true                  |
-| Lycoris/Cache/GuixPublish/Nar | /var/cache/guix/publish/nar | compress=off,recordsize=1M | true                  |
+| Lycoris/Cache/GuixMoe         | /var/cache/guix-moe         |                            |                       |
+| Lycoris/Cache/GuixMoe/Narinfo | /var/cache/guix-moe/narinfo | recordsize=8K              |                       |
+| Lycoris/Cache/GuixPublish     | /var/cache/guix/publish     | recordsize=8K              |                       |
+| Lycoris/Cache/GuixPublish/Nar | /var/cache/guix/publish/nar | compress=off,recordsize=1M |                       |
 | Lycoris/Data                  | /var/lib                    |                            |                       |
-| Lycoris/Data/Forgejo          | /var/lib/forgejo            |                            | true                  |
+| Lycoris/Data/Forgejo          | /var/lib/forgejo            |                            |                       |
 | Lycoris/Data/Mail             | /var/lib/docker-mailserver  |                            | true                  |
 | Lycoris/Data/PostgreSQL       | /var/lib/postgresql         | recordsize=32K             | true                  |
 | Lycoris/Data/Redis            | /var/lib/redis              |                            | true                  |
