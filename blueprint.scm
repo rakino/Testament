@@ -176,11 +176,24 @@
 ;;; Commands.
 ;;;
 
-(define-command (update-command arguments)
-  ((invoke "update")
+(define-command (compile-command arguments)
+  ((invoke "compile")
    (category 'development)
-   (synopsis "Update channels.lock to latest channel revisions"))
-  ($guix `("repl" "--" "scripts/write-channels.scm") #:channels "channels.scm"))
+   (synopsis "Compile Guix from its git submodule"))
+  ;; Update Citre tags.
+  (let ((citre-tags-file "/home/hako/.cache/tags/!home!hako!Testament!.tags"))
+    (when (file-exists? citre-tags-file)
+      ($emacs `("--quick" "--batch"
+                "--load" "citre-ctags"
+                "--eval"
+                ,(format #f "(citre-update-tags-file ~s)" citre-tags-file)))))
+  ;; Compile Guix.
+  (and (file-exists? "channels/guix/bootstrap")
+       (with-directory-excursion "channels/guix"
+         (unless (file-exists? "Makefile")
+           ($ '("./bootstrap"))
+           ($ '("./configure")))
+         ($ `("make" "-j" ,(number->string (current-processor-count)))))))
 
 (define-command (serve-command arguments)
   ((invoke "serve")
@@ -200,24 +213,11 @@
                       (run-nrepl-server))
                    <>)))))
 
-(define-command (compile-command arguments)
-  ((invoke "compile")
+(define-command (update-command arguments)
+  ((invoke "update")
    (category 'development)
-   (synopsis "Compile Guix from its git submodule"))
-  ;; Update Citre tags.
-  (let ((citre-tags-file "/home/hako/.cache/tags/!home!hako!Testament!.tags"))
-    (when (file-exists? citre-tags-file)
-      ($emacs `("--quick" "--batch"
-                "--load" "citre-ctags"
-                "--eval"
-                ,(format #f "(citre-update-tags-file ~s)" citre-tags-file)))))
-  ;; Compile Guix.
-  (and (file-exists? "channels/guix/bootstrap")
-       (with-directory-excursion "channels/guix"
-         (unless (file-exists? "Makefile")
-           ($ '("./bootstrap"))
-           ($ '("./configure")))
-         ($ `("make" "-j" ,(number->string (current-processor-count)))))))
+   (synopsis "Update channels.lock to latest channel revisions"))
+  ($guix `("repl" "--" "scripts/write-channels.scm") #:channels "channels.scm"))
 
 (define-command (build-os-command arguments)
   ((invoke "build-os")
@@ -305,9 +305,10 @@ VARIANTS, saving the results under dist/."))
  (buildables
   (map (cut apply system-config-for <>) %systems))
  (commands
-  (list update-command
+  (list compile-command
         serve-command
-        compile-command
+        update-command
+
         build-os-command
         deploy-os-command
         build-iso-command)))
