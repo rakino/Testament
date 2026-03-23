@@ -484,6 +484,13 @@ Generate passwordless ECC key:
 #+end_src
 
 ** Containers & Virtualization
+*** binfmt_misc
+#+begin_src scheme :noweb-ref service
+  (service qemu-binfmt-service-type
+    (qemu-binfmt-configuration
+      (platforms (lookup-qemu-platforms "aarch64" "arm"))))
+#+end_src
+
 *** podman
 #+begin_src scheme :noweb-ref account-group-hako
   "cgroup"
@@ -1272,6 +1279,7 @@ Guix System - services
   (gnu services ssh)
   (gnu services syncthing)
   (gnu services sysctl)
+  (gnu services virtualization)
   (gnu services xorg)
   (rosenthal services file-systems)
   (rosenthal services keyboard)
