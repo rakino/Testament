@@ -70,6 +70,80 @@
   udp dport mdns accept
 #+end_src
 
+Extra configurations for NVIDIA proprietary driver
+
+Performance
+#+begin_src scheme :noweb-ref kernel-argument
+  "nvidia.NVreg_RegistryDwords=RmEnableAggressiveVblank=1"
+  "nvidia.NVreg_UsePageAttributeTable=1"
+#+end_src
+
+Power management and suspend
+#+begin_src scheme :noweb-ref kernel-argument
+  "nvidia.NVreg_UseKernelSuspendNotifiers=1"
+  "nvidia.NVreg_TemporaryFilePath=/var/tmp"
+  "mem_sleep_default=s2idle"
+  "nvidia.NVreg_EnableS0ixPowerManagement=1"
+#+end_src
+
+FIXME: GDM doesn't work, disable amdgpu for now
+
+#+begin_example
+  libmutter-Message: 20:32:02.883: Device '/dev/dri/card1' prefers shadow buffer
+  libmutter-Message: 20:32:02.892: Added device '/dev/dri/card1' (nvidia-drm) using atomic mode setting.
+  libmutter-Message: 20:32:02.938: Device '/dev/dri/card0' prefers shadow buffer
+  libmutter-Message: 20:32:02.939: Added device '/dev/dri/card0' (amdgpu) using atomic mode setting.
+  libmutter-Message: 20:32:02.941: Failed to initialize accelerated iGPU/dGPU framebuffer sharing: Not hardware accelerated
+  libmutter-Message: 20:32:02.941: Created gbm renderer for '/dev/dri/card1'
+  libmutter-Message: 20:32:02.942: Created gbm renderer for '/dev/dri/card0'
+  libmutter-Message: 20:32:02.942: GPU /dev/dri/card0 selected as primary
+#+end_example
+
+#+begin_src scheme :noweb-ref kernel-argument
+  "modprobe.blacklist=amdgpu"
+#+end_src
+
+Application profiles
+#+begin_src scheme :noweb-ref service
+  (simple-service 'nvidia-application-profiles etc-service-type
+    `(;; https://github.com/Frogging-Family/nvidia-all/blob/master/system/limit-vram-usage
+      ("nvidia/nvidia-application-profiles-rc.d/limit-vram-usage.json"
+       ,(json-file "nvidia-application-profile-limit-vram-usage.json"
+          #~`(("profiles"
+                 . #((("name" . "No VidMem Reuse")
+                      ("settings"
+                       . #((("key" . "GLVidHeapReuseRatio")
+                            ("value" . 0)))))))
+              ("rules"
+               . #((("pattern"
+                     ("op" . "or")
+                     ("sub"
+                      . ,(list->vector
+                          (map (lambda (name)
+                                 `(("feature" . "procname")
+                                   ("matches" . ,name)))
+                               '("librewolf"
+                                 "niri")))))
+                    ("profile" . "No VidMem Reuse")))))))
+      ;; https://github.com/Frogging-Family/nvidia-all/blob/master/system/cuda-no-stable-perf-limit
+      ("nvidia/nvidia-application-profiles-rc.d/cuda-no-stable-perf-limit.json"
+       ,(json-file "nvidia-application-profile-cuda-no-stable-perf-limit.json"
+          #~`(("profiles"
+               . #((("name" . "CudaNoStablePerfLimit")
+                    ("settings" . #("0x166c5e" 0)))))
+              ("rules"
+               . #((("pattern"
+                     ("op" . "or")
+                     ("sub"
+                      . ,(list->vector
+                          (map (lambda (name)
+                                 `(("feature" . "procname")
+                                   ("matches" . ,name)))
+                               '("librewolf"
+                                 "obs")))))
+                    ("profile" . "CudaNoStablePerfLimit")))))))))
+#+end_src
+
 ** Guix Home
 #+begin_src scheme :noweb yes :noweb-ref service
   (service guix-home-service-type
@@ -99,17 +173,6 @@
   "memtest=3"
   "zswap.enabled=1"
   "zswap.max_pool_percent=90"
-#+end_src
-
-Extra kernel arguments for NVIDIA proprietary driver
-#+begin_src scheme :noweb-ref kernel-argument
-  ;; https://github.com/Frogging-Family/nvidia-all/blob/master/customization.cfg
-  "nvidia.NVreg_RegistryDwords=RmEnableAggressiveVblank=1"
-  "nvidia.NVreg_UsePageAttributeTable=1"
-
-  "mem_sleep_default=s2idle"
-  "nvidia.NVreg_EnableS0ixPowerManagement=1"
-  "nvidia.NVreg_UseKernelSuspendNotifiers=1"
 #+end_src
 
 #+begin_src scheme :noweb-ref service
@@ -512,23 +575,6 @@ Generate passwordless ECC key:
    gdm-service-type)
 #+end_src
 
-Disable amdgpu for now.
-
-#+begin_example
-  libmutter-Message: 20:32:02.883: Device '/dev/dri/card1' prefers shadow buffer
-  libmutter-Message: 20:32:02.892: Added device '/dev/dri/card1' (nvidia-drm) using atomic mode setting.
-  libmutter-Message: 20:32:02.938: Device '/dev/dri/card0' prefers shadow buffer
-  libmutter-Message: 20:32:02.939: Added device '/dev/dri/card0' (amdgpu) using atomic mode setting.
-  libmutter-Message: 20:32:02.941: Failed to initialize accelerated iGPU/dGPU framebuffer sharing: Not hardware accelerated
-  libmutter-Message: 20:32:02.941: Created gbm renderer for '/dev/dri/card1'
-  libmutter-Message: 20:32:02.942: Created gbm renderer for '/dev/dri/card0'
-  libmutter-Message: 20:32:02.942: GPU /dev/dri/card0 selected as primary
-#+end_example
-
-#+begin_src scheme :noweb-ref kernel-argument
-  "modprobe.blacklist=amdgpu"
-#+end_src
-
 *** niri
 #+begin_src scheme :noweb-ref package-spec
   "niri"
@@ -691,46 +737,6 @@ Disable amdgpu for now.
       Ctrl+Print                     { screenshot-screen; }
       Alt+Print                      { screenshot-window; }
   }
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  (simple-service 'nvidia-application-profiles etc-service-type
-    `(;; https://github.com/Frogging-Family/nvidia-all/blob/master/system/limit-vram-usage
-      ("nvidia/nvidia-application-profiles-rc.d/limit-vram-usage.json"
-       ,(json-file "nvidia-application-profile-limit-vram-usage.json"
-          #~`(("profiles"
-                 . #((("name" . "No VidMem Reuse")
-                      ("settings"
-                       . #((("key" . "GLVidHeapReuseRatio")
-                            ("value" . 0)))))))
-              ("rules"
-               . #((("pattern"
-                     ("op" . "or")
-                     ("sub"
-                      . ,(list->vector
-                          (map (lambda (name)
-                                 `(("feature" . "procname")
-                                   ("matches" . ,name)))
-                               '("librewolf"
-                                 "niri")))))
-                    ("profile" . "No VidMem Reuse")))))))
-      ;; https://github.com/Frogging-Family/nvidia-all/blob/master/system/cuda-no-stable-perf-limit
-      ("nvidia/nvidia-application-profiles-rc.d/cuda-no-stable-perf-limit.json"
-       ,(json-file "nvidia-application-profile-cuda-no-stable-perf-limit.json"
-          #~`(("profiles"
-               . #((("name" . "CudaNoStablePerfLimit")
-                    ("settings" . #("0x166c5e" 0)))))
-              ("rules"
-               . #((("pattern"
-                     ("op" . "or")
-                     ("sub"
-                      . ,(list->vector
-                          (map (lambda (name)
-                                 `(("feature" . "procname")
-                                   ("matches" . ,name)))
-                               '("librewolf"
-                                 "obs")))))
-                    ("profile" . "CudaNoStablePerfLimit")))))))))
 #+end_src
 
 *** shepherd
