@@ -16,6 +16,7 @@
   ;; Guix origin methods
   #:use-module (guix git-download)
   ;; Guix packages
+  #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages file)
@@ -27,6 +28,7 @@
   #:use-module (gnu packages ssh)
   #:use-module (gnu packages sync)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu packages vim)
   #:use-module (nongnu packages linux)
   #:use-module (rosenthal packages password-utils)
   #:export (testament-path
@@ -234,7 +236,8 @@ WARNED."
 ;;;
 
 (define %testament-cli-packages
-  (list curl
+  (list binutils
+        curl
         fd
         file
         git
@@ -248,7 +251,8 @@ WARNED."
         ripgrep
         rsync
         sops
-        unzip))
+        unzip
+        xxd))
 
 (define %kernel-patches
   (let ((commit "efe2c30a7601a0472069544d36e2d8f12b9807cf"))
