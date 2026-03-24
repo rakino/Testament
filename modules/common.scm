@@ -3,7 +3,6 @@
 
 (define-module (common)
   ;; Guile builtins
-  #:use-module (ice-9 match)
   #:use-module (ice-9 popen)
   #:use-module (ice-9 textual-ports)
   #:use-module (srfi srfi-26)
@@ -16,8 +15,6 @@
   #:use-module (sops secrets)
   ;; Guix origin methods
   #:use-module (guix git-download)
-  ;; Guix build systems
-  #:use-module (guix build-system copy)
   ;; Guix packages
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
@@ -57,8 +54,7 @@
             %xdg-base-directory-env-vars
 
             %testament-cli-packages
-            linux/dolly
-            manage-cuirass))
+            linux/dolly))
 
 
 ;;;
@@ -277,73 +273,3 @@ WARNED."
        (patches
         (map (cut file-append %kernel-patches <>)
              '("/6.18/bbr3-patches/0001-tcp-bbr3-add-BBRv3-congestion-control.patch")))))))
-
-(define manage-cuirass
-  (let ((script
-         (program-file "manage-cuirass.scm"
-           #~(begin
-               (use-modules (ice-9 format) (ice-9 match))
-               (define %services
-                 '("cuirass"
-                   "cuirass-remote-server"
-                   "cuirass-remote-worker"
-                   "cuirass-web"))
-               (define %actions
-                 '("status"
-                   "start"
-                   "stop"
-                   "restart"
-                   "enable"
-                   "disable"))
-               (define (service? service)
-                 (member service %services))
-               (define (action? action)
-                 (member action %actions))
-
-               (match (cdr (command-line))
-                 (((? service? service) (? action? action))
-                  (system* "herd" action service))
-                 (_
-                  (format (current-error-port) "~
-Usage: manage-cuirass SERVICE ACTION
-
-SERVICE:
-~{- ~a
-~}
-ACTION:
-~{- ~a
-~}" %services %actions)
-                  (exit 1)))))))
-    (package
-      (name "manage-cuirass")
-      (version "0.0.0")
-      (source #f)
-      (build-system copy-build-system)
-      (arguments
-       (list
-        #:phases
-        #~(modify-phases %standard-phases
-            (delete 'unpack)
-            (replace 'install
-              (lambda _
-                (call-with-output-file "manage-cuirass.c"
-                  (lambda (port)
-                    (format port "~
-#include <sys/types.h>
-#include <stdio.h>
-#include <unistd.h>
-
-int main(int argc, char **argv, char **envp) {
-  setuid(geteuid());
-  *argv = ~s;
-  execve(*argv, argv, envp);
-  perror(*argv);
-  return 127;
-}~%"
-                            #$script)))
-                (invoke "gcc" "manage-cuirass.c" "-o" "manage-cuirass")
-                (install-file "manage-cuirass" (in-vicinity #$output "bin")))))))
-      (home-page "")
-      (synopsis "")
-      (description "")
-      (license #f))))
