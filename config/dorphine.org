@@ -26,7 +26,8 @@
       (initrd microcode-initrd)
       (file-systems (append <<file-systems>> %base-file-systems))
       (swap-devices (append <<swap-devices>>))
-      (users (cons* <<user>> %base-user-accounts))
+      (groups (cons* <<user-group>> %base-groups))
+      (users (cons* <<user-account>> %base-user-accounts))
       (packages
        (append (specifications->packages
                 '(;; Desktop applications.
@@ -292,7 +293,7 @@ Generate random password hash:
   pwgen -sync 16 1 | openssl passwd -6 -stdin
 #+end_src
 
-#+begin_src scheme :noweb yes :noweb-ref user
+#+begin_src scheme :noweb yes :noweb-ref user-account
   (user-account
     (inherit %root-account)
     (password #f)
@@ -301,7 +302,7 @@ Generate random password hash:
   (user-account
     (name "hako")
     (group "users")
-    (supplementary-groups '("adbusers" "audio" "cgroup" "kvm" "plugdev" "video" "wheel"))
+    (supplementary-groups '("kvm" "wheel" "audio" "video" <<account-group-hako>>))
     (shell (file-append fish "/bin/fish")))
 #+end_src
 
@@ -484,6 +485,10 @@ Generate passwordless ECC key:
 
 ** Containers & Virtualization
 *** podman
+#+begin_src scheme :noweb-ref account-group-hako
+  "cgroup"
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (service rootless-podman-service-type
     (rootless-podman-configuration
@@ -816,6 +821,10 @@ use =en_US.utf8= (the default) if you have encountered issues.
 
 ** Applications
 *** adb
+#+begin_src scheme :noweb-ref account-group-hako
+  "adbusers"
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (udev-rules-service 'android android-udev-rules #:groups '("adbusers"))
 #+end_src
