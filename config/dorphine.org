@@ -1087,7 +1087,8 @@ Copied from =%default-dotguile=.
             (start
              #~(make-forkexec-constructor
                 '(#$(file-append jellyfin-mpv-shim "/bin/jellyfin-mpv-shim"))))
-            (stop #~(make-kill-destructor)))))
+            (stop #~(make-kill-destructor))
+            (auto-start? #f))))
 #+end_src
 
 *** librewolf
