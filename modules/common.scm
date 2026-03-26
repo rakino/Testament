@@ -2,6 +2,7 @@
 ;;; Copyright © 2023-2026 Hilton Chain <hako@ultrarare.space>
 
 (define-module (common)
+  #:use-module (linux)
   ;; Guile builtins
   #:use-module (ice-9 popen)
   #:use-module (ice-9 textual-ports)
@@ -13,6 +14,7 @@
   #:use-module (rosenthal utils file)
   #:use-module (sops secrets)
   ;; Guix origin methods
+  #:use-module (guix download)
   #:use-module (guix git-download)
   ;; Guix build systems
   #:use-module (guix build-system trivial)
@@ -58,8 +60,10 @@
             %xdg-base-directory-env-vars
 
             %testament-cli-packages
-            linux/dolly
-            sugar-light-sddm-theme/dolly))
+            sugar-light-sddm-theme/dolly
+
+            linux-desktop/dolly
+            linux-server/dolly))
 
 
 ;;;
@@ -273,26 +277,97 @@ WARNED."
     (propagated-inputs '())
     (outputs '("out"))))
 
-(define %kernel-patches
-  (let ((commit "efe2c30a7601a0472069544d36e2d8f12b9807cf"))
-    (origin
-      (method git-fetch)
-      (uri (git-reference
-             (url "https://github.com/rakino/kernel-patches")
-             (commit commit)))
-      (file-name (git-file-name "kernel-patches" (string-take commit 7)))
-      (sha256
-       (base32
-        "07asnniwybkiz3rfdqsdwg53g5djazbhdszj74mzybm36091ps4b")))))
+
+;;;
+;;; Kernel
+;;;
 
-(define linux/dolly
-  (let ((base linux-6.18))
-    (customize-linux
-     #:name "linux-dolly"
-     #:linux base
-     #:source
+(define (%kernel-config path)
+  (let* ((commit "73ec75731ef64e03368dc8cdfbabe8a67cd2fab0")
+         (source
+          (origin
+            (method git-fetch)
+            (uri (git-reference
+                   (url "https://codeberg.org/hako/kernel-config.git")
+                   (commit commit)))
+            (file-name (string-append "kernel-config." (string-take commit 7)))
+            (sha256
+             (base32 "0nqnzkaqy4pqb3kza6n0cn76p1kh4dwldyx76ycgar7b61p6p8jz")))))
+    (file-append source path)))
+
+(define* (make-linux/dolly base version source #:key defconfig modconfig (configs ""))
+  (let ((kernel
+         (customize-linux
+          #:name "linux-dolly"
+          #:linux base
+          #:source source
+          #:defconfig defconfig
+          #:modconfig modconfig
+          #:configs configs)))
+    (linux-with-zfs
+     (package
+       (inherit kernel)
+       (version version)))))
+
+(define linux-server/dolly
+  (let ((cachyos-version "6.18.20-1"))
+    (make-linux/dolly
+     linux-6.18
+     cachyos-version
      (origin
-       (inherit (package-source base))
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/CachyOS/linux/releases/download/cachyos-"
+             cachyos-version "/cachyos-" cachyos-version ".tar.gz"))
+       (sha256
+        (base32 "1iwkqiqjn611igvnpqkiv7fl6prmbgicf2rf3czas8wk46g5r691")))
+     #:defconfig (%kernel-config "/defconfig_server")
+     #:configs
+     (string-join
+      (append (cachyos-configs
+               #:cachy-config? #f
+               #:cpusched 'eevdf
+               #:cc-harder? #t
+               #:per-gov? #f
+               #:tcp-bbr3? #t
+               #:HZ-ticks 300
+               #:tickrate 'full
+               #:preempt 'none
+               #:hugepage 'always
+               #:processor-opt 'generic)
+              (default-initrd-configs))
+      "\n"))))
+
+(define linux-desktop/dolly
+  (let ((cachyos-version "6.19.10-1"))
+    (make-linux/dolly
+     linux-6.19
+     cachyos-version
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/CachyOS/linux/releases/download/cachyos-"
+             cachyos-version "/cachyos-" cachyos-version ".tar.gz"))
+       (sha256
+        (base32 "024mfb94nxr2kdbq398r76bfw3yk0ijg45f3z0cfpl3by5qvb478"))
        (patches
-        (map (cut file-append %kernel-patches <>)
-             '("/6.18/bbr3-patches/0001-tcp-bbr3-add-BBRv3-congestion-control.patch")))))))
+        (map %kernel-config
+             '("/patches/bore-cachy-6.19.patch"
+               "/patches/cjktty-6.19.patch"
+               "/patches/cjktty-add-cjk32x32-font-data.patch"))))
+     #:defconfig (%kernel-config "/defconfig_desktop")
+     #:configs
+     (string-join
+      (append (cachyos-configs
+               #:cachy-config? #t
+               #:cpusched 'bore
+               #:cc-harder? #t
+               #:per-gov? #f
+               #:tcp-bbr3? #t
+               #:HZ-ticks 1000
+               #:tickrate 'full
+               #:preempt 'full
+               #:hugepage 'always
+               #:processor-opt 'zen4)
+              (default-initrd-configs))
+      "\n"))))
