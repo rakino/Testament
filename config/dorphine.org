@@ -46,13 +46,13 @@
                %base-packages))
       (services
        (cons* <<service>>
-              (modify-services %rosenthal-desktop-services/gdm <<modify-service>>)))
+              (modify-services %rosenthal-desktop-services/base <<modify-service>>)))
       (name-service-switch %mdns-host-lookup-nss)))
 
   (define %transformed-os
     ((nonguix-transformation-nvidia
       #:open-source-kernel-module? #f
-      #:configure-xorg? gdm-service-type)
+      #:configure-xorg? sddm-service-type)
      %os))
 
   (operating-system
@@ -83,23 +83,6 @@ Power management and suspend
   "nvidia.NVreg_TemporaryFilePath=/var/tmp"
   "mem_sleep_default=s2idle"
   "nvidia.NVreg_EnableS0ixPowerManagement=1"
-#+end_src
-
-FIXME: GDM doesn't work, disable amdgpu for now
-
-#+begin_example
-  libmutter-Message: 20:32:02.883: Device '/dev/dri/card1' prefers shadow buffer
-  libmutter-Message: 20:32:02.892: Added device '/dev/dri/card1' (nvidia-drm) using atomic mode setting.
-  libmutter-Message: 20:32:02.938: Device '/dev/dri/card0' prefers shadow buffer
-  libmutter-Message: 20:32:02.939: Added device '/dev/dri/card0' (amdgpu) using atomic mode setting.
-  libmutter-Message: 20:32:02.941: Failed to initialize accelerated iGPU/dGPU framebuffer sharing: Not hardware accelerated
-  libmutter-Message: 20:32:02.941: Created gbm renderer for '/dev/dri/card1'
-  libmutter-Message: 20:32:02.942: Created gbm renderer for '/dev/dri/card0'
-  libmutter-Message: 20:32:02.942: GPU /dev/dri/card0 selected as primary
-#+end_example
-
-#+begin_src scheme :noweb-ref kernel-argument
-  "modprobe.blacklist=amdgpu"
 #+end_src
 
 Application profiles
@@ -566,12 +549,21 @@ Generate passwordless ECC key:
 #+end_src
 
 ** Graphical Session
-*** gdm
+*** sddm
+#+begin_src scheme :noweb-ref service
+  (service sddm-service-type
+    (sddm-configuration
+      (sddm sddm-qt5)
+      (theme "sugar-light")
+      (themes-directory
+       (file-append sugar-light-sddm-theme/dolly "/share/sddm/themes"))))
+#+end_src
+
 #+begin_src scheme :noweb-ref service
   (set-xorg-configuration
    (xorg-configuration
      (keyboard-layout keyboard-layout))
-   gdm-service-type)
+   sddm-service-type)
 #+end_src
 
 *** niri
@@ -1280,6 +1272,7 @@ Guix System - services
   (gnu services containers)
   (gnu services linux)
   (gnu services networking)
+  (gnu services sddm)
   (gnu services security)
   (gnu services security-token)
   (gnu services ssh)
@@ -1288,7 +1281,6 @@ Guix System - services
   (gnu services virtualization)
   (gnu services xorg)
   (rosenthal services file-systems)
-  (rosenthal services keyboard)
   (rosenthal services networking)
   (rosenthal services shellutils)
 #+end_src
@@ -1305,6 +1297,7 @@ Guix Home - services
 Guix packages
 #+begin_src scheme :noweb-ref module
   (gnu packages android)
+  (gnu packages display-managers)
   (gnu packages fcitx5)
   (gnu packages file-systems)
   (gnu packages games)

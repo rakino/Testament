@@ -14,10 +14,13 @@
   #:use-module (sops secrets)
   ;; Guix origin methods
   #:use-module (guix git-download)
+  ;; Guix build systems
+  #:use-module (guix build-system trivial)
   ;; Guix packages
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
+  #:use-module (gnu packages display-managers)
   #:use-module (gnu packages file)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages linux)
@@ -55,7 +58,8 @@
             %xdg-base-directory-env-vars
 
             %testament-cli-packages
-            linux/dolly))
+            linux/dolly
+            sugar-light-sddm-theme/dolly))
 
 
 ;;;
@@ -249,6 +253,25 @@ WARNED."
         sops
         unzip
         xxd))
+
+(define sugar-light-sddm-theme/dolly
+  (package
+    (inherit sugar-light-sddm-theme)
+    (build-system trivial-build-system)
+    (arguments
+     (list
+      #:builder
+      (with-imported-modules '((guix build utils))
+        #~(begin
+            (use-modules (guix build utils))
+            (copy-recursively #$sugar-light-sddm-theme #$output)
+            (substitute* (in-vicinity #$output "share/sddm/themes/sugar-light/theme.conf")
+              (("(ForceHideCompletePassword=)false" _ option)
+               (string-append option "true")))))))
+    (native-inputs '())
+    (inputs '())
+    (propagated-inputs '())
+    (outputs '("out"))))
 
 (define %kernel-patches
   (let ((commit "efe2c30a7601a0472069544d36e2d8f12b9807cf"))
