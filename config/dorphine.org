@@ -131,9 +131,7 @@ Application profiles
   (service guix-home-service-type
     `(("hako" ,(home-environment
                  (services
-                  (cons* <<home-service>>
-                         (service home-keyboard-service-type keyboard-layout)
-                         %rosenthal-desktop-home-services))))))
+                  (cons* <<home-service>> %rosenthal-desktop-home-services))))))
 #+end_src
 
 #+begin_src scheme :noweb yes :noweb-ref home-service
