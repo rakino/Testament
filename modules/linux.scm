@@ -78,8 +78,7 @@
            #:optional
            (system (or (%current-target-system)
                        (%current-system))))
-  "Kernel configurations required by 'default-initrd-modules'.  If possible,
-build them into the kernel to avoid loading issues in the initrd."
+  "Kernel configurations required by 'default-initrd-modules'."
   `("CONFIG_NLS_ISO8859_1=m"
 
     "CONFIG_CRYPTO_SERPENT=m"
@@ -112,7 +111,7 @@ build them into the kernel to avoid loading issues in the initrd."
           '()
           '("CONFIG_HID_APPLE=m"))))
 
-;; https://github.com/CachyOS/CachyOS-PKGBUILDS
+;; https://github.com/CachyOS/linux-cachyos
 (define* (cachyos-configs #:key cachy-config?
                           cpusched
                           cc-harder?
