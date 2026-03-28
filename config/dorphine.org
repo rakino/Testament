@@ -1081,6 +1081,7 @@ Copied from =%default-dotguile=.
   "adaptive-tab-bar-colour-icecat"
   "bitwarden-icecat"
   "livemarks-icecat"
+  "miniflux-injector-icecat"
   "ohmyech-icecat"
   "ublock-origin-icecat"
 #+end_src
