@@ -447,7 +447,7 @@
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'asahi)
              (url "https://codeberg.org/asahi-guix/channel")
@@ -470,7 +470,7 @@
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'atomized)
              (url "https://codeberg.org/ieure/atomized-guix.git")
@@ -493,7 +493,7 @@
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'cast)
              (branch "main")
@@ -516,7 +516,7 @@
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'emacs-master)
              (url "https://github.com/gs-101/emacs-master.git")
@@ -538,7 +538,7 @@
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))))
+             (url "https://git.guix.moe/mirror/guix.git"))))
     (priority 9)
     (systems '("x86_64-linux")))
 #+end_src
@@ -551,7 +551,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/hako/guix.git")
+             (url "https://git.guix.moe/hako/guix.git")
              (branch "pinned"))))
     (priority 9)
     (systems '("aarch64-linux")))
@@ -565,7 +565,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'guixcn)
              (url "https://codeberg.org/guixcn/guix-channel.git")
@@ -587,7 +587,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'nonguix)
              (url "https://gitlab.com/nonguix/nonguix")
@@ -608,7 +608,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'rain-and-roses)
              (url "https://codeberg.org/untrusem/rain-and-roses.git")
@@ -626,7 +626,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'rde)
              (url "https://git.sr.ht/~abcdw/rde")
@@ -647,7 +647,7 @@ Pin commit for aarch64-linux as the build resource is limited
     (channels
      (list (channel
              (inherit %default-guix-channel)
-             (url "https://git.urspace.moe/mirror/guix.git"))
+             (url "https://git.guix.moe/mirror/guix.git"))
            (channel
              (name 'rosenthal)
              (url "https://codeberg.org/hako/rosenthal.git")
@@ -1155,7 +1155,7 @@ See [[file:shared/caddy.org][shared/caddy.org]].
 
 *** forgejo
 #+begin_src caddyfile :noweb-ref caddy-site
-  git.urspace.moe {
+  git.guix.moe {
   	import tailscale {
   		reverse_proxy localhost:48071
   	}
@@ -1168,7 +1168,6 @@ See [[file:shared/caddy.org][shared/caddy.org]].
       (postgresql-password-file "/run/secrets/postgres/forgejo")
       (config
        #~'((#f
-            ("APP_NAME" . "URSpace VCS")
             ("RUN_USER" . "forgejo")
             ("WORK_PATH" . "/var/lib/forgejo")
             ("RUN_MODE" . "prod"))
@@ -1181,39 +1180,28 @@ See [[file:shared/caddy.org][shared/caddy.org]].
             ("PASSWD" . "placeholder")
             ("SSL_MODE" . "disable")
             ("LOG_SQL" . "false"))
-           ("ui"
-            ("AMBIGUOUS_UNICODE_DETECTION" . "false"))
            ("repository"
             ("ROOT" . "/var/lib/forgejo/data/forgejo-repositories")
             ("PREFERRED_LICENSES" . "GPL-3.0-or-later")
             ("ENABLE_PUSH_CREATE_USER" . "true")
-            ("ENABLE_PUSH_CREATE_ORG" . "true")
-            ("DEFAULT_REPO_UNITS" . "repo.code,repo.releases,repo.issues,repo.pulls")
-            ("DEFAULT_BRANCH" . "trunk")
             ("DISABLE_DOWNLOAD_SOURCE_ARCHIVES" . "true"))
            ("lfs"
             ("PATH" . "/var/lib/forgejo/data/lfs"))
            ("service"
-            ("REGISTER_EMAIL_CONFIRM" . "true")
-            ("ENABLE_NOTIFY_MAIL" . "true")
-            ("DISABLE_REGISTRATION" . "true")
-            ("ALLOW_ONLY_EXTERNAL_REGISTRATION" . "false")
-            ("ENABLE_CAPTCHA" . "false")
-            ("REQUIRE_SIGNIN_VIEW" . "false")
+            ("REGISTER_MANUAL_CONFIRM" . "true")
             ("DEFAULT_KEEP_EMAIL_PRIVATE" . "true")
-            ("DEFAULT_ALLOW_CREATE_ORGANIZATION" . "true")
-            ("DEFAULT_ENABLE_TIMETRACKING" . "true")
-             ("NO_REPLY_ADDRESS" . "noreply.localhost"))
+            ("DEFAULT_ALLOW_CREATE_ORGANIZATION" . "false")
+            ("NO_REPLY_ADDRESS" . "noreply.localhost"))
            ("openid"
             ("ENABLE_OPENID_SIGNIN" . "false")
             ("ENABLE_OPENID_SIGNUP" . "false"))
            ("cron.update_checker"
             ("ENABLED" . "false"))
            ("session"
-            ("PROVIDER" . "file"))
+            ("PROVIDER" . "db"))
            ("log"
             ("MODE" . "file")
-            ("LEVEL" . "info")
+            ("LEVEL" . "warn")
             ("ROOT_PATH" . "/var/log/forgejo"))
            ("repository.pull-request"
             ("DEFAULT_MERGE_STYLE" . "rebase"))
@@ -1222,6 +1210,13 @@ See [[file:shared/caddy.org][shared/caddy.org]].
       (group-id 969)
       (user-id 974)))
 #+end_src
+
+Troubleshooting:
+#+begin_example
+  sudo -u forgejo \
+      "$(guix gc -R /run/current-system | grep forgejo-)"/bin/forgejo doctor check \
+      --config "$(sudo herd configuration forgejo)"
+#+end_example
 
 *** heisenbridge
 #+begin_src scheme :noweb-ref service
