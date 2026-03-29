@@ -261,6 +261,7 @@ WARNED."
         git
         gnupg
         htop
+        jujutsu
         lsof
         mirror-substitutes
         mosh

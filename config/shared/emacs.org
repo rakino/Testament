@@ -681,43 +681,33 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
     (after-init . envrc-global-mode))
 #+end_src
 
-*** emacs-magit
+*** emacs-majutsu
 #+begin_src scheme :noweb-ref package-spec
-  "emacs-magit"
+  "emacs-majutsu"
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package magit
     :custom
-    (git-commit-cd-to-toplevel t))
+    (magit-define-global-key-bindings nil))
+
+  (use-package majutsu
+    :custom
+    (magit-define-global-key-bindings nil)
+    :init
+    (defun majutsu-project-status/hako ()
+      (interactive)
+      (when (fboundp 'project-root)
+        (majutsu-log (project-root (project-current t)))))
+    :bind
+    ("C-x g" . majutsu-log))
 
   (use-package project
     :config
-    (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
+    (add-to-list 'project-switch-commands '(majutsu-project-status/hako "Majutsu") t)
     :bind
     (:map project-prefix-map
-          ("m" . magit-project-status)))
-#+end_src
-
-*** emacs-magit-delta
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-magit-delta-dolly"
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package magit-delta
-    :hook
-    (magit-mode . magit-delta-mode))
-#+end_src
-
-*** emacs-forge
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-forge"
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package forge
-    :after (magit))
+          ("m" . majutsu-project-status/hako)))
 #+end_src
 
 *** emacs-notmuch

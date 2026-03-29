@@ -1033,18 +1033,16 @@ notmuch:
   	pushInsteadOf = "https://git.guix.moe/"
 #+end_src
 
-For emacs-forge.
-#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/git/config
-  [github]
-          user = rakino
-  [gitlab]
-          user = hakourspace
-#+end_src
+[[https://forgejo.org/docs/latest/user/agit-support/][AGit Workflow]] helpers.  Usage:
 
-[[https://forgejo.org/docs/latest/user/agit-support/][AGit Workflow]] helpers.
+#+begin_example
+  $ git pr-push <my-branch> master
+  $ git pr-apply 233
+#+end_example
+
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/git/config
   [alias]
-  	pr-push  = "!f() { branch=$1; topic=$(git branch --show-current); shift; git push origin $topic:refs/for/$branch/$topic -o force-push \"$@\"; }; f"
+  	pr-push  = "!f() { topic=$1; branch=$2; shift; shift; git push origin $topic:refs/for/$branch/$topic -o force-push \"$@\"; }; f"
   	pr-apply = "!f() { for id in $(git cherry HEAD pullreqs/$1 | cut -c2-); do git cherry-pick --signoff $id; done; }; f"
 #+end_src
 
@@ -1062,6 +1060,21 @@ For emacs-forge.
                    #:environment-variables (environ))
                   args)))
             (stop #~(make-kill-destructor)))))
+#+end_src
+
+*** jujutsu
+#+begin_src toml :tangle ../tangled/dorphine/dotfiles/.config/jj/config.toml
+  [user]
+  name = "Hilton Chain"
+  email = "hako@ultrarare.space"
+
+  [signing]
+  behavior = "drop"
+  backend = "gpg"
+  key = "ACC66D09CA528292"
+
+  [git]
+  sign-on-push = true
 #+end_src
 
 *** librewolf
