@@ -350,7 +350,8 @@ Theming
   "emacs-arei-dolly"
 #+end_src
 
-See also =ares= command in blueprint.scm.  Run ~blue ares~ to start the server.
+See also =serve= command in blueprint.scm.  Run ~blue serve~ to start the
+server.
 
 To start the server in another project, start a shell in its root directory and
 run the following command:
