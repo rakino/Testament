@@ -1288,7 +1288,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
 
 *** miniflux
 #+begin_src caddyfile :noweb-ref caddy-site
-  reader.urspace.moe {
+  reader.guix.moe {
   	import cloudflare_dns
   	import block_bots
   	reverse_proxy localhost:51787
@@ -1299,7 +1299,7 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
   (service miniflux-service-type
     (miniflux-configuration
       (listen-address "127.0.0.1:51787")
-      (base-url "https://reader.urspace.moe/")
+      (base-url "https://reader.guix.moe/")
       (extra-settings
        '("CLEANUP_ARCHIVE_READ_DAYS=-1"
          "CLEANUP_ARCHIVE_UNREAD_DAYS=-1"))))
