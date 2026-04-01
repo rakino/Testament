@@ -11,6 +11,7 @@
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (guix store)
+  #:use-module (guix utils)
   #:use-module (rosenthal utils file)
   #:use-module (sops secrets)
   ;; Guix origin methods
@@ -251,7 +252,10 @@ WARNED."
         gnupg
         mosh
         ncurses
-        rclone
+        (package/inherit rclone
+          (arguments
+           (substitute-keyword-arguments arguments
+             ((#:tests? _ #f) #f))))
         ripgrep
         rsync
         sops
@@ -310,7 +314,7 @@ WARNED."
        (version version)))))
 
 (define linux-server/dolly
-  (let ((cachyos-version "6.18.20-1"))
+  (let ((cachyos-version "6.18.21-1"))
     (make-linux/dolly
      linux-6.18
      cachyos-version
@@ -320,7 +324,7 @@ WARNED."
              "https://github.com/CachyOS/linux/releases/download/cachyos-"
              cachyos-version "/cachyos-" cachyos-version ".tar.gz"))
        (sha256
-        (base32 "1iwkqiqjn611igvnpqkiv7fl6prmbgicf2rf3czas8wk46g5r691")))
+        (base32 "12474qw0c156vwy7a14blvjxyif9lgsm36ibj4cvahrirhrzjk21")))
      #:defconfig (%kernel-config "/defconfig_server")
      #:configs
      (string-join
@@ -339,7 +343,7 @@ WARNED."
       "\n"))))
 
 (define linux-desktop/dolly
-  (let ((cachyos-version "6.19.10-1"))
+  (let ((cachyos-version "6.19.11-2"))
     (make-linux/dolly
      linux-6.19
      cachyos-version
@@ -349,7 +353,7 @@ WARNED."
              "https://github.com/CachyOS/linux/releases/download/cachyos-"
              cachyos-version "/cachyos-" cachyos-version ".tar.gz"))
        (sha256
-        (base32 "024mfb94nxr2kdbq398r76bfw3yk0ijg45f3z0cfpl3by5qvb478"))
+        (base32 "0w2f8yb56cpklwcgimm1c2dy7lavl0xwbclh2dyixwq70xvlryy5"))
        (patches
         (map %kernel-config
              '("/patches/bore-cachy-6.19.patch"
