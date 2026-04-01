@@ -544,20 +544,6 @@
     (systems '("x86_64-linux")))
 #+end_src
 
-Pin commit for aarch64-linux as the build resource is limited
-#+begin_src scheme :noweb-ref cuirass-spec
-  (specification
-    (name "guix-pinned")
-    (build '(channels guix))
-    (channels
-     (list (channel
-             (inherit %default-guix-channel)
-             (url "https://git.guix.moe/hako/guix.git")
-             (branch "pinned"))))
-    (priority 9)
-    (systems '("aarch64-linux")))
-#+end_src
-
 **** guixcn
 #+begin_src scheme :noweb-ref cuirass-spec
   (specification
