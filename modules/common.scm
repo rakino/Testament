@@ -20,6 +20,7 @@
   ;; Guix build systems
   #:use-module (guix build-system trivial)
   ;; Guix packages
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
@@ -27,6 +28,8 @@
   #:use-module (gnu packages file)
   #:use-module (gnu packages gnupg)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages lsof)
+  #:use-module (gnu packages ncdu)
   #:use-module (gnu packages ncurses)
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages rust-apps)
@@ -35,6 +38,7 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages vim)
   #:use-module (nongnu packages linux)
+  #:use-module (rosenthal packages package-management)
   #:use-module (rosenthal packages password-utils)
   #:export (testament-path
             testament-file
@@ -250,7 +254,11 @@ WARNED."
         file
         git
         gnupg
+        htop
+        lsof
+        mirror-substitutes
         mosh
+        ncdu
         ncurses
         (package/inherit rclone
           (arguments
