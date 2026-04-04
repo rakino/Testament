@@ -254,7 +254,7 @@
   	}
 
   	handle /nar/* {
-  		redir https://nars.guix.moe{uri}
+  		reverse_proxy https://nars.guix.moe
   	}
 
   	respond "Visit guix [dot] moe for more information." 404 {
@@ -298,7 +298,7 @@
             (stop #~(make-kill-destructor)))
 
           (shepherd-timer '(guix-moe-mirror-sync)
-            #~(calendar-event #:minutes '(30))
+            #~(calendar-event #:minutes '(40))
             #~("/run/privileged/bin/sudo" "-u" "guix-moe" "-g" "guix-moe"
                "/bin/sh" "--login"
                #$(local-file (testament-file "involemi/setup-mirror.sh")) "latest")

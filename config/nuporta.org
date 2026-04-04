@@ -198,12 +198,6 @@
                (file %sops-nuporta)
                (user "caddy"))
              (sops-secret
-               (key '("docker-mailserver" "ecprivkey.pem"))
-               (file %sops-nuporta))
-             (sops-secret
-               (key '("docker-mailserver" "ecpubkey.pem"))
-               (file %sops-nuporta))
-             (sops-secret
                (key '("rclone"))
                (file %sops-nuporta))
 
@@ -317,17 +311,6 @@
 *** elogind
 #+begin_src scheme :noweb-ref service
   (service elogind-service-type)
-#+end_src
-
-** Containers & Virtualization
-*** containerd
-#+begin_src scheme :noweb-ref service
-  (service containerd-service-type)
-#+end_src
-
-*** docker
-#+begin_src scheme :noweb-ref service
-  (service docker-service-type)
 #+end_src
 
 ** Databases
@@ -675,10 +658,6 @@
   	handle /*.narinfo {
   		root * /var/cache/guix-moe/narinfo-cdn
   		file_server
-  	}
-
-  	handle /nar/* {
-  		redir https://nars.guix.moe{uri}
   	}
 
   	respond "Visit guix [dot] moe for more information." 404 {
@@ -1335,7 +1314,6 @@ Guix System - services
   (gnu services avahi)
   (gnu services cuirass)
   (gnu services databases)
-  (gnu services docker)
   (gnu services networking)
   (gnu services rsync)
   (gnu services security)
