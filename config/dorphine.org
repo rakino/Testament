@@ -304,21 +304,11 @@ Application profiles
       (authorized-keys %guix-keys)
       (substitute-urls '("https://cache-cdn.guix.moe"))))
 
-  (service guix-publish-service-type
-    (guix-publish-configuration
-      (port 49637)
-      (host "0.0.0.0")
-      (advertise? #t)))
-
   (simple-service 'guix-gc shepherd-root-service-type
     (list (shepherd-timer '(guix-gc)
             #~(calendar-event #:days-of-month '(1) #:hours '(12) #:minutes '(0))
             #~("/run/current-system/profile/bin/guix" "gc" "--delete-generations=1m")
             #:requirement '(user-processes guix-daemon))))
-#+end_src
-
-#+begin_src nftables :noweb-ref nftables-filter-input
-  tcp dport 49637 accept
 #+end_src
 
 *** Users
