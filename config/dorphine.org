@@ -581,6 +581,14 @@ Generate passwordless ECC key:
          (list xwayland-satellite)))))
 #+end_src
 
+#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/xdg-desktop-portal/niri-portals.conf
+  [preferred]
+  default=gnome;gtk;
+  org.freedesktop.impl.portal.Access=gtk;
+  org.freedesktop.impl.portal.FileChooser=gtk;
+  org.freedesktop.impl.portal.Notification=gtk;
+#+end_src
+
 #+begin_src kdl :tangle ../tangled/dorphine/niri.kdl
   prefer-no-csd
   screenshot-path "~/Pictures/Screenshots/%Y%m%d-%H%M%S.png"
