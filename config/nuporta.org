@@ -677,7 +677,7 @@
   	}
   }
 
-  cache-fi.guix.moe, cache-de.guix.moe, cache-it.guix.moe {
+  cache-fi.guix.moe {
   	import cloudflare_dns
   	import block_bots
 
