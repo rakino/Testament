@@ -737,27 +737,11 @@ Run ~herd restart noctalia-shell~ after home environment reconfiguration.
   (service home-polkit-gnome-service-type)
 #+end_src
 
-*** qogir-icon-theme
+*** icon theme & fonts
 #+begin_src scheme :noweb-ref package-spec
   "dconf"
   "glib:bin"
-#+end_src
 
-#+begin_src scheme :noweb-ref home-service
-  (service home-theme-service-type
-    (home-theme-configuration
-      (packages (list qogir-icon-theme))
-      (icon-theme "Qogir")
-      (cursor-theme "Qogir")))
-#+end_src
-
-#+begin_example
-  $ gsettings set org.gnome.desktop.interface icon-theme Qogir
-  $ gsettings set org.gnome.desktop.interface cursor-theme Qogir
-#+end_example
-
-*** fontconfig
-#+begin_src scheme :noweb-ref package-spec
   "font-apple-new-york"
   "font-apple-sf-pro"
   "font-chiron-hei-hk"
@@ -767,6 +751,20 @@ Run ~herd restart noctalia-shell~ after home environment reconfiguration.
   "font-nerd-symbols"
   "font-sarasa-gothic"
   "font-victor-mono"
+#+end_src
+
+#+begin_example
+  $ gsettings set org.gnome.desktop.interface icon-theme Qogir
+  $ gsettings set org.gnome.desktop.interface cursor-theme Qogir
+  $ gsettings set org.gnome.desktop.interface font-name Sans
+#+end_example
+
+#+begin_src scheme :noweb-ref home-service
+  (service home-theme-service-type
+    (home-theme-configuration
+      (packages (list qogir-icon-theme))
+      (icon-theme "Qogir")
+      (cursor-theme "Qogir")))
 #+end_src
 
 fontconfig on Guix is [[https://codeberg.org/guix/guix/pulls/5654#issuecomment-9928509][known]] not working with some locales (e.g. =zh_CN.utf8=),
