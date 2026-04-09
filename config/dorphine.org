@@ -1163,14 +1163,15 @@ Jujutsu:
 
 See also: <https://github.com/ValveSoftware/steam-for-linux/issues/2092>
 
-#+begin_src scheme :noweb-ref scheme
+#+begin_src scheme :noweb-ref service
   (udev-rules-service 'controller
       (udev-rule "60-controller-permission.rules" "\
   KERNEL==\"event*\", ATTRS{idVendor}==\"045e\", ATTRS{idProduct}==\"028e\", \
   MODE=\"0660\", GROUP=\"users\""))
 #+end_src
 
-Disable
+My controller offers two interfaces without a toggle, resulting in a race
+condition.  Disable one of them.
 
 #+begin_src scheme :noweb-ref kernel-argument
   "modprobe.blacklist=hid_nintendo"
