@@ -1091,9 +1091,12 @@ For emacs-forge.
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'openjdk-for-prismlauncher home-files-service-type
     (map (lambda (jdk)
-           (list (in-vicinity ".local/share/PrismLauncher/java" (package-version jdk))
-                 jdk))
-         (list openjdk25)))
+           (let ((path (in-vicinity ".local/share/PrismLauncher/java" (package-version jdk))))
+             (list path jdk)))
+         (list openjdk25
+               openjdk21
+               openjdk17
+               icedtea-8)))
 #+end_src
 
 *** steam
