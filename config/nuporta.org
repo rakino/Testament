@@ -1322,7 +1322,7 @@ Troubleshooting:
   (service tuwunel-service-type
     (tuwunel-configuration
       (config
-       #~'(("Global"
+       #~'(("global"
             ("address" . #("127.0.0.1" "::1"))
             ("port" . 26372)
             ("server_name" . "guix.moe")
@@ -1333,7 +1333,11 @@ Troubleshooting:
             ("trusted_servers" . #("matrix.org"))
             ("well_known"
              ("client" . "https://matrix.guix.moe")
-             ("server" . "matrix.guix.moe:443")))))
+             ("server" . "matrix.guix.moe:443"))
+            ("media_storage_providers" . #("r2"))
+            ("store_media_on_providers" . #("r2"))
+            ("storage_provider"
+             ("r2" ("S3" #$@(sops-sexp %sops-nuporta '("tuwunel"))))))))
       (group-id 968)
       (user-id 973)))
 #+end_src
