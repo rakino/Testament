@@ -1007,12 +1007,9 @@ notmuch:
           quotePath = false
   [init]
           defaultBranch = trunk
-  [commit]
-          gpgsign = true
   [user]
           name = Hilton Chain
           email = hako@ultrarare.space
-          signingkey = ACC66D09CA528292!
   [pull]
           rebase = true
   [rerere]
