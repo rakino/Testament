@@ -1001,6 +1001,30 @@ notmuch:
   PreferTextIcon=True
 #+end_src
 
+*** flatpak
+#+begin_src scheme :noweb-ref package-spec
+  "flatpak"
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'flatpak-xdg-data-dir home-environment-variables-service-type
+    `(("XDG_DATA_DIRS" . "$XDG_DATA_DIRS:$XDG_DATA_HOME/flatpak/exports/share")))
+#+end_src
+
+Expose icons and fonts for Guix Home.  Those of Guix System are already handled
+by a patch.
+
+#+begin_src scheme :noweb-ref service
+  (extra-special-file "/usr/share/icons" "/home/hako/.guix-home/profile/share/icons")
+  (extra-special-file "/usr/local/share/fonts" "/home/hako/.guix-home/profile/share/fonts")
+#+end_src
+
+Expose =/gnu/store= to Flatpak:
+
+#+begin_example
+  $ flatpak --user override --filesystem=/gnu/store:ro
+#+end_example
+
 *** git & jujutsu
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/git/config
   [core]
