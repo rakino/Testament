@@ -734,16 +734,13 @@ Generate passwordless ECC key:
 #+end_src
 
 *** noctalia-shell
-Run ~herd restart noctalia-shell~ after home environment reconfiguration.
+NOTE: Run ~herd restart noctalia-shell~ after home environment reconfiguration.
 
 #+begin_src scheme :noweb-ref home-service
   (service home-noctalia-shell-service-type)
 #+end_src
 
-*** polkit-gnome
-#+begin_src scheme :noweb-ref home-service
-  (service home-polkit-gnome-service-type)
-#+end_src
+Use <https://noctalia.dev/plugins/polkit-agent/> as Polkit agent.
 
 *** icon theme & fonts
 #+begin_src scheme :noweb-ref package-spec
