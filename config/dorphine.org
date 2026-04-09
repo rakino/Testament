@@ -56,8 +56,9 @@
   (define %transformed-os
     ((nonguix-transformation-nvidia
       #:driver nvda-595
-      #:open-source-kernel-module? #f
+      #:open-source-kernel-module? #t
       #:configure-xorg? sddm-service-type
+      #:dynamic-boost? #t
       #:remove-nvenc-restriction? #t)
      %os))
 
