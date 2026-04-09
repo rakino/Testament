@@ -569,6 +569,11 @@ Generate passwordless ECC key:
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
+  (service home-graphical-session-service-type
+    (home-graphical-session-configuration
+      (wayland? #t)
+      (x11? #t)))
+
   (service home-niri-service-type
     (home-niri-configuration
       (config
@@ -581,12 +586,11 @@ Generate passwordless ECC key:
   prefer-no-csd
   screenshot-path "~/Pictures/Screenshots/%Y%m%d-%H%M%S.png"
 
+  spawn-sh-at-startup "herd set-environment graphical-session XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP XDG_SESSION_TYPE=$XDG_SESSION_TYPE NIRI_SOCKET=$NIRI_SOCKET"
+
   xwayland-satellite {
           path "$$bin/xwayland-satellite$$"
   }
-
-  // Guix Home (home-shepherd-service-type)
-  spawn-at-startup "shepherd"
 
   hotkey-overlay {
           skip-at-startup
@@ -720,15 +724,6 @@ Generate passwordless ECC key:
           Ctrl+Print                     { screenshot-screen; }
           Alt+Print                      { screenshot-window; }
   }
-#+end_src
-
-*** shepherd
-Autostart Shepherd in environments that support XDG Autostart (e.g. GNOME).
-#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/autostart/shepherd.desktop
-  [Desktop Entry]
-  Type=Application
-  Name=Shepherd
-  Exec=shepherd
 #+end_src
 
 *** noctalia-shell
@@ -1058,11 +1053,15 @@ For emacs-forge.
   (simple-service 'jellyfin-mpv-shim home-shepherd-service-type
     (list (shepherd-service
             (provision '(jellyfin-mpv-shim))
+            (requirement '(graphical-session))
+            (auto-start? #f)
             (start
-             #~(make-forkexec-constructor
-                '(#$(file-append jellyfin-mpv-shim "/bin/jellyfin-mpv-shim"))))
-            (stop #~(make-kill-destructor))
-            (auto-start? #f))))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   '(#$(file-append jellyfin-mpv-shim "/bin/jellyfin-mpv-shim"))
+                   #:environment-variables (environ))
+                  args)))
+            (stop #~(make-kill-destructor)))))
 #+end_src
 
 *** librewolf
@@ -1260,6 +1259,7 @@ Guix Home - services
   (gnu home services fontutils)
   (gnu home services gnupg)
   (gnu home services shells)
+  (rosenthal home services desktop)
   (sops home services sops)
 #+end_src
 

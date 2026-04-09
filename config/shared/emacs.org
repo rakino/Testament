@@ -70,7 +70,8 @@ shell while using Emacs.
   (service home-emacs-service-type
     (home-emacs-configuration
       (emacs emacs-pgtk)
-      (packages (specifications->manifest '(<<package-spec>>)))))
+      (packages (specifications->manifest '(<<package-spec>>)))
+      (shepherd-requirement '(graphical-session))))
 #+end_src
 
 #+begin_src scheme :noweb-ref package-spec
