@@ -1022,8 +1022,12 @@ Expose icons and fonts for Guix Home.  Those of Guix System are already handled
 by a patch.
 
 #+begin_src scheme :noweb-ref service
-  (extra-special-file "/usr/share/icons" "/home/hako/.guix-home/profile/share/icons")
-  (extra-special-file "/usr/local/share/fonts" "/home/hako/.guix-home/profile/share/fonts")
+  (extra-special-file
+   "/usr/share/icons"
+   "/var/guix/profiles/per-user/hako/guix-home/profile/share/icons")
+  (extra-special-file
+   "/usr/local/share/fonts"
+   "/var/guix/profiles/per-user/hako/guix-home/profile/share/fonts")
 #+end_src
 
 Expose =/gnu/store= to Flatpak:
