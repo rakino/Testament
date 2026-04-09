@@ -830,16 +830,12 @@ Pinned for latest Live ISOs.
 #+end_src
 
 #+begin_src sh :tangle ../tangled/nuporta/setup-mirror.sh
-  #!/bin/sh
-
   set -e
 
   MIRROR_DIR="/var/cache/guix-moe/mirror"
   URL_PREFIX="https://nars.guix.moe/nar/"
-
   GUIX_SUBSTITUTES="https://ci.guix.gnu.org https://bordeaux.guix.gnu.org"
   NONGUIX_SUBSTITUTES="https://substitutes.nonguix.org"
-
   # https://github.com/rakino/guix-store-paths
   STORE_PATHS="/var/cache/guix-moe/store-paths"
   DATE="$1"
@@ -1229,9 +1225,9 @@ See [[file:shared/caddy.org][shared/caddy.org]].
 
 Troubleshooting:
 #+begin_example
-  sudo -u forgejo \
-      "$(guix gc -R /run/current-system | grep forgejo-)"/bin/forgejo doctor check \
-      --config "$(sudo herd configuration forgejo)"
+  $ sudo -u forgejo \
+       /run/current-system/profile/bin/forgejo doctor check \
+       --config "$(sudo herd configuration forgejo)"
 #+end_example
 
 *** heisenbridge
@@ -1323,10 +1319,8 @@ Troubleshooting:
 #+end_src
 
 #+begin_src scheme :noweb-ref service
-  (service conduit-service-type
-    (conduit-configuration
-      (conduit (file-append tuwunel-bin "/bin/tuwunel"))
-      (database-path "/var/lib/tuwunel")
+  (service tuwunel-service-type
+    (tuwunel-configuration
       (config
        #~'(("Global"
             ("address" . #("127.0.0.1" "::1"))
