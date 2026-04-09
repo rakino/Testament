@@ -695,19 +695,24 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
     :custom
     (magit-define-global-key-bindings nil)
     :init
-    (defun majutsu-project-status/hako ()
+    (defun hako/majutsu-project-log ()
       (interactive)
       (when (fboundp 'project-root)
         (majutsu-log (project-root (project-current t)))))
+    (defvaralias 'hako/jjdescription-mode-hook 'git-commit-mode-hook)
+    (defvaralias 'hako/jjdescription-mode-map  'git-commit-mode-map)
+    (define-minor-mode hako/jjdescription-mode "" :lighter "")
+    :hook
+    (majutsu-jjdescription-mode . hako/jjdescription-mode)
     :bind
     ("C-x g" . majutsu-log))
 
   (use-package project
     :config
-    (add-to-list 'project-switch-commands '(majutsu-project-status/hako "Majutsu") t)
+    (add-to-list 'project-switch-commands '(hako/majutsu-project-log "Majutsu") t)
     :bind
     (:map project-prefix-map
-          ("m" . majutsu-project-status/hako)))
+          ("m" . hako/majutsu-project-log)))
 #+end_src
 
 *** emacs-notmuch
