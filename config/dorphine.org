@@ -975,7 +975,7 @@ notmuch:
   (service home-fcitx5-service-type
     (home-fcitx5-configuration
       (themes (list fcitx5-material-color-theme))
-      (input-method-editors (list fcitx5-rime))
+      (input-method-editors (list fcitx5-rime fcitx5-skk))
       (wayland-frontend? #t)))
 #+end_src
 
@@ -986,6 +986,42 @@ notmuch:
   [Behavior]
   OverrideXkbOption=True
   CustomXkbOption=ctrl:nocaps
+#+end_src
+
+UI
+
+#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/fcitx5/conf/classicui.conf
+  Vertical Candidate List=False
+  PerScreenDPI=True
+  Theme=Material-Color-Teal
+  Font="Chiron Sung HK VF 12"
+  MenuFont="Sans 10"
+  TrayFont="Sans Bold 10"
+  PreferTextIcon=True
+#+end_src
+
+skk
+
+#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/fcitx5/conf/skk.conf
+  Candidate Layout=Horizontal
+  EggLikeNewLine=True
+  NTriggersToShowCandWin=0
+
+  [CandidatesPageUpKey]
+  0=Page_Up
+  1=Alt+V
+
+  [CandidatesPageDownKey]
+  0=Next
+  1=Control+V
+
+  [CursorUp]
+  0=Up
+  1=Control+P
+
+  [CursorDown]
+  0=Down
+  1=Control+N
 #+end_src
 
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/fcitx5/profile
@@ -1002,18 +1038,12 @@ notmuch:
   Name=rime
   Layout=
 
+  [Groups/0/Items/2]
+  Name=skk
+  Layout=
+
   [GroupOrder]
   0=Default
-#+end_src
-
-#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/fcitx5/conf/classicui.conf
-  Vertical Candidate List=False
-  PerScreenDPI=True
-  Theme=Material-Color-Teal
-  Font="Chiron Sung HK VF 12"
-  MenuFont="Sans 10"
-  TrayFont="Sans Bold 10"
-  PreferTextIcon=True
 #+end_src
 
 *** flatpak
