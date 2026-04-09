@@ -642,6 +642,7 @@ Generate passwordless ECC key:
   }
 
   layout {
+          always-center-single-column
           // Set transparent workspace background color so you see the backdrop at all times.
           background-color "transparent"
 
