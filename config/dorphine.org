@@ -1001,7 +1001,7 @@ notmuch:
   PreferTextIcon=True
 #+end_src
 
-*** git
+*** git & jujutsu
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/git/config
   [core]
           quotePath = false
@@ -1043,6 +1043,22 @@ notmuch:
   	pr-apply = "!f() { for id in $(git cherry HEAD pullreqs/$1 | cut -c2-); do git cherry-pick --signoff $id; done; }; f"
 #+end_src
 
+Jujutsu:
+
+#+begin_src toml :tangle ../tangled/dorphine/dotfiles/.config/jj/config.toml
+  [user]
+  name = "Hilton Chain"
+  email = "hako@ultrarare.space"
+
+  [signing]
+  behavior = "drop"
+  backend = "gpg"
+  key = "ACC66D09CA528292"
+
+  [git]
+  sign-on-push = true
+#+end_src
+
 *** jellyfin-mpv-shim
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'jellyfin-mpv-shim home-shepherd-service-type
@@ -1057,21 +1073,6 @@ notmuch:
                    #:environment-variables (environ))
                   args)))
             (stop #~(make-kill-destructor)))))
-#+end_src
-
-*** jujutsu
-#+begin_src toml :tangle ../tangled/dorphine/dotfiles/.config/jj/config.toml
-  [user]
-  name = "Hilton Chain"
-  email = "hako@ultrarare.space"
-
-  [signing]
-  behavior = "drop"
-  backend = "gpg"
-  key = "ACC66D09CA528292"
-
-  [git]
-  sign-on-push = true
 #+end_src
 
 *** librewolf
