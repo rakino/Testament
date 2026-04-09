@@ -1264,12 +1264,14 @@ condition.  Disable one of them.
 
 *** thunar
 #+begin_src scheme :noweb-ref package-spec
-  "exo"
-  "file-roller"
   "thunar"
   "thunar-archive-plugin"
   "thunar-media-tags-plugin"
   "thunar-volman"
+
+  "exo"
+  "file-roller"
+  "xfconf"
   ;; Thumbnails.
   "ffmpegthumbnailer"
   "tumbler"
