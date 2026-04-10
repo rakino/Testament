@@ -203,7 +203,6 @@
 #+begin_src scheme :noweb-ref service
   (service sops-secrets-service-type
     (sops-service-configuration
-      (sops sops)
       (gnupg-home "/var/lib/sops")
       (secrets
        (list (sops-secret
@@ -1351,6 +1350,5 @@ Guix packages
   (rosenthal packages binaries)
   (rosenthal packages ci)
   (rosenthal packages package-management)
-  (rosenthal packages password-utils)
   (rosenthal packages web)
 #+end_src

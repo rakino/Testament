@@ -402,7 +402,6 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb-ref home-service
   (service home-sops-secrets-service-type
     (home-sops-service-configuration
-      (sops sops)
       (gnupg-home (in-vicinity %xdg-data-home "sops"))
       (secrets
        (list (sops-secret
@@ -1287,5 +1286,4 @@ Guix packages
   (gnu packages video)
   (gnu packages xorg)
   (nongnu packages nvidia)
-  (rosenthal packages password-utils)
 #+end_src
