@@ -172,8 +172,21 @@ Theming
   "emacs-helpful"
 #+end_src
 
+=emacs-pgtk:doc= stores Emacs source under =c-source=, which differs from the
+original =src= expected by =helpful--library-path=, redefine the function as a
+workaround.
+
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package helpful
+    :config
+    (defun helpful--library-path (library-name)
+      (when (member (f-ext library-name) '("c" "rs"))
+        (setq library-name
+              (f-expand (f-filename library-name)
+                        find-function-C-source-directory)))
+      (condition-case nil
+          (find-library-name library-name)
+        (error nil)))
     :bind
     ([remap describe-function] . helpful-callable)
     ([remap describe-variable] . helpful-variable)
