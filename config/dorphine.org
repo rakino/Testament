@@ -832,10 +832,6 @@ See [[file:shared/emacs.org][shared/emacs.org]].
   <<home-service/emacs>>
 #+end_src
 
-#+begin_src scheme :noweb yes :noweb-ref package-spec
-  <<package-spec/emacs>>
-#+end_src
-
 #+begin_src scheme :noweb yes :noweb-ref module
   <<module/emacs>>
 #+end_src

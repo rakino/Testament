@@ -12,11 +12,6 @@ workaround.
   <<home-service>>
 #+end_src
 
-#+name: package-spec/emacs
-#+begin_src scheme :noweb yes
-  <<package-spec>>
-#+end_src
-
 #+name: module/emacs
 #+begin_src scheme :noweb yes
   <<module>>
@@ -66,8 +61,20 @@ shell while using Emacs.
       ("ESHELL" . ,(file-append fish "/bin/fish"))))
 #+end_src
 
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'emacs-configuration home-xdg-configuration-files-service-type
+    `(("emacs/init.el" ,(local-file (testament-file "emacs/emacs-init.el")))))
+#+end_src
+
+#+begin_src scheme :noweb yes :noweb-ref home-service
+  (service home-emacs-service-type
+    (home-emacs-configuration
+      (emacs emacs-pgtk)
+      (packages (specifications->manifest '(<<package-spec>>)))))
+#+end_src
+
 #+begin_src scheme :noweb-ref package-spec
-  "emacs-pgtk"
+  "emacs-pgtk:doc"
 
   "emacs-gcmh"
   "emacs-no-littering"
@@ -82,25 +89,6 @@ shell while using Emacs.
   "emacs-markdown-mode"
   "emacs-nftables-mode"
   "emacs-zig-mode"
-#+end_src
-
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'emacs-configuration home-xdg-configuration-files-service-type
-    `(("emacs/init.el"
-       ,(computed-substitution-with-inputs "init.el"
-          (local-file (testament-file "emacs/emacs-init.el"))
-          (list ccls
-                python-lsp-server
-                rust-analyzer
-                zig-zls-0.15)))))
-#+end_src
-
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'emacs home-shepherd-service-type
-    (list (shepherd-service
-            (provision '(emacs-daemon))
-            (start #~(make-forkexec-constructor '("emacs" "--fg-daemon")))
-            (stop #~(make-kill-destructor)))))
 #+end_src
 
 ** Interface
@@ -451,22 +439,22 @@ Arei's builtin xref backend provides =xref-buffer-location= but Citre expects
 
 *** emacs eglot
 #+begin_src scheme :noweb-ref package-spec
+  "ccls"
   "python"
+  "python-lsp-server"
   "rust"
   "rust:cargo"
+  "rust-analyzer"
   "zig"
+  "zig-zls"
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package eglot
     :config
     (dolist (program
-             `(((rust-ts-mode rust-mode)
-                "$$bin/rust-analyzer$$")
-               ((python-mode python-ts-mode)
-                "$$bin/pylsp$$")
-               ((c-mode c-ts-mode c++-mode c++-ts-mode)
-                "$$bin/ccls$$"
+             `(((c-mode c-ts-mode c++-mode c++-ts-mode)
+                "ccls"
                 ,(concat
                   "--init="
                   (json-serialize
@@ -474,9 +462,7 @@ Arei's builtin xref backend provides =xref-buffer-location= but Citre expects
                       (directory
                        . ,(concat (or (getenv "XDG_CACHE_HOME")
                                       "~/.cache")
-                                  "/ccls-cache")))))))
-               ((zig-mode)
-                "$$bin/zls$$")))
+                                  "/ccls-cache")))))))))
       (add-to-list 'eglot-server-programs program)))
 #+end_src
 
@@ -842,20 +828,18 @@ Within this repository
 Utilities
 #+begin_src scheme :noweb-ref module
   (guix gexp)
-  (rosenthal utils file)
 #+end_src
 
 Guix Home - services
 #+begin_src scheme :noweb-ref module
   (gnu home services)
   (gnu home services shepherd)
+  (rosenthal home services emacs)
 #+end_src
 
 Guix packages
 #+begin_src scheme :noweb-ref module
-  (gnu packages cpp)
-  (gnu packages python-xyz)
-  (gnu packages rust)
+  (gnu packages)
+  (gnu packages emacs)
   (gnu packages shells)
-  (gnu packages zig-xyz)
 #+end_src
