@@ -971,8 +971,7 @@ notmuch:
     (home-fcitx5-configuration
       (themes (list fcitx5-material-color-theme))
       (input-method-editors (list fcitx5-rime))
-      (gtk-im-module? #t)
-      (qt-im-module? #t)))
+      (wayland-frontend? #t)))
 #+end_src
 
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/fcitx5/config
