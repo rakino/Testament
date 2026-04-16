@@ -344,6 +344,7 @@
                      -i nonguix-packages.txt
 
   popd
+  rm -rf "$WORK_DIR"
 #+end_src
 
 ** Web Servers & Services
