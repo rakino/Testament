@@ -696,31 +696,52 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
 
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package magit
+    :autoload (magit-toplevel)
     :custom
     (magit-define-global-key-bindings nil))
 
   (use-package majutsu
-    :custom
-    (magit-define-global-key-bindings nil)
+    :autoload (majutsu-toplevel)
     :init
-    (defun hako/majutsu-project-log ()
+    ;; Use `majutsu' for Jujutsu repositories and `magit' otherwise.
+    (defun hako/majutsu-or-magit (&optional directory)
+      (interactive
+       (list (and (or current-prefix-arg
+                      (not (or (majutsu-toplevel)
+                               (magit-toplevel))))
+                  (file-name-as-directory
+                   (expand-file-name
+                    (read-directory-name "Repository or directory: "
+                                         nil nil nil))))))
+
+      (let ((default-directory (or directory default-directory)))
+        (if (majutsu-toplevel default-directory)
+            (majutsu default-directory)
+          (magit default-directory))))
+    ;; `hako/majutsu-or-magit' for `project.el'.
+    (defun hako/majutsu-or-magit-project ()
       (interactive)
       (when (fboundp 'project-root)
-        (majutsu-log (project-root (project-current t)))))
+        (let ((directory (project-root (project-current t))))
+          (hako/majutsu-or-magit directory))))
+    ;; Set up `git-commit-mode' for `majutsu'.
     (defvaralias 'hako/jjdescription-mode-hook 'git-commit-mode-hook)
     (defvaralias 'hako/jjdescription-mode-map  'git-commit-mode-map)
     (define-minor-mode hako/jjdescription-mode "" :lighter "")
     :hook
     (majutsu-jjdescription-mode . hako/jjdescription-mode)
     :bind
-    ("C-x g" . majutsu-log))
+    ("C-x g" . hako/majutsu-or-magit))
 
   (use-package project
+    :init
     :config
-    (add-to-list 'project-switch-commands '(hako/majutsu-project-log "Majutsu") t)
+    (add-to-list 'project-switch-commands
+                 '(hako/majutsu-or-magit-project "Majutsu or Magit")
+                 t)
     :bind
     (:map project-prefix-map
-          ("m" . hako/majutsu-project-log)))
+          ("m" . hako/majutsu-or-magit-project)))
 #+end_src
 
 *** emacs-notmuch
