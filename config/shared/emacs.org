@@ -696,13 +696,12 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
 
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package magit
-    :autoload (magit-toplevel)
     :custom
     (magit-define-global-key-bindings nil))
 
   (use-package majutsu
-    :autoload (majutsu-toplevel)
-    :init
+    :demand t
+    :config
     (defun hako/majutsu-or-magit (&optional directory)
       "Use `majutsu' for Jujutsu repositories and `magit' otherwise."
       (interactive
@@ -734,7 +733,6 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
     ("C-x g" . hako/majutsu-or-magit))
 
   (use-package project
-    :init
     :config
     (add-to-list 'project-switch-commands
                  '(hako/majutsu-or-magit-project "Majutsu or Magit")
