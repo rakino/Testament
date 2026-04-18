@@ -703,8 +703,8 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
   (use-package majutsu
     :autoload (majutsu-toplevel)
     :init
-    ;; Use `majutsu' for Jujutsu repositories and `magit' otherwise.
     (defun hako/majutsu-or-magit (&optional directory)
+      "Use `majutsu' for Jujutsu repositories and `magit' otherwise."
       (interactive
        (list (and (or current-prefix-arg
                       (not (or (majutsu-toplevel)
@@ -713,21 +713,21 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
                    (expand-file-name
                     (read-directory-name "Repository or directory: "
                                          nil nil nil))))))
-
       (let ((default-directory (or directory default-directory)))
         (if (majutsu-toplevel default-directory)
             (majutsu default-directory)
           (magit default-directory))))
-    ;; `hako/majutsu-or-magit' for `project.el'.
     (defun hako/majutsu-or-magit-project ()
+      "`hako/majutsu-or-magit' for `project.el'."
       (interactive)
       (when (fboundp 'project-root)
         (let ((directory (project-root (project-current t))))
           (hako/majutsu-or-magit directory))))
-    ;; Set up `git-commit-mode' for `majutsu'.
     (defvaralias 'hako/jjdescription-mode-hook 'git-commit-mode-hook)
     (defvaralias 'hako/jjdescription-mode-map  'git-commit-mode-map)
-    (define-minor-mode hako/jjdescription-mode "" :lighter "")
+    (define-minor-mode hako/jjdescription-mode
+      "Set up `git-commit-mode' for `majutsu'."
+      :lighter "")
     :hook
     (majutsu-jjdescription-mode . hako/jjdescription-mode)
     :bind
