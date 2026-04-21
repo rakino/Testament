@@ -266,7 +266,7 @@ WARNED."
         mosh
         ncdu
         ncurses
-        rclone/no-test
+        rclone
         ripgrep
         rsync
         sops
