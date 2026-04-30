@@ -607,6 +607,12 @@ niri supports getting keyboard layout from localed.
           open-floating true
   }
 
+  window-rule {
+    background-effect {
+      blur true
+    }
+  }
+
   // Noctalia
   window-rule {
           geometry-corner-radius 20
@@ -1278,7 +1284,7 @@ condition.  Disable one of them.
   local wezterm = require 'wezterm'
   local config = wezterm.config_builder()
 
-  config.window_background_opacity = 0.97
+  config.window_background_opacity = 0.90
   config.color_scheme = 'Catppuccin Mocha'
 
   return config
