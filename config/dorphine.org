@@ -29,11 +29,13 @@
       (skeletons %rosenthal-skeletons)
       (packages
        (append (specifications->packages
-                '(;; Desktop applications.
-                  "digikam"
+                '("digikam"
+                  "distrobox"
                   "gimp"
                   "imv"
+                  "inkscape"
                   "kdenlive"
+                  "krita"
                   "libreoffice"
                   "obs-nvidia"
                   "telegram-desktop"
