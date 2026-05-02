@@ -38,6 +38,7 @@
                   "krita"
                   "libreoffice"
                   "obs-nvidia"
+                  "picard"
                   "telegram-desktop"
                   "zathura"
                   "zathura-pdf-poppler"
