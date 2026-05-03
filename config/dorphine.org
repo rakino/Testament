@@ -156,6 +156,9 @@ Application profiles
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-kernel-module-loader kernel-module-loader-service-type
     '("ntsync"))
+
+  (simple-service 'extend-sysctl-rules sysctl-service-type
+    '(("kernel.sysrq" . "1")))
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
@@ -1330,6 +1333,7 @@ Guix System - services
   (gnu services security-token)
   (gnu services ssh)
   (gnu services syncthing)
+  (gnu services sysctl)
   (gnu services virtualization)
   (gnu services xorg)
   (rosenthal services file-systems)
