@@ -40,7 +40,6 @@
   #:use-module (gnu packages vim)
   #:use-module (nongnu packages linux)
   #:use-module (rosenthal packages package-management)
-  #:use-module (rosenthal packages version-control)
   #:export (testament-path
             testament-file
 
@@ -261,7 +260,7 @@ WARNED."
         git
         gnupg
         htop
-        jujutsu/dolly
+        jujutsu
         lsof
         mirror-substitutes
         mosh
@@ -292,7 +291,7 @@ WARNED."
              (base32 "0nbg64ab4drzig1i7ifya7yx0d93l5fzzqvsj53ykv22wrixwpaa")))))
     (file-append source path)))
 
-(define* (make-linux/dolly base version source #:key defconfig modconfig (configs "") (zfs zfs))
+(define* (make-linux/dolly base version source #:key defconfig modconfig (configs ""))
   (let ((kernel
          (customize-linux
           #:name "linux-dolly"
@@ -301,11 +300,9 @@ WARNED."
           #:defconfig defconfig
           #:modconfig modconfig
           #:configs configs)))
-    (linux-with-zfs
-     (package
-       (inherit kernel)
-       (version version))
-     zfs)))
+    (package
+      (inherit kernel)
+      (version version))))
 
 (define linux-server/dolly
   (let ((cachyos-version "6.18.33-1"))
@@ -350,19 +347,6 @@ WARNED."
        (sha256
         (base32 "0g2drv5rvkkari9z7ya3l25lcfsxpjv50hhcic739arcxx0b8aws"))
        (patches (map %kernel-config '("/patches/bore-cachy-7.0.patch"))))
-     #:zfs
-     (package
-       (inherit zfs)
-       (source
-        (origin
-          (method git-fetch)
-          (uri (git-reference
-                 (url "https://github.com/cachyos/zfs.git")
-                 (commit "0829cf892b5d7b3a0e8aa76cc7aca02b84f62557")))
-          (file-name "zfs-0829cf8")
-          (sha256
-           (base32
-            "1gpvkmagdjclaac1rxab3vwmfjiq5acnhmnsqxl472gksjsdci1r")))))
      #:defconfig (%kernel-config "/defconfig_desktop")
      #:configs
      (string-join
