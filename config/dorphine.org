@@ -611,9 +611,10 @@ niri supports getting keyboard layout from localed.
   }
 
   window-rule {
-    background-effect {
-      blur true
-    }
+          background-effect {
+                  blur true
+                  xray false
+          }
   }
 
   // Noctalia
