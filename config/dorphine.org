@@ -292,8 +292,7 @@ Application profiles
    config => (guix-configuration
                (inherit config)
                (discover? #t)
-               (tmpdir "/var/tmp")
-               (substitute-urls '())))
+               (tmpdir "/var/tmp")))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
