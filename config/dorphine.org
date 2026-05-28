@@ -40,8 +40,6 @@
                   "obs-nvidia"
                   "picard"
                   "telegram-desktop"
-                  "zathura"
-                  "zathura-pdf-poppler"
                   <<package-spec>>))
                %testament-cli-packages
                %base-packages))
