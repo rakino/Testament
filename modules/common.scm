@@ -246,12 +246,6 @@ WARNED."
 ;;; Packages
 ;;;
 
-(define rclone/no-test
-  (package/inherit rclone
-    (arguments
-     (substitute-keyword-arguments arguments
-       ((#:tests? _ #f) #f)))))
-
 (define %testament-cli-packages
   (list binutils
         curl
