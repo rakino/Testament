@@ -258,6 +258,7 @@ WARNED."
         fd
         file
         git
+        `(,git "send-email")
         gnupg
         htop
         jujutsu

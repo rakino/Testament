@@ -1057,6 +1057,10 @@ Expose =/gnu/store= to Flatpak:
           rebase = true
   [rerere]
           enabled = true
+  [sendemail]
+          smtpEncryption = ssl
+          smtpServer = mail.boiledscript.com
+          smtpUser = hako@ultrarare.space
 
   [diff "scheme"]
           xfuncname = "^(\\(define.*)$"
