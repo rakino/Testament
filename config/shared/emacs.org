@@ -342,6 +342,7 @@ workaround.
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package emacs
     :custom
+    (fill-column 80)
     ;; Disable tab indentation.
     (indent-tabs-mode nil)
     ;; CJK support.
