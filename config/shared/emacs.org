@@ -486,7 +486,9 @@ Arei's builtin xref backend provides =xref-buffer-location= but Citre expects
                        . ,(concat (or (getenv "XDG_CACHE_HOME")
                                       "~/.cache")
                                   "/ccls-cache")))))))))
-      (add-to-list 'eglot-server-programs program)))
+      (add-to-list 'eglot-server-programs program))
+    :hook
+    ((c-mode python-mode rust-ts-mode zig-mode) . eglot-ensure))
 #+end_src
 
 *** emacs-flycheck
