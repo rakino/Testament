@@ -144,22 +144,39 @@ Theming
     (after-init . menu-bar-mode))
 #+end_src
 
-*** emacs-adaptive-wrap
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-adaptive-wrap"
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package adaptive-wrap
-    :hook
-    (visual-line-mode . adaptive-wrap-prefix-mode))
-#+end_src
-
-*** emacs completion-preview
+*** completion-preview
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package completion-preview
     :custom
     (global-completion-preview-mode t))
+#+end_src
+
+*** isearch
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package isearch
+    :custom
+    (isearch-lazy-count t)
+    (isearch-wrap-pause 'no-ding)
+    (regexp-search-ring-max 200)
+    (search-ring-max 200))
+#+end_src
+
+*** paren
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package paren
+    :custom
+    (show-paren-context-when-offscreen 'overlay)
+    :hook
+    (after-init . show-paren-mode))
+#+end_src
+
+*** which-key
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package which-key
+    :config
+    (which-key-setup-side-window-right-bottom)
+    :hook
+    (after-init . which-key-mode))
 #+end_src
 
 *** emacs-doom-modeline
@@ -218,16 +235,6 @@ workaround.
     (prog-mode . hl-todo-mode))
 #+end_src
 
-*** emacs isearch
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package isearch
-    :custom
-    (isearch-lazy-count t)
-    (isearch-wrap-pause 'no-ding)
-    (regexp-search-ring-max 200)
-    (search-ring-max 200))
-#+end_src
-
 *** emacs-mwim
 #+begin_src scheme :noweb-ref package-spec
   "emacs-mwim"
@@ -253,26 +260,6 @@ workaround.
     (orderless-matching-styles '(orderless-literal orderless-flex orderless-regexp)))
 #+end_src
 
-*** emacs-org-rainbow-tags
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-org-rainbow-tags"
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package org-rainbow-tags
-    :hook
-    (org-mode . org-rainbow-tags-mode))
-#+end_src
-
-*** emacs paren
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package paren
-    :custom
-    (show-paren-context-when-offscreen 'overlay)
-    :hook
-    (after-init . show-paren-mode))
-#+end_src
-
 *** emacs-rainbow-delimiters
 #+begin_src scheme :noweb-ref package-spec
   "emacs-rainbow-delimiters"
@@ -284,15 +271,6 @@ workaround.
     (prog-mode . rainbow-delimiters-mode))
 #+end_src
 
-*** emacs-valign
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-valign"
-#+end_src
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package valign
-    :hook
-    (org-mode . valign-mode))
-#+end_src
 *** emacs-vertico
 #+begin_src scheme :noweb-ref package-spec
   "emacs-vertico"
@@ -316,28 +294,6 @@ workaround.
     (rfn-eshadow-update-overlay . vertico-directory-tidy))
 #+end_src
 
-*** emacs-visual-fill-column
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-visual-fill-column"
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package visual-fill-column
-    :custom
-    (visual-fill-column-center-text t)
-    :hook
-    (visual-line-mode . visual-fill-column-mode))
-#+end_src
-
-*** emacs which-key
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package which-key
-    :config
-    (which-key-setup-side-window-right-bottom)
-    :hook
-    (after-init . which-key-mode))
-#+end_src
-
 ** Editing
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package emacs
@@ -356,62 +312,32 @@ workaround.
     (after-init . electric-pair-mode))
 #+end_src
 
-*** emacs-arei
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-arei"
-#+end_src
-
-See also =serve= command in blueprint.scm.  Run ~blue serve~ to start the
-server.
-
-To start the server in another project, start a shell in its root directory and
-run the following command:
-
-#+begin_example
-  echo "(begin (use-modules (ares server) (guix gexp)) (run-nrepl-server))" |
-      guix shell guile guile-ares-rs -- guix repl -t machine
-#+end_example
-
-In Emacs, Use ~arei-connect~ (=C-c C-a=) or ~sesman-start~ (=C-c C-s C-s=) to
-connect to the server.
-
-Arei's builtin xref backend provides =xref-buffer-location= but Citre expects
-=xref-file-location=.  Define a custom xref backend for Citre:
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package arei
-    :after (xref)
-    :custom
-    ;; Prevent geiser from interfering with completion.
-    (geiser-mode-auto-p nil)
-    :config
-    (defun hako/arei--xref-backend () 'hako/arei)
-    (defun hako/arei-xref--make-xref-loc (identifier)
-      (when-let* ((info (arei-xref--request-lookup identifier))
-                  (file (arei-nrepl-dict-get info "file"))
-                  (line (arei-nrepl-dict-get info "line"))
-                  (column (arei-nrepl-dict-get info "column")))
-        (xref-make-file-location file line column)))
-    (cl-defmethod xref-backend-identifier-at-point ((_backend (eql hako/arei)))
-      (thing-at-point 'symbol t))
-    (cl-defmethod xref-backend-definitions ((_backend (eql hako/arei)) identifier)
-      (when (arei-connected-p)
-        (when-let* ((loc (hako/arei-xref--make-xref-loc identifier)))
-          (list (xref-make identifier loc)))))
-    :hook
-    (after-init . global-arei-mode))
-#+end_src
-
-*** emacs-citre
+*** xref & emacs-citre
 #+begin_src scheme :noweb-ref package-spec
   "emacs-citre"
+  "ripgrep"
 #+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package xref
+    :custom
+    ;; Used by commands like `dired-do-find-regexp' and `project-find-regexp'.
+    (xref-search-program 'ripgrep))
+#+end_src
+
+Xref stops searching if one backend fails to find the symbol.  Replacing it with
+Citre since the latter supports [[https://github.com/universal-ctags/citre/blob/master/docs/user-manual/adapt-an-existing-xref-backend.md][adapting existing Xref backends]] and handles
+multiple backends better.
 
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package citre
     :custom
     (citre-default-create-tags-file-location 'global-cache)
     (citre-edit-ctags-options-manually nil)
+    (citre-find-definition-backends
+     '(eglot elisp arei tags dumb-jump))
+    (citre-find-reference-backends
+     '(eglot elisp dumb-jump))
     :bind
     ([remap xref-find-definitions] . citre-jump)
     ([remap xref-find-references]  . citre-jump-to-reference)
@@ -419,48 +345,13 @@ Arei's builtin xref backend provides =xref-buffer-location= but Citre expects
     ("C-x c p" . citre-ace-peek)
     ("C-x c u" . citre-update-this-tags-file))
 
-  (use-package citre-xref-adapter
-    :after (citre)
-    :config
-    (defvar citre-arei-backend
-      (citre-xref-backend-to-citre-backend
-       'hako/arei
-       (lambda () (derived-mode-p 'scheme-mode))))
-    (defvar citre-dumb-jump-backend
-      (citre-xref-backend-to-citre-backend
-       'dumb-jump
-       (lambda () t)))
-    (defvar citre-elisp-backend
-      (citre-xref-backend-to-citre-backend
-       'elisp
-       (lambda () (derived-mode-p 'scheme-mode))))
-    (citre-register-backend 'arei citre-arei-backend)
-    (citre-register-backend 'dumb-jump citre-dumb-jump-backend)
-    (citre-register-backend 'elisp citre-elisp-backend))
-
-  (use-package citre-backend-interface
-    :custom
-    (citre-find-definition-backends
-     '(eglot arei tags elisp dumb-jump))
-    (citre-find-reference-backends
-     '(eglot elisp dumb-jump)))
-
   (use-package citre-config)
 #+end_src
 
-*** emacs-dumb-jump
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-dumb-jump"
-#+end_src
+Citre has builtin support for Eglot backend.  Other backends will be converted
+later in their own sections.
 
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package dumb-jump
-    :after (xref)
-    :config
-    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate))
-#+end_src
-
-*** emacs eglot
+*** eglot
 #+begin_src scheme :noweb-ref package-spec
   "ccls"
   "python"
@@ -491,6 +382,96 @@ Arei's builtin xref backend provides =xref-buffer-location= but Citre expects
     ((c-mode python-mode rust-ts-mode zig-mode) . eglot-ensure))
 #+end_src
 
+*** elisp-mode
+Elisp Xref backend doesn't handle =*.el.gz= files by itself and returns =*.el=
+files instead.  Redefine so that Citre can find them.
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package elisp-mode
+    :after (citre)
+    :config
+    (defun elisp--xref-make-xref (type symbol file &optional summary)
+      (let ((file* (if (string-suffix-p ".el" file)
+                       (find-library-name file)
+                     file)))
+        (xref-make (or summary
+  		     (format elisp--xref-format (or type 'defun) symbol))
+  	         (xref-make-elisp-location symbol type file*))))
+    (defvar citre-elisp-backend
+      (citre-xref-backend-to-citre-backend
+       'elisp
+       (lambda () (derived-mode-p 'emacs-lisp-mode))))
+    (citre-register-backend 'elisp citre-elisp-backend))
+#+end_src
+
+*** emacs-arei
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-arei"
+#+end_src
+
+To start nREPL server for Arei, run the following command under project root
+directory:
+
+#+begin_example
+  guix shell guile guile-ares-rs -- guile -c '((@ (ares server) run-nrepl-server))'
+#+end_example
+
+Or the following one for Guix development:
+
+#+begin_example
+  echo "(begin (use-modules (ares server) (guix gexp)) (run-nrepl-server))" | guix shell guile guile-ares-rs -- guix repl /dev/stdin
+#+end_example
+
+Then connect to the server via ~arei-connect~ (=C-c C-a=) in Emacs.
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package arei
+    :custom
+    ;; Prevent geiser from interfering with completion.
+    (geiser-mode-auto-p nil)
+    :hook
+    (after-init . global-arei-mode))
+#+end_src
+
+Arei Xref backend provides =xref-buffer-location= but Citre expects
+=xref-file-location=.  Redefine it:
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package arei-xref
+    :after (citre)
+    :config
+    (defun arei-xref--make-xref-loc (identifier)
+      (when-let* ((info (arei-xref--request-lookup identifier))
+                  (file (arei-nrepl-dict-get info "file"))
+                  (line (arei-nrepl-dict-get info "line"))
+                  (column (arei-nrepl-dict-get info "column")))
+        (xref-make-file-location file line column)))
+    (defvar citre-arei-backend
+      (citre-xref-backend-to-citre-backend
+       'arei
+       #'arei-connected-p))
+    (citre-register-backend 'arei citre-arei-backend))
+#+end_src
+
+*** emacs-dumb-jump
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-dumb-jump"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package dumb-jump
+    :after (citre)
+    :custom
+    (dumb-jump-prefer-searcher 'rg)
+    :config
+    (add-hook 'xref-backend-functions #'dumb-jump-xref-activate)
+    (defvar citre-dumb-jump-backend
+      (citre-xref-backend-to-citre-backend
+       'dumb-jump
+       (lambda () t)))
+    (citre-register-backend 'dumb-jump citre-dumb-jump-backend))
+#+end_src
+
 *** emacs-flycheck
 Check syntax on the fly.
 
@@ -513,35 +494,6 @@ Check syntax on the fly.
   (use-package macrostep
     :bind
     ("C-c e" . macrostep-expand))
-#+end_src
-
-*** emacs org
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package org
-    :custom
-    (org-babel-load-languages
-     '((scheme . t)
-       (python . t)
-       (scheme . t)
-       (shell . t)))
-    (org-id-track-globally t)
-    (org-insert-heading-respect-content t)
-    (org-link-file-path-type 'relative)
-    (org-log-into-drawer t)
-    (org-special-ctrl-a/e t)
-    (org-special-ctrl-k t)
-    (org-startup-folded 'content)
-    (org-todo-keywords '((sequence "TODO(t!)" "DOING(g!)" "|" "DONE(d!)"))))
-#+end_src
-
-*** emacs-ox-hugo
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-ox-hugo"
-#+end_src
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package ox-hugo
-    :after (ox))
 #+end_src
 
 *** emacs-puni
@@ -628,19 +580,83 @@ Disable a few yasnippet snippets.
              "prog-mode/xxx"))))
 #+end_src
 
-** Miscellaneous
-*** emacs-daemons
+** Text Editing
+*** org
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package org
+    :custom
+    (org-babel-load-languages
+     '((scheme . t)
+       (python . t)
+       (scheme . t)
+       (shell . t)))
+    (org-id-track-globally t)
+    (org-insert-heading-respect-content t)
+    (org-link-file-path-type 'relative)
+    (org-log-into-drawer t)
+    (org-special-ctrl-a/e t)
+    (org-special-ctrl-k t)
+    (org-startup-folded 'content)
+    (org-todo-keywords '((sequence "TODO(t!)" "DOING(g!)" "|" "DONE(d!)"))))
+#+end_src
+
+*** emacs-adaptive-wrap
 #+begin_src scheme :noweb-ref package-spec
-  "emacs-daemons"
+  "emacs-adaptive-wrap"
 #+end_src
 
 #+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package daemons
-    :custom
-    (daemons-list-fill-frame t))
+  (use-package adaptive-wrap
+    :hook
+    (visual-line-mode . adaptive-wrap-prefix-mode))
 #+end_src
 
-*** emacs dired
+*** emacs-org-rainbow-tags
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-org-rainbow-tags"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package org-rainbow-tags
+    :hook
+    (org-mode . org-rainbow-tags-mode))
+#+end_src
+
+*** emacs-ox-hugo
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-ox-hugo"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package ox-hugo
+    :after (ox))
+#+end_src
+
+*** emacs-valign
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-valign"
+#+end_src
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package valign
+    :hook
+    (org-mode . valign-mode))
+#+end_src
+
+*** emacs-visual-fill-column
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-visual-fill-column"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package visual-fill-column
+    :custom
+    (visual-fill-column-center-text t)
+    :hook
+    (visual-line-mode . visual-fill-column-mode))
+#+end_src
+
+** Miscellaneous
+*** dired
 #+begin_src emacs-lisp :noweb-ref emacs-init
   (use-package dired
     :custom
@@ -655,6 +671,28 @@ Disable a few yasnippet snippets.
     (dired-create-destination-dirs 'ask)
     (dired-create-destination-dirs-on-trailing-dirsep t)
     (dired-vc-rename-file t))
+#+end_src
+
+*** smtpmail
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package smtpmail
+    :custom
+    (smtpmail-default-smtp-server "mail.boiledscript.com")
+    (smtpmail-smtp-service 465)
+    (smtpmail-stream-type 'ssl)
+    (smtpmail-queue-mail t)
+    (smtpmail-queue-dir "~/.local/share/queued-mail"))
+#+end_src
+
+*** emacs-daemons
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-daemons"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package daemons
+    :custom
+    (daemons-list-fill-frame t))
 #+end_src
 
 *** emacs-eat
@@ -769,17 +807,6 @@ emacs-eat with patches <https://codeberg.org/akib/emacs-eat/pulls/133> and
     (notmuch-show-insert-text/plain . notmuch-wash-convert-inline-patch-to-part)
     :bind
     ("C-c M-m" . message-mark-inserted-region))
-#+end_src
-
-*** emacs smtpmail
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package smtpmail
-    :custom
-    (smtpmail-default-smtp-server "mail.boiledscript.com")
-    (smtpmail-smtp-service 465)
-    (smtpmail-stream-type 'ssl)
-    (smtpmail-queue-mail t)
-    (smtpmail-queue-dir "~/.local/share/queued-mail"))
 #+end_src
 
 ** Fonts
