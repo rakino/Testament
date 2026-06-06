@@ -659,27 +659,6 @@ Interactive macro-expander.
           ("C-c e" . macrostep-expand)))
 #+end_src
 
-*** [[https://orgmode.org/][org]]
-(builtin) Highly flexible structured plain text file format.
-
-#+begin_src emacs-lisp :noweb-ref emacs-init
-  (use-package org
-    :custom
-    (org-babel-load-languages
-     '((scheme . t)
-       (python . t)
-       (scheme . t)
-       (shell . t)))
-    (org-id-track-globally t)
-    (org-insert-heading-respect-content t)
-    (org-link-file-path-type 'relative)
-    (org-log-into-drawer t)
-    (org-special-ctrl-a/e t)
-    (org-special-ctrl-k t)
-    (org-startup-folded 'content)
-    (org-todo-keywords '((sequence "TODO(t!)" "DOING(g!)" "|" "DONE(d!)"))))
-#+end_src
-
 *** [[https://github.com/AmaiKinono/puni][puni]]
 Structured editing (soft deletion, expression navigating & manipulating) that
 supports many major modes out of the box.
@@ -767,6 +746,42 @@ Managing init system services.
   (use-package daemons
     :custom
     (daemons-list-fill-frame t))
+#+end_src
+
+*** [[https://protesilaos.com/emacs/denote][denote]]
+Simple notes with an efficient file-naming scheme.
+
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-denote"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package denote
+    :after org
+    :custom
+    (denote-directory "~/Documents/Notes")
+    (denote-known-keywords nil)
+    (denote-date-prompt-use-org-read-date t)
+    (denote-rename-buffer-mode t)
+    :hook
+    (dired-mode . denote-dired-mode)
+    :bind
+    (("C-c n n" . denote-open-or-create)
+     ("C-c n d" . denote-dired)
+     ("C-c n g" . denote-grep)
+     ("C-c n r" . denote-rename-file)
+     ("C-c n R" . denote-rename-file-using-front-matter)
+     :map org-mode-map
+     ("C-c n l" . denote-link)
+     ("C-c n L" . denote-add-links)
+     ("C-c n b" . denote-backlinks)
+     ("C-c n q c" . denote-query-contents-link)
+     ("C-c n q f" . denote-query-filenames-link)
+     :map dired-mode-map
+     ("C-c C-d C-i" . denote-dired-link-marked-notes)
+     ("C-c C-d C-r" . denote-dired-rename-files)
+     ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
+     ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter)))
 #+end_src
 
 *** [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]]
@@ -912,6 +927,27 @@ Interface for [[https://notmuchmail.org/][Notmuch]].
     (notmuch-show-insert-text/plain . notmuch-wash-convert-inline-patch-to-part)
     :bind
     ("C-c M-m" . message-mark-inserted-region))
+#+end_src
+
+*** [[https://orgmode.org/][org]]
+(builtin) Highly flexible structured plain text file format.
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package org
+    :custom
+    (org-babel-load-languages
+     '((scheme . t)
+       (python . t)
+       (scheme . t)
+       (shell . t)))
+    (org-id-track-globally t)
+    (org-insert-heading-respect-content t)
+    (org-link-file-path-type 'relative)
+    (org-log-into-drawer t)
+    (org-special-ctrl-a/e t)
+    (org-special-ctrl-k t)
+    (org-startup-folded 'content)
+    (org-todo-keywords '((sequence "TODO(t!)" "DOING(g!)" "|" "DONE(d!)"))))
 #+end_src
 
 *** [[https://ox-hugo.scripter.co/][ox-hugo]]
