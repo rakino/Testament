@@ -623,6 +623,28 @@ Flycheck support for Eglot.
     (after-init . global-flycheck-eglot-mode))
 #+end_src
 
+*** [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Info-Lookup.html][info-look]]
+(builtin) Info documentation lookup (C-h S).
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package info-look
+    :config
+    (info-lookup-add-help
+     :mode 'scheme-mode
+     :regexp "[^()`',\"        \n]+"
+     :ignore-case nil
+     :doc-spec
+     (mapcar (lambda (node-name)
+               (list node-name nil "^[       ]+-+ [^:]+:[    ]*" "\\b"))
+             '("(guile)R5RS Index"
+               "(guix)Programming Index"
+               "(guile)Procedure Index"
+               "(guile)Variable Index"
+               "(r5rs)Index"
+               "(guile)Concept Index"
+               "(guix)Concept Index"))))
+#+end_src
+
 *** [[https://github.com/emacsorphanage/macrostep][macrostep]]
 Interactive macro-expander.
 
