@@ -655,6 +655,42 @@ Set up ElDoc integration.
     (flycheck-mode . mp/flycheck-prefer-eldoc))
 #+end_src
 
+Fix org-lint compatibility.  https://github.com/flycheck/flycheck/pull/2165#issuecomment-4537260684
+
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package flycheck
+    :config
+    (defun hako/flycheck-checker-get-advice (orig checker property &rest rest)
+      (if (and (eq 'org-lint checker)
+               (eq 'start property)
+               (string= flycheck-version "36.0"))
+          (lambda (checker callback)
+            (condition-case err
+                (let ((errors
+                       (delq nil
+                             (mapcar
+                              (lambda (e)
+                                (pcase e
+                                  (`(,_n [,line ,_trust ,desc ,_checker])
+                                   (flycheck-error-new-at
+                                    (if (stringp line)
+                                        (string-to-number line)
+                                      line)
+                                    nil 'info desc
+                                    :checker checker))
+                                  (_
+                                   (flycheck-error-new-at
+                                    1 nil 'warning
+                                    (format "Unexpected org-lint format: %S" e)
+                                    :checker checker))))
+                              (org-lint)))))
+                  (funcall callback 'finished errors))
+              (error (funcall callback 'errored
+                              (error-message-string err)))))
+        (apply orig checker property rest)))
+    (advice-add #'flycheck-checker-get :around #'hako/flycheck-checker-get-advice))
+#+end_src
+
 *** [[https://github.com/flycheck/flycheck-eglot][flycheck-eglot]]
 Flycheck support for Eglot.
 
