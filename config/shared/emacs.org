@@ -668,6 +668,68 @@ Flycheck support for Eglot.
     (after-init . global-flycheck-eglot-mode))
 #+end_src
 
+*** [[https://github.com/flatwhatson/flycheck-guile][flycheck-guile]]
+Flycheck checker for GNU Guile.
+
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-flycheck-guile"
+#+end_src
+
+flycheck-guile gets load paths from geiser.  Define a custom checker to use guix
+repl instead.
+
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package flycheck-guile
+    :after flycheck
+    :config
+    (flycheck-define-checker guile-guix
+      "A GNU Guile syntax checker using `guild compile'."
+      :command
+      ("guild" "compile" "-O0"
+       (option-list "-W" flycheck-guile-warnings)
+       (eval (mapcan
+              (lambda (p)
+                (list "-L" p))
+              (read (shell-command-to-string "echo '(write %load-path)' | guix repl /dev/stdin"))))
+       source)
+      :error-filter flycheck-guile--filter-errors
+      :error-patterns
+      ((warning
+        line-start
+        (file-name) ":" line ":" column ": warning:" (message) line-end)
+       (warning
+        line-start
+        "<unknown-location>: warning:" (message) line-end)
+       (error
+        line-start
+        "ice-9/boot-9.scm:" (+ digit) ":" (+ digit) ":" (+ (any space "\n"))
+        "In procedure raise-exception:"                 (+ (any space "\n"))
+        "In procedure " (id (+ (not (any ":")))) ":"    (+ (any space "\n"))
+        (file-name) ":" line ":" column ":" (message (+? anything)) (* space) string-end)
+       (error
+        line-start
+        "ice-9/boot-9.scm:" (+ digit) ":" (+ digit) ":" (+ (any space "\n"))
+        "In procedure raise-exception:"                 (+ (any space "\n"))
+        (id (+ (not (any ":")))) ":"                    (+ (any space "\n"))
+        (file-name) ":" line ":" column ":" (message (+? anything)) (* space) string-end)
+       (error
+        line-start
+        "ice-9/boot-9.scm:" (+ digit) ":" (+ digit) ":" (+ (any space "\n"))
+        "In procedure raise-exception:"                 (+ (any space "\n"))
+        (message (+? anything)) (* space) string-end)
+       (error
+        line-start
+        (file-name) ":" line ":" column ":"             (+ (any space "\n"))
+        "In procedure raise-exception:"                 (+ (any space "\n"))
+        (message (+? anything)) (* space) string-end)
+       (error
+        line-start
+        (file-name) ":" line ":" column ":"             (+ (any space "\n"))
+        (message (+? anything)) (* space) string-end))
+      :modes (scheme-mode))
+    (add-to-list 'flycheck-checkers 'guile-guix))
+#+end_src
+
 *** [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Info-Lookup.html][info-look]]
 (builtin) Info documentation lookup (C-h S).
 
