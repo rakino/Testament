@@ -731,11 +731,11 @@ niri supports getting keyboard layout from localed.
   "font-victor-mono"
 #+end_src
 
-#+begin_example
-  $ gsettings set org.gnome.desktop.interface icon-theme Qogir
-  $ gsettings set org.gnome.desktop.interface cursor-theme Qogir
-  $ gsettings set org.gnome.desktop.interface font-name Sans
-#+end_example
+#+begin_src bash
+  gsettings set org.gnome.desktop.interface icon-theme Qogir
+  gsettings set org.gnome.desktop.interface cursor-theme Qogir
+  gsettings set org.gnome.desktop.interface font-name Sans
+#+end_src
 
 #+begin_src scheme :noweb-ref home-service
   (service home-theme-service-type
@@ -1016,9 +1016,9 @@ by a patch.
 
 Expose =/gnu/store= to Flatpak:
 
-#+begin_example
-  $ flatpak --user override --filesystem=/gnu/store:ro
-#+end_example
+#+begin_src bash
+  flatpak --user override --filesystem=/gnu/store:ro
+#+end_src
 
 *** git & jujutsu
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/git/config
@@ -1056,10 +1056,10 @@ Expose =/gnu/store= to Flatpak:
 
 [[https://forgejo.org/docs/latest/user/agit-support/][AGit Workflow]] helpers.  Usage:
 
-#+begin_example
-  $ git pr-push <my-branch> master
-  $ git pr-apply 233
-#+end_example
+#+begin_src bash
+  git pr-push <my-branch> master
+  git pr-apply 233
+#+end_src
 
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/git/config
   [alias]
