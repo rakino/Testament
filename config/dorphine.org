@@ -129,6 +129,10 @@ Application profiles
 #+begin_src scheme :noweb yes :noweb-ref service
   (service guix-home-service-type
     `(("hako" ,(home-environment
+                 (essential-services
+                  (cons* (service home-writable-files-manager-service-type)
+                         (modify-services ((@@ (gnu home) home-environment-default-essential-services) this-home-environment)
+                           (delete home-symlink-manager-service-type))))
                  (services
                   (cons* <<home-service>> %rosenthal-desktop-home-services))))))
 #+end_src
@@ -992,28 +996,6 @@ skk
   1=Control+N
 #+end_src
 
-#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/fcitx5/profile
-  [Groups/0]
-  Name=Default
-  Default Layout=us-dvorak
-  DefaultIM=rime
-
-  [Groups/0/Items/0]
-  Name=keyboard-us-dvorak
-  Layout=
-
-  [Groups/0/Items/1]
-  Name=rime
-  Layout=
-
-  [Groups/0/Items/2]
-  Name=skk
-  Layout=
-
-  [GroupOrder]
-  0=Default
-#+end_src
-
 *** flatpak
 #+begin_src scheme :noweb-ref package-spec
   "flatpak"
@@ -1322,7 +1304,9 @@ Guix Home - services
   (gnu home services fontutils)
   (gnu home services gnupg)
   (gnu home services shells)
+  (gnu home services symlink-manager)
   (rosenthal home services desktop)
+  (rosenthal home services writable-files-manager)
   (sops home services sops)
 #+end_src
 

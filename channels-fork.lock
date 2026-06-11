@@ -32,7 +32,7 @@
        (name 'rosenthal)
        (url "https://codeberg.org/hako/rosenthal.git")
        (branch "trunk")
-       (commit "f1cdc992a24110fbca6a62b23a3e667f28e96c73")
+       (commit "ed943d36b4163d7186109e9e430adbe0392aaa8d")
        (introduction
         (make-channel-introduction
          "7677db76330121a901604dfbad19077893865f35"
