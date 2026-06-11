@@ -858,8 +858,6 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                               . (+archive -unread -inbox -new))
                              ("folder:imap/Junk"
                               . (+spam -inbox -new))
-                             ("folder:imap/Trash"
-                              . (+trashed -inbox -new))
                              ;; others
                              ("tag:new"
                               . (+inbox -new)))))
