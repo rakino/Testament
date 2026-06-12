@@ -713,9 +713,7 @@ niri supports getting keyboard layout from localed.
 
 *** noctalia
 #+begin_src scheme :noweb-ref home-service
-  (service home-noctalia-service-type
-    (home-noctalia-configuration
-      (noctalia (@ (noctalia) noctalia-git))))
+  (service home-noctalia-service-type)
 #+end_src
 
 *** icon theme & fonts
