@@ -516,7 +516,6 @@ See [[file:shared/caddy.org][shared/caddy.org]].
 #+begin_src caddyfile :noweb-ref caddy-site
   boiledscript.com {
   	import cloudflare_dns
-  	import block_bots
   	reverse_proxy localhost:54493
   }
 #+end_src
