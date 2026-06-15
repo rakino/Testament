@@ -786,19 +786,18 @@ Pinned for latest Live ISOs.
                       "--cache=/var/cache/guix-moe/mirror"
                       "--listen=127.0.0.1"
                       "--port=13778"
-                      "--ttl=6m"
-                      "--negative-ttl=300s")
+                      "--ttl=1m"
+                      "--negative-ttl=300s"
+                      ;; Args for mirror-substitutes
+                      "--substitute-urls=https://bordeaux.guix.gnu.org https://ci.guix.gnu.org https://substitutes.nonguix.org"
+                      "--url-prefix=https://nars.guix.moe/nar/")
                 #:user "guix-moe"
                 #:group "guix-moe"
-                #:log-file "/var/log/guix-moe-mirror-publish.log"))
+                #:log-file "/var/log/guix-moe-mirror-publish.log"
+                #:environment-variables
+                (cons* "XDG_CACHE_HOME=/var/cache/guix-moe/user-cache/.cache"
+                       (default-environment-variables))))
             (stop #~(make-kill-destructor)))
-
-          (shepherd-timer '(guix-moe-mirror-sync)
-            #~(calendar-event #:minutes '(30))
-            #~("/run/privileged/bin/sudo" "-u" "guix-moe" "-g" "guix-moe"
-               "/bin/sh" "--login"
-               #$(local-file (testament-file "nuporta/setup-mirror.sh")) "latest")
-            #:requirement '(user-processes networking))
 
           (shepherd-timer '(guix-moe-mirror-update-store-paths)
             #~(calendar-event #:hours (iota 12 1 2) #:minutes '(30))
@@ -823,25 +822,6 @@ Pinned for latest Live ISOs.
                "--fast-list"
                "--no-traverse")
             #:requirement '(user-processes networking))))
-#+end_src
-
-#+begin_src sh :tangle ../tangled/nuporta/setup-mirror.sh
-  set -e
-
-  MIRROR_DIR="/var/cache/guix-moe/mirror"
-  URL_PREFIX="https://nars.guix.moe/nar/"
-  GUIX_SUBSTITUTES="https://ci.guix.gnu.org https://bordeaux.guix.gnu.org"
-  NONGUIX_SUBSTITUTES="https://substitutes.nonguix.org"
-  # https://github.com/rakino/guix-store-paths
-  STORE_PATHS="/var/cache/guix-moe/store-paths"
-  DATE="$1"
-
-  mirror-substitutes -o "$MIRROR_DIR" --url-prefix="$URL_PREFIX" --threads=4 --substitute-urls="$GUIX_SUBSTITUTES" \
-                     -i "$STORE_PATHS/$DATE/guix.txt"
-  mirror-substitutes -o "$MIRROR_DIR" --url-prefix="$URL_PREFIX" --threads=4 --substitute-urls="$GUIX_SUBSTITUTES" \
-                     -i "$STORE_PATHS/$DATE/guix-packages.txt"
-  mirror-substitutes -o "$MIRROR_DIR" --url-prefix="$URL_PREFIX" --threads=4 --substitute-urls="$GUIX_SUBSTITUTES $NONGUIX_SUBSTITUTES" \
-                     -i "$STORE_PATHS/$DATE/nonguix-packages.txt"
 #+end_src
 
 Maintenance: manually sync mirrored substitutes to remote storage.
