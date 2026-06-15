@@ -424,6 +424,44 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   }
 #+end_src
 
+*** guixcn-planet
+#+begin_src caddyfile :noweb-ref caddy-site
+  planet.guixcn.org {
+  	import cloudflare_dns
+  	root * /var/lib/webpublic/planet.guixcn.org/public
+  	file_server
+  }
+#+end_src
+
+#+begin_src scheme :noweb-ref user-group
+  (user-group
+    (name "guixcn-planet")
+    (system? #t))
+#+end_src
+
+#+begin_src scheme :noweb-ref user-account
+  (user-account
+    (name "guixcn-planet")
+    (group "guixcn-planet")
+    (home-directory "/var/empty")
+    (shell (file-append shadow "/sbin/nologin"))
+    (system? #t))
+#+end_src
+
+#+begin_src scheme :noweb-ref service
+  (simple-service 'guix-moe-mirror shepherd-root-service-type
+    (list (shepherd-timer '(guixcn-planet)
+            #~(calendar-event #:hours '(8) #:minutes '(0))
+            #~("/run/privileged/bin/sudo" "-u" "guixcn-planet" "-g" "guixcn-planet"
+               "/bin/sh" "--login" "-c"
+               #$(string-append
+                  "cd /var/lib/webpublic/planet.guixcn.org;"
+                  "guix shell -m manifest.scm -- "
+                  "guile --no-auto-compile -L . -c '((@ (planet build) build-planet))';"
+                  "chmod -R a+r /var/lib/webpublic/planet.guixcn.org;"))
+            #:requirement '(user-processes networking))))
+#+end_src
+
 *** mirroring
 #+begin_src caddyfile :noweb-ref caddy-site
   cache-de.guix.moe, cache-it.guix.moe {
