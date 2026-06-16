@@ -62,7 +62,6 @@
 |                                  |                                |                               |                       |
 | Lycoris/State/Forgejo            | /var/lib/forgejo               |                               |                       |
 | Lycoris/State/PostgreSQL         | /var/lib/postgresql            | recordsize=32K                | true                  |
-| Lycoris/State/SOPS               | /var/lib/sops                  |                               | true                  |
 | Lycoris/State/Tailscale          | /var/lib/tailscale             |                               | true                  |
 | Lycoris/State/Tuwunel            | /var/lib/tuwunel               |                               | true                  |
 | Lycoris/State/WebPublic          | /var/lib/webpublic             |                               | true                  |
@@ -194,30 +193,6 @@
       ("hako" ,%ssh-key-hako)
       ("jonathan" ,%ssh-key-jonathan)
       ("podiki" ,%ssh-key-podiki)))
-#+end_src
-
-*** SOPS Secrets
-#+begin_src scheme :noweb-ref service
-  (service sops-secrets-service-type
-    (sops-service-configuration
-      (gnupg-home "/var/lib/sops")
-      (secrets
-       (list (sops-secret
-               (key '("cloudflare"))
-               (file %sops-nuporta)
-               (user "caddy"))
-             (sops-secret
-               (key '("rclone"))
-               (file %sops-nuporta))
-
-             (sops-secret
-               (key '("caddy" "cuirass" "admin"))
-               (file %sops-nuporta)
-               (group "caddy"))
-             (sops-secret
-               (key '("caddy" "cuirass" "forgejo"))
-               (file %sops-nuporta)
-               (group "caddy"))))))
 #+end_src
 
 ** Networking & SSH
@@ -374,7 +349,7 @@
   		path /admin/forgejo/event || /jobset/*/hook/evaluate
   	}
   	handle @forgejo_hooks {
-  		import /run/secrets/caddy/cuirass/forgejo
+  		import /etc/nuporta-configs/caddy/cuirass-forgejo
   	}
 
   	handle /admin/* {
@@ -811,7 +786,7 @@ Pinned for latest Live ISOs.
             #~("/run/current-system/profile/bin/rclone" "copy"
                "/var/cache/guix-moe/mirror/nar"
                "r2:substitutes-apac/nar"
-               "--config" "/run/secrets/rclone"
+               "--config" "/etc/nuporta-configs/rclone"
                "--exclude" "*.tmp"
                "--max-age" "7h"
                "--verbose"
@@ -829,7 +804,7 @@ Maintenance: manually sync mirrored substitutes to remote storage.
 #+begin_src bash
   sudo herd stop guix-moe-mirror-remote-upload
   sudo rclone sync /var/cache/guix-moe/mirror/nar r2:substitutes-apac/nar \
-       --verbose --config /run/secrets/rclone \
+       --verbose --config /etc/nuporta-configs/rclone \
        --exclude '*.tmp' --delete-excluded \
        --s3-no-check-bucket \
        --size-only --fast-list
@@ -890,7 +865,7 @@ rsync://cache.guix.moe
   (define %nars-list-new     (string-append %nars-list ".new"))
 
   (define %rclone-arguments
-    '("--config" "/run/secrets/rclone"
+    '("--config" "/etc/nuporta-configs/rclone"
       "--size-only"
       "--no-traverse"
       "--s3-no-check-bucket"
@@ -1116,9 +1091,40 @@ See [[file:shared/caddy.org][shared/caddy.org]].
   	}
   }
 
-  <<caddy-snippet-block-bots>>
-  <<caddy-snippet-cloudflare-dns>>
-  <<caddy-snippet-tailscale>>
+  (block_bots) {
+  	import $$share/ai-robots-txt/Caddyfile$$
+  	handle @aibots {
+  		log_skip
+  		respond /* "Access denied" 403 {
+  			close
+  		}
+  	}
+
+  	@fake {
+  		header User-Agent *Chrome*
+  		header User-Agent *Firefox*
+  		header !Sec-Fetch-Mode
+  	}
+  	handle @fake {
+  		log_skip
+  		respond /* "Access denied" 403 {
+  			close
+  		}
+  	}
+  }
+
+  (cloudflare_dns) {
+  	tls {
+  		dns cloudflare {file./etc/nuporta-configs/caddy/cloudflare}
+  	}
+  }
+
+  (tailscale) {
+  	@tailscale client_ip 100.64.0.0/10 fd7a:115c:a1e0::/48
+  	handle @tailscale {
+  		{block}
+  	}
+  }
 
   :80, :443 {
   	respond /* "Access denied" 403 {
@@ -1259,7 +1265,6 @@ Utilities
 #+begin_src scheme :noweb-ref module
   (gnu)
   (rosenthal)
-  (sops secrets)
 #+end_src
 
 Guix System - services
@@ -1276,7 +1281,6 @@ Guix System - services
   (rosenthal services messaging)
   (rosenthal services networking)
   (rosenthal services web)
-  (sops services sops)
 #+end_src
 
 Guix packages
