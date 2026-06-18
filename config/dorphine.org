@@ -37,6 +37,7 @@
                   "libreoffice"
                   "obs-nvidia"
                   "picard"
+                  "showmethekey"
                   <<package-spec>>))
                %testament-cli-packages
                %base-packages))
@@ -520,12 +521,16 @@ Generate passwordless ECC key:
 #+end_src
 
 ** Graphical Session
-*** localed keyboard layout
+*** keyboard layout
 niri supports getting keyboard layout from localed.
 
 #+begin_src scheme :noweb-ref service
   (simple-service 'localed-keyboard-layout localed-service-type
     keyboard-layout)
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (service home-keyboard-service-type keyboard-layout)
 #+end_src
 
 *** niri
@@ -605,6 +610,15 @@ niri supports getting keyboard layout from localed.
   window-rule {
           match app-id="firefox" title="^Picture-in-Picture$"
           open-floating true
+  }
+
+  window-rule {
+          match app-id="showmethekey"
+          open-floating true
+          geometry-corner-radius 0
+          background-effect {
+                  blur false
+          }
   }
 
   window-rule {
@@ -1275,6 +1289,7 @@ Guix System - services
   (gnu services sysctl)
   (gnu services virtualization)
   (gnu services xorg)
+  (rosenthal services keyboard)
   (rosenthal services networking)
   (rosenthal services shellutils)
 #+end_src
