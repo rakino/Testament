@@ -901,13 +901,15 @@ Automatic usage and fallback for tree-sitter major modes.
   "tree-sitter-go"
   "tree-sitter-gomod"
   "tree-sitter-json"
+  "tree-sitter-kdl"
   "tree-sitter-lua"
+  "tree-sitter-nix"
   "tree-sitter-rust"
   "tree-sitter-typescript"
   "tree-sitter-yaml"
 
   "emacs-kdl-mode"
-  "tree-sitter-kdl"
+  "emacs-nix-ts-mode"
 #+end_src
 
 #+begin_src elisp :noweb-ref emacs-init
@@ -921,6 +923,7 @@ Automatic usage and fallback for tree-sitter major modes.
                ("dockerfile" . dockerfile-ts)
                ("go"         . go-ts)
                ("lua"        . lua-ts)
+               ("nix"        . nix-ts)
                ("rust"       . rust-ts)
                ("typescript" . typescript-ts)
                ("yaml"       . yaml-ts)))

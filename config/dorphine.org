@@ -204,6 +204,7 @@ Application profiles
 | Mentha/Log             | legacy (/var/log)  |               |                       |
 | Mentha/Guix            | legacy (/var/guix) |               |                       |
 | Mentha/Store           | legacy (/gnu)      | atime=off     |                       |
+| Mentha/Nix             | legacy (/nix)      | atime=off     |                       |
 | Mentha/Home            | legacy (/home)     |               | true                  |
 |                        |                    |               |                       |
 | Mentha/State/Bluetooth | /var/lib/bluetooth |               | true                  |
@@ -229,6 +230,7 @@ Application profiles
          ("Log"    . "/var/log")
          ("Guix"   . "/var/guix")
          ("Store"  . "/gnu")
+         ("Nix"    . "/nix")
          ("Home"   . "/home")))
 #+end_src
 
@@ -1155,6 +1157,17 @@ Jujutsu:
        ,(file-append mpv-mpris "/lib/mpv-mpris/mpris.so"))))
 #+end_src
 
+*** nix
+#+begin_src scheme :noweb-ref service
+  (service nix-service-type
+    (nix-configuration
+      (build-directory "/var/tmp")
+      (extra-config
+       '("experimental-features = nix-command flakes\n"
+         "auto-optimise-store = true\n"
+         "substituters = https://mirrors.ustc.edu.cn/nix-channels/store https://cache.nixos.org\n"))))
+#+end_src
+
 *** prismlauncher
 #+begin_src scheme :noweb-ref package-spec
   "prismlauncher-dolly"
@@ -1294,6 +1307,7 @@ Guix System - services
   (gnu services containers)
   (gnu services linux)
   (gnu services networking)
+  (gnu services nix)
   (gnu services security)
   (gnu services security-token)
   (gnu services ssh)
