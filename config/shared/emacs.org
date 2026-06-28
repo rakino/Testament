@@ -1327,6 +1327,7 @@ https://web.archive.org/web/20240525203039/http://community.schemewiki.org/?emac
       (put 'computed-substitution-with-inputs 'scheme-indent-function 1)
       (put 'hidden-desktop-entry              'scheme-indent-function 1)
       (put 'modify-services/by-name           'scheme-indent-function 1)
+      (put 'nix-shell-wrapper                 'scheme-indent-function 1)
       (put 'ini-file                          'scheme-indent-function 1)
       (put 'json-file                         'scheme-indent-function 1)
       (put 'toml-file                         'scheme-indent-function 1)
