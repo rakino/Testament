@@ -913,14 +913,8 @@ Automatic usage and fallback for tree-sitter major modes.
 #+begin_src elisp :noweb-ref emacs-init
   (use-package treesit-auto
     :config
-    ;; FIXME: These modes aren't loaded automatically.
-    (require 'cmake-ts-mode)
-    (require 'dockerfile-ts-mode)
-    (require 'go-ts-mode)
-    (require 'lua-ts-mode)
-    (require 'rust-ts-mode)
-    (require 'typescript-ts-mode)
-    (require 'yaml-ts-mode)
+    ;; Enable tree-sitter mode for installed grammars.
+    (treesit-auto-add-to-auto-mode-alist t)
     ;; https://github.com/renzmann/treesit-auto/issues/32
     (dolist (mode
              '(("cmake"      . cmake-ts)
