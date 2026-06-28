@@ -572,7 +572,7 @@ niri supports getting keyboard layout from localed.
       (config
        (computed-substitution-with-inputs "niri.kdl"
          (local-file (testament-file "dorphine/niri.kdl"))
-         (list xwayland-satellite)))))
+         (list rofi xwayland-satellite)))))
 #+end_src
 
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/xdg-desktop-portal/niri-portals.conf
@@ -682,7 +682,7 @@ niri supports getting keyboard layout from localed.
           XF86MonBrightnessDown allow-when-locked=true { spawn "noctalia" "msg" "brightness-down"; }
 
           Mod+A           { spawn "noctalia" "msg" "panel-toggle" "control-center"; }
-          Mod+D           { spawn "noctalia" "msg" "panel-toggle" "launcher"; }
+          Mod+D           { spawn "$$bin/rofi$$" "-show" "combi"; }
           Mod+S           { spawn "noctalia" "msg" "settings-toggle"; }
           Mod+L           { spawn "noctalia" "msg" "session" "lock"; }
           Ctrl+Alt+Delete { spawn "noctalia" "msg" "panel-toggle" "session"; }
@@ -1364,6 +1364,7 @@ Guix packages
   (gnu packages shells)
   (gnu packages ssh)
   (gnu packages video)
+  (gnu packages xdisorg)
   (gnu packages xorg)
   (nongnu packages nvidia)
 #+end_src
