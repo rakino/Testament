@@ -28,21 +28,22 @@
       (users (cons* <<user-account>> %base-user-accounts))
       (skeletons %rosenthal-skeletons)
       (packages
-       (append (specifications->packages
-                '("digikam"
-                  "firefox"
-                  "gimp"
-                  "imv"
-                  "kdenlive"
-                  "libreoffice"
-                  "obs-nvidia"
-                  "picard"
-                  "showmethekey"
-                  <<package-spec>>))
-               (map nix-shell-wrapper->package
-                    (list <<package-nix>>))
-               %testament-cli-packages
-               %base-packages))
+       (with-nix-profile
+        (append (specifications->packages
+                 '("digikam"
+                   "firefox"
+                   "gimp"
+                   "imv"
+                   "kdenlive"
+                   "libreoffice"
+                   "obs-nvidia"
+                   "picard"
+                   "showmethekey"
+                   "telegram-desktop"
+                   <<package-spec>>))
+                (list <<package-nix>>)
+                %testament-cli-packages
+                %base-packages)))
       (services
        (cons* <<service>>
               (modify-services %rosenthal-desktop-services/tuigreet <<modify-service>>)))
@@ -1168,40 +1169,37 @@ Jujutsu:
        '("experimental-features = nix-command flakes\n"
          "auto-optimise-store = true\n"
          "substituters = https://mirrors.ustc.edu.cn/nix-channels/store https://cache.nixos.org\n"))))
+
+  (service nix-search-paths-service-type)
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (service home-nix-search-paths-service-type)
 #+end_src
 
 TODO: Address locale issue.
 
 #+begin_src scheme :noweb-ref package-nix
   (nix-shell-wrapper "nocturne"
-    '("github:NixOS/nixpkgs/nixos-26.05#coreutils"
-      "github:NixOS/nixpkgs/nixos-26.05#nocturne")
-    #:run-command '("env" "LANG=C.UTF-8" "nocturne"))
+    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#nocturne")
+    #:run-command '("nocturne")
+    #:environment-set '(("LANG" . "C.UTF-8")))
 
   (nix-shell-wrapper "readest"
-    '("github:NixOS/nixpkgs/nixos-26.05#coreutils"
-      "github:NixOS/nixpkgs/nixos-26.05#readest")
-    #:run-command '("env" "LANG=C.UTF-8" "readest"))
+    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#readest")
+    #:run-command '("readest")
+    #:environment-set '(("LANG" . "C.UTF-8")))
 #+end_src
 
 *** prismlauncher
-#+begin_src scheme :noweb-ref package-spec
-  "prismlauncher-dolly"
+#+begin_src scheme :noweb-ref package-nix
+  (nix-shell-wrapper "prismlauncher"
+    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#prismlauncher")
+    #:run-command '("prismlauncher"))
 #+end_src
 
 #+begin_src nftables :noweb-ref nftables-filter-input
   tcp dport 25565 accept
-#+end_src
-
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'openjdk-for-prismlauncher home-files-service-type
-    (map (lambda (jdk)
-           (let ((path (in-vicinity ".local/share/PrismLauncher/java" (package-version jdk))))
-             (list path jdk)))
-         (list openjdk25
-               openjdk21
-               openjdk17
-               icedtea-8)))
 #+end_src
 
 *** steam
@@ -1334,6 +1332,7 @@ Guix System - services
   (gnu services xorg)
   (rosenthal services keyboard)
   (rosenthal services networking)
+  (rosenthal services nix)
   (rosenthal services shellutils)
 #+end_src
 
