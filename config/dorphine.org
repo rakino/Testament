@@ -1176,6 +1176,21 @@ home-fontconfig-service-type.
   (extra-special-file "/etc/fonts/fonts.conf" "/home/hako/.guix-home/files/.config/fontconfig/fonts.conf")
 #+end_src
 
+NixOS installs graphics drivers to /run/opengl-driver, when using Nix packages
+we'll need this as well, since GLX and CUDA drivers don't have search paths.
+Alternatively, you can load them (libGL.so, libcuda.so, libnvcuvid.so) via the
+LD_PRELOAD environment variable.
+
+Even if you're not using a NVIDIA graphics card, add the nvda package from
+Nonguix to system profile as well (not needed for NVIDIA cards though, since
+this has already been handled by nonguix-transformation-nvidia properly).  That
+package provides a mesa variant with GLVND support and search paths for various
+graphics libraries.
+
+#+begin_src scheme :noweb-ref service
+  (extra-special-file "/run/opengl-driver" "/run/booted-system/profile")
+#+end_src
+
 *** prismlauncher
 #+begin_src scheme :noweb-ref package-nix
   (nix-shell-wrapper "prismlauncher"
