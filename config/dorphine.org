@@ -1103,6 +1103,21 @@ Jujutsu:
             (stop #~(make-kill-destructor)))))
 #+end_src
 
+*** moor
+[[https://github.com/walles/moor][Moor]] is a pager similar to =less=, with features like syntax highlighting and
+incremental search.
+
+#+begin_src scheme :noweb-ref package-nix
+  (nix-shell-wrapper "moor"
+    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#moor")
+    #:run-command '("moor"))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'moor-pager home-environment-variables-service-type
+    `(("PAGER" . "moor")))
+#+end_src
+
 *** mpv
 #+begin_src scheme :noweb-ref package-spec
   "mpv-nvidia"
