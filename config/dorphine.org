@@ -1109,7 +1109,8 @@ incremental search.
 
 #+begin_src scheme :noweb-ref package-nix
   (nix-shell-wrapper "moor"
-    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#moor")
+    '("moor")
+    #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
     #:run-command '("moor"))
 #+end_src
 
@@ -1169,18 +1170,25 @@ incremental search.
   (service home-nix-search-paths-service-type)
 #+end_src
 
-TODO: Address locale issue.
+Pin Nixpkgs to avoid networking requirement when using the wrappers.
+
+#+begin_src nix :tangle ../tangled/dorphine/nixpkgs.nix
+  (import (builtins.getFlake "github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041") {})
+#+end_src
 
 #+begin_src scheme :noweb-ref package-nix
   (nix-shell-wrapper "nix-assets"
-    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#glibcLocales"))
+    '("glibcLocales")
+    #:expression (local-file (testament-file "dorphine/nixpkgs.nix")))
 
   (nix-shell-wrapper "nocturne"
-    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#nocturne")
+    '("nocturne")
+    #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
     #:run-command '("nocturne"))
 
   (nix-shell-wrapper "readest"
-    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#readest")
+    '("readest")
+    #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
     #:run-command '("readest"))
 #+end_src
 
@@ -1210,7 +1218,8 @@ graphics libraries.
 *** prismlauncher
 #+begin_src scheme :noweb-ref package-nix
   (nix-shell-wrapper "prismlauncher"
-    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#prismlauncher")
+    '("prismlauncher")
+    #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
     #:run-command '("prismlauncher"))
 #+end_src
 
