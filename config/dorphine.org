@@ -134,12 +134,7 @@ Application profiles
                  (essential-services
                   (cons* (service home-writable-files-manager-service-type)
                          (modify-services ((@@ (gnu home) home-environment-default-essential-services) this-home-environment)
-                           (delete home-symlink-manager-service-type)
-                           (home-fontconfig-service-type
-                            _ => '("/run/current-system/profile/share/fonts"
-                                   "~/.guix-home/profile/share/fonts"
-                                   "/nix/var/nix/profiles/guix-system-nix-profile/share/fonts"
-                                   "/var/tmp/guix-home-nix-profile/share/fonts")))))
+                           (delete home-symlink-manager-service-type))))
                  (services
                   (cons* <<home-service>> %rosenthal-desktop-home-services))))))
 #+end_src
@@ -1162,7 +1157,9 @@ incremental search.
        '("experimental-features = nix-command flakes\n"
          "auto-optimise-store = true\n"
          "substituters = https://mirrors.ustc.edu.cn/nix-channels/store https://cache.nixos.org\n"))))
+#+end_src
 
+#+begin_src scheme :noweb-ref service
   (service nix-search-paths-service-type)
 #+end_src
 
@@ -1193,8 +1190,13 @@ Pin Nixpkgs to avoid networking requirement when using the wrappers.
 #+end_src
 
 Create /etc/fonts/fonts.conf to specify font directories and extra
-configurations, see also my previous modifications to
-home-fontconfig-service-type.
+configurations, see also my previous extensions to home-fontconfig-service-type.
+
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'nix-fonts home-fontconfig-service-type
+    '("/nix/var/nix/profiles/guix-system-nix-profile/share/fonts"
+      "/var/tmp/guix-home-nix-profile/share/fonts"))
+#+end_src
 
 #+begin_src scheme :noweb-ref service
   (extra-special-file "/etc/fonts/fonts.conf" "/home/hako/.guix-home/files/.config/fontconfig/fonts.conf")
