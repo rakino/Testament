@@ -1172,15 +1172,16 @@ incremental search.
 TODO: Address locale issue.
 
 #+begin_src scheme :noweb-ref package-nix
+  (nix-shell-wrapper "nix-assets"
+    '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#glibcLocales"))
+
   (nix-shell-wrapper "nocturne"
     '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#nocturne")
-    #:run-command '("nocturne")
-    #:environment-set '(("LANG" . "C.UTF-8")))
+    #:run-command '("nocturne"))
 
   (nix-shell-wrapper "readest"
     '("github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#readest")
-    #:run-command '("readest")
-    #:environment-set '(("LANG" . "C.UTF-8")))
+    #:run-command '("readest"))
 #+end_src
 
 Create /etc/fonts/fonts.conf to specify font directories and extra
