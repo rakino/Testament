@@ -1194,7 +1194,8 @@ configurations, see also my previous extensions to home-fontconfig-service-type.
 
 #+begin_src scheme :noweb-ref home-service
   (simple-service 'nix-fonts home-fontconfig-service-type
-    '("/nix/var/nix/profiles/guix-system-nix-profile/share/fonts"
+    '("/run/current-system/profile/share/fonts"
+      "/nix/var/nix/profiles/guix-system-nix-profile/share/fonts"
       "/var/tmp/guix-home-nix-profile/share/fonts"))
 #+end_src
 
