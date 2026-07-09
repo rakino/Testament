@@ -872,13 +872,13 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                              ("tag:new AND (tag:replied OR tag:sent)"
                               . (-unread))
                              ;; mailing lists
-                             ("tag:new AND folder:lists/emacs-devel"
+                             ("folder:lists/emacs-devel"
                               . (+lists +lists/emacs-devel -inbox -new))
-                             ("tag:new AND folder:lists/guile-devel"
+                             ("folder:lists/guile-devel"
                               . (+lists +lists/guile-devel -inbox -new))
-                             ("tag:new AND folder:lists/guix-devel"
+                             ("folder:lists/guix-devel"
                               . (+lists +lists/guix-devel -inbox -new))
-                             ("tag:new AND folder:lists/guix-user"
+                             ("folder:lists/guix-user"
                               . (+lists +lists/guix-user -inbox -new))
                              ;; folders
                              ("folder:local/Drafts"
