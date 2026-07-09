@@ -600,13 +600,13 @@ niri supports getting keyboard layout from localed.
           skip-at-startup
   }
 
-  // noctalia
+  // noctalia: https://docs.noctalia.dev/v5/compositor-settings/niri/
   window-rule {
           geometry-corner-radius 20
           clip-to-geometry true
   }
   window-rule {
-          match app-id="dev.noctalia.Noctalia.Settings"
+          match app-id="dev.noctalia.Noctalia"
           open-floating true
           default-column-width { fixed 1080; }
           default-window-height { fixed 920; }
@@ -614,12 +614,31 @@ niri supports getting keyboard layout from localed.
   debug {
           honor-xdg-activation-with-invalid-serial
   }
+  // Stationary Wallpaper.
+  overview {
+          workspace-shadow {
+                  off
+          }
+  }
   layer-rule {
-          match namespace="^noctalia-backdrop"
+          match namespace="^noctalia-wallpaper"
           place-within-backdrop true
   }
-
+  // Blur.
   window-rule {
+          background-effect {
+                  blur true
+                  xray false
+          }
+  }
+  layer-rule {
+          match namespace="^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$"
+          background-effect {
+                  xray false
+          }
+  }
+  layer-rule {
+          match namespace="noctalia-window-switcher"
           background-effect {
                   blur true
                   xray false
@@ -627,7 +646,7 @@ niri supports getting keyboard layout from localed.
   }
 
   window-rule {
-          match app-id="firefox" title="^Picture-in-Picture$"
+          match app-id="Firefox" title="^Picture-in-Picture$"
           open-floating true
   }
 
@@ -651,6 +670,7 @@ niri supports getting keyboard layout from localed.
   }
 
   layout {
+          background-color "transparent"
           always-center-single-column
           focus-ring {
                   off
@@ -688,8 +708,9 @@ niri supports getting keyboard layout from localed.
           Mod+D           { spawn "$$bin/rofi$$" "-show" "combi"; }
           Mod+S           { spawn "noctalia" "msg" "settings-toggle"; }
           Mod+L           { spawn "noctalia" "msg" "session" "lock"; }
-          Ctrl+Alt+Delete { spawn "noctalia" "msg" "panel-toggle" "session"; }
           Mod+Shift+E     { spawn "noctalia" "msg" "panel-toggle" "session"; }
+          Ctrl+Alt+Delete { spawn "noctalia" "msg" "panel-toggle" "session"; }
+          Alt+Tab         { spawn "noctalia" "msg" "window-switcher"; }
 
           Mod+E       { spawn "emacsclient" "--create-frame" "--no-wait"; }
           Mod+Return  { spawn "wezterm"; }
