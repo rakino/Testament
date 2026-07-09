@@ -33,6 +33,9 @@ Services, packages and configuration file for Emacs:
          (specifications->manifest
           '(;; Configured packages.
             <<package-spec>>
+            ;; TeX.
+            "texlive-scheme-small"
+            "texlive-dvipng"
             ;; Others.
             "emacs-beancount"
             "emacs-caddyfile-mode"
