@@ -3,6 +3,8 @@
 #+TITLE: dorphine
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
+#+html: <img src="https://s3.boiledscript.com/misskey/c3d32a96-2074-4fb4-9382-c484c0754c97.webp">
+
 ** Guix System
 #+begin_src scheme :tangle ../tangled/dorphine/dorphine.scm :noweb yes
   (use-modules <<module>>)
@@ -1204,7 +1206,7 @@ Make fonts available to Nix packages.
 Pin Nixpkgs to avoid networking requirement when using the wrappers.
 
 #+begin_src nix :tangle ../tangled/dorphine/nixpkgs.nix
-  (import (builtins.getFlake "github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041") {})
+  (import (builtins.getFlake "github:NixOS/nixpkgs/fd1462031fdee08f65fd0b4c6b64e22239a77870") {})
 #+end_src
 
 #+begin_src scheme :noweb-ref package-nix
