@@ -921,6 +921,7 @@ Automatic usage and fallback for tree-sitter major modes.
              '(("cmake"      . cmake-ts)
                ("dockerfile" . dockerfile-ts)
                ("go"         . go-ts)
+               ("json"       . json-ts)
                ("lua"        . lua-ts)
                ("nix"        . nix-ts)
                ("rust"       . rust-ts)
