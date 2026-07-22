@@ -1208,7 +1208,7 @@ Troubleshooting:
 ** Modules
 Within this repository
 #+begin_src scheme :noweb-ref module
-  (common)
+  (testament common)
 #+end_src
 
 Guile builtins

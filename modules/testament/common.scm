@@ -1,8 +1,8 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2023-2026 Hilton Chain <hako@ultrarare.space>
 
-(define-module (common)
-  #:use-module (linux)
+(define-module (testament common)
+  #:use-module (testament linux)
   ;; Guile builtins
   #:use-module (ice-9 popen)
   #:use-module (ice-9 textual-ports)
@@ -45,7 +45,6 @@
             %sops-chapra
             %sops-dorphine
             %sops-involemi
-            %sops-nuporta
 
             %guix-keys
             %ssh-key-deploy
@@ -90,8 +89,6 @@
   (local-file (in-vicinity testament-path "secrets/dorphine.yaml")))
 (define %sops-involemi
   (local-file (in-vicinity testament-path "secrets/involemi.yaml")))
-(define %sops-nuporta
-  (local-file (in-vicinity testament-path "secrets/nuporta.yaml")))
 
 
 ;;;
