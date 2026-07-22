@@ -135,7 +135,7 @@ Application profiles
     `(("hako" ,(home-environment
                  (essential-services
                   (cons* (service home-writable-files-manager-service-type)
-                         (modify-services ((@@ (gnu home) home-environment-default-essential-services) this-home-environment)
+                         (modify-services (home-environment-default-essential-services this-home-environment)
                            (delete home-symlink-manager-service-type))))
                  (services
                   (cons* <<home-service>> %rosenthal-desktop-home-services))))))
