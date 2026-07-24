@@ -101,12 +101,12 @@ Application profiles
                . #((("pattern"
                      ("op" . "or")
                      ("sub"
-                      . ,(list->vector
-                          (map (lambda (name)
-                                 `(("feature" . "procname")
-                                   ("matches" . ,name)))
-                               '("firefox"
-                                 "niri")))))
+                      . #$(vector-map
+                           (lambda (index name)
+                             `(("feature" . "procname")
+                               ("matches" . ,name)))
+                           #("firefox"
+                             "niri"))))
                     ("profile" . "No VidMem Reuse")))))))
       ;; https://github.com/Frogging-Family/nvidia-all/blob/master/system/cuda-no-stable-perf-limit
       ("nvidia/nvidia-application-profiles-rc.d/cuda-no-stable-perf-limit.json"
@@ -120,12 +120,12 @@ Application profiles
                . #((("pattern"
                      ("op" . "or")
                      ("sub"
-                      . ,(list->vector
-                          (map (lambda (name)
-                                 `(("feature" . "procname")
-                                   ("matches" . ,name)))
-                               '("firefox"
-                                 "obs")))))
+                      . #$(vector-map
+                           (lambda (index name)
+                             `(("feature" . "procname")
+                               ("matches" . ,name)))
+                           #("firefox"
+                             "obs"))))
                     ("profile" . "CudaNoStablePerfLimit")))))))))
 #+end_src
 
@@ -1371,6 +1371,7 @@ Within this repository
 Guile builtins
 #+begin_src scheme :noweb-ref module
   (ice-9 match)
+  (srfi srfi-43)
 #+end_src
 
 Utilities
