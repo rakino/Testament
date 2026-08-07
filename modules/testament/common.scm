@@ -12,6 +12,7 @@
   #:use-module (guix packages)
   #:use-module (guix store)
   #:use-module (guix utils)
+  #:use-module (rosenthal utils file)
   ;; Guix origin methods
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -51,6 +52,9 @@
             %ssh-key-jonathan
             %ssh-key-podiki
             %ssh-key-podiki
+
+            %network-manager-ipv6-privacy
+            %network-manager-random-mac-address
 
             %xdg-data-home
             %xdg-base-directory-env-vars
@@ -128,6 +132,26 @@
 (define %ssh-key-podiki
   (plain-file "podiki.pub"
     "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDaSmW/3uq5L6ZP6gWmRw5RiTTg0es1PrbAo/x4vkPzwIKTrMFOCBCmcuH3vOCkEZJtNy3OpXbt/a3tDW+cc6dkeq2H4WpogQvyMTXreFS2phMgDTEXW2gGZIP6fA33CHERmhd9A/m0A+NH5KGAmLDQNK8QgPgIjZuseJYtYHNCnN2TCsWQYnbZtVQF5CS6iBUILpVp6p7QlSUokiCGaPjZfrjSFCm1hUPjJYSkv0NTq8TzyDfU2quqP7TBCj4WBi9HoW9+a8tN2TQ/+GYbGqlFljeNdz3vzItcHjidHOQL/42mpvzgZx7o7dtrqX9stp+mI3oBREYSD0bMyvND/dEBRWIbpFvbyYx/leMKq9yUcFNyI2lztk17ObaQkDLxlq4ClytgEtdbP6X0gua29FYK/YlAi13NptK6uy2xB2gsEIt5P4N3u+gZCNA0U3IVd7iMRSpg6PWiL1JguvhYSD5vGOnOjiXVlBCKn+ErTO9Ey/BZqwVBZMeDwynFnU1mYnkxtA+G54VI77gj24FrHw/ClOdJOdBUGAso9P3sFjdykkAJyKd4jiFzpDTOOJNs8qKhmFFzJBnJjn7nzwjElwOCZXdDKTrKqF/51WEqpNr8Za2QjRirV4m7n6FnyyD38b24InAVa+yze3qDI9yk2vjPdtFGCeLODSEjfV3U1z1hiw=="))
+
+
+;;;
+;;; NetworkManager
+;;;
+
+(define %network-manager-ipv6-privacy
+  `("ip6-privacy.conf"
+    ,(ini-file "ip6-privacy.conf"
+       #~'(("connection"
+            . (("ipv6.ip6-privacy" . 2)))))))
+
+;; NOTE: When using on cloud machines, refer to the terms of the provider
+;; first.
+(define %network-manager-random-mac-address
+  `("random-mac-address.conf"
+    ,(ini-file "random-mac-address.conf"
+       #~'(("connection-mac-randomization"
+            . (("ethernet.cloned-mac-address" . "stable")
+               ("wifi.cloned-mac-address" . "stable")))))))
 
 
 ;;;
