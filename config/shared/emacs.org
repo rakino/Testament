@@ -338,6 +338,23 @@ Colorize Org tags automatically to make them visually distinguishable.
     (org-mode . org-rainbow-tags-mode))
 #+end_src
 
+*** [[https://github.com/oantolin/orderless][orderless]]
+Emacs completion style that matches multiple regexps in any order.
+
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-orderless"
+#+end_src
+
+#+begin_src emacs-lisp :noweb-ref emacs-init
+  (use-package orderless
+    :custom
+    (completion-styles '(orderless basic))
+    (completion-category-overrides '((file (styles partial-completion))))
+    (completion-category-defaults nil)
+    (completion-pcm-leading-wildcard t)
+    (orderless-matching-styles '(orderless-literal orderless-flex orderless-regexp)))
+#+end_src
+
 *** [[https://github.com/radian-software/prescient.el][prescient]]
 Frecency based completion sorting and filtering.
 
@@ -348,23 +365,9 @@ Frecency based completion sorting and filtering.
 #+begin_src elisp :noweb-ref emacs-init
   (use-package prescient
     :custom
-    (prescient-filter-method '(literal fuzzy regexp initialism))
+    (completion-preview-sort-function #'prescient-completion-sort)
     :hook
     (after-init . prescient-persist-mode))
-#+end_src
-
-#+begin_src elisp :noweb-ref emacs-init
-  (use-package emacs
-    :custom
-    (completion-styles '(prescient basic))
-    (completion-category-overrides '((file (styles basic partial-completion))))
-    (completion-preview-sort-function #'prescient-completion-sort))
-#+end_src
-
-#+begin_src elisp :noweb-ref emacs-init
-  (use-package vertico-prescient
-    :hook
-    (after-init . vertico-prescient-mode))
 #+end_src
 
 *** [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]]
@@ -429,6 +432,15 @@ Vertical minibuffer completion UI based on the default completion system.
      ("RET" . vertico-directory-enter)
      ("DEL" . vertico-directory-delete-char)
      ("M-DEL" . vertico-directory-delete-word)))
+#+end_src
+
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package vertico-prescient
+    :after vertico prescient
+    :custom
+    (vertico-prescient-enable-filtering nil) ;use orderless for filtering instead
+    :hook
+    (after-init . vertico-prescient-mode))
 #+end_src
 
 #+begin_src elisp :noweb-ref emacs-init
@@ -729,7 +741,7 @@ Flycheck checker for GNU Guile.
 
 #+begin_src elisp :noweb-ref emacs-init
   (use-package flycheck-guile
-    :after (flycheck geiser-guile))
+    :after flycheck geiser-guile)
 #+end_src
 
 *** [[https://geiser.nongnu.org/][geiser]]
