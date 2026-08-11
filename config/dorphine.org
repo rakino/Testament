@@ -1250,6 +1250,11 @@ Pin Nixpkgs to avoid networking requirement when using the wrappers.
     '("glibcLocales")
     #:expression (local-file (testament-file "dorphine/nixpkgs.nix")))
 
+  (nix-shell-wrapper "element-desktop"
+    '("element-desktop")
+    #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
+    #:run-command '("element-desktop" "--no-update"))
+
   (nix-shell-wrapper "nocturne"
     '("nocturne")
     #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
