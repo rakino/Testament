@@ -1122,32 +1122,6 @@ Simple notes with an efficient file-naming scheme.
     (dired-vc-rename-file t))
 #+end_src
 
-*** [[https://codeberg.org/akib/emacs-eat][eat]]
-Terminal emulator.
-
-Patches https://codeberg.org/akib/emacs-eat/pulls/133 and
-https://codeberg.org/akib/emacs-eat/pulls/228 are applied.
-
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-eat-dolly"
-#+end_src
-
-#+begin_src elisp :noweb-ref emacs-init
-  (use-package eat
-    :custom
-    (eat-kill-buffer-on-exit t)
-    (eshell-visual-commands nil)
-    :hook
-    (eshell-load . eat-eshell-mode))
-
-  (use-package project
-    :config
-    (add-to-list 'project-switch-commands '(eat-project "Eat") t)
-    :bind
-    ((:map project-prefix-map)
-     ("t" . eat-project)))
-#+end_src
-
 *** [[https://github.com/purcell/envrc][envrc]]
 [[https://direnv.net/][direnv]] integration.
 
@@ -1159,6 +1133,31 @@ https://codeberg.org/akib/emacs-eat/pulls/228 are applied.
   (use-package envrc
     :hook
     (after-init . envrc-global-mode))
+#+end_src
+
+*** [[https://github.com/dakra/ghostel][ghostel]]
+Terminal emulator
+
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package ghostel
+    :vc (:url "https://github.com/dakra/ghostel" :lisp-dir "lisp" :rev "v0.49.0")
+    :bind
+    ("C-x t" . ghostel)
+    (:map ghostel-semi-char-mode-map)
+    ("C-s" . isearch-forward)
+    ("M-n" . (lambda () (interactive) (ghostel-send-key "n" "ctrl")))
+    ("M-p" . (lambda () (interactive) (ghostel-send-key "p" "ctrl")))
+    :hook
+    (after-init . ghostel-comint-global-mode)
+    (after-init . ghostel-compile-global-mode)
+    (eshell-load . ghostel-eshell-visual-command-mode))
+
+  (use-package project
+    :config
+    (add-to-list 'project-switch-commands '(ghostel-project "Ghostel") t)
+    :bind
+    (:map project-prefix-map)
+    ("t" . ghostel-project))
 #+end_src
 
 *** [[https://magit.vc/][magit]]
