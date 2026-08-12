@@ -129,7 +129,6 @@ Basic configuration and theming for builtin packages.
     (before-save . delete-trailing-whitespace)
     (prog-mode . display-fill-column-indicator-mode)
     :bind
-    ([remap list-buffers] . switch-to-buffer)
     ("M-o" . other-window))
 #+end_src
 
@@ -206,6 +205,76 @@ Customizations from [[https://cgit.git.savannah.gnu.org/cgit/emacs.git/tree/etc/
 #+end_src
 
 ** Interface
+*** [[https://github.com/minad/consult][consult]]
+Search and navigate via =completing-read=.
+
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-consult"
+  "emacs-consult-flycheck"
+
+  "fd"
+  "ripgrep"
+#+end_src
+
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package consult
+    :custom
+    (completion-in-region-function #'consult-completion-in-region)
+    (xref-show-definitions-function #'consult-xref)
+    (xref-show-xrefs-function #'consult-xref)
+    :bind
+    ;; `C-x ...'
+    ([remap list-buffers]                  . consult-buffer)
+    ([remap switch-to-buffer]              . consult-buffer)
+    ([remap switch-to-buffer-other-frame]  . consult-buffer-other-frame)
+    ([remap switch-to-buffer-other-tab]    . consult-buffer-other-tab)
+    ([remap switch-to-buffer-other-window] . consult-buffer-other-window)
+    ([remap project-list-buffers]          . consult-project-buffer)
+    ([remap project-switch-to-buffer]      . consult-project-buffer)
+    ([remap bookmark-jump]                 . consult-bookmark)
+    ([remap repeat-complex-command]        . consult-complex-command)
+    ;; Others.
+    ([remap yank-pop] . consult-yank-pop)
+    ;; `C-c ...'
+    (:map mode-specific-map)
+    ("M-x" . consult-mode-command)
+    ("h"   . consult-history)
+    ("k"   . consult-kmacro)
+    ("m"   . consult-man)
+    ("i"   . consult-info)
+    (:map Info-mode-map)
+    ([remap Info-search] . consult-info)
+    ;; `M-g ...'
+    (:map goto-map)
+    ("e" . consult-compile-error)
+    ("f" . consult-flycheck)
+    ("o" . consult-outline)
+    ("m" . consult-mark)
+    ("k" . consult-global-mark)
+    ("i" . consult-imenu)
+    ("I" . consult-imenu-multi)
+    (:map global-map)
+    ([remap goto-line] . consult-goto-line)
+    ;; `M-s ...'
+    (:map search-map)
+    ("d" . consult-fd)
+    ("g" . consult-ripgrep)
+    ("l" . consult-line)
+    ("L" . consult-line-multi)
+    ("k" . consult-keep-lines)
+    ("u" . consult-focus-lines)
+    ("e" . consult-isearch-history)
+    ;; `C-s ...'
+    (:map isearch-mode-map)
+    ([remap isearch-edit-string] . consult-isearch-history)
+    ("M-s l" . consult-line)
+    ("M-s L" . consult-line-multi)
+    ;; Minibuffer.
+    (:map minibuffer-local-map)
+    ([remap next-matching-history-element]     . consult-history)
+    ([remap previous-matching-history-element] . consult-history))
+#+end_src
+
 *** [[https://github.com/seagle0128/doom-modeline][doom-modeline]]
 Fancy and fast mode-line inspired by minimalism design.
 
@@ -511,7 +580,6 @@ citre: Code reading & auto-completion tool with pluggable backends.
 
 #+begin_src scheme :noweb-ref package-spec
   "emacs-citre"
-  "ripgrep"
 #+end_src
 
 #+begin_src elisp :noweb-ref emacs-init
