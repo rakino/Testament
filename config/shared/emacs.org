@@ -485,8 +485,8 @@ Vertical minibuffer completion UI based on the default completion system.
     :hook
     (after-init . vertico-mode)
     :bind
-    ((:map vertico-map)
-     ([remap vertico-insert] . hako/vertico-insert)))
+    (:map vertico-map)
+    ([remap vertico-insert] . hako/vertico-insert))
 #+end_src
 
 #+begin_src elisp :noweb-ref emacs-init
@@ -497,10 +497,10 @@ Vertical minibuffer completion UI based on the default completion system.
     (rfn-eshadow-update-overlay . vertico-directory-tidy)
     :bind
     ;; More convenient directory navigation commands.
-    ((:map vertico-map)
-     ("RET" . vertico-directory-enter)
-     ("DEL" . vertico-directory-delete-char)
-     ("M-DEL" . vertico-directory-delete-word)))
+    (:map vertico-map)
+    ("RET" . vertico-directory-enter)
+    ("DEL" . vertico-directory-delete-char)
+    ("M-DEL" . vertico-directory-delete-word))
 #+end_src
 
 #+begin_src elisp :noweb-ref emacs-init
@@ -957,8 +957,8 @@ Interactive macro-expander.
 #+begin_src elisp :noweb-ref emacs-init
   (use-package macrostep
     :bind
-    ((:map emacs-lisp-mode-map)
-     ("C-c e" . macrostep-expand)))
+    (:map emacs-lisp-mode-map)
+    ("C-c e" . macrostep-expand))
 #+end_src
 
 *** [[https://github.com/nbfalcon/macrostep-geiser][macrostep-geiser]]
@@ -974,10 +974,10 @@ Macrostep backend powered by geiser.
     :hook
     ((geiser-mode geiser-repl-mode) . macrostep-geiser-setup)
     :bind
-    ((:map geiser-mode-map)
-     ("C-c e" . macrostep-expand))
-    ((:map geiser-repl-mode-map)
-     ("C-c e" . macrostep-expand)))
+    (:map geiser-mode-map)
+    ("C-c e" . macrostep-expand)
+    (:map geiser-repl-mode-map)
+    ("C-c e" . macrostep-expand))
 #+end_src
 
 *** [[https://github.com/AmaiKinono/puni][puni]]
@@ -994,10 +994,10 @@ supports many major modes out of the box.
     ((eval-expression-minibuffer-setup nxml-mode prog-mode sgml-mode tex-mode)
      . puni-mode)
     :bind
-    ((:map puni-mode-map)
-     ("C-M-r" . puni-raise)
-     ("C-M-," . puni-slurp-backward)
-     ("C-M-." . puni-slurp-forward)))
+    (:map puni-mode-map)
+    ("C-M-r" . puni-raise)
+    ("C-M-," . puni-slurp-backward)
+    ("C-M-." . puni-slurp-forward))
 #+end_src
 
 *** [[https://github.com/renzmann/treesit-auto][treesit-auto]]
@@ -1085,22 +1085,22 @@ Simple notes with an efficient file-naming scheme.
     :hook
     (dired-mode . denote-dired-mode)
     :bind
-    (("C-c n n" . denote-open-or-create)
-     ("C-c n d" . denote-dired)
-     ("C-c n g" . denote-grep)
-     ("C-c n r" . denote-rename-file)
-     ("C-c n R" . denote-rename-file-using-front-matter)
-     (:map org-mode-map)
-     ("C-c n l" . denote-link)
-     ("C-c n L" . denote-add-links)
-     ("C-c n b" . denote-backlinks)
-     ("C-c n q c" . denote-query-contents-link)
-     ("C-c n q f" . denote-query-filenames-link)
-     (:map dired-mode-map)
-     ("C-c C-d C-i" . denote-dired-link-marked-notes)
-     ("C-c C-d C-r" . denote-dired-rename-files)
-     ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
-     ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter)))
+    ("C-c n n" . denote-open-or-create)
+    ("C-c n d" . denote-dired)
+    ("C-c n g" . denote-grep)
+    ("C-c n r" . denote-rename-file)
+    ("C-c n R" . denote-rename-file-using-front-matter)
+    (:map org-mode-map)
+    ("C-c n l" . denote-link)
+    ("C-c n L" . denote-add-links)
+    ("C-c n b" . denote-backlinks)
+    ("C-c n q c" . denote-query-contents-link)
+    ("C-c n q f" . denote-query-filenames-link)
+    (:map dired-mode-map)
+    ("C-c C-d C-i" . denote-dired-link-marked-notes)
+    ("C-c C-d C-r" . denote-dired-rename-files)
+    ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
+    ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
 #+end_src
 
 *** [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]]
@@ -1174,8 +1174,8 @@ Text-based user interface to [[https://git-scm.com/][Git]].
                  '(magit-project-status "Magit")
                  t)
     :bind
-    ((:map project-prefix-map)
-     ("m" . magit-project-status)))
+    (:map project-prefix-map)
+    ("m" . magit-project-status))
 #+end_src
 
 *** [[https://github.com/0WD0/majutsu][majutsu]]
@@ -1213,8 +1213,8 @@ Interface for [[https://www.jj-vcs.dev/latest/][Jujutsu]].
                  '(hako/majutsu-project-log "Majutsu")
                  t)
     :bind
-    ((:map project-prefix-map)
-     ("j" . hako/majutsu-project-log)))
+    (:map project-prefix-map)
+    ("j" . hako/majutsu-project-log))
 #+end_src
 
 *** [[https://notmuchmail.org/notmuch-emacs/][notmuch]]
