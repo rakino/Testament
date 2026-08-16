@@ -688,9 +688,11 @@ files.
 
 #+begin_src scheme :noweb-ref package-spec
   "ccls"
+  "gcc-toolchain"
   "go"
   "gopls"
   "govulncheck"
+  "make"
   "python"
   "python-lsp-server"
   "rust"
@@ -743,86 +745,6 @@ On the fly syntax checking.
   (use-package flycheck
     :hook
     (after-init . global-flycheck-mode))
-#+end_src
-
-Set up ElDoc integration.  https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
-
-#+begin_src elisp :noweb-ref emacs-init
-  (use-package flycheck
-    :init
-    (defun mp/flycheck-eldoc (callback &rest _ignored)
-      "Print flycheck messages at point by calling CALLBACK."
-      (when-let ((flycheck-errors (and flycheck-mode (flycheck-overlay-errors-at (point)))))
-        (mapc (lambda (err)
-                (funcall callback
-                         (format "%s: %s"
-                                 (let ((level (flycheck-error-level err)))
-                                   (pcase level
-                                     ('info (propertize "I" 'face 'flycheck-error-list-info))
-                                     ('error (propertize "E" 'face 'flycheck-error-list-error))
-                                     ('warning (propertize "W" 'face 'flycheck-error-list-warning))
-                                     (_ level)))
-                                 (flycheck-error-message err))
-                         :thing (or (flycheck-error-id err)
-                                    (flycheck-error-group err))
-                         :face 'font-lock-doc-face))
-              flycheck-errors)))
-    (defun mp/flycheck-prefer-eldoc ()
-      (add-hook 'eldoc-documentation-functions #'mp/flycheck-eldoc nil t)
-      (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
-      (setq flycheck-display-errors-function nil)
-      (setq flycheck-help-echo-function nil))
-    :hook
-    (flycheck-mode . mp/flycheck-prefer-eldoc))
-#+end_src
-
-Fix org-lint compatibility.  https://github.com/flycheck/flycheck/pull/2165#issuecomment-4537260684
-
-#+begin_src elisp :noweb-ref emacs-init
-  (use-package flycheck
-    :config
-    (defun hako/flycheck-checker-get-advice (orig checker property &rest rest)
-      (if (and (eq 'org-lint checker)
-               (eq 'start property)
-               (string= flycheck-version "36.0"))
-          (lambda (checker callback)
-            (condition-case err
-                (let ((errors
-                       (delq nil
-                             (mapcar
-                              (lambda (e)
-                                (pcase e
-                                  (`(,_n [,line ,_trust ,desc ,_checker])
-                                   (flycheck-error-new-at
-                                    (if (stringp line)
-                                        (string-to-number line)
-                                      line)
-                                    nil 'info desc
-                                    :checker checker))
-                                  (_
-                                   (flycheck-error-new-at
-                                    1 nil 'warning
-                                    (format "Unexpected org-lint format: %S" e)
-                                    :checker checker))))
-                              (org-lint)))))
-                  (funcall callback 'finished errors))
-              (error (funcall callback 'errored
-                              (error-message-string err)))))
-        (apply orig checker property rest)))
-    (advice-add #'flycheck-checker-get :around #'hako/flycheck-checker-get-advice))
-#+end_src
-
-*** [[https://github.com/flycheck/flycheck-eglot][flycheck-eglot]]
-Flycheck support for Eglot.
-
-#+begin_src scheme :noweb-ref package-spec
-  "emacs-flycheck-eglot"
-#+end_src
-
-#+begin_src elisp :noweb-ref emacs-init
-  (use-package flycheck-eglot
-    :hook
-    (after-init . global-flycheck-eglot-mode))
 #+end_src
 
 *** [[https://github.com/flatwhatson/flycheck-guile][flycheck-guile]]
@@ -1452,7 +1374,8 @@ https://web.archive.org/web/20240525203039/http://community.schemewiki.org/?emac
       (put 'yaml-file                         'scheme-indent-function 1)
       ;; My own preferences.
       (put 'service                           'scheme-indent-function 1)
-      (put 'simple-service                    'scheme-indent-function 2))
+      (put 'simple-service                    'scheme-indent-function 2)
+      (put 'shepherd-timer                    'scheme-indent-function 1))
     :hook
     (scheme-mode . hako/adjust-scheme-indentation))
 #+end_src

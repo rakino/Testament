@@ -230,7 +230,7 @@
 ;;;
 
 (define (%kernel-config path)
-  (let* ((commit "959e95c6882daaf7299feb377ae83a879702f6d6")
+  (let* ((commit "49c98a1ee831a527193d9a8c3b56293c5fc6e7d7")
          (source
           (origin
             (method git-fetch)
@@ -239,7 +239,7 @@
                    (commit commit)))
             (file-name (string-append "kernel-config." (string-take commit 7)))
             (sha256
-             (base32 "0nbg64ab4drzig1i7ifya7yx0d93l5fzzqvsj53ykv22wrixwpaa")))))
+             (base32 "08an8armqdr7jj3addl53f44279l3n9g6s2x3qjqsiay5x7rkpb2")))))
     (file-append source path)))
 
 (define* (make-linux/dolly base version source #:key defconfig modconfig (configs ""))
@@ -286,9 +286,9 @@
       "\n"))))
 
 (define linux-desktop/dolly
-  (let ((cachyos-version "7.0.12-2"))
+  (let ((cachyos-version "7.2.0-1"))
     (make-linux/dolly
-     linux-7.0
+     linux-7.2
      cachyos-version
      (origin
        (method url-fetch)
@@ -296,8 +296,8 @@
              "https://github.com/CachyOS/linux/releases/download/cachyos-"
              cachyos-version "/cachyos-" cachyos-version ".tar.gz"))
        (sha256
-        (base32 "1whzwakpcgyvks07ac7lp7yf9vv5aa6h90cpg6jxx0kwaw9n5ibk"))
-       (patches (map %kernel-config '("/patches/bore-cachy-7.0.patch"))))
+        (base32 "03rrghrvxqba375vijvbrvvp0rsl2y03gddz4ksjy47yckw9xr60"))
+       (patches (map %kernel-config '("/patches/bore-cachy-7.2.patch"))))
      #:defconfig (%kernel-config "/defconfig_desktop")
      #:configs
      (string-join
