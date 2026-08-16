@@ -158,13 +158,13 @@ Customizations from [[https://cgit.git.savannah.gnu.org/cgit/emacs.git/tree/etc/
     (recentf-mode t)
     ;; Editing-related options
     (electric-pair-mode t)
-    ;; (repeat-mode t)
-    ;; (delete-selection-mode t)
+    (repeat-mode t)
+    (delete-selection-mode t)
     (editorconfig-mode t)
     (indent-tabs-mode nil)
     (imenu-auto-rescan t)
     (view-read-only t)
-    ;; (column-number-mode t)
+    (column-number-mode t)
     ;; Directory managment-related options
     (dired-auto-revert-buffer t)
     (dired-mouse-drag-files t)
@@ -183,13 +183,13 @@ Customizations from [[https://cgit.git.savannah.gnu.org/cgit/emacs.git/tree/etc/
     (completions-group t)
     (completion-auto-select 'second-tab)
     (completion-eager-update t)
-    ;; (completion-styles '(basic emacs22 flex))
+    (completion-styles '(basic emacs22 flex))
     (global-completion-preview-mode t)
     (tab-always-indent 'complete)
     (which-key-mode t)
     ;; Package-related options
-    ;; (package-autosuggest-mode t)
-    ;; (package-menu-use-current-if-no-marks nil)
+    (package-autosuggest-mode t)
+    (package-menu-use-current-if-no-marks nil)
     ;; Frame- and window-related options
     (frame-inhibit-implied-resize t)
     ;; (tab-bar-history-mode t)
