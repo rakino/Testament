@@ -1253,11 +1253,6 @@ Pin Nixpkgs to avoid networking requirement when using the wrappers.
     '("nocturne")
     #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
     #:run-command '("nocturne"))
-
-  (nix-shell-wrapper "readest"
-    '("readest")
-    #:expression (local-file (testament-file "dorphine/nixpkgs.nix"))
-    #:run-command '("readest"))
 #+end_src
 
 *** prismlauncher
