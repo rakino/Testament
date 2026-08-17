@@ -1072,6 +1072,7 @@ Simple notes with an efficient file-naming scheme.
 
 #+begin_src scheme :noweb-ref package-spec
   "emacs-denote"
+  "emacs-denote-journal"
   "emacs-consult-denote"
 #+end_src
 
@@ -1101,6 +1102,14 @@ Simple notes with an efficient file-naming scheme.
     ("C-c C-d C-r" . denote-dired-rename-files)
     ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
     ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
+
+  (use-package denote-journal
+    :custom
+    (denote-journal-title-format 'day-date-month-year)
+    :bind
+    ("C-c n j" . denote-journal-new-or-existing-entry)
+    :hook
+    (calendar-mode . denote-journal-calendar-mode))
 
   (use-package consult-denote
     :bind
