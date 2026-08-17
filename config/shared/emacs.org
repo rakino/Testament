@@ -127,9 +127,7 @@ Basic configuration and theming for builtin packages.
     :hook
     (after-init . show-paren-mode)
     (before-save . delete-trailing-whitespace)
-    (prog-mode . display-fill-column-indicator-mode)
-    :bind
-    ("M-o" . other-window))
+    (prog-mode . display-fill-column-indicator-mode))
 #+end_src
 
 Customizations from [[https://cgit.git.savannah.gnu.org/cgit/emacs.git/tree/etc/themes/newcomers-presets-theme.el][newcomers-presets-theme]] ([[https://github.com/emacs-mirror/emacs/blob/master/etc/themes/newcomers-presets-theme.el][mirror]]).
@@ -544,6 +542,33 @@ Vertical minibuffer completion UI based on the default completion system.
   (use-package which-key
     :config
     (which-key-setup-side-window-right-bottom))
+#+end_src
+
+*** [[https://github.com/deb0ch/emacs-winum][winum]]
+Navigate windows and frames using numbers.
+
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-winum"
+#+end_src
+
+https://karthinks.com/software/emacs-window-management-almanac/#winum-mode
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package winum
+    :init
+    (defvar-keymap winum-keymap
+      :doc "Keymap for winum-mode actions."
+      "M-0" 'winum-select-window-0-or-10
+      "M-1" 'winum-select-window-1
+      "M-2" 'winum-select-window-2
+      "M-3" 'winum-select-window-3
+      "M-4" 'winum-select-window-4
+      "M-5" 'winum-select-window-5
+      "M-6" 'winum-select-window-6
+      "M-7" 'winum-select-window-7
+      "M-8" 'winum-select-window-8
+      "M-9" 'winum-select-window-9)
+    :hook
+    (after-init . winum-mode))
 #+end_src
 
 *** [[https://elpa.gnu.org/packages/adaptive-wrap.html][adaptive-wrap]] & [[https://codeberg.org/joostkremers/visual-fill-column][visual-fill-column]]
