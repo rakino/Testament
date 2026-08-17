@@ -1072,6 +1072,7 @@ Simple notes with an efficient file-naming scheme.
 
 #+begin_src scheme :noweb-ref package-spec
   "emacs-denote"
+  "emacs-consult-denote"
 #+end_src
 
 #+begin_src elisp :noweb-ref emacs-init
@@ -1087,7 +1088,6 @@ Simple notes with an efficient file-naming scheme.
     :bind
     ("C-c n n" . denote-open-or-create)
     ("C-c n d" . denote-dired)
-    ("C-c n g" . denote-grep)
     ("C-c n r" . denote-rename-file)
     ("C-c n R" . denote-rename-file-using-front-matter)
     (:map org-mode-map)
@@ -1101,6 +1101,13 @@ Simple notes with an efficient file-naming scheme.
     ("C-c C-d C-r" . denote-dired-rename-files)
     ("C-c C-d C-k" . denote-dired-rename-marked-files-with-keywords)
     ("C-c C-d C-R" . denote-dired-rename-marked-files-using-front-matter))
+
+  (use-package consult-denote
+    :bind
+    ("C-c n f" . consult-denote-find)
+    ("C-c n g" . consult-denote-grep)
+    :hook
+    (after-init . consult-denote-mode))
 #+end_src
 
 *** [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Dired.html][dired]]
