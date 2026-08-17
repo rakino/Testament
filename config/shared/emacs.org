@@ -21,30 +21,29 @@ Services, packages and configuration file for Emacs:
 #+begin_src scheme :noweb yes :noweb-ref home-service
   (service home-emacs-service-type
     (home-emacs-configuration
-      (emacs emacs-pgtk)
+      (emacs emacs-next-pgtk)
       (packages
-       (with-transformation
-           (compose (options->transformation
-                     '((without-tests . "emacs-el-mock")))
-                    (package-input-rewriting
-                     `((,(@ (gnu packages emacs) emacs)         . ,emacs)
-                       (,(@ (gnu packages emacs) emacs-minimal) . ,emacs)
-                       (,(@ (gnu packages emacs) emacs-no-x)    . ,emacs))))
-         (specifications->manifest
-          '(;; Configured packages.
-            <<package-spec>>
-            ;; TeX.
-            "texlive-scheme-small"
-            "texlive-dvipng"
-            ;; Others.
-            "emacs-beancount"
-            "emacs-caddyfile-mode"
-            "emacs-edit-indirect"
-            "emacs-fish-mode"
-            "emacs-markdown-mode"
-            "emacs-nftables-mode"
-            "emacs-reader"
-            "emacs-zig-mode"))))
+       ;; (with-transformation
+       ;;     (package-input-rewriting
+       ;;      `((,(@ (gnu packages emacs) emacs)         . ,emacs)
+       ;;        (,(@ (gnu packages emacs) emacs-minimal) . ,emacs)
+       ;;        (,(@ (gnu packages emacs) emacs-no-x)    . ,emacs)))
+       ;;   )
+       (specifications->manifest
+        '(;; Configured packages.
+          <<package-spec>>
+          ;; TeX.
+          "texlive-scheme-small"
+          "texlive-dvipng"
+          ;; Others.
+          "emacs-beancount"
+          "emacs-caddyfile-mode"
+          "emacs-edit-indirect"
+          "emacs-fish-mode"
+          "emacs-markdown-mode"
+          "emacs-nftables-mode"
+          "emacs-reader"
+          "emacs-zig-mode")))
       (shepherd-requirement '(graphical-session))))
 #+end_src
 
@@ -65,6 +64,9 @@ a functional setup with fish login shell.
 
 #+begin_src elisp :noweb yes :tangle ../../tangled/emacs/emacs-init.el
   ;;; -*- lexical-binding: t -*-
+
+  ;; For Emacs 31.
+  (add-to-list 'warning-suppress-types '(files missing-lexbind-cookie))
 
   (setopt custom-file (locate-user-emacs-file "custom.el"))
   (if (not (file-exists-p custom-file))
@@ -309,7 +311,7 @@ information.
 
 #+begin_src scheme :noweb-ref package-spec
   "emacs-helpful"
-  "emacs-pgtk:doc"
+  "emacs-next-pgtk:doc"
 #+end_src
 
 Source code of Emacs is optional.  It will be used for displaying source of C
@@ -524,14 +526,6 @@ Vertical minibuffer completion UI based on the default completion system.
     (read-file-name-completion-ignore-case t)
     ;; Exclude unavailable commands from completion.
     (read-extended-command-predicate #'command-completion-default-include-p)
-    :config
-    (when (< emacs-major-version 31)
-      (advice-add #'completing-read-multiple :filter-args
-                  (lambda (args)
-                    (cons (format "[CRM%s] %s"
-                                  (string-replace "[ \t]*" "" crm-separator)
-                                  (car args))
-                          (cdr args)))))
     :hook
     (after-init . minibuffer-depth-indicate-mode))
 #+end_src
@@ -705,6 +699,8 @@ files.
 
 #+begin_src elisp :noweb-ref emacs-init
   (use-package eglot
+    :custom
+    (eglot-documentation-renderer 'markdown-ts-view-mode)
     :config
     (dolist (program
              `(((c-mode c-ts-mode c++-mode c++-ts-mode)
@@ -838,8 +834,8 @@ Guile:
     ;; TODO: Add to `geiser-guile'.
     (defun hako/geiser-guile--project-path (old)
       ;; see `geiser-repl--set-up-load-path'
-      (if-let ((geiser-repl-add-project-paths)
-               (root (funcall geiser-repl-current-project-function)))
+      (if-let* ((geiser-repl-add-project-paths)
+                (root (funcall geiser-repl-current-project-function)))
           (append
            old
            (mapcan (lambda (p)
