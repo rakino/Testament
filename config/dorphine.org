@@ -294,7 +294,8 @@ Application profiles
       (authorized-keys %guix-keys)
       (substitute-urls
        '("https://mirror.sjtu.edu.cn/guix-bordeaux"
-         "https://mirror.sjtu.edu.cn/guix"))))
+         "https://mirror.sjtu.edu.cn/guix"
+         "https://substitutes.nonguix.org"))))
 
   (service guix-publish-service-type
     (guix-publish-configuration
