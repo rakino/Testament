@@ -625,6 +625,10 @@ niri supports getting keyboard layout from localed.
               (match (@ (app-id "thunar")
                         (title "^File Operation Progress$")))
               (open-floating #t))
+             (window-rule
+              (match (@ (app-id "thunar")
+                        (title "^Rename \".*\"$")))
+              (open-floating #t))
 
              (layout
               (background-color "transparent")
