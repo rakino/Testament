@@ -1369,6 +1369,8 @@ https://web.archive.org/web/20240525203039/http://community.schemewiki.org/?emac
       ;;; Nonguix
       (put 'with-transformation               'scheme-indent-function 1)
       ;;; Rosenthal
+      (put 'match-record/dolly                'scheme-indent-function 3)
+      (put 'match-record-lambda/dolly         'scheme-indent-function 2)
       (put 'computed-substitution-with-inputs 'scheme-indent-function 1)
       (put 'hidden-desktop-entry              'scheme-indent-function 1)
       (put 'modify-services/by-name           'scheme-indent-function 1)

@@ -12,7 +12,6 @@
   #:use-module (guix packages)
   #:use-module (guix store)
   #:use-module (guix utils)
-  #:use-module (rosenthal utils file)
   ;; Guix origin methods
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -38,7 +37,6 @@
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages vim)
   #:use-module (nongnu packages linux)
-  #:use-module (rosenthal packages package-management)
   #:export (testament-path
             testament-file
 
@@ -127,18 +125,20 @@
 
 (define %network-manager-ipv6-privacy
   `("ip6-privacy.conf"
-    ,(ini-file "ip6-privacy.conf"
-       #~'(("connection"
-            . (("ipv6.ip6-privacy" . 2)))))))
+    ,(plain-file "ip6-privacy.conf" "\
+[connection]
+ipv6.ip6-privacy=2
+")))
 
 ;; NOTE: When using on cloud machines, refer to the terms of the provider
 ;; first.
 (define %network-manager-random-mac-address
   `("random-mac-address.conf"
-    ,(ini-file "random-mac-address.conf"
-       #~'(("connection-mac-randomization"
-            . (("ethernet.cloned-mac-address" . "stable")
-               ("wifi.cloned-mac-address" . "stable")))))))
+    ,(plain-file "random-mac-address.conf" "\
+[connection-mac-randomization]
+ethernet.cloned-mac-address=stable
+wifi.cloned-mac-address=stable
+")))
 
 
 ;;;
@@ -196,11 +196,11 @@
         file
         git
         `(,git "send-email")
+        glibc
         gnupg
         htop
         jujutsu
         lsof
-        mirror-substitutes
         mosh
         ncdu
         ncurses
@@ -209,7 +209,8 @@
         rsync
         sops
         unzip
-        xxd))
+        xxd
+        zip))
 
 
 ;;;
