@@ -205,6 +205,16 @@ Customizations from [[https://cgit.git.savannah.gnu.org/cgit/emacs.git/tree/etc/
     ;; (text-mode . flyspell-mode))
 #+end_src
 
+*** packages (for manual installations)
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package package
+    :custom
+    (package-archives
+     '(("gnu"    . "https://mirrors.ustc.edu.cn/elpa/gnu/")
+       ("melpa"  . "https://mirrors.ustc.edu.cn/elpa/melpa/")
+       ("nongnu" . "https://mirrors.ustc.edu.cn/elpa/nongnu/"))))
+#+end_src
+
 ** Interface
 *** [[https://github.com/minad/consult][consult]]
 Search and navigate via =completing-read=.
@@ -1100,7 +1110,7 @@ Terminal emulator
 
 #+begin_src elisp :noweb-ref emacs-init
   (use-package ghostel
-    :vc (:url "https://github.com/dakra/ghostel" :lisp-dir "lisp" :rev "v0.49.0")
+    :ensure t
     :bind
     ("C-x t" . ghostel)
     (:map ghostel-semi-char-mode-map)
