@@ -60,6 +60,7 @@
 | Lycoris/Cache/GuixPublish        | /var/cache/guix/publish        | compression=off               |                       |
 |                                  |                                |                               |                       |
 | Lycoris/State/Forgejo            | /var/lib/forgejo               |                               |                       |
+| Lycoris/State/Nonguix            | /var/lib/nonguix               |                               | true                  |
 | Lycoris/State/PostgreSQL         | /var/lib/postgresql            | recordsize=32K                | true                  |
 | Lycoris/State/Tailscale          | /var/lib/tailscale             |                               | true                  |
 | Lycoris/State/Tuwunel            | /var/lib/tuwunel               |                               | true                  |
@@ -335,6 +336,14 @@
   	}
   	handle @guix_publish {
   		reverse_proxy localhost:49637
+  	}
+
+  	@installer {
+  		path /nonguix-system-install*.iso || /nonguix-system-install*.iso.asc
+  	}
+  	handle @installer {
+  		root * /var/lib/nonguix
+  		file_server
   	}
 
   	@forgejo_hooks {
