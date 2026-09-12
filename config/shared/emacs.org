@@ -1115,6 +1115,10 @@ Terminal emulator
 #+begin_src elisp :noweb-ref emacs-init
   (use-package ghostel
     :ensure t
+    :custom
+    (ghostel-tramp-shells
+     '((t login-shell)
+       ("docker" "/bin/sh")))
     :bind
     (:map ghostel-semi-char-mode-map)
     ("C-s" . isearch-forward)
@@ -1274,6 +1278,18 @@ Org to [[https://gohugo.io/][Hugo]] exporter.
     (smtpmail-stream-type 'ssl)
     (smtpmail-queue-mail t)
     (smtpmail-queue-dir "~/.local/share/queued-mail"))
+#+end_src
+
+*** [[https://github.com/ArthurHeymans/emacs-tramp-rpc][tramp-rpc]]
+High-performance TRAMP backend using JSON-RPC instead of shell parsing.
+
+#+begin_src scheme :noweb-ref package-spec
+  "emacs-tramp-rpc"
+#+end_src
+
+#+begin_src elisp :noweb-ref emacs-init
+  (use-package tramp-rpc
+    :after tramp)
 #+end_src
 
 ** Fonts
