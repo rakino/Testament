@@ -1256,7 +1256,7 @@ Make fonts available to Nix packages.
 Pin Nixpkgs to avoid networking requirement when using the wrappers.
 
 #+begin_src nix :tangle ../tangled/dorphine/nixpkgs.nix
-  (import (builtins.getFlake "github:NixOS/nixpkgs/d58a46e3bc02d91ebe04667f8397752a749c0024") {})
+  (import (builtins.getFlake "github:NixOS/nixpkgs/c508844df6c28fa6dabc1b6af70f3ccbd65c5201") {})
 #+end_src
 
 #+begin_src scheme :noweb-ref package-nix
@@ -1273,7 +1273,7 @@ Pin Nixpkgs to avoid networking requirement when using the wrappers.
     #:run-command '("nocturne"))
 
   (nix-shell-wrapper "tsukimi"
-    '("github:merrkry/nixpkgs/d604b2aa661ad3a79367e8ba6f04c732dccf7cbc#tsukimi")
+    '("github:NixOS/nixpkgs/da100efb6f98396f285ee84b52641bede78e0343#tsukimi")
     #:environment-set '(("XDG_DATA_DIRS" . "/nix/var/nix/profiles/guix-system-nix-profile/share"))
     #:run-command '("tsukimi"))
 #+end_src
