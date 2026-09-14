@@ -45,15 +45,10 @@
      (let ((exit-val (popen prog args)))
        (zero? exit-val)))))
 
-(define* ($guix args #:key dry-run? use-guix-fork? (channels "channels.lock")
+(define* ($guix args #:key use-guix-fork? (channels "channels.lock")
                 #:allow-other-keys)
   (if (getenv "GUIX")                   ;Using pre-inst-env.
-      ($ `("guix"
-           ,@(if (null? args)
-                 args
-                 `(,(car args)
-                   ,@(if dry-run? '("--dry-run") '())
-                   ,@(cdr args)))))
+      ($ `("guix" ,@args))
       ($ `("guix" "time-machine" ,%substitute-urls
            "-C" ,@(if use-guix-fork?
                       '("channels-fork.lock" "--disable-authentication")
