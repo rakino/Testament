@@ -46,7 +46,7 @@
                 %base-packages)))
       (services
        (cons* <<service>>
-              (modify-services %rosenthal-desktop-services/tuigreet <<modify-service>>)))
+              (modify-services %rosenthal-desktop-services/base <<modify-service>>)))
       (name-service-switch %mdns-host-lookup-nss)
       (sudoers-file
        (plain-file "sudoers"
@@ -529,6 +529,22 @@ Generate passwordless ECC key:
 #+end_src
 
 ** Graphical Session
+*** noctalia-greeter
+#+begin_src scheme :noweb-ref service
+  (service noctalia-greeter-service-type
+    (noctalia-greeter-configuration
+     (keyboard-layout keyboard-layout)))
+
+  (service greetd-service-type
+    (greetd-configuration
+      (greeter-supplementary-groups '("video" "input"))
+      (terminals
+       (list (greetd-terminal-configuration
+               (terminal-vt "7")
+               (terminal-switch #t)
+               (default-session-command (greetd-noctalia-greeter-session)))))))
+#+end_src
+
 *** keyboard layout
 niri supports getting keyboard layout from localed.
 
