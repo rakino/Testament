@@ -783,6 +783,7 @@ Generate passwordless ECC key:
   (service home-theme-service-type
     (home-theme-configuration
       (packages (list qogir-icon-theme))
+      (font "sans-serif 10")
       (icon-theme "Qogir")
       (cursor-theme "Qogir")))
 #+end_src
@@ -794,6 +795,7 @@ Generate passwordless ECC key:
   "font-chiron-hei-hk"
   "font-chiron-sung-hk"
   "font-sarasa-gothic"
+  "font-google-noto"
   "font-google-noto-emoji"
   "font-nerd-symbols"
 #+end_src
