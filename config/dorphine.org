@@ -545,18 +545,6 @@ Generate passwordless ECC key:
                (default-session-command (greetd-noctalia-greeter-session)))))))
 #+end_src
 
-*** keyboard layout
-niri supports getting keyboard layout from localed.
-
-#+begin_src scheme :noweb-ref service
-  (simple-service 'localed-keyboard-layout localed-service-type
-    keyboard-layout)
-#+end_src
-
-#+begin_src scheme :noweb-ref home-service
-  (service home-keyboard-service-type keyboard-layout)
-#+end_src
-
 *** niri
 #+begin_src scheme :noweb-ref package-spec
   "niri"
@@ -655,7 +643,11 @@ niri supports getting keyboard layout from localed.
              (input
               (keyboard
                (repeat-delay 300)
-               (repeat-rate 30))
+               (repeat-rate 30)
+               (xkb
+                (layout  #$(or (keyboard-layout-name    keyboard-layout) ""))
+                (variant #$(or (keyboard-layout-variant keyboard-layout) ""))
+                (options #$(string-join (keyboard-layout-options keyboard-layout)))))
               (touchpad
                (tap)
                (natural-scroll))
