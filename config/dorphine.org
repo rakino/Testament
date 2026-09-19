@@ -498,7 +498,7 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb-ref home-service
   (service home-gpg-agent-service-type
     (home-gpg-agent-configuration
-      (pinentry-program (file-append pinentry-qt "/bin/pinentry-qt"))
+      (pinentry-program (file-append pinentry-gnome3 "/bin/pinentry-gnome3"))
       (ssh-support? #t)
       (shepherd-requirement '(graphical-session))))
 #+end_src
@@ -549,12 +549,9 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb-ref package-spec
   "niri"
 
-  "xdg-desktop-portal-gnome"
-  "xdg-desktop-portal-gtk"
-  "xdg-utils"
-
   "dconf"
   "wl-clipboard"
+  "xdg-utils"
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
@@ -562,7 +559,9 @@ Generate passwordless ECC key:
     (home-graphical-session-configuration
       (wayland? #t)
       (x11? #t)))
+#+end_src
 
+#+begin_src scheme :noweb-ref home-service
   (service home-niri-service-type
     (home-niri-configuration
       (config
@@ -765,17 +764,36 @@ Generate passwordless ECC key:
                (screenshot-window))))))))
 #+end_src
 
+*** noctalia
+#+begin_src scheme :noweb-ref home-service
+  (service home-noctalia-service-type)
+#+end_src
+
+*** xdg-desktop-portal
+#+begin_src scheme :noweb-ref package-spec
+  "gcr@3"
+  "gnome-keyring"
+  "xdg-desktop-portal-gnome"
+  "xdg-desktop-portal-gtk"
+#+end_src
+
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/xdg-desktop-portal/niri-portals.conf
   [preferred]
   default=gnome;gtk;
   org.freedesktop.impl.portal.Access=gtk;
   org.freedesktop.impl.portal.FileChooser=gtk;
   org.freedesktop.impl.portal.Notification=gtk;
+  org.freedesktop.impl.portal.Secret=gnome-keyring;
 #+end_src
 
-*** noctalia
-#+begin_src scheme :noweb-ref home-service
-  (service home-noctalia-service-type)
+https://wiki.gnome.org/Projects(2f)GnomeKeyring(2f)Pam.html
+
+#+begin_src scheme :noweb-ref service
+  (service gnome-keyring-service-type
+    (gnome-keyring-configuration
+      (pam-services
+       '(("greetd" . login)
+         ("passwd" . passwd)))))
 #+end_src
 
 *** icon theme & fonts
