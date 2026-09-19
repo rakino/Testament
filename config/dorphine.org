@@ -3,7 +3,7 @@
 #+TITLE: dorphine
 #+PROPERTY: header-args :mkdirp yes :noweb-prefix no
 
-#+html: <img src="https://s3.boiledscript.com/misskey/c3d32a96-2074-4fb4-9382-c484c0754c97.webp">
+#+html: <img src="https://s3.boiledscript.com/misskey/4796f68a-6181-43eb-bbef-7a0fde496d99.png">
 
 ** Guix System
 #+begin_src scheme :tangle ../tangled/dorphine/dorphine.scm :noweb yes
@@ -567,7 +567,6 @@ Generate passwordless ECC key:
       (config
        (kdlv1-file "niri.kdl"
          #~'((prefer-no-csd)
-             (screenshot-path "~/Pictures/Screenshots/%Y%m%d-%H%M%S.png")
              (spawn-sh-at-startup
               #$(string-append
                  "herd set-environment graphical-session "
@@ -582,7 +581,7 @@ Generate passwordless ECC key:
              (hotkey-overlay
               (skip-at-startup))
 
-             ;; noctalia: https://docs.noctalia.dev/v5/compositor-settings/niri/
+             ;; Noctalia: https://docs.noctalia.dev/noctalia/compositor-settings/niri/
              (window-rule
               (match (@ (app-id "dev.noctalia.Noctalia")))
               (open-floating true)
@@ -597,33 +596,15 @@ Generate passwordless ECC key:
              (layer-rule
               (match (@ (namespace "^noctalia-wallpaper")))
               (place-within-backdrop #t))
-             ;; Blur.
-             (window-rule
-              (background-effect
-               (blur #t)
-               (xray #f)))
-             (layer-rule
-              (match (@ (namespace "^noctalia-(bar-[^\"]+|notification|dock|panel|attached-panel|osd)$")))
-              (background-effect
-               (xray #f)))
-             (layer-rule
-              (match (@ (namespace "noctalia-window-switcher")))
-              (background-effect
-               (blur #t)
-               (xray #f)))
 
              (window-rule
               (match (@ (app-id "Firefox")
                         (title "^Picture-in-Picture$")))
               (open-floating #t))
-
              (window-rule
               (match (@ (app-id "showmethekey")))
               (open-floating #t)
-              (geometry-corner-radius 0)
-              (background-effect
-               (blur #f)))
-
+              (geometry-corner-radius 0))
              (window-rule
               (match (@ (app-id "thunar")
                         (title "^File Operation Progress$")))
@@ -685,6 +666,12 @@ Generate passwordless ECC key:
                (spawn "noctalia" "msg" "panel-toggle" "session"))
               (Alt+Tab
                (spawn "noctalia" "msg" "window-switcher"))
+              (Print
+               (spawn "noctalia" "msg" "screenshot-region"))
+              (Ctrl+Print
+               (spawn "noctalia" "msg" "screenshot-fullscreen"))
+              (Alt+Print
+               (spawn "noctalia" "msg" "screenshot-fullscreen" "all"))
 
               (Mod+Left
                (focus-column-left))
@@ -754,14 +741,7 @@ Generate passwordless ECC key:
 
               (Mod+Tab
                (@ (repeat #f))
-               (toggle-overview))
-
-              (Print
-               (screenshot))
-              (Ctrl+Print
-               (screenshot-screen))
-              (Alt+Print
-               (screenshot-window))))))))
+               (toggle-overview))))))))
 #+end_src
 
 *** noctalia
