@@ -533,8 +533,7 @@ Generate passwordless ECC key:
   (service home-gpg-agent-service-type
     (home-gpg-agent-configuration
       (pinentry-program (file-append pinentry-gnome3 "/bin/pinentry-gnome3"))
-      (ssh-support? #t)
-      (shepherd-requirement '(graphical-session))))
+      (ssh-support? #t)))
 #+end_src
 
 *** pcscd
