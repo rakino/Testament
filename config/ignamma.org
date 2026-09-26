@@ -287,7 +287,6 @@ Within this repository
 Utilities
 #+begin_src scheme :noweb-ref module
   (gnu)
-  (rosenthal)
 #+end_src
 
 Guix System - services
@@ -296,6 +295,7 @@ Guix System - services
   (gnu services cuirass)
   (gnu services networking)
   (gnu services security)
+  (gnu services shepherd)
   (gnu services ssh)
   (gnu services virtualization)
   (rosenthal services networking)

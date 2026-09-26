@@ -594,16 +594,18 @@ Within this repository
 Utilities
 #+begin_src scheme :noweb-ref module
   (gnu)
-  (rosenthal)
+  (rosenthal utils file)
   (sops secrets)
 #+end_src
 
 Guix System - services
 #+begin_src scheme :noweb-ref module
   (gnu services databases)
+  (gnu services desktop)
   (gnu services docker)
   (gnu services networking)
   (gnu services security)
+  (gnu services shepherd)
   (gnu services ssh)
   (gnu services sysctl)
   (rosenthal services mail)

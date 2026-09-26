@@ -966,7 +966,12 @@ Guile builtins
 Utilities
 #+begin_src scheme :noweb-ref module
   (gnu)
-  (rosenthal)
+  (rosenthal utils file)
+#+end_src
+
+Guix System - bootloaders
+#+begin_src scheme :noweb-ref module
+  (rosenthal bootloader limine)
 #+end_src
 
 Guix System - services
@@ -974,9 +979,10 @@ Guix System - services
   (gnu services avahi)
   (gnu services cuirass)
   (gnu services databases)
+  (gnu services desktop)
   (gnu services networking)
-  (gnu services rsync)
   (gnu services security)
+  (gnu services shepherd)
   (gnu services ssh)
   (gnu services sysctl)
   (gnu services web)
@@ -992,8 +998,6 @@ Guix packages
   (gnu packages file-systems)
   (gnu packages shells)
   (gnu packages ssh)
-  (rosenthal packages binaries)
-  (rosenthal packages ci)
   (rosenthal packages package-management)
   (rosenthal packages web)
 #+end_src

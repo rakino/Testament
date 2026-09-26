@@ -315,14 +315,14 @@ Within this repository
 Utilities
 #+begin_src scheme :noweb-ref module
   (gnu)
-  (guix modules)
-  (rosenthal)
+  (rosenthal utils file)
 #+end_src
 
 Guix System - services
 #+begin_src scheme :noweb-ref module
   (gnu services networking)
   (gnu services security)
+  (gnu services shepherd)
   (gnu services ssh)
   (gnu services sysctl)
 #+end_src
