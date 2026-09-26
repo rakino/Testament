@@ -386,6 +386,10 @@ Application profiles
 
                          (service home-fish-service-type)
 
+                         (service home-fish-plugin-atuin-service-type)
+                         (service home-fish-plugin-direnv-service-type)
+                         (service home-fish-plugin-zoxide-service-type)
+
                          (service home-dotfiles-service-type
                            (home-dotfiles-configuration
                              (directories
@@ -441,27 +445,7 @@ Generate random password hash:
   pwgen -sync 16 1 | openssl passwd -6 -stdin
 #+end_src
 
-*** Shell Utilities
-#+begin_src scheme :noweb-ref home-service
-  (service home-fish-plugin-atuin-service-type)
-  (service home-fish-plugin-direnv-service-type)
-  (service home-fish-plugin-zoxide-service-type)
-#+end_src
-
-*** SOPS Secrets
-#+begin_src scheme :noweb-ref home-service
-  (service home-sops-secrets-service-type
-    (home-sops-service-configuration
-      (gnupg-home (in-vicinity %xdg-data-home "sops"))
-      (secrets
-       (list (sops-secret
-               (key '("mail"))
-               (file %sops-dorphine))))))
-#+end_src
-
-Extra notes:
-
-Create GPG home directory specifically for use with SOPS.
+Create GPG home directory specifically for use with SOPS:
 #+begin_src bash
   MY_GPGHOME="<GPG homedir>"
 
@@ -863,6 +847,7 @@ Generate passwordless ECC key:
 #+begin_src scheme :noweb-ref package-spec
   "gcr@3"
   "gnome-keyring"
+  "libsecret"
   "xdg-desktop-portal-gnome"
   "xdg-desktop-portal-gtk"
 #+end_src
@@ -1087,7 +1072,7 @@ mbsync:
   IMAPAccount hako
   Host mail.boiledscript.com
   User "hako@ultrarare.space"
-  PassCmd "cat $XDG_RUNTIME_DIR/secrets/mail"
+  PassCmd "secret-tool lookup host mail.boiledscript.com user hako@ultrarare.space"
   TLSType IMAPS
 
   IMAPStore remote
