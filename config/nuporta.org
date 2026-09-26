@@ -16,19 +16,32 @@
        (bootloader limine-efi-removable-bootloader)
        (targets '("/efi"))))
     (kernel linux-server/dolly)
-    (kernel-arguments (cons* <<kernel-argument>> %default-kernel-arguments))
-    (file-systems (append <<file-systems>> %base-file-systems))
-    (swap-devices <<swap-devices>>)
-    (groups (cons* <<user-group>> %base-groups))
-    (users (cons* <<user-account>> %base-user-accounts))
-    (skeletons %rosenthal-skeletons)
-    (packages (append (list mirror-substitutes) %testament-cli-packages %base-packages))
-    (services (cons* <<service>> %base-services))
+    (kernel-arguments
+     (cons* <<kernel-argument>>
+            %default-kernel-arguments))
+    (file-systems
+     (append <<file-systems>>
+             %base-file-systems))
+    (swap-devices
+     (append <<swap-devices>>))
+    (groups
+     (cons* <<user-group>>
+            %base-groups))
+    (users
+     (cons* <<user-account>>
+            %base-user-accounts))
+    (packages
+     (append (list mirror-substitutes)
+             %testament-cli-packages
+             %base-packages))
+    (services
+     (cons* <<service>>
+            %base-services))
     (sudoers-file
      (plain-file "sudoers"
        (string-join
         (list (plain-file-content %sudoers-specification)
-              "deploy ALL=(ALL) NOPASSWD: ALL")
+              <<sudoers>>)
         "\n"))))
 #+end_src
 
@@ -160,17 +173,6 @@
 *** Users
 #+begin_src scheme :noweb-ref user-account
   (user-account
-    (inherit %root-account)
-    (password #f)
-    (shell (file-append fish "/bin/fish")))
-  (user-account
-    (name "deploy")
-    (group "nogroup")
-    (home-directory "/var/empty")
-    (create-home-directory? #f)
-    (system? #t))
-
-  (user-account
     (name "hako")
     (group "users")
     (supplementary-groups '("wheel"))
@@ -184,6 +186,23 @@
     (group "users")
     (supplementary-groups '("wheel")))
 #+end_src
+
+Account for [[https://guix.gnu.org/manual/devel/en/html_node/Invoking-guix-deploy.html][=guix deploy=]].
+
+#+begin_src scheme :noweb yes :noweb-ref user-account
+  (user-account
+    (name "deploy")
+    (group "nogroup")
+    (home-directory "/var/empty")
+    (create-home-directory? #f)
+    (system? #t))
+#+end_src
+
+#+begin_src scheme :noweb-ref sudoers
+  "deploy ALL=(ALL) NOPASSWD: ALL"
+#+end_src
+
+Authorized SSH keys.
 
 #+begin_src scheme :noweb-ref service
   (simple-service 'extend-openssh openssh-service-type
@@ -204,11 +223,6 @@
 *** ntp
 #+begin_src scheme :noweb-ref service
   (service ntp-service-type)
-#+end_src
-
-*** avahi
-#+begin_src scheme :noweb-ref service
-  (service avahi-service-type)
 #+end_src
 
 *** nftables
@@ -255,15 +269,6 @@
   }
 #+end_src
 
-*** tailscale
-#+begin_src scheme :noweb-ref service
-  (service tailscale-service-type)
-#+end_src
-
-#+begin_src nftables :noweb-ref nftables-filter-input
-  tcp dport 41641 accept
-#+end_src
-
 *** openssh
 #+begin_src scheme :noweb-ref service
   (service openssh-service-type
@@ -271,6 +276,11 @@
       (openssh openssh-sans-x)
       (permit-root-login 'prohibit-password)
       (password-authentication? #f)))
+
+  (simple-service 'openssh-fail2ban-jails fail2ban-service-type
+    (list (fail2ban-jail-configuration
+            (name "sshd")
+            (enabled? #t))))
 #+end_src
 
 #+begin_src nftables :noweb-ref nftables-filter-input
@@ -279,14 +289,18 @@
   udp dport 60000-61000 accept
 #+end_src
 
-*** fail2ban
+*** avahi
 #+begin_src scheme :noweb-ref service
-  (service fail2ban-service-type
-    (fail2ban-configuration
-      (extra-jails
-       (list (fail2ban-jail-configuration
-               (name "sshd")
-               (enabled? #t))))))
+  (service avahi-service-type)
+#+end_src
+
+*** tailscale
+#+begin_src scheme :noweb-ref service
+  (service tailscale-service-type)
+#+end_src
+
+#+begin_src nftables :noweb-ref nftables-filter-input
+  tcp dport 41641 accept
 #+end_src
 
 ** Session and Seat Management
