@@ -80,6 +80,66 @@
    %os)
 #+end_src
 
+Extra notes:
+
+Search a Guix package:
+#+begin_src bash
+  guix search hello
+#+end_src
+#+begin_example
+  name: hello
+  version: 2.12.3
+  outputs:
+  + out: everything
+  systems: x86_64-linux i686-linux
+  dependencies:
+  location: gnu/packages/base.scm:100:2
+  homepage: https://www.gnu.org/software/hello/
+  license: GPL 3+
+  synopsis: Example GNU package
+  description: GNU Hello prints the message "Hello, world!" and then exits.  It
+  + serves as an example of standard GNU coding practices.  As such, it supports
+  + command-line arguments, multiple languages, and so on.
+  relevance: 34
+#+end_example
+
+Search a Guix System service:
+
+#+begin_src bash
+  guix system search gdm
+#+end_src
+#+begin_example
+  name: gdm
+  location: gnu/services/xorg.scm:1413:2
+  extends: shepherd-root account dconf-profile pam polkit profile dbus
+  + localed
+  shepherdnames: xorg-server
+  description: Run the GNOME Desktop Manager (GDM), a program that allows you to
+  + log in in a graphical session, whether or not you use + GNOME.
+  relevance: 17
+#+end_example
+
+Search a Guix Home service:
+
+#+begin_src bash
+  guix home search fish
+#+end_src
+#+begin_example
+  name: home-fish
+  location: gnu/home/services/shells.scm:640:2
+  extends: home-xdg-configuration home-profile
+  description: Install and configure Fish, the friendly interactive shell.
+  relevance: 5
+#+end_example
+
+View their sources:
+
+#+begin_src bash
+  guix edit hello
+  guix system edit gdm
+  guix home edit home-fish
+#+end_src
+
 ** Base
 *** Kernel
 #+begin_src scheme :noweb-ref kernel-argument
@@ -324,13 +384,15 @@ Application profiles
                  (services
                   (cons* <<home-service>>
 
-                         (simple-service 'xdg-base-directory home-environment-variables-service-type
-                           %xdg-base-directory-env-vars)
+                         (service home-fish-service-type)
 
                          (service home-dotfiles-service-type
                            (home-dotfiles-configuration
                              (directories
                               (list (in-vicinity testament-path "tangled/dorphine/dotfiles")))))
+
+                         (simple-service 'xdg-base-directory home-environment-variables-service-type
+                           %xdg-base-directory-env-vars)
 
                          %base-home-services))))))
 #+end_src
@@ -1484,6 +1546,7 @@ Guix Home - services
   (gnu home services dotfiles)
   (gnu home services fontutils)
   (gnu home services gnupg)
+  (gnu home services shells)
   (gnu home services shepherd)
   (gnu home services sound)
   (gnu home services symlink-manager)
