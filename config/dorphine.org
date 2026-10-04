@@ -729,6 +729,14 @@ Generate passwordless ECC key:
               (open-floating #t)
               (geometry-corner-radius 0))
              (window-rule
+              (match (@ (app-id "steam")
+                        (title "^notificationtoasts_[0-9]+_desktop$")))
+              (default-floating-position
+                (@ (x 10)
+                   (y 10)
+                   (relative-to "bottom-right")))
+              (open-focused #f))
+             (window-rule
               (match (@ (app-id "thunar")
                         (title "^File Operation Progress$")))
               (open-floating #t))
