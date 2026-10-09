@@ -29,6 +29,7 @@
         (bootloader ros:limine-efi-removable-bootloader)
         (targets '("/efi"))))
      (kernel ros:linux-cachyos-bore-zen4)
+     (kernel-loadable-modules `((,zfs "module")))
      (initrd non:microcode-initrd)
      (firmware
       (cons* non:linux-firmware
@@ -259,6 +260,10 @@ Application profiles
 | Mentha/State/Captures  | /var/lib/Captures  |               |                       |
 | Mentha/State/Sandbox   | /var/lib/Sandbox   |               |                       |
 |------------------------+--------------------+---------------+-----------------------|
+
+#+begin_src scheme :noweb-ref service
+  (service zfs-service-type)
+#+end_src
 
 #+begin_src scheme :noweb-ref file-systems
   (map (match-lambda
@@ -894,11 +899,11 @@ https://wiki.gnome.org/Projects(2f)GnomeKeyring(2f)Pam.html
          ("passwd" . passwd)))))
 #+end_src
 
-*** icon theme & fonts
+*** theming
 #+begin_src scheme :noweb-ref home-service
   (service ros:home-theme-service-type
     (ros:home-theme-configuration
-      (packages (list qogir-icon-theme))
+      (packages (list qogir-icon-theme sound-theme-freedesktop))
       (font "sans-serif 10")
       (icon-theme "Qogir")
       (cursor-theme "Qogir")))
@@ -1221,6 +1226,11 @@ skk
 #+end_src
 
 *** git & jujutsu
+#+begin_src scheme :noweb-ref package-spec
+  "git"
+  "git:send-email"
+#+end_src
+
 #+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/git/config
   [core]
           quotePath = false
@@ -1268,6 +1278,10 @@ skk
 #+end_src
 
 Jujutsu:
+
+#+begin_src scheme :noweb-ref package-spec
+  "jujutsu"
+#+end_src
 
 #+begin_src toml :tangle ../tangled/dorphine/dotfiles/.config/jj/config.toml
   [user]
@@ -1556,6 +1570,7 @@ Guix packages
   (gnu packages gnome-xyz)
   (gnu packages gnupg)
   (gnu packages java)
+  (gnu packages libcanberra)
   (gnu packages linux)
   (gnu packages mail)
   (gnu packages security-token)
