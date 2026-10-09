@@ -1287,22 +1287,6 @@ Jujutsu:
   sign-on-push = true
 #+end_src
 
-*** moor
-[[https://github.com/walles/moor][Moor]] is a pager similar to =less=, with features like syntax highlighting and
-incremental search.
-
-#+begin_src scheme :noweb yes :noweb-ref package-nix
-  (nix-shell-wrapper "moor"
-    '("moor")
-    #:expression (local-file <<testament-path("tangled/dorphine/nixpkgs.nix")>>)
-    #:run-command '("moor"))
-#+end_src
-
-#+begin_src scheme :noweb-ref home-service
-  (simple-service 'moor-pager home-environment-variables-service-type
-    `(("PAGER" . "moor")))
-#+end_src
-
 *** mpv
 #+begin_src scheme :noweb-ref package-spec
   "mpv-nvidia"
