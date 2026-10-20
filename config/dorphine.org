@@ -676,14 +676,10 @@ Generate passwordless ECC key:
        (ros:kdlv1-file "niri.kdl"
          #~'((prefer-no-csd)
              (spawn-sh-at-startup
-              #$(string-append
-                 "herd set-environment graphical-session "
-                 (string-join
-                  (map (lambda (env)
-                         (string-append env "=$" env))
-                       '("XDG_CURRENT_DESKTOP"
-                         "XDG_SESSION_TYPE"
-                         "NIRI_SOCKET")))))
+              #$(format #f "herd set-environment graphical-session~{ ~a=$~:*~a~}"
+                        '("XDG_CURRENT_DESKTOP"
+                          "XDG_SESSION_TYPE"
+                          "NIRI_SOCKET")))
              (xwayland-satellite
               (path #$(file-append xwayland-satellite "/bin/xwayland-satellite")))
              (hotkey-overlay
@@ -1473,6 +1469,7 @@ condition.  Disable one of them.
 ** Modules
 Guile builtins
 #+begin_src scheme :noweb-ref module
+  (ice-9 format)
   (ice-9 match)
   (srfi srfi-1)
   (srfi srfi-43)
