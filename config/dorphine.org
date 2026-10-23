@@ -381,8 +381,8 @@ Application profiles
 
                   (service home-fish-service-type)
 
-                  (service ros:home-fish-plugin-atuin-service-type)
                   (service ros:home-fish-plugin-direnv-service-type)
+                  (service ros:home-fish-plugin-stinkpot-service-type)
                   (service ros:home-fish-plugin-zoxide-service-type)
 
                   (service home-dotfiles-service-type
