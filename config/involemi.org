@@ -573,25 +573,6 @@ https://github.com/misskey-dev/misskey/blob/develop/.config/example.yml
       (user-id 975)))
 #+end_src
 
-*** vaultwarden
-#+begin_src caddyfile :noweb-ref caddy-site
-  vault.urspace.moe {
-  	import block_bots
-  	reverse_proxy localhost:23263
-  }
-#+end_src
-
-#+begin_src scheme :noweb-ref service
-  (service ros:vaultwarden-service-type
-    (ros:vaultwarden-configuration
-      (postgresql-password-file "")
-      (database-url "postgresql://vaultwarden:placeholder@localhost/vaultwarden")
-      (port 23263)
-      (extra-options '(("ROCKET_ADDRESS" . "127.0.0.1")))
-      (group-id 981)
-      (user-id 977)))
-#+end_src
-
 ** Modules
 Utilities
 #+begin_src scheme :noweb-ref module
