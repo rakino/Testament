@@ -1337,28 +1337,26 @@ Jujutsu:
   "mpv-nvidia"
 #+end_src
 
-#+begin_src conf :tangle ../tangled/dorphine/dotfiles/.config/mpv/mpv.conf
-  # https://vcb-s.com/archives/7594
-  profile=high-quality
-  cscale=catmull_rom
-  deband=yes
-  blend-subtitles=video
-  video-sync=display-resample
-  interpolation=yes
-  tscale=oversample
-  sub-auto=fuzzy
-  fullscreen=yes
-  hwdec=auto-safe
-
-  idle=yes
-  screenshot-directory=/home/hako/Pictures/MPV/
-  screenshot-template="%F %P"
-#+end_src
-
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'mpv-mpris home-xdg-configuration-files-service-type
-    `(("mpv/scripts/mpris.so"
-       ,(file-append mpv-mpris "/lib/mpv-mpris/mpris.so"))))
+  (service home-mpv-service-type
+    (make-home-mpv-configuration
+     #:global
+     ;; https://vcb-s.com/archives/7594
+     (make-mpv-profile-configuration
+      #:profile '("high-quality")
+      #:cscale 'catmull_rom
+      #:deband? #t
+      #:blend-subtitles 'video
+      #:video-sync 'display-resample
+      #:interpolation? #t
+      #:tscale 'oversample
+      #:sub-auto 'fuzzy
+      #:fullscreen? #t
+      #:hwdec '("auto-safe")
+      #:idle 'yes
+      #:screenshot-directory "/home/hako/Pictures/MPV/"
+      #:screenshot-template "%F %P"
+      #:scripts (list (file-append mpv-mpris "/lib/mpv-mpris/mpris.so")))))
 #+end_src
 
 *** nix
@@ -1587,6 +1585,7 @@ Guix Home - services
   (gnu home services dotfiles)
   (gnu home services fontutils)
   (gnu home services gnupg)
+  (gnu home services mpv)
   (gnu home services shells)
   (gnu home services shepherd)
   (gnu home services sound)
