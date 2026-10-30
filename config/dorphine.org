@@ -671,22 +671,6 @@ Generate passwordless ECC key:
 #+end_src
 
 ** Graphical Session
-*** noctalia-greeter
-#+begin_src scheme :noweb-ref service
-  (service ros:noctalia-greeter-service-type
-    (ros:noctalia-greeter-configuration
-     (keyboard-layout keyboard-layout)))
-
-  (service greetd-service-type
-    (greetd-configuration
-      (greeter-supplementary-groups '("video" "input"))
-      (terminals
-       (list (greetd-terminal-configuration
-               (terminal-vt "7")
-               (terminal-switch #t)
-               (default-session-command (ros:greetd-noctalia-greeter-session)))))))
-#+end_src
-
 *** niri
 #+begin_src scheme :noweb-ref package-spec
   "niri"
@@ -701,6 +685,18 @@ Generate passwordless ECC key:
     (ros:home-graphical-session-configuration
       (wayland? #t)
       (x11? #t)))
+#+end_src
+
+#+begin_src scheme :noweb-ref home-service
+  (simple-service 'start-niri-on-tty1-login home-fish-service-type
+    (home-fish-extension
+      (config
+       (list (mixed-text-file "niri.fish" "\
+  if status is-login
+      if test -z \"$WAYLAND_DISPLAY\" && test -n \"$XDG_VTNR\" && test \"$XDG_VTNR\" = 1
+          exec " niri "/bin/niri --session
+      end
+  end\n")))))
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
@@ -924,7 +920,7 @@ https://wiki.gnome.org/Projects(2f)GnomeKeyring(2f)Pam.html
   (service gnome-keyring-service-type
     (gnome-keyring-configuration
       (pam-services
-       '(("greetd" . login)
+       '(("login"  . login)
          ("passwd" . passwd)))))
 #+end_src
 
@@ -1577,7 +1573,6 @@ Guix System - services
   (gnu services sysctl)
   (gnu services virtualization)
   (gnu services xorg)
-  ((rosenthal services base) #:prefix ros:)
   ((rosenthal services desktop) #:prefix ros:)
   ((rosenthal services networking) #:prefix ros:)
   ((rosenthal services nix) #:prefix ros:)
@@ -1617,6 +1612,7 @@ Guix packages
   (gnu packages shells)
   (gnu packages ssh)
   (gnu packages video)
+  (gnu packages window-management)
   (gnu packages xdisorg)
   (gnu packages xorg)
   ((nongnu packages linux) #:prefix non:)
