@@ -797,7 +797,7 @@ Generate passwordless ECC key:
               (Mod+A
                (spawn "noctalia" "msg" "panel-toggle" "control-center"))
               (Mod+D
-               (spawn #$(file-append rofi "/bin/rofi") "-show" "combi"))
+               (spawn "noctalia" "msg" "panel-toggle" "launcher"))
               (Mod+S
                (spawn "noctalia" "msg" "settings-toggle"))
               (Mod+L
@@ -1613,7 +1613,6 @@ Guix packages
   (gnu packages ssh)
   (gnu packages video)
   (gnu packages window-management)
-  (gnu packages xdisorg)
   (gnu packages xorg)
   ((nongnu packages linux) #:prefix non:)
   ((nongnu packages nvidia) #:prefix non:)
