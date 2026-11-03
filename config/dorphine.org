@@ -1215,13 +1215,37 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                                         ("Pattern" . "*")
                                         ("SyncState" . "*"))))))
                      (list
-                      ;; self
+                      ;; folders
                       (rule
-                       (query "from:hako@ultrarare.space")
-                       (tags '(+sent)))
+                       (query "folder:local/Archive")
+                       (tags '(+archive -unread -inbox -new)))
                       (rule
-                       (query "tag:replied OR tag:sent")
-                       (tags '(-unread)))
+                       (query "tag:archive AND NOT folder:local/Archive")
+                       (move-to "local/Archive"))
+
+                      (rule
+                       (query "folder:local/Billing")
+                       (tags '(+billing -inbox -new)))
+                      (rule
+                       (query "tag:billing AND NOT folder:local/Billing")
+                       (move-to "local/Billing"))
+
+                      (rule
+                       (query "folder:local/Drafts")
+                       (tags '(+draft -unread -inbox -new)))
+                      (rule
+                       (query "tag:draft AND NOT folder:local/Drafts")
+                       (move-to "local/Drafts"))
+
+                      (rule
+                       (query "folder:imap/Junk AND tag:new")
+                       (tags '(+spam -inbox -new)))
+                      (rule
+                       (query "folder:imap/Junk AND NOT tag:spam")
+                       (tags '(+inbox)))
+                      (rule
+                       (query "tag:spam AND NOT folder:imap/Junk")
+                       (move-to "imap/Junk"))
 
                       ;; forges
                       (rule
@@ -1276,38 +1300,16 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                        (query "tag:lists AND NOT tag:notifications")
                        (tags '(-new)))
 
-                      ;; folders
+                      ;; self
+                      (rule
+                       (query "from:hako@ultrarare.space")
+                       (tags '(+sent)))
+                      (rule
+                       (query "tag:replied OR tag:sent")
+                       (tags '(-unread)))
                       (rule
                        (query "tag:inbox AND NOT folder:local/INBOX")
-                       (move-to "local/INBOX"))
-
-                      (rule
-                       (query "folder:local/Archive")
-                       (tags '(+archive -unread -inbox -new)))
-                      (rule
-                       (query "tag:archive AND NOT folder:local/Archive")
-                       (move-to "local/Archive"))
-
-                      (rule
-                       (query "folder:local/Billing")
-                       (tags '(+billing -inbox -new)))
-                      (rule
-                       (query "tag:billing AND NOT folder:local/Billing")
-                       (move-to "local/Billing"))
-
-                      (rule
-                       (query "folder:local/Drafts")
-                       (tags '(+draft -unread -inbox -new)))
-                      (rule
-                       (query "tag:draft AND NOT folder:local/Drafts")
-                       (move-to "local/Drafts"))
-
-                      (rule
-                       (query "folder:imap/Junk")
-                       (tags '(+spam -inbox -new)))
-                      (rule
-                       (query "tag:spam AND NOT folder:imap/Junk")
-                       (move-to "imap/Junk")))))))))))
+                       (move-to "local/INBOX")))))))))))
 #+end_src
 
 *** fcitx5
