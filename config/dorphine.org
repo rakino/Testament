@@ -1224,53 +1224,55 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                       ;; forges
                       (rule
                        (query "from:noreply@codeberg.org")
-                       (tags '(+forges +forges/codeberg -inbox -new)))
+                       (tags '(+forges +forges/codeberg)))
                       (rule
                        (query "tag:forges/codeberg AND body:\"  mentioned you:\"")
-                       (tags '(+inbox)))
+                       (tags '(+notifications)))
                       (rule
-                       (query "tag:forges/codeberg AND NOT tag:inbox AND NOT folder:forges/codeberg")
+                       (query "tag:forges/codeberg AND NOT tag:notifications")
+                       (tags '(-new)))
+                      (rule
+                       (query "tag:forges/codeberg AND NOT folder:forges/codeberg")
                        (move-to "forges/codeberg"))
 
                       (rule
                        (query "from:gitlab@mg.gitlab.com")
-                       (tags '(+forges +forges/gitlab -inbox -new)))
+                       (tags '(+notifications +forges +forges/gitlab)))
                       (rule
-                       (query "tag:forges/gitlab AND body:\"@hakourspace\"")
-                       (tags '(+inbox)))
-                      (rule
-                       (query "tag:forges/gitlab AND NOT tag:inbox AND NOT folder:forges/gitlab")
+                       (query "tag:forges/gitlab AND NOT folder:forges/gitlab")
                        (move-to "forges/gitlab"))
 
                       ;; mailing lists
                       (rule
                        (query "folder:lists/emacs-devel")
-                       (tags '(+emacs +lists +lists/emacs-devel -inbox -new)))
+                       (tags '(+emacs +lists +lists/emacs-devel -inbox)))
                       (rule
                        (query "folder:lists/guile-bugs")
-                       (tags '(+guile +lists +lists/guile-bugs -inbox -new)))
+                       (tags '(+guile +lists +lists/guile-bugs -inbox)))
                       (rule
                        (query "folder:lists/guile-devel")
-                       (tags '(+guile +lists +lists/guile-devel -inbox -new)))
+                       (tags '(+guile +lists +lists/guile-devel -inbox)))
                       (rule
                        (query "folder:lists/guile-user")
-                       (tags '(+guile +lists +lists/guile-user -inbox -new)))
+                       (tags '(+guile +lists +lists/guile-user -inbox)))
                       (rule
                        (query "folder:lists/guix-bugs")
-                       (tags '(+guix +lists +lists/guix-bugs -inbox -new)))
+                       (tags '(+guix +lists +lists/guix-bugs -inbox)))
                       (rule
                        (query "folder:lists/guix-devel")
-                       (tags '(+guix +lists +lists/guix-devel -inbox -new)))
+                       (tags '(+guix +lists +lists/guix-devel -inbox)))
                       (rule
                        (query "folder:lists/guix-patches")
-                       (tags '(+guix +lists +lists/guix-patches -inbox -new)))
+                       (tags '(+guix +lists +lists/guix-patches -inbox)))
                       (rule
                        (query "folder:lists/guix-user")
-                       (tags '(+guix +lists +lists/guix-user -inbox -new)))
-
+                       (tags '(+guix +lists +lists/guix-user -inbox)))
                       (rule
                        (query "tag:lists AND (from:hako@ultrarare.space OR to:hako@ultrarare.space)")
-                       (tags '(+inbox)))
+                       (tags '(+notifications)))
+                      (rule
+                       (query "tag:lists AND NOT tag:notifications")
+                       (tags '(-new)))
 
                       ;; folders
                       (rule
