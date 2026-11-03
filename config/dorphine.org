@@ -1164,21 +1164,23 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                         (system* "emacsclient" "--eval" "(smtpmail-send-queued-mail)")
                         ;; Delete.
                         (for-each delete-mail (notmuch-search-files "tag:trash"))
-                        ;; Move.
-                        (for-each (match-record-lambda <rule>
-                                      (query move-to)
-                                    (when move-to
-                                      (for-each (cut move-mail <> move-to)
-                                                (notmuch-search-files query))))
-                                  notmuch-rules)
                         ;; Sync.
                         (invoke mbsync "--all" "--config" mbsync-config)
-                        ;; Index.
                         (invoke notmuch "new")
+                        ;; Tag.
                         (for-each (match-record-lambda <rule>
                                       (query tags)
                                     (unless (null? tags)
                                       (notmuch-tag query tags)))
+                                  notmuch-rules)
+                        ;; Move.
+                        (for-each (match-record-lambda <rule>
+                                      (query move-to)
+                                    (when move-to
+                                      (let ((mails (notmuch-search-files query)))
+                                        (for-each (cut move-mail <> move-to) mails)
+                                        (unless (null? mails)
+                                          (invoke notmuch "new")))))
                                   notmuch-rules)
                         ;; Notify.
                         (let ((new-mails (map notmuch-sexp->subject (notmuch-search "tag:new"))))
