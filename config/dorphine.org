@@ -1117,7 +1117,7 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                       (tags    rule-tags    (default '()))
                       (move-to rule-move-to (default #f)))
 
-                    (define (main mbsync.conf rules)
+                    (define (main mbsync-config notmuch-rules)
                       (let* ((notify-send #$(file-append libnotify "/bin/notify-send"))
                              (notmuch     #$(file-append notmuch "/bin/notmuch"))
                              (mbsync      #$(file-append isync "/bin/mbsync"))
@@ -1170,16 +1170,16 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                                     (when move-to
                                       (for-each (cut move-mail <> move-to)
                                                 (notmuch-search-files query))))
-                                  rules)
+                                  notmuch-rules)
                         ;; Sync.
-                        (invoke mbsync "--all" "--config" mbsync.conf)
+                        (invoke mbsync "--all" "--config" mbsync-config)
                         ;; Index.
                         (invoke notmuch "new")
                         (for-each (match-record-lambda <rule>
                                       (query tags)
                                     (unless (null? tags)
                                       (notmuch-tag query tags)))
-                                  rules)
+                                  notmuch-rules)
                         ;; Notify.
                         (let ((new-mails (map notmuch-sexp->subject (notmuch-search "tag:new"))))
                           (unless (null? new-mails)
@@ -1224,9 +1224,9 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                       ;; forges
                       (rule
                        (query "from:noreply@codeberg.org")
-                       (tags '(+forges +forges/codeberg)))
+                       (tags '(+forges +forges/codeberg -inbox)))
                       (rule
-                       (query "tag:forges/codeberg AND body:\"  mentioned you:\"")
+                       (query "tag:forges/codeberg AND (body:\"  mentioned you:\" OR subject:\"/^[[]hako[/]/\")")
                        (tags '(+notifications)))
                       (rule
                        (query "tag:forges/codeberg AND NOT tag:notifications")
@@ -1237,7 +1237,7 @@ See [[file:shared/emacs.org][shared/emacs.org]].
 
                       (rule
                        (query "from:gitlab@mg.gitlab.com")
-                       (tags '(+notifications +forges +forges/gitlab)))
+                       (tags '(+notifications +forges +forges/gitlab -inbox)))
                       (rule
                        (query "tag:forges/gitlab AND NOT folder:forges/gitlab")
                        (move-to "forges/gitlab"))
