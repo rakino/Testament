@@ -1593,8 +1593,10 @@ Pin Nixpkgs to avoid networking requirement when using the wrappers.
 #+end_src
 
 #+begin_src scheme :noweb-ref home-service
-  (simple-service 'nonguix-sandbox-home home-environment-variables-service-type
-    `(("GUIX_SANDBOX_HOME" . "/var/lib/Sandbox")))
+  (simple-service 'steam-environment home-environment-variables-service-type
+    `(("GUIX_SANDBOX_HOME" . "/var/lib/Sandbox")
+      ;; https://github.com/ValveSoftware/steam-for-linux/issues/13817
+      ("TZ" . "Etc/GMT-8")))
 #+end_src
 
 #+begin_src scheme :noweb-ref service
