@@ -1446,6 +1446,9 @@ Jujutsu:
   name = "Hilton Chain"
   email = "hako@ultrarare.space"
 
+  [revsets]
+  log = "trunk() | ancestors(@, 10) | ancestors(immutable_heads().., 5) | ancestors(untracked_remote_bookmarks(), 2)"
+
   [signing]
   behavior = "drop"
   backend = "gpg"
