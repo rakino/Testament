@@ -1170,7 +1170,10 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                                           (invoke notmuch "new")))))
                                   notmuch-rules)
                         ;; Notify.
-                        (let ((new-mails (map notmuch-sexp->subject (notmuch-search "tag:new"))))
+                        (let ((new-mails
+                               (delete-duplicates
+                                (map notmuch-sexp->subject (notmuch-search "tag:new"))
+                                string=?)))
                           (unless (null? new-mails)
                             (system* notify-send "You've got mail" (string-join new-mails "\n"))))
                         (notmuch-tag "tag:new" '(+inbox -new))))
@@ -1267,6 +1270,9 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                        (query "tag:forges/codeberg AND (body:\"  mentioned you:\" OR subject:\"/^[[]hako[/]/\")")
                        (tags '(+notifications)))
                       (rule
+                       (query "tag:forges/codeberg AND thread:{tag:notifications}")
+                       (tags '(+notifications)))
+                      (rule
                        (query "tag:forges/codeberg AND NOT tag:notifications")
                        (tags '(-new)))
                       (rule
@@ -1307,6 +1313,9 @@ See [[file:shared/emacs.org][shared/emacs.org]].
                        (tags '(+guix +lists +lists/guix-user -inbox)))
                       (rule
                        (query "tag:lists AND (from:hako@ultrarare.space OR to:hako@ultrarare.space)")
+                       (tags '(+notifications)))
+                      (rule
+                       (query "tag:lists AND thread:{tag:notifications}")
                        (tags '(+notifications)))
                       (rule
                        (query "tag:lists AND NOT tag:notifications")
